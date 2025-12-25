@@ -1,0 +1,36 @@
+# VB6
+*.exe
+*.dll
+*.ocx
+*.vbw
+*.log
+*.tmp
+
+# AI Agent files
+.claude/
+.cursor/
+.aider*
+.continue/
+.copilot/
+.github/copilot/
+.codeium/
+.tabnine/
+.windsurf/
+CLAUDE.md
+.cursorignore
+.cursorindexingignore
+
+# IDE
+.vs/
+.vscode/
+*.suo
+*.user
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Build
+bin/
+obj/

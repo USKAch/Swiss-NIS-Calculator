@@ -1,0 +1,834 @@
+1101	&Datei	
+1102	S&chliessen	
+1103	&Berechnung laden	
+1104	Berechnung &speichern	
+1105	Berechnung &löschen	
+1106	Berechnung &drucken	
+1107	Druck Formular anzeigen	
+1108	Antennendaten aufbereiten	
+1109	&Beenden	
+1110	&?	
+1111	Beschreibung	
+1112	Dieses Programm ist nicht kompatibel mit gespeicherten Daten aus Versionen 5.0.0 und kleiner	
+1113	Formeln (RTF)	
+1114	Formeln (HTML)	
+1115	Wichtig!	
+1116	Inf&o	
+1117	NIS Feldstärkeberechnung	
+1118	Antennenbibliothek im Internet	
+1119	Antennenkommission	
+1120	Eigene Kabeldaten eingeben	
+1121	Antennendaten drucken	
+1131	Eine Antenne ... was tun? (pdf)	
+1132	Wegleitung zur Emissionserklärung für Amateurfunkanlagen (pdf)	
+1133	Formelblatt mit Erläuterungen (pdf)	
+1134	Glossar (pdf)	
+1135	Emissionserklärung für Amateurfunkanlagen (Word)	
+1136	Beilage 1 zur Emissionserklärung (pdf)	
+1137	Beilage 5 zur Emissionserklärung (Word)	
+1138	Beilage 7 zur Emissionserklärung (Word)	
+1139	Verordnung über den Schutz vor nichtionisierender Strahlung (NISV) (pdf)	
+1140	Erläuternder Bericht NISV (pdf)	
+1201	Berechnungsformular	
+1202	Immissionsberechnung für die Amateurfunkstation von	
+1203	Name	
+1204	Call	
+1205	Vorname, Name	
+1206	Strasse, No.	
+1207	PLZ, Wohnort	
+1208	Rufzeichen	
+1209	Frequenz	
+1210	f	
+1211	[MHz]	
+1212	Wahl des Amateurfunkbandes	
+1213	Abstand OKA zur Antenne	
+1214	d	
+1215	[m]	
+1216	Distanz Antenne bis zur nächsten gelegentlich begehbaren Stelle	
+1217	Leistung am Senderausgang	
+1218	P	
+1219	[W]	
+1220	Betriebsart	
+1221	Aktivitätsfaktor	
+1222	AF	
+1223	Modulationsfaktor	
+1224	MF	
+1225	Mittl. Leistung am Senderausgang	
+1226	Pm	
+1227	[W]	
+1228	Kabeldämpfung	
+1229	a1	
+1230	[dB]	
+1231	übrige Dämpfung	
+1232	a2	
+1233	[dB]	
+1234	Summe der Dämpfung	
+1235	a	
+1236	[dB]	
+1237	Dämpfungsfaktor	
+1238	A	
+1239	Antennengewinn	
+1240	g1	
+1241	[dBi]	
+1242	Vertikale Winkeldämpfung	
+1243	g2	
+1244	[dB]	
+1245	Totaler Antennengewinn	
+1246	g	
+1247	[dB]	
+1248	Antennengewinnfaktor	
+1249	G	
+1250	Massgebende Sendeleistung (EIRP)	
+1251	Ps	
+1252	[W]	
+1253	Massgebende Sendeleistung  (ERP)	
+1254	P's	
+1255	[W]	
+1256	Gebäudedämpfung	
+1257	ag	
+1258	[dB]	
+1259	Gebäudedämpfungsfaktor	
+1260	AG	
+1261	Mittlere Feldstärke	
+1262	E	
+1263	[V/m]	
+1264	Bodenreflexionsfaktor	
+1265	kr	
+1266	Massgebende Feldstärke am OKA	
+1267	E'	
+1268	[V/m]	
+1269	im Abstand von            m	
+1270	Immissions-Grenzwert	
+1271	E IGW	
+1272	[V/m]	
+1273	Sicherheitsabstand	
+1274	ds	
+1275	[m]	
+1276	Berechnen (F4)	
+1277	Drucktabelle	
+1278	Tabellenkolonne	
+1279	Werte in Tabelle übertragen	
+1280	Senderausgangsleistung	
+1281	Eingabefeld für die Betriebsart	
+1282	Normalfall 0.5 (6 Min. Intervall)	
+1283	Wird aus der Betriebsart berechnet	
+1284	Ausgangsleistung reduziert um Aktivitäts- und Modulationsfaktor	
+1285	Kabeldämpfung bezogen auf Kabellänge	
+1286	Stecker, SWR-Brücke, Antennenschalter (ca. 0.5 dB)	
+1287	Summe Kabel und übrige Dämpfung	
+1288	In absolute Zahl umgerechnete Dämpfung	
+1289	Antennengewinn gemäss Herstellerangaben	
+1290	Gewinnverminderung durch vertikales Strahlungsdiagramm der Antenne	
+1291	Antennengewinn - vertikale Winkeldämpfung	
+1292	In absolute Zahl umgerechneter Antennengewinn - Winkeldämpfung	
+1293	Äquivalente abgestrahlte Leistung bezogen auf einen Isotropen-Strahler	
+1294	Äquivalente abgestrahlte Leistung bezogen auf einen Dipol	
+1295	Dämpfung durch Gebäudemauern und Decken	
+1296	In absolute Zahl umgerechnete Gebäudedämpfung	
+1297	Feldstärke berechnet nach Fernfeldformel	
+1298	Faktor welcher zu einer Zunahme der Feldstärke führt	
+1299	6 Minuten-Mittelwert der Feldstärke an der nächsten gelegentlich begehbaren Stelle	
+1300	Immissionsgrenzwert für die Feldstärke gemäss NISV	
+1301	Distanz von der Antenne, wo der Immissionsgrenzwert erreicht wird	
+1302	Berechnen der Werte aus den aktuellen Eingaben	
+1303	Aktuelle Kolonne in der Druckertabelle	
+1304	Übernimmt die berechneten Werte in die Druckertabelle	
+1305	Aktuelle Kolonne in der Druckertabelle	
+1306	Siehe Info	
+1307	 Kolonne	
+1308	Kolonne löschen	
+1311	Keine Gebäudedämpfung	
+1312	Stahlbeton Decke	
+1313	Blechdach	
+1314	Ziegeldach	
+1315	Stahlbeton	
+1316	Mauerwerk	
+1317	Holzkonstruktion	
+1401	Koaxialkabel	
+1402	Berechnung der Kabeldämpfung	
+1403	Frequenz  MHz	
+1404	Kabeltyp 1	
+1405	Kabellänge 	
+1406	Kabeldämpfung je 100m	
+1407	Kabeldämpfung 	
+1408	Kabeltyp 2	
+1409	Kabellänge	
+1410	Kabeldämpfung je 100m 	
+1411	Kabeldämpfung 	
+1412	Kabeldämpfung 	
+1413	Zusätzliche Dämpfung durch Stecker etc.	
+1414	Dämpfung	
+1415	Berechnen	
+1416	Kabeldaten	
+1417	Auswahl des Kabeltyps	
+1418	Länge des Koaxialkabels Typ 1	
+1419	Eingabefeld für das Amateurfunkband	
+1420	Zusätzliche Dämpfung durch Stecker, SWR-Brücke, Antennenschalter, Tiefpassfilter	
+1421	Zusätzlich eigene Kabeldaten von der Disk laden	
+1431	Kabeltyp 3	
+1432	Kabellänge in Meter	
+1433	Kabeldämpfung je 100m	
+1434	Kabeldämpfung	
+1450	Feldstärkeberechnung	
+1451	Version	
+1452	Immissionsberechnung für Amateurfunkstationen in der Schweiz	
+1453	Dieses Programm darf nur für Amateurfunkzwecke und nicht für kommerzielle Nutzung eingesetzt werden.              Der Autor lehnt jede Haftung ab.                  hb9zs@uska.ch         copyright HB9ZS / 2008	
+1454	Information	
+1501	Antenne	
+1502	Frequenz	
+1503	Hersteller	
+1504	Typen	
+1505	des Herstellers	
+1506	Antennengewinn	
+1507	Vertikale Winkeldämpfung	
+1508	Wird die Frequenz verändert, muss der Antennentyp nochmals gewählt werden	
+1509	Antennendaten ohne Gewähr. Die Daten beruhen auf Herstellerangaben und NEC-Berechnungen von DL9KCE und DJ2ZS / DM2BLE	
+1510	Antennendaten                                                               vertikale Winkeldämpfung 10 - 90 Grad (dB)	
+1511	Eingabefeld für das Amateurfunkband	
+1512	Wahl des Antennenherstellers	
+1513	Antennentyp des Herstellers	
+1514	Antennengewinn abhängig von Typ und Frequenz	
+1515	Vertikale Winkeldämpfung bezogen auf den eingegebenen Winkel	
+1516	Winkel der auf der Tabelle unten gewählt wurde	
+1517	Zur Übernahme der Winkeldämpfung in der entsprechenden Winkelkolonne anklicken	
+1518	Strahlungsdiagramm	
+1519	Kein vertikales Strahlungsdiagramm für diese Frequenz vorhanden	
+1520	Vertikales Strahlungsdiagramm	
+1521	neu zeichnen	
+1522	Fenster schliessen	
+1523	Vertikale Winkeldämpfung  (dB)	
+1524	Ant. Gewinn	
+1525	Antennentyp:	
+1526	Antennendaten	
+1527	dB bei	
+1528	Grad	
+1529	Vertikale Winkeldämpfung für	
+1601	Immissionsberechnung für	
+1602	Formular	
+1603	&Formular laden	
+1604	Formular &speichern	
+1605	Formular &löschen	
+1606	Formular &drucken 	
+1607	Formular drucken Treiber 2	
+1608	Ausdruck	
+1700	Ausgangsleistung des Senders oder Linears	
+1701	Datei	
+1702	Antennendaten aufbereiten	
+1703	Beenden	
+1706	Registrierung	
+1707	Lizenz	
+1708	Wichtig	
+1709	Nr. des OKA auf dem Situationsplan	
+1710	Im Situationsplan eingezeichneter Ort für den kurzfristigen Aufenthalt	
+1711	Datei	
+1712	Beenden	
+1713	Vorname, Name	
+1714	Rufzeichen	
+1715	Softwarenummer	
+1716	Lizenznummer	
+1717	Die Lizenznummer kann bei hb9zs@uska.ch angefordert werden. Bitte Vorname, Name, Rufzeichen und Softwarenummer angeben.	
+1718	Lizenz anfordern	
+1719	Zustellung des Lizenzschlüssels für die Software Nr: 	
+1720	Bitte Softwarelizenznummer für das Feldstärkeberechnungsprogramm per E-Mail zustellen	
+1721	Sendefrequenz der Amateurfunkstation	
+1722	Antenne - Ort für den kurzfristigen Aufenthalt	
+1723	     Horizontalprojektion (Ja/Nein):	
+1724	     Effektive Distanz (Ja/Nein): 	
+1725	Ausgangsleistung des Senders oder Linear	
+1726	In der Regel AF = 0.5	
+1727	bei SSB: MF=0.2, bei CW: MF=0.4, bei FM/RTTY/PSK31: MF=1.0	
+1728	Ausgangsleistung reduziert um Aktivitäts- und Modulationsfaktor	
+1729	Kabeldämpfung + übrige Dämpfung	
+1730	In absolute Zahl umgerechnete "Summe der Dämpfungen"	
+1731	Maximaler Gewinn der Antenne gemäss Hersteller	
+1732	Gewinnverminderung, wegen vertikalem Strahlungsdiagramm der Antenne	
+1733	Antennengewinn - vertikale Winkeldämpfung	
+1734	In absolute Zahl umgerechneter "Antennengewinn"	
+1735	Äquivalente abgestrahlte Leistung bezogen auf einen isotropen Strahler	
+1736	Äquivalente abgestrahlte Leistung bezogen auf einen Dipol	
+1737	Dämpfung durch Gebäudemauern und Decken	
+1738	In absolute Zahlen umgerechnete "Gebäudedämpfung"	
+1739	Feldstärke berechnet nach Fernfeldformel	
+1740	Faktor welcher zu einer Zunahme der Feldstärke führt	
+1741	6-Minuten-Mittelwert der Feldstärke am Ort für den kurzfristigen Aufenthalt	
+1742	   	
+1743	Immissions-Grenzwert für die elektrische Feldstärke gemäss NISV	
+1744	Distanz von der Antenne, wo der Immissions-Grenzwert erreicht wird	
+1745	Unterschrift:	
+1750	Sender:	
+1751	Linear:	
+1752	Horizontal drehbar (Ja/Nein):	
+1753	Vertikal drehbar (Ja/Nein):	
+1754	Winkel:	
+1755	Grad	
+1756	Antenne:	
+1757	Nein	
+1758	Dämpfung durch Stecker	
+1759	Erläuterungen zu den verschiedenen	
+1760	Tabellenspalten	
+1761	   	
+1771	Kabeldaten - Eingabe	
+1772	Kabeldaten speichern	
+1773	Fenster schliessen	
+1774	Eingabemaske für Kabeldaten	
+1775	Kabeltyp des Herstellers	
+1776	Eigen Typ 1	
+1777	Eigen Typ 2	
+1778	Kabeldämpfung in dB bezogen auf 100m Kabellänge	
+1779	Kabeldaten laden	
+2101	&Données	
+2102	&Fermer	
+2103	&Créer une tabelle	
+2104	&Enregistrer la tabelle	
+2105	&Vider la tabelle	
+2106	Im&primer la tabelle	
+2107	Montrer la formule imprimer	
+2108	Préparer les données d'antenne	
+2109	&Terminer	
+2110	&?	
+2111	Description	
+2112	Ce programme n'est pas compatible pour les données stockées avec les versions 5.0.0 ou les précédentes	
+2113	F&ormule (RTF)	
+2114	Formule (&MHTL)	
+2115	Important!	
+2116	Informations	
+2117	Calcul des immissions	
+2118	Antennenbibliothek im Internet	
+2119	Commission des antennes	
+2120	Programme pour les valeurs des câbles   	
+2121	Imprimer les données d'antenne	
+2131	Une antenne ... que faire? (pdf)	
+2132	Directive pour la déclaration des émissions pour les  installations de radioamateur (pdf)	
+2133	Feuille de formules avec explications (pdf)	
+2134	Glossaire (pdf)	
+2135	Déclaration des émissions pour les installations de radioamateur (Word)	
+2136	Annexe 1 pour la déclaration des émissions (pdf)	
+2137	Annexe 5 pour la déclaration des émissions (Word)	
+2138	Annexe 7 pour la déclaration des émissions (Word) 	
+2139	Ordonnance sur la protection contre le rayonnement non-ionisant (ORNI) (pdf)	
+2140	Rapport explicatif ORNI (pdf)	
+2201	Formulaire de calcul	
+2202	Calcul des immissions pour la station radioamateur de	
+2203	Noms	
+2204	Call	
+2205	nom et prénoms	
+2206	Rue et No.	
+2207	No. postal, lieu 	
+2208	Indicativ	
+2209	Fréquences	
+2210	f	
+2211	MHz	
+2212	Rubrique pour la bande de fréquence d'amateur	
+2213	Distance entre le LSM et l'antenne	
+2214	d	
+2215	m	
+2216	Distance de l'antenne aux endroits sensibles	
+2217	Puissance à la sortie de l'émetteur	
+2218	P	
+2219	W	
+2220	Type d'émission	
+2221	Facteur d'activité	
+2222	AF	
+2223	Facteur de modulation	
+2224	MF	
+2225	Puissance moyenne à la sortie de l'émetteur	
+2226	Pm	
+2227	W	
+2228	Atténuation des câbles	
+2229	a1	
+2230	dB	
+2231	Autres atténuations	
+2232	a2	
+2233	dB	
+2234	Total des atténuations	
+2235	a	
+2236	dB	
+2237	Facteur du total des atténuations	
+2238	A	
+2239	Gain d'antenne	
+2240	g1	
+2241	dBi	
+2242	Atténuation angulaire verticale	
+2243	g2	
+2244	dB	
+2245	Gain total d'antenne	
+2246	g	
+2247	dB	
+2248	Facteur du gain total d'antenne	
+2249	G	
+2250	Puissance déterminante (EIRP)	
+2251	Ps	
+2252	W	
+2253	Puissance déterminante (ERP)	
+2254	P's	
+2255	W	
+2256	Atténuation due au bâtiment	
+2257	ag	
+2258	dB	
+2259	Facteur d'atténuation due au bâtiment	
+2260	AG	
+2261	Intensité de champ moyenne	
+2262	E	
+2263	V/m	
+2264	Facteur réflexion du sol	
+2265	kr	
+2266	Intensité de champ électrique déterminante au LSM	
+2267	E'	
+2268	V/m	
+2269	à la distance de               m	
+2270	Valeur limites des immissions	
+2271	E IGW	
+2272	V/m	
+2273	Distance de sécurité	
+2274	ds	
+2275	m	
+2276	Calculer (F4)	
+2277	Tableau à imprimer	
+2278	Colonne actuelle dans le tableau	
+2279	Envoie les valeurs au tableau	
+2280	Puissance de l'émetteur	
+2281	Rubrique pour le genre d'émission	
+2282	Cas normal 0.5 (6 min. intervalle)	
+2283	Cas normal 0.5 (6 min. intervalle)	
+2284	Puissance réduite aux facteurs d'activité et de modulation	
+2285	Atténuation du câble par rapport à sa longueur	
+2286	Prises et fiches, coupleur et commutateurs d'antenne (ev. 0.5 dB)	
+2287	Total des atténuations de câbles et autres pertes	
+2288	Valeur d'atténuation calculée	
+2289	Gain de l'antenne selon le constructeur	
+2290	Diminution du gain selon diagramme de rayonnement vertical de l'antenne	
+2291	Gain de l'antenne moins l'atténuation par l'angle de rayonnement vertical	
+2292	Gain de l'antenne moins atténuation d'angle exprimé en chiffres	
+2293	puissance rayonnée équivalente comparée à une antenne isotrope	
+2294	Puissance rayonnée équivalente comparée à un dipôle 	
+2295	Atténuation par les murs et le toit du bâtiment	
+2296	Atténuation par le bâtiment calculée en chiffres	
+2297	Intensité de champ électrique selon champ de rayonnement distant	
+2298	Facteur provoquant une augmentation du champ	
+2299	Valeur moyenne de 6 min. du champ au point sensible	
+2300	Valeur limite des immissions pour le champ selon ORNI	
+2301	Distance de l'antenne avec l'endroit ou est atteint la valeur limite des immissions	
+2302	Calculation de la valeur à partir des données actuelles	
+2303	Colonne actuelle dans la tabelle imprimée	
+2304	Reçois les valeurs calculées de la tabelle imprimée	
+2305	Colonne actuelle de la tabelle imprimée	
+2306	Voir Info	
+2307	 Colonne	
+2308	Vider la colonne	
+2311	pas d'atténuation du bâtiment	
+2312	Toit en béton armé	
+2313	Toit en tôle	
+2314	Toit en tuiles	
+2315	Murs en béton armé	
+2316	Murs en briques	
+2317	Construction en bois	
+2401	Câble coaxial	
+2402	Calcul de l'atténuation du câble	
+2403	Fréquence en MHz	
+2404	Type de câble No. 1	
+2405	Longueur du câble	
+2406	Pertes du câble par 100 m	
+2407	Pertes du câble	
+2408	Type de câble No. 2	
+2409	Longueur du câble	
+2410	Pertes du câble par 100 m	
+2411	Pertes du câble	
+2412	Pertes des câbles	
+2413	Pertes suplém. par fiches, etc. en dB	
+2414	Pertes	
+2415	Calculs	
+2416	Spec. des câbles	
+2417	Choix du type de câble No. 1	
+2418	Longueur du câble coaxial  No. 1	
+2419	Rubrique de la bande de fréquence des amateurs	
+2420	Atténuation due aux connecteurs, accords, commutateurs et filtre etc.	
+2421	Charger les données de vos câbles à partir du HD	
+2431	Type de câble No. 3	
+2432	Longueur du câble	
+2433	Pertes du câble par 100 m	
+2434	Pertes du câble	
+2450	Calculation des immissions RNI	
+2451	Version	
+2452	Calcul des immissions pour les stations de radioamateur en Suisse	
+2453	Ce programm est prévu uniquement pour les stations de radioamateurs en Suisse. Il ne dois pas être utilisé dans des buts commerciaux. L'auteur décline toute responsabilité à ce sujet.                                                        hb9zs@uska.ch          copyright HB9ZS / 2008	
+2454	Information	
+2501	Antenne	
+2502	Fréquence	
+2503	Constructeur	
+2504	Type	
+2505	d'antennes	
+2506	Gain de l'antenne	
+2507	Pertes d'angle verticales	
+2508	Le type d'antenne doit être changé si la fréquence est modifiée	
+2509	Données sur les antennes sans garantie! Les valeurs citées proviennent de fabriquant, ainsi que des calculs de DL9KCE et DJ2ZS / DM2BLE	
+2510	Specification d'antenne                                                            Pertes d'angle verticales de 10 - 90 Deg.  (dB)	
+2511	Rubrique pour la bande d'amateurs	
+2512	Choix du fournisseur	
+2513	Type d'antenne du constructeur	
+2514	Gain de l'antenne selon le type et la fréquence	
+2515	Diagramme de rayonnement de l'antenne choisie	
+2516	Angle de rayonnement selon la tabelle ci-dessous	
+2517	Pour ramener les valeurs de perte d'angle selection das la colonne concernant 	
+2518	diagramm de rayonnement	
+2519	Pas de diagramme de rayonnement vertical disponible pour cette fréquence	
+2520	diagramme de rayonnement vertical	
+2521	nouveau dessin	
+2522	fermeture da la fenêtre	
+2523	Atténuation verticale d'angle  (dB)	
+2524	Gain antenne	
+2525	Type d'antenne:	
+2526	Specification d'antenne                                           Pertes d'angle verticales de 10 - 90 Deg.  (dB)	
+2527	dB à	
+2529	Pertes d'angle verticales pour	
+2601	Calcul des immissions pour:	
+2602	Formule	
+2603	&Charger la formule	
+2604	&Enregistrer la formule	
+2605	&Radier la formule	
+2606	Im&primer la formule	
+2607	Imprimer la formule, Pilote 2	
+2608	Imprimer	
+2700	Puissance de sortie de l'émetteur ou du linéaire	
+2701	Fichier	
+2702	Préparer les données d'antennes	
+2703	Terminer	
+2706	Enregistrer	
+2707	Licence	
+2708	Important	
+2709	No du LSM sur le plan de situation	
+2710	Emplacement du séjour momentané marqué sur le plan de situation	
+2711	Fichier	
+2712	Terminer	
+2713	Prénom, Nom	
+2714	Indicatif	
+2715	No. du Logiciel	
+2716	Numéro du licence	
+2717	Le numéro de licence peut être demandé à hb9zs@uska.ch. Prière de mentionner vos prénoms, nom, indicatif et le numéro du logiciel en question.	
+2718	demander la licence	
+2719	Remise du code de la licence pour le logiciel no:  	
+2720	Prière d'envoyer, par couriel, le numéro de logiciel pour le programme de calcul de l'intensité de champ.	
+2721	Fréquence d'émission de la station de radioamateur	
+2722	Antenne - lieu de séjour momentané	
+2723	     Projection horizontale (oui/non):	
+2724	     Distance effective (oui/non):	
+2725	Puissance de sortie de l'émeteur ou de l'ampli linéaire	
+2726	normalement AF = 0.5	
+2727	en SSB: MF=0.2, en CW: MF=0.4, en FM/RTTY/PSK31: MF=1.0	
+2728	Puissance de sortie diminuée par le facteur d'activité et de modulation	
+2729	Atténuations des câbles et autres atténuations	
+2730	Total des atténuations converties en valeur absolue	
+2731	Gain maximal d'antenne selon le fabricant	
+2732	Diminution du gain selon diagramme du lobe de rayonnement vertical	
+2733	Gain d'antenne moins l'atténuation verticale d'angle	
+2734	Gain total d'antenne converti en valeur absolue	
+2735	Puissance équivalente rayonnée comparée à une antenne isotropique	
+2736	Puissance équivalente rayonnée comparée à un dipôle	
+2737	Atténuation dues aux murs et couverture du bâtiment	
+2738	Atténuation du bâtiment converti en valeur absolue	
+2739	Valeur du champ calculée s'après la formule des champs distants	
+2740	Facteur amenant une augmentation de la force du champ	
+2741	Valeur moyenne sur 6 minutes de l'intensité de champ électrique au lieu de séjour momentané	
+2742	prochain emplacement accessible à pied	
+2743	Valeur limite d'immissions de l'intensité de champ électrique au lieu de séjour momentané selon ORNI	
+2744	Distance jusqu'à l'antenne à partir de laquelle la valeur 	
+2745	Signature:	
+2750	Emetteur:	
+2751	Linéaier:	
+2752	Horizontale rotative (oui/non):	
+2753	Verticale rotative (oui/non):	
+2754	Angle:	
+2755	Degré	
+2756	Antenne:	
+2757	Non	
+2758	Atténuation connecteurs	
+2759	Explications des différents champs de la tabelle	
+2760	   	
+2761	limite des immissions est atteinte	
+2771	Entrée des valeurs des câbles	
+2772	Enregistrer les valeurs des câbles	
+2773	Fermer la liste	
+2774	Masque d'entrée pour les valeurs des câbles	
+2775	Type de câble du fabricant	
+2776	Propriétés du type 1	
+2777	Propriétés du type 2	
+2778	Atténuation du câble en dB par 100m. de longueur	
+2779	Charcher les valeurs des câbles	
+3101	Schedario	
+3102	Chiudere	
+3103	Caricare un calcolo	
+3104	Salvare il calcolo	
+3105	Cancellare il calcolo	
+3106	Stampare il calcolo	
+3107	Mostrare il formulario stampare	
+3108	Aggiornare i dati d'antenna	
+3109	Uscire	
+3110	&?	
+3111	Descriptione	
+3112	Questo programma non è compatibile con i dati salvati nelle versioni 5.0.0 e inferiori	
+3113	Formula (RTF)	
+3114	Formula (HTML)	
+3115	Importante!	
+3116	Informazioni	
+3117	Calcolo delle immissioni RNI	
+3118	Biblioteca d'antenne in Internet	
+3119	Commissione antenne	
+3120	Programma per valori dei cavi	
+3121	Stampare i dati d'antenna	
+3131	Un’antenna … che fare? (pdf)	
+3132	Guida alla dichiarazione delle emissioni per impianti per radioamatori (pdf)	
+3133	Formule e spiegazioni (pdf)	
+3134	Glossario (pdf)	
+3135	Dichiarazione delle emissioni per gli impianti per radioamatori (Word)	
+3136	Allegato 1 per la dichiarazione delle emissioni (pdf)	
+3137	Allegato 5 per la dichiarazione delle emissioni (Word)	
+3138	Allegato 7 per la dichiarazione delle emissioni (Word)	
+3139	Ordinanza sulla protezione dalle radiazioni non ionizzanti (pdf)	
+3140	Rapporto esplicativo ORNI (pdf)	
+3201	Formulario di calcolo	
+3202	Calcolo delle immissioni per la stazione radioamatore di	
+3203	Nome	
+3204	Call	
+3205	Nome, cognome	
+3206	Via e no.	
+3207	CAP, luogo	
+3208	Indicativo di chiamata	
+3209	Frequenza	
+3210	f	
+3211	MHz	
+3212	Scelta delle bande di frequenza dei radioamatori	
+3213	Distanza dell’LSBD dall’antenna	
+3214	d	
+3215	m	
+3216	Distanza dall'antenna ai luoghi sensibili	
+3217	Potenza d’emissione del trasmettitore	
+3218	P	
+3219	W	
+3220	Modo di trasmissione	
+3221	Fattore d'attività	
+3222	AF	
+3223	Fattore di modulazione	
+3224	MF	
+3225	Potenza media d’emissione del trasmettitore	
+3226	Pm	
+3227	W	
+3228	Attenuazione del cavo	
+3229	a1	
+3230	dB	
+3231	Attenuazioni diverse	
+3232	a2	
+3233	dB	
+3234	Somma delle attenuazioni	
+3235	a	
+3236	dB	
+3237	Fattore d'attenuazione	
+3238	A	
+3239	Guadagno d'antenna	
+3240	g1	
+3241	dBi	
+3242	Attenuazione d'angolo verticale	
+3243	g2	
+3244	dB	
+3245	Guadagno totale dell'antenna	
+3246	g	
+3247	dB	
+3248	Fattore di guadagno dell'antenna	
+3249	G	
+3250	Potenza di trasmissione determinante (EIRP)	
+3251	Ps	
+3252	W	
+3253	Potenza di trasmissione determinante (ERP)	
+3254	P's	
+3255	W	
+3256	Attenuazione dello stabile	
+3257	ag	
+3258	dB	
+3259	Fattore d'attenuazione dello stabile	
+3260	AG	
+3261	Intensità media di campo	
+3262	E	
+3263	V/m	
+3264	Fattore di riflessione del suolo	
+3265	kr	
+3266	Intensità di campo determinante nell’LSBD	
+3267	E'	
+3268	V/m	
+3269	alla distanza di               m	
+3270	Valore limite delle immissioni	
+3271	E IGW	
+3272	V/m	
+3273	Distanza di sicurezza	
+3274	ds	
+3275	m	
+3276	Calcolare (F4)	
+3277	Tabella da stampare	
+3278	Colonna attuale nella tabella	
+3279	Invia i valori alla tabella	
+3280	Potenza d'uscita del trasmettitore	
+3281	Rubrica per il modo di trasmissione	
+3282	Caso normale 0.5 (6 min. intervallo)	
+3283	Caso normale 0.5 (6 min. intervallo)	
+3284	Potenza ridotta ai fattori d'attività e di modulazione	
+3285	Attenuazione del cavo in rapporto alla sua lunghezza	
+3286	Prese e PL, accoppiatori e commutatori d'antenna (ca. 0.5 dB)	
+3287	Totale delle attenuazioni dei cavi e altre perdite	
+3288	Valore assoluto d'attenuazione calcolato	
+3289	Guadagno dell'antenna dato dal costruttore	
+3290	Diminuzione del guadagno secondo il diagramma d'irradiazione verticale dell'antenna	
+3291	Guadagno dell'antenna meno l'attenuazione data dall'angolo d'irradiazione verticale	
+3292	Valore assoluto del guadagno d'antenna meno l'attenuazione d'angolo	
+3293	Potenza irradiata equivalente in rapporto ad un'antenna isotropa	
+3294	Potenza irradiata equivalente in rapporto ad un dipolo	
+3295	Attenuazione dovuta dai muri ed dal tetto dello stabile	
+3296	Valore assoluto dell'attenuazione dello stabile	
+3297	Intensità di campo elettrico a seconda del campo d'irradiazione distante	
+3298	Fattore provocante un aumento dell'intensità di campo	
+3299	Valore medio di 6 min. del campo nel punto sensibile	
+3300	Valore limite delle immissioni per il campo secondo ORNI	
+3301	Distanza dell'antenna dal luogo dove è raggiunto il valore limite delle immissioni	
+3302	Calcolazione del valore a partire dai dati attuali	
+3303	Colonna attuale nella tabella stampata	
+3304	Riceve i valori calcolati nella tabella stampata	
+3305	Colonna attuale nella tabella stampata	
+3306	Vedi Inf	
+3307	 Colonna	
+3308	Cancellare il colonna	
+3311	Senza attenuatione dello stabile	
+3312	Soffito di cemento armato	
+3313	Tetto di latta	
+3314	tetto di tegole	
+3315	cemento armato	
+3316	operain muratura	
+3317	construzione di legno	
+3401	Cavo coassiale	
+3402	Calcolo dell'attenuazione del cavo	
+3403	Frequenza in MHz	
+3404	Tipo di cavo no. 1	
+3405	Lunghezza del cavo	
+3406	Perdite del cavo per 100 m	
+3407	Perdite del cavo	
+3408	Tipo di cavo no. 2	
+3409	Lunghezza del cavo	
+3410	Perdite del cavo per 100 m	
+3411	Perdite del cavo	
+3412	Perdite dei cavi	
+3413	Perdite supplementari per connettori, ecc. in dB	
+3414	Perdite totali	
+3415	Calcoli	
+3416	Spec. dei cavi	
+3417	Scelta del tipo di cavo no. 1	
+3418	Lunghezza del cavo coassiale no. 1	
+3419	Rubrica della banda di frequenza dei radioamatori	
+3420	Attenuazione dovuta ai connettori, raccordi, commutatori e filtri ecc.	
+3421	Zusätzlich eigene Kabeldaten vom Disk laden	
+3431	Tipo di cavo no. 3	
+3432	Lunghezza del cavo	
+3433	Perdite del cavo per 100 m	
+3434	Perdite del cavo	
+3450	Calcolo delle immissioni RNI	
+3451	Versione	
+3452	Calcolo delle immissioni per i radioamatori in Svizzera	
+3453	Questo programma è previsto unicamente per le stazioni di radioamatori in Svizzera. Lo stesso non deve essere utilizzato per scopi commerciali. L'autore declina ogni responsabilità a questo proposito.        hb9zs@uska.ch          copyright HB9ZS / 2008	
+3454	Informatione	
+3501	Antenna	
+3502	Frequenza	
+3503	Costruttore	
+3504	Tipi	
+3505	d'antenne	
+3506	Guadagno dell'antenna	
+3507	Perdite dovute all'angolo verticale	
+3508	Il tipo d'antenna deve essere cambiato se la frequenza è modificata	
+3509	Dati sulle antenne senza garanzie! i valori citati provengono dal fabbricante, così come dai calcoli di DL9KCE e DJ2ZS / DM2BLE	
+3510	Specifiche d'antenna.                                                     Perdite dovute all'angolo verticale di 10 - 90 Deg.  (dB)	
+3511	Rubrica per la banda di radioamator	
+3512	Scelta del fornitore d'antenna	
+3513	Tipo d'antenna del costruttor	
+3514	Guadagno dell'antenna secondo il tipo e la frequenz	
+3515	Diagramma d'irradiazione dell'antenna scelta	
+3516	Angolo d'irradiazione secondo la tabella di cui sopra	
+3517	Per riportare i valori d'attenuazione d'angolo cliccare nella rispettiva colonna	
+3518	Diagramma d'irradiazione	
+3519	Nessun diagramma d'irradiazione verticale disponibile per questa frequenza	
+3520	Diagramma d'irradiazione verticale	
+3521	nuovo disegno	
+3522	chiudere finestra	
+3523	Perdite dovute all'angolo verticale di 10 - 90 Deg.  (dB)	
+3524	Gain antenna	
+3525	Tipo d'antenna:	
+3526	Specifiche d'antenna	
+3527	dB a	
+3529	Perdite dovute all'angolo verticale per	
+3601	Calcolo delle immissioni di	
+3602	Formulario	
+3603	Caricare il formulario	
+3604	Salvare il formulario	
+3605	Cancellare il formulario	
+3606	Stampare il formulario	
+3607	Stampare il formulario, Pilote 2	
+3608	Stampa	
+3700	Potenza di uscita del trasmettitore o dell’amplificatore lineare	
+3701	Schedario	
+3702	Aggiornare di dati d'antenna	
+3703	Uscire	
+3706	Registrazione	
+3707	Licenza	
+3708	Importante	
+3709	Nr. dell’LSBD sulla planimetria	
+3710	Spazio/locale di soggiorno di breve durata disegnato sulla planimetria	
+3711	File	
+3712	Uscire	
+3713	Nome, Cognome	
+3714	Indicativo	
+3715	Numero del Software	
+3716	Numero della licenza	
+3717	Il numero della licenza può essere richiesto a hb9zs@usak.ch. Vi prego di menzionare il vostro nome, cognome, indicativo ed il numero di software in questione.	
+3718	richiedere la licenza	
+3719	Comunicazione del codice di licenza per il software no. 	
+3720	Con preghiera d'inviare, tramite posta, il numero di software del programma di calcolo dell'intensità di campo. 	
+3721	frequenza di transmissione della statione d'amatore	
+3722	Antenna – Spazio/locale di soggiorno di breve durata	
+3723	       proiezione orizzontale (si/no):	
+3724	       distanza effettiva (si/no):	
+3725	potenza d'uscita del transmettitore o dell'amplificatore lineare	
+3726	di regola AF = 0.5	
+3727	in BLU: MF=0.2, in CW: MF=0.4, in FM/RTTY/PSK31: MF=1.0	
+3728	potenza d'uscita ridotta secondo il fattore d'attività e di modulatione	
+3729	cavo e attenuazioni diverse	
+3730	somma delle attenuationi convertite in valore assoluto	
+3731	guadagno massimo secondo il construttore	
+3732	diminutione di guadagno dovuto all'angolo d'irradiazione verticale	
+3733	guadagno dell'antenna meno l'attenuazione verticale	
+3734	somma del guadagno dell'antenna convertito in valore	
+3735	potenza irradiata equivalente ad una irradiazione isotropa	
+3736	potenza irradiata equivalente riferita ad un dipolo	
+3737	attenuazione dei murri e del tetto	
+3738	attenuazione dello stabile convertito in valore assoluto	
+3739	intensità di campo calcolata secondo la formula	
+3740	fattore che determina un aumento dell'intensità di campo	
+3741	Valore medio durante 6 minuti dell’intensità di campo nello	
+3742	   spazio/locale di soggiorno di breve durata	
+3743	Valore limite d’immissione per l’intensità di campo elettrico ai sensi dell’ORNI	
+3744	distanza tra l'antenna ed il luogo dove é raggiunto il valore limite	
+3745	firma:	
+3750	Transmettitore:	
+3751	Amplificatore lineare:	
+3752	Girevole orizzontalmente (si/no):	
+3753	Girevole verticalmente (si/no):	
+3754	Angolo:	
+3755	Grado	
+3756	Antenna:	
+3757	No	
+3758	Attenuatione connectori	
+3759	Definizione dei termini utilizzati per	
+3760	il calcolo	
+3761	     delle immissioni	
+3771	Inserimento dei valori dei cavi	
+3772	Salvare i valori dei cavi	
+3773	Chiudere la lista	
+3774	Finestra d'inserimento dei valori dei cavi	
+3775	Tipo di cavo del fabricante	
+3776	Proprietà del tipo 1	
+3777	Proprietà del tipo 2	
+3778	Attenuatione del cavo in dB per 100m. di lunghezza	
+3779	Caricare i valori dei cavi	
+	
+
