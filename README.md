@@ -4,7 +4,6 @@
 [![Avalonia UI](https://img.shields.io/badge/Avalonia-11.x-8B44AC?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xMiAyTDEgMjFoMjJMMTIgMnoiLz48L3N2Zz4=)](https://avaloniaui.net/)
 [![Platform](https://img.shields.io/badge/Platform-Windows-0078D4?logo=windows&logoColor=white)](https://github.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Build](https://img.shields.io/badge/Build-Passing-brightgreen?logo=github-actions&logoColor=white)](https://github.com/)
 
 > RF field strength calculator for Swiss amateur radio antenna approval (NISV compliance)
 
