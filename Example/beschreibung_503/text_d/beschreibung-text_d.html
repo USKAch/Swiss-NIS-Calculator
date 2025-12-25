@@ -1,0 +1,362 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="Content-Language" content="de-ch">
+<meta http-equiv="Author" content="HB9ZS">
+<meta http-equiv="copyright" content="HB9ZS / 2008">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>Feldstärkeberechnung für Amateurfunkstationen</title>
+<base target="_self">
+</head>
+
+<body background="../../ground.gif">
+<font face="Arial,Verdana"><font size="2">
+<h4><b><u><a name="Programm">Programm</a> zur Berechnung der Feldstärke für Amateurfunkstationen in der
+Schweiz.</u></b></h4>
+
+<p>Das Programm ist dreisprachig, deutsch, französisch und italienisch und wird
+durch den Benutzer auf die gewünschte Sprache eingestellt. Es verfügt
+über eine Datenbank der gängigen Amateurfunkantennen mit Antennengewinn und
+soweit vorhanden die vertikalen Winkeldämpfungsdaten der Antennen. Ebenfalls
+sind die Dämpfungen der üblichen Koaxialkabel enthalten.&nbsp;<br>
+Das Zusatzprogramm &quot;Antennendaten - Eingabe&quot; welches auch mitinstalliert
+wird, erlaubt das Eingeben von Antennentypen welche nicht in der Datenbank
+vorhanden sind. Diese neuen Typen können unter &quot;Eigene&quot; in die
+Datenbank gespeichert werden. Auch enthält das Zusatzprogramm eine Kabeldateneingabemaske für zwei
+zusätzliche Antennenkabeltypen die auch in die Datenbank aufgenommen werden. </p>
+<p>Die Zusammenstellung der Berechnungen auf dem &quot;Ausdruckformular&quot;
+können gespeichert und&nbsp; wieder zurück in das Berechnungsprogramm
+geladen werden. Dadurch lassen sich die Daten wieder bearbeiten und neu speichern.&nbsp; <br>
+</p>
+<h3>Das <a name="Startformular"> Startformular</a></h3>
+<p>Im Startformular wird die gewünschte Sprache&nbsp; durch drücken der Taste
+z.B. &quot;Text deutsch&quot; gewählt.&nbsp; Die gewählte Sprache wird immer beim
+erneuten Programmstart automatisch übernommen. </p>
+<p>&nbsp;</p>
+<p><img border="0" src="start_d.jpg" width="500" height="500"></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp; </p>
+
+<p><img border="0" src="aufbereiten_d.jpg" width="503" height="499"></p>
+
+<p>&nbsp;</p>
+
+<h3><a name="Menue - Leiste">Menu - Leiste</a></h3>
+
+<p>Betrachten wir zuerst die Menuleiste.<br>
+<br>
+</p>
+
+<h3><a name="Menue &quot;Datei&quot;">Menu &quot;Datei&quot;</a></h3>
+
+<ul>
+  <li>&quot;Druck Formular anzeigen&quot; öffnet das Ausdruckformular falls es
+    nicht angezeigt wird.</li>
+  <li>&quot;Berechnung drucken&quot; startet den Ausdruck des Formulars.</li>
+  <li>&quot;Antennendaten drucken&quot; druckt&nbsp; die Antennendaten. Tabelle
+    wie im Register &quot;Antenne&quot;.<br>
+    Antennentyp, Frequenz, Gewinn, Winkeldämpfungen und
+    Winkeldämpfungsdiagramm<br>
+    der gewählten Frequenz und des Winkels</li>
+  <li>&quot;Berechnung laden&quot; lädt eine gespeicherte Berechnung zur
+    Bearbeitung.</li>
+  <li>&quot;Berechnung speichern&quot; speichert die Berechnung.</li>
+  <li>&quot;Beenden&quot; beendet das Programm. Die Daten werden nicht
+    gespeichert. Das Speichern muss vorher mit dem Menupunkt &quot;Berechnung
+    speichern&quot; durchgeführt werden.&nbsp;<br>
+  </li>
+</ul>
+
+<p><img border="0" src="berechnung6_d.jpg" width="713" height="205"></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<h3><a name="Menue &quot;Internet&quot;">Menu &quot;Internet&quot;</a></h3>
+
+<ul>
+  <li>&quot;Antennenbibliothek im Internet&quot; Link zu der Antennendatenbank
+    von DL9KCE, DJ2ZS und DM2BLE. Hier findet man weitere&nbsp; Antennentypen,
+    die in diesem Programm nicht enthalten sind.</li>
+  <li>&quot;NIS - Verordnung&quot; Link zum Herunterladen der NIS - Verordnung
+    im PDF - Format.
+  </li>
+  <li>Erläuternder Bericht zur NIS Verordnung zum Herunterladen als File im PDF
+    Format.<br>
+  </li>
+</ul>
+
+<p><img border="0" src="berechnung7_d.jpg" width="716" height="139"></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<h3><a name="Menue &quot;PDF - Files&quot;">Menu &quot;PDF - Files&quot;</a></h3>
+
+<p>Notwendige Unterlagen zum Erstellen der Immissionsberechnung.</p>
+
+<p><img border="0" src="berechnung8_d.jpg" width="715" height="242"></p>
+
+<h3>&nbsp;</h3>
+
+<p>&nbsp;</p>
+
+<h3><a name="Menue &quot;?&quot;">Menu &quot;?&quot;</a></h3>
+
+<ul>
+  <li>&quot;Beschreibung&quot; Beschreibung des Programms, wie vorliegend.</li>
+  <li>&quot;Wichtig&quot; Info zur Benutzung des Programms</li>
+  <li>&quot;Info&quot; Programmversion und Nutzung<br>
+  </li>
+</ul>
+
+<p><img border="0" src="berechnung9_d.jpg" width="716" height="131"></p>
+
+<h3>&nbsp;</h3>
+
+<h3>&nbsp;</h3>
+
+<h3><br>
+<a name="Berechnungsformular">
+Berechnungsformular</a></h3>
+
+<p>In den Feldern Name werden Vorname und Nachname, Strasse und Hausnummer sowie
+Postleitzahl und Wohnort eingetragen.<br>
+In den Feldern Sender und Endstufe sind Hersteller und Typ einzutragen.<br>
+<br>
+<a name="Horizontalprojektion">
+Horizontalprojektion</a> (Ja/Nein). Darunter versteht man die Ansicht von oben auf
+die Antennen und die Distanz zur nächst begehbaren Stelle im Umkreis von 360
+Grad. Dabei handelt es sich nicht um die effektive Distanz<br>
+<br>
+<a name="Effektive Distanz">
+Effektive Distanz</a> (Ja/Nein). Die eingetragene Distanz in Meter, entspricht der effektiven Distanz
+vom Antenneneinspeisepunkt (nur bei Yagi
+Antennen)&nbsp; bis zur nächsten begehbaren Stelle. Dies
+ist die vertikale Ansicht.&nbsp;<br>
+ Die nächste begehbare Stelle kann z.B. ein Mansardenzimmer, Estrich,
+Balkon, Garten&nbsp;
+etc. sein.&nbsp;&nbsp;<br>
+Es können nicht beide Eingabefenster mit Ja beantwortet werden.&nbsp;<br>
+<br>
+Für <a name="Drahtantennen"> Drahtantennen</a> (Langdraht, Dipol 40, 80, 160m)
+gilt als Distanz (d), die Distanz zum
+Antennendraht entlang der Antenne (vom Speisepunkt bis zu den Antennenenden).&nbsp;<br>
+</p>
+
+<p><img border="0" src="berechnung1_d.jpg" width="717" height="741">
+</p>
+
+<p><br>
+<b><a name="Eigabemaske">
+Eigabemaske</a>:</b>
+</p>
+<font size="2">
+<p><b><a name="Frequenz">Frequenz</a>:&nbsp;</b>&nbsp;<br>
+Pfeil im Eingabefeld anklicken und Amateurband auswählen.<br>
+Ein Wechsel der Frequenz wird immer auf allen Arbeitsblättern
+(Berechnungsformular, Koaxialkabel und Antenne) durchgeführt. Dies hat zur Folge, dass die Kabeldämpfung und der Antennengewinn jeweils
+automatisch entsprechend der gewählten Frequenz angepasst wird.&nbsp;&nbsp;
+</p>
+
+<p><b><a name="Distanz">Distanz</a>:&nbsp;</b>&nbsp;<br>
+Distanz eintragen und die Eingabe durch die Tasten &quot;Pfeil abwärts&quot;
+oder &quot;Eingabetaste (&lt;--') &quot; abschliessen. Das Feld muss wieder gelb
+hinterlegt sein, sonst werden die Werte nicht in die Berechnung aufgenommen.<br>
+<br>
+Für die Eingabe der &quot;Kabeldämpfung&quot; und &quot;übrige
+Dämpfung&quot; ist in das Arbeitsblatt &quot;Koaxialkabel zu wechseln. Für die
+Eingabe &quot;Antennengewinn&quot; und &quot;vertikale
+Winkeldämpfung&quot; ist in das Arbeitsblatt &quot;Antenne&quot; zu wechseln.&nbsp;<br>
+Sind alle Eingaben vollständig, kann der Berechnungsvorgang durch anklicken der
+rot blinkenden Taste &quot;<a name="Berechnen">Berechnen</a>&quot; oder
+&quot;F4&quot; ausgelöst werden. Die berechneten
+Werte werden automatisch in die entsprechende Kolonne des Ausdruckformulars
+kopiert. Die Taste &quot;Berechnen&quot; blinkt sobald ein Wert verändert wird.
+Dies ist ein Hinweis dass ein neuer Berechnungsvorgang vorgenommen werden muss,
+damit die Berechnung stimmt.
+</p>
+
+<p><b><a name="Kolonne verschieben">Kolonne verschieben</a>:</b><br>
+Unten im Berechnungsformular kann die Kolonne wahlweise durch Anklicken des
+Pfeils nach rechts oder links
+verschoben werden, oder mit &quot;F6&quot; nach links und mit &quot;F7&quot;nach
+rechts. Es stehen pro Ausdruckformular 5 Kolonnen zur Verfügung.
+</p>
+
+<p><b><a name="Überschreiben">Überschreiben</a>:</b><br>
+Jede Kolonne kann wieder angewählt werden. So lassen sich einzelne Werte
+korrigieren und wieder neu berechnen. Auch das Formular &quot;Ausdruck&quot; wird jeweils
+automatisch auf
+den neusten Stand gebracht.
+</p>
+
+<p><b><a name="Kolonne löschen">Kolonne löschen</a>:</b><br>
+Mit der Taste &quot;Kolonne löschen&quot; wird die gewählte Kolonne auf dem
+&quot;Ausdruckformular&quot; gelöscht.
+</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<h3><a name="Koaxialkabel">Koaxialkabel</a><br>
+<br>
+<img border="0" src="kabel_d.jpg" width="716" height="741"></h3>
+
+<p><br>
+<b>
+Eingaben:</b></p>
+
+<p><b>Frequenz:</b><br>
+Eingabe sofern notwendig.</p>
+
+<p><b><a name="Kabeltyp 1">Kabeltyp 1</a>:</b><br>
+Kabeltyp auswählen. Für den Kabeltyp 1&nbsp; werden die Dämpfungen für die
+Amateurbänder zur Information angezeigt.&nbsp;</p>
+
+<p><b><a name="Kabellänge">Kabellänge</a>:</b><br>
+Gelb markiertes Fenster durch &quot;Doppelklick&quot; öffnen.&nbsp; Eingabe der Kabellänge für diesen Kabeltyp.
+Fenster mit &quot;Return&quot; schliessen. Die Dämpfung wird automatisch
+für die gewählte Frequenz&nbsp; und Kabellänge berechnet.</p>
+
+<p><b><a name="Kabeltyp2">Kabeltyp2</a> und 3:</b><br>
+Kabeltyp auswählen. Es erfolgt keine Anzeige der Dämpfungen als Übersicht.<br>
+Entsprechend der eingegebenen Kabellänge für den Kabeltyp 2 und 3 wird die Dämpfung
+berechnet<br>
+<br>
+<b>Kabeldämpfung Total:</b><br>
+Summe der Kabeldämpfung 1 ,2 und 3</p>
+
+<p><b><a name="Falsche Berechnung">Falsche Berechnung</a>:</b><br>
+In der Ländereinstellung der Systemsteuerung (Windows) muss als
+Dezimaltrennzeichen ein &quot;Punkt&quot; gewählt sein.&nbsp;<br>
+Ist das Dezimaltrennzeichen auf &quot;Komma&quot; eingestellt rechnet das
+Programm falsch.</p>
+
+<p><b><a name="Zusätzliche Dämpfungen">Zusätzliche Dämpfungen</a>:</b><br>
+Hier können Dämpfungen für Stecker, SWR - Meter, Antennentuner etc.
+eingegeben werden.&nbsp;<font color="#FF0000"><br>
+Wichtig:</font> Zuerst Textfeld ausfüllen! Wenn das Textfeld leer ist, kann
+kein Dämpfungswert eingegeben werden.</p>
+
+<p><b><a name="Eigene Kabeldaten">Eigene Kabeldaten</a> laden:</b><br>
+Sofern mit dem Programm &quot;Antennen- und Kabeleingabe&quot; eigene Kabeldaten
+eingegeben und gespeichert wurden, können diese geladen werden.</p>
+
+<h3><br>
+&nbsp;<a name="Antenne">Antenne</a><br>
+<br>
+<img border="0" src="antenne_d.jpg" width="716" height="741"></h3>
+
+<p>&nbsp;</p>
+
+<p><b>Eingaben:</b></p>
+
+<p><b>Frequenz:</b><br>
+Eingabe sofern notwendig.</p>
+
+<p><b><a name="Hersteller">Hersteller</a>:<br>
+</b>Auswahl des Antennenherstellers. Durch das Anklicken eines Herstellers
+werden dessen Antennentypen aufgelistet.<br>
+&quot;Diverse&quot; zeigt eine Vielzahl von Antennentypen an. Diese sind vor
+allem bei selbstgebauten Antennen von Interesse.&nbsp;</p>
+
+<p><b><a name="Typen des Herstellers">Typen des Herstellers</a>:</b><br>
+Durch anklicken des Antennentyps werden die Daten in das Antennendatenfeld
+geladen. Entsprechend dem gewählten Amateurband wird der Antennengewinn im gelb
+hinterlegten Feld oben im Arbeitsblatt angezeigt.&nbsp;</p>
+
+<p><b><a name="Winkeldämpfung">Winkeldämpfung</a>:<br>
+</b>Die Winkeldämpfung wird durch Anklicken der entsprechenden Kolonne gewählt
+und oben im Arbeitsblatt in den gelb hinterlegten Feldern mit Grad und Winkel
+angezeigt. Dies natürlich nur wenn entsprechende Winkeldämpfungsdaten
+vorhanden sind.</p>
+
+<p><b><a name="Strahlungsdiagramm">Strahlungsdiagramm</a>:</b><br>
+Durch anklicken der Taste &quot;Strahlungsdiagramm&quot; kann das <u>vertikale
+Strahlungsdiagramm</u> sichtbar gemacht werden.&nbsp;</p>
+
+<p><b>Horizontal <a name="drehbar">drehbar</a>, vertikal drehbar:</b><br>
+Hier sind die entsprechenden Angaben zu machen, die auch in das Ausdruckformular
+übernommen werden.<br>
+</p>
+
+<p>&nbsp;</p>
+
+<h3>Strahlungsdiagramm</h3>
+
+<p><a name="Beispiel">Beispiel</a></p>
+
+<p><img border="0" src="diagramm_d.jpg" width="533" height="431"></p>
+
+<p>&nbsp;</p>
+
+<h3><br>
+<a name="Ausdruckformular">
+Ausdruckformular</a></h3>
+
+<p><br>
+<img border="0" src="ausdruck_d.jpg" width="687" height="221"></p>
+
+<p><br>
+Dies ist eine Teilansicht des Ausdruckformulars. Im Kopf sehen Sie das Feld
+&quot;Formular&quot;. Hier können Sie durch anklicken von&nbsp; <b><br>
+&quot;<a name="Formular laden">Formular
+laden</a>&quot;</b> eine gespeicherte Berechnung wieder laden und somit auch
+bearbeiten.<br>
+<b>&quot;<a name="Formular speichern">Formular speichern</a>&quot;</b> speichert das Ausdruckformular mit allen
+Angaben.<br>
+<b>&quot;<a name="Formular drucken">Formular drucken</a>&quot;</b> Druckt das Formular auf eine A4 hoch
+Seite.&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p><b>Ganzes Ausdruckformular</b><br>
+<br>
+<br>
+<img border="0" src="ausdruck1_d.jpg" width="687" height="544"><br>
+<img border="0" src="ausdruck2_d.jpg" width="691" height="562">
+</p>
+
+<p><br>
+<br>
+<br>
+</p>
+
+<p><b><a name="Ausdruck Antennendaten">Ausdruck Antennendaten</a></b></p>
+<p>Im Berechnungsformular kann unter dem Reiter &quot;Datei&quot; --&gt;
+&quot;Antennendaten drucken&quot; der Ausdruck ausgelöst werden. Es werden
+immer die Antennendaten der <u>aktiven Antenne</u>&nbsp; und das der Frequenz
+entsprechende Winkeldämpfungsdiagramm ausgedruckt.</p>
+
+<p><br>
+<img border="0" src="nis_3501_d.gif" width="646" height="514"><br>
+<img border="0" src="nis_3502_d.gif" width="642" height="381"><br>
+</p>
+
+<p>&nbsp;
+</p>
+
+<p>&nbsp;
+</p>
+
+<hr>
+<p><font size="2"><!--webbot bot="Timestamp" S-Type="EDITED"
+S-Format="%d.%m.%Y" startspan -->06.04.2008<!--webbot bot="Timestamp" i-CheckSum="12532" endspan -->
+ / HB9ZS<br>
+</font></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+</body>
+
+</html>

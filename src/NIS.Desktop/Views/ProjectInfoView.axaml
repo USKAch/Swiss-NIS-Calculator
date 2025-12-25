@@ -1,0 +1,67 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NIS.Desktop.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="650" d:DesignHeight="550"
+             x:Class="NIS.Desktop.Views.ProjectInfoView"
+             x:DataType="vm:ProjectInfoViewModel">
+
+    <Design.DataContext>
+        <vm:ProjectInfoViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- Header -->
+        <Border Grid.Row="0" Background="#2196F3" Padding="20,15">
+            <StackPanel>
+                <TextBlock Text="{Binding TitleLabel}"
+                           FontSize="20" FontWeight="Bold" Foreground="White"/>
+                <TextBlock Text="{Binding LanguageDisplayName}"
+                           FontSize="12" Foreground="#BBDEFB" Margin="0,3,0,0"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Form -->
+        <ScrollViewer Grid.Row="1" Padding="20" VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="15">
+                <!-- Callsign -->
+                <StackPanel Spacing="5">
+                    <TextBlock Text="{Binding CallsignLabel}" FontWeight="SemiBold"/>
+                    <TextBox Text="{Binding Callsign}" Watermark="e.g. HB9FS"/>
+                </StackPanel>
+
+                <!-- Operator -->
+                <StackPanel Spacing="5">
+                    <TextBlock Text="{Binding OperatorLabel}" FontWeight="SemiBold"/>
+                    <TextBox Text="{Binding OperatorName}" Watermark="e.g. Max Mustermann"/>
+                </StackPanel>
+
+                <!-- Address -->
+                <StackPanel Spacing="5">
+                    <TextBlock Text="{Binding AddressLabel}" FontWeight="SemiBold"/>
+                    <TextBox Text="{Binding Address}" Watermark="e.g. Musterstrasse 1"/>
+                </StackPanel>
+
+                <!-- Location -->
+                <StackPanel Spacing="5">
+                    <TextBlock Text="{Binding LocationLabel}" FontWeight="SemiBold"/>
+                    <TextBox Text="{Binding Location}" Watermark="e.g. 8000 Zürich"/>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Buttons -->
+        <Border Grid.Row="2" Background="#F5F5F5" Padding="20,15">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                <Button Content="{Binding CancelButtonLabel}"
+                        Command="{Binding CancelCommand}"
+                        Padding="20,10"/>
+                <Button Content="{Binding CreateButtonLabel}"
+                        Command="{Binding CreateCommand}"
+                        Background="#4CAF50" Foreground="White"
+                        Padding="20,10"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

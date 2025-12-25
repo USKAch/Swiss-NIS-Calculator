@@ -1,0 +1,219 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NIS.Desktop.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="700"
+             x:Class="NIS.Desktop.Views.MasterDataManagerView"
+             x:DataType="vm:MasterDataManagerViewModel">
+
+    <Design.DataContext>
+        <vm:MasterDataManagerViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- Header -->
+        <Border Grid.Row="0" Background="#FF9800" Padding="20,15">
+            <TextBlock Text="Master Data Manager" FontSize="20" FontWeight="Bold" Foreground="White"/>
+        </Border>
+
+        <!-- Tab Control -->
+        <TabControl Grid.Row="1" SelectedIndex="{Binding SelectedTabIndex}" Margin="20">
+
+            <!-- Antennas Tab -->
+            <TabItem Header="Antennas">
+                <Grid RowDefinitions="Auto,*,Auto" Margin="0,10,0,0">
+                    <!-- Search -->
+                    <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,10">
+                        <TextBox Text="{Binding AntennaSearchText}"
+                                 Watermark="Search by manufacturer or model..."
+                                 Padding="10,8"/>
+                        <Button Grid.Column="1" Content="Clear"
+                                Command="{Binding ClearAntennaSearchCommand}"
+                                Margin="10,0,0,0" Padding="15,8"/>
+                    </Grid>
+
+                    <!-- List -->
+                    <Border Grid.Row="1" Background="White" CornerRadius="4" BorderBrush="#E0E0E0" BorderThickness="1">
+                        <ListBox ItemsSource="{Binding FilteredAntennas}"
+                                 SelectedItem="{Binding SelectedAntenna}"
+                                 Padding="5">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Padding="10,8" BorderBrush="#F0F0F0" BorderThickness="0,0,0,1">
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" FontSize="14"/>
+                                                <StackPanel Orientation="Horizontal" Spacing="15" Margin="0,3,0,0">
+                                                    <TextBlock Foreground="#666" FontSize="12">
+                                                        <TextBlock.Text>
+                                                            <MultiBinding StringFormat="{}{0} bands">
+                                                                <Binding Path="Bands.Count"/>
+                                                            </MultiBinding>
+                                                        </TextBlock.Text>
+                                                    </TextBlock>
+                                                    <TextBlock Text="{Binding IsRotatable, StringFormat='Rotatable: {0}'}"
+                                                               Foreground="#666" FontSize="12"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                <ItemsControl ItemsSource="{Binding Bands}">
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <StackPanel Orientation="Horizontal" Spacing="5"/>
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Border Background="#E3F2FD" CornerRadius="3" Padding="6,2">
+                                                                <TextBlock FontSize="11" Foreground="#1976D2">
+                                                                    <TextBlock.Text>
+                                                                        <MultiBinding StringFormat="{}{0}MHz">
+                                                                            <Binding Path="FrequencyMHz"/>
+                                                                        </MultiBinding>
+                                                                    </TextBlock.Text>
+                                                                </TextBlock>
+                                                            </Border>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Border>
+
+                    <!-- Action buttons -->
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
+                        <Button Content="+ Add Antenna" Command="{Binding AddAntennaCommand}"
+                                Background="#4CAF50" Foreground="White" Padding="15,8"/>
+                        <Button Content="Edit" Command="{Binding EditAntennaCommand}"
+                                IsEnabled="{Binding SelectedAntenna, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                Padding="15,8"/>
+                        <Button Content="Delete" Command="{Binding DeleteAntennaCommand}"
+                                IsEnabled="{Binding SelectedAntenna, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                Foreground="#F44336" Padding="15,8"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <!-- Cables Tab -->
+            <TabItem Header="Cables">
+                <Grid RowDefinitions="Auto,*,Auto" Margin="0,10,0,0">
+                    <!-- Search -->
+                    <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,10">
+                        <TextBox Text="{Binding CableSearchText}"
+                                 Watermark="Search by cable name..."
+                                 Padding="10,8"/>
+                        <Button Grid.Column="1" Content="Clear"
+                                Command="{Binding ClearCableSearchCommand}"
+                                Margin="10,0,0,0" Padding="15,8"/>
+                    </Grid>
+
+                    <!-- List -->
+                    <Border Grid.Row="1" Background="White" CornerRadius="4" BorderBrush="#E0E0E0" BorderThickness="1">
+                        <ListBox ItemsSource="{Binding FilteredCables}"
+                                 SelectedItem="{Binding SelectedCable}"
+                                 Padding="5">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Padding="10,8" BorderBrush="#F0F0F0" BorderThickness="0,0,0,1">
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="14"/>
+                                            <TextBlock Grid.Column="1" Foreground="#666" FontSize="12" VerticalAlignment="Center">
+                                                <TextBlock.Text>
+                                                    <MultiBinding StringFormat="{}{0} frequency points">
+                                                        <Binding Path="AttenuationPer100m.Count"/>
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Border>
+
+                    <!-- Action buttons -->
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
+                        <Button Content="+ Add Cable" Command="{Binding AddCableCommand}"
+                                Background="#4CAF50" Foreground="White" Padding="15,8"/>
+                        <Button Content="Edit" Command="{Binding EditCableCommand}"
+                                IsEnabled="{Binding SelectedCable, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                Padding="15,8"/>
+                        <Button Content="Delete" Command="{Binding DeleteCableCommand}"
+                                IsEnabled="{Binding SelectedCable, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                Foreground="#F44336" Padding="15,8"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <!-- Radios Tab -->
+            <TabItem Header="Radios">
+                <Grid RowDefinitions="Auto,*,Auto" Margin="0,10,0,0">
+                    <!-- Search -->
+                    <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,10">
+                        <TextBox Text="{Binding RadioSearchText}"
+                                 Watermark="Search by manufacturer or model..."
+                                 Padding="10,8"/>
+                        <Button Grid.Column="1" Content="Clear"
+                                Command="{Binding ClearRadioSearchCommand}"
+                                Margin="10,0,0,0" Padding="15,8"/>
+                    </Grid>
+
+                    <!-- List -->
+                    <Border Grid.Row="1" Background="White" CornerRadius="4" BorderBrush="#E0E0E0" BorderThickness="1">
+                        <ListBox ItemsSource="{Binding FilteredRadios}"
+                                 SelectedItem="{Binding SelectedRadio}"
+                                 Padding="5">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Padding="10,8" BorderBrush="#F0F0F0" BorderThickness="0,0,0,1">
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <StackPanel>
+                                                <TextBlock FontWeight="SemiBold" FontSize="14">
+                                                    <TextBlock.Text>
+                                                        <MultiBinding StringFormat="{}{0} {1}">
+                                                            <Binding Path="Manufacturer"/>
+                                                            <Binding Path="Model"/>
+                                                        </MultiBinding>
+                                                    </TextBlock.Text>
+                                                </TextBlock>
+                                            </StackPanel>
+                                            <TextBlock Grid.Column="1" Foreground="#666" FontSize="12" VerticalAlignment="Center">
+                                                <TextBlock.Text>
+                                                    <MultiBinding StringFormat="{}{0}W max">
+                                                        <Binding Path="MaxPowerWatts"/>
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Border>
+
+                    <!-- Action buttons -->
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
+                        <Button Content="+ Add Radio" Command="{Binding AddRadioCommand}"
+                                Background="#4CAF50" Foreground="White" Padding="15,8"/>
+                        <Button Content="Edit" Command="{Binding EditRadioCommand}"
+                                IsEnabled="{Binding SelectedRadio, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                Padding="15,8"/>
+                        <Button Content="Delete" Command="{Binding DeleteRadioCommand}"
+                                IsEnabled="{Binding SelectedRadio, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                Foreground="#F44336" Padding="15,8"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <!-- Footer -->
+        <Border Grid.Row="2" Background="#F5F5F5" Padding="20,15">
+            <Button Content="Back to Welcome" Command="{Binding BackCommand}" Padding="20,10"/>
+        </Border>
+    </Grid>
+</UserControl>

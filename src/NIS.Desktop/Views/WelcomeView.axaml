@@ -1,0 +1,108 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NIS.Desktop.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="650" d:DesignHeight="550"
+             x:Class="NIS.Desktop.Views.WelcomeView"
+             x:DataType="vm:WelcomeViewModel">
+
+    <Design.DataContext>
+        <vm:WelcomeViewModel/>
+    </Design.DataContext>
+
+    <UserControl.Resources>
+        <vm:EqualsConverter x:Key="EqualsConverter"/>
+    </UserControl.Resources>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- Header -->
+        <Border Grid.Row="0" Background="#2196F3" Padding="30,25">
+            <StackPanel HorizontalAlignment="Center">
+                <TextBlock Text="Swiss NIS Calculator"
+                           FontSize="28" FontWeight="Bold" Foreground="White"
+                           HorizontalAlignment="Center"/>
+                <TextBlock Text="RF Field Strength Calculator for Amateur Radio"
+                           FontSize="14" Foreground="#BBDEFB" Margin="0,5,0,0"
+                           HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Main Content -->
+        <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="30" Margin="40">
+
+            <!-- Language & Theme Selection -->
+            <StackPanel Spacing="15">
+                <TextBlock Text="Select Language / Sprache wählen"
+                           FontSize="16" FontWeight="SemiBold"
+                           HorizontalAlignment="Center"/>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="8">
+                    <ToggleButton Content="Deutsch"
+                                  IsChecked="{Binding SelectedLanguage, Converter={StaticResource EqualsConverter}, ConverterParameter=de}"
+                                  Command="{Binding SelectLanguageCommand}"
+                                  CommandParameter="de"
+                                  Padding="18,10" FontSize="14"/>
+
+                    <ToggleButton Content="Français"
+                                  IsChecked="{Binding SelectedLanguage, Converter={StaticResource EqualsConverter}, ConverterParameter=fr}"
+                                  Command="{Binding SelectLanguageCommand}"
+                                  CommandParameter="fr"
+                                  Padding="18,10" FontSize="14"/>
+
+                    <ToggleButton Content="Italiano"
+                                  IsChecked="{Binding SelectedLanguage, Converter={StaticResource EqualsConverter}, ConverterParameter=it}"
+                                  Command="{Binding SelectLanguageCommand}"
+                                  CommandParameter="it"
+                                  Padding="18,10" FontSize="14"/>
+
+                    <ToggleButton Content="English"
+                                  IsChecked="{Binding SelectedLanguage, Converter={StaticResource EqualsConverter}, ConverterParameter=en}"
+                                  Command="{Binding SelectLanguageCommand}"
+                                  CommandParameter="en"
+                                  Padding="18,10" FontSize="14"/>
+                </StackPanel>
+
+                <!-- Dark Mode Toggle -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10" Margin="0,10,0,0">
+                    <TextBlock Text="Theme:" VerticalAlignment="Center"/>
+                    <ToggleSwitch IsChecked="{Binding IsDarkMode}"
+                                  OnContent="Dark" OffContent="Light"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Action Buttons -->
+            <StackPanel Spacing="12" Width="300">
+                <Button Content="New Project"
+                        Command="{Binding NewProjectCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        Background="#4CAF50" Foreground="White"
+                        Padding="20,15"
+                        FontSize="16"/>
+
+                <Button Content="Open Project..."
+                        Command="{Binding OpenProjectCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        Background="#2196F3" Foreground="White"
+                        Padding="20,15"
+                        FontSize="16"/>
+
+                <Button Content="Master Data"
+                        Command="{Binding MasterDataCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        Background="#FF9800" Foreground="White"
+                        Padding="20,15"
+                        FontSize="16"/>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Footer -->
+        <Border Grid.Row="2" Background="#EEEEEE" Padding="15,10">
+            <TextBlock Text="NISV Compliance Calculator for Swiss Amateur Radio Stations"
+                       HorizontalAlignment="Center" Foreground="#666"/>
+        </Border>
+    </Grid>
+</UserControl>

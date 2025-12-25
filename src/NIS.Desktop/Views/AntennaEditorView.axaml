@@ -1,0 +1,227 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NIS.Desktop.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="700"
+             x:Class="NIS.Desktop.Views.AntennaEditorView"
+             x:DataType="vm:AntennaEditorViewModel">
+
+    <Design.DataContext>
+        <vm:AntennaEditorViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto">
+        <!-- Header -->
+        <Border Grid.Row="0" Background="#2196F3" Padding="20,15">
+            <Panel>
+                <TextBlock Text="Add New Antenna" IsVisible="{Binding IsAddingNew}"
+                           FontSize="20" FontWeight="Bold" Foreground="White"/>
+                <TextBlock Text="Antenna Repository" IsVisible="{Binding !IsAddingNew}"
+                           FontSize="20" FontWeight="Bold" Foreground="White"/>
+            </Panel>
+        </Border>
+
+        <!-- Search (hidden when adding new) -->
+        <Border Grid.Row="1" Background="#F5F5F5" Padding="15" IsVisible="{Binding !IsAddingNew}">
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBox Text="{Binding SearchText}"
+                         Watermark="Search by manufacturer or model..."
+                         Padding="10,8"/>
+                <Button Grid.Column="1" Content="Clear"
+                        Command="{Binding ClearSearchCommand}"
+                        Margin="10,0,0,0" Padding="15,8"/>
+            </Grid>
+        </Border>
+
+        <!-- Antenna List (hidden when adding new) -->
+        <Border Grid.Row="2" Margin="15" Background="White" CornerRadius="4" BorderBrush="#E0E0E0" BorderThickness="1"
+                IsVisible="{Binding !IsAddingNew}">
+            <ListBox ItemsSource="{Binding FilteredAntennas}"
+                     SelectedItem="{Binding SelectedAntenna}"
+                     Padding="5">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border Padding="10,8" BorderBrush="#F0F0F0" BorderThickness="0,0,0,1">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" FontSize="14"/>
+                                    <StackPanel Orientation="Horizontal" Spacing="15" Margin="0,3,0,0">
+                                        <TextBlock Foreground="#666" FontSize="12">
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0} bands">
+                                                    <Binding Path="Bands.Count"/>
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                        <TextBlock Text="{Binding IsRotatable, StringFormat='Rotatable: {0}'}"
+                                                   Foreground="#666" FontSize="12"/>
+                                    </StackPanel>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <ItemsControl ItemsSource="{Binding Bands}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel Orientation="Horizontal" Spacing="5"/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Background="#E3F2FD" CornerRadius="3" Padding="6,2">
+                                                    <TextBlock FontSize="11" Foreground="#1976D2">
+                                                        <TextBlock.Text>
+                                                            <MultiBinding StringFormat="{}{0}MHz">
+                                                                <Binding Path="FrequencyMHz"/>
+                                                            </MultiBinding>
+                                                        </TextBlock.Text>
+                                                    </TextBlock>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Border>
+
+        <!-- Add New Antenna Form (shown when adding new) -->
+        <ScrollViewer Grid.Row="2" Padding="20" IsVisible="{Binding IsAddingNew}" VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="15">
+                <Border Background="#F5F5F5" CornerRadius="8" Padding="20">
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="Antenna Details" FontWeight="Bold" FontSize="16"/>
+
+                        <Grid ColumnDefinitions="120,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="12" ColumnSpacing="15">
+                            <TextBlock Text="Manufacturer:" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <TextBox Grid.Column="1" Text="{Binding NewManufacturer}" Watermark="e.g. Cushcraft" MinWidth="250"/>
+
+                            <TextBlock Grid.Row="1" Text="Model:" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding NewModel}" Watermark="e.g. A3S" MinWidth="250"/>
+
+                            <TextBlock Grid.Row="2" Text="Rotatable:" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <CheckBox Grid.Row="2" Grid.Column="1" IsChecked="{Binding NewIsRotatable}" Content="Horizontally rotatable"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <Border Background="#F5F5F5" CornerRadius="8" Padding="20">
+                    <StackPanel Spacing="12">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Text="Frequency Bands" FontWeight="Bold" FontSize="16"/>
+                            <Button Grid.Column="1" Content="+ Add Band" Command="{Binding AddBandCommand}"
+                                    Background="#4CAF50" Foreground="White" Padding="12,6"/>
+                        </Grid>
+
+                        <ItemsControl ItemsSource="{Binding NewBands}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="White" CornerRadius="6" Padding="15" Margin="0,8">
+                                        <StackPanel Spacing="12">
+                                            <!-- Frequency and Gain row -->
+                                            <Grid ColumnDefinitions="Auto,120,Auto,120,*,Auto">
+                                                <TextBlock Text="Frequency:" VerticalAlignment="Center" Margin="0,0,8,0" FontWeight="SemiBold"/>
+                                                <NumericUpDown Grid.Column="1" Value="{Binding FrequencyMHz}"
+                                                               Minimum="1" Maximum="10000" Increment="1" FormatString="F0"/>
+                                                <TextBlock Grid.Column="2" Text="MHz     Gain:" VerticalAlignment="Center" Margin="15,0,8,0" FontWeight="SemiBold"/>
+                                                <NumericUpDown Grid.Column="3" Value="{Binding GainDbi}"
+                                                               Minimum="-10" Maximum="30" Increment="0.5" FormatString="F1"/>
+                                                <TextBlock Grid.Column="4" Text="dBi" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                                                <Button Grid.Column="5" Content="Remove"
+                                                        Command="{Binding $parent[ItemsControl].((vm:AntennaEditorViewModel)DataContext).RemoveBandCommand}"
+                                                        CommandParameter="{Binding}"
+                                                        Padding="10,5" Foreground="#F44336"/>
+                                            </Grid>
+
+                                            <!-- Pattern section -->
+                                            <StackPanel Spacing="8">
+                                                <TextBlock Text="Vertical Pattern (attenuation in dB at each angle):" FontSize="12" Foreground="#666"/>
+                                                <Grid ColumnDefinitions="*,*,*,*,*" RowDefinitions="Auto,Auto" RowSpacing="8" ColumnSpacing="8">
+                                                    <!-- Row 1: 0° to 40° -->
+                                                    <StackPanel Spacing="2">
+                                                        <TextBlock Text="0°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
+                                                        <NumericUpDown Value="{Binding Pattern0}" Minimum="0" Maximum="50" Increment="0.1" FormatString="F1" Width="65"/>
+                                                    </StackPanel>
+                                                    <StackPanel Grid.Column="1" Spacing="2">
+                                                        <TextBlock Text="10°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
+                                                        <NumericUpDown Value="{Binding Pattern10}" Minimum="0" Maximum="50" Increment="0.1" FormatString="F1" Width="65"/>
+                                                    </StackPanel>
+                                                    <StackPanel Grid.Column="2" Spacing="2">
+                                                        <TextBlock Text="20°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
+                                                        <NumericUpDown Value="{Binding Pattern20}" Minimum="0" Maximum="50" Increment="0.1" FormatString="F1" Width="65"/>
+                                                    </StackPanel>
+                                                    <StackPanel Grid.Column="3" Spacing="2">
+                                                        <TextBlock Text="30°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
+                                                        <NumericUpDown Value="{Binding Pattern30}" Minimum="0" Maximum="50" Increment="0.1" FormatString="F1" Width="65"/>
+                                                    </StackPanel>
+                                                    <StackPanel Grid.Column="4" Spacing="2">
+                                                        <TextBlock Text="40°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
+                                                        <NumericUpDown Value="{Binding Pattern40}" Minimum="0" Maximum="50" Increment="0.1" FormatString="F1" Width="65"/>
+                                                    </StackPanel>
+
+                                                    <!-- Row 2: 50° to 90° -->
+                                                    <StackPanel Grid.Row="1" Spacing="2">
+                                                        <TextBlock Text="50°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
+                                                        <NumericUpDown Value="{Binding Pattern50}" Minimum="0" Maximum="50" Increment="0.1" FormatString="F1" Width="65"/>
+                                                    </StackPanel>
+                                                    <StackPanel Grid.Row="1" Grid.Column="1" Spacing="2">
+                                                        <TextBlock Text="60°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
+                                                        <NumericUpDown Value="{Binding Pattern60}" Minimum="0" Maximum="50" Increment="0.1" FormatString="F1" Width="65"/>
+                                                    </StackPanel>
+                                                    <StackPanel Grid.Row="1" Grid.Column="2" Spacing="2">
+                                                        <TextBlock Text="70°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
+                                                        <NumericUpDown Value="{Binding Pattern70}" Minimum="0" Maximum="50" Increment="0.1" FormatString="F1" Width="65"/>
+                                                    </StackPanel>
+                                                    <StackPanel Grid.Row="1" Grid.Column="3" Spacing="2">
+                                                        <TextBlock Text="80°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
+                                                        <NumericUpDown Value="{Binding Pattern80}" Minimum="0" Maximum="50" Increment="0.1" FormatString="F1" Width="65"/>
+                                                    </StackPanel>
+                                                    <StackPanel Grid.Row="1" Grid.Column="4" Spacing="2">
+                                                        <TextBlock Text="90°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
+                                                        <NumericUpDown Value="{Binding Pattern90}" Minimum="0" Maximum="50" Increment="0.1" FormatString="F1" Width="65"/>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <TextBlock Text="Add at least one frequency band. Pattern values are vertical attenuation in dB (0° = horizon, 90° = straight up)."
+                                   Foreground="#666" FontSize="11" FontStyle="Italic" TextWrapping="Wrap"
+                                   IsVisible="{Binding !NewBands.Count}"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Buttons -->
+        <Border Grid.Row="3" Background="#F5F5F5" Padding="20,15">
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                <!-- Add New button (shown in list mode) -->
+                <Button Content="+ Add New Antenna"
+                        Command="{Binding StartAddNewCommand}"
+                        IsVisible="{Binding !IsAddingNew}"
+                        Background="#4CAF50" Foreground="White" Padding="15,10"/>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10">
+                    <Button Content="Cancel" Command="{Binding CancelCommand}" Padding="20,10"/>
+
+                    <!-- Select button (shown in list mode) -->
+                    <Button Content="Select" Command="{Binding SelectCommand}"
+                            IsVisible="{Binding !IsAddingNew}"
+                            IsEnabled="{Binding HasSelection}"
+                            Background="#2196F3" Foreground="White" Padding="20,10"/>
+
+                    <!-- Save button (shown in add mode) -->
+                    <Button Content="Save Antenna" Command="{Binding SaveNewAntennaCommand}"
+                            IsVisible="{Binding IsAddingNew}"
+                            Background="#4CAF50" Foreground="White" Padding="20,10"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

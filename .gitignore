@@ -1,6 +1,4 @@
-# VB6
-*.exe
-*.dll
+# VB6 (only in legacy folder - allow .exe/.dll there)
 *.ocx
 *.vbw
 *.log

@@ -1,0 +1,41 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:NIS.Desktop.ViewModels"
+        xmlns:views="using:NIS.Desktop.Views"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="700"
+        x:Class="NIS.Desktop.Views.MainShellWindow"
+        x:DataType="vm:MainShellViewModel"
+        Title="{Binding WindowTitle}"
+        Width="900" Height="700"
+        MinWidth="700" MinHeight="500"
+        WindowStartupLocation="CenterScreen">
+
+    <Design.DataContext>
+        <vm:MainShellViewModel/>
+    </Design.DataContext>
+
+    <Window.DataTemplates>
+        <DataTemplate DataType="vm:WelcomeViewModel">
+            <views:WelcomeView/>
+        </DataTemplate>
+        <DataTemplate DataType="vm:ProjectInfoViewModel">
+            <views:ProjectInfoView/>
+        </DataTemplate>
+        <DataTemplate DataType="vm:ProjectOverviewViewModel">
+            <views:ProjectOverviewView/>
+        </DataTemplate>
+        <DataTemplate DataType="vm:ConfigurationEditorViewModel">
+            <views:ConfigurationEditorView/>
+        </DataTemplate>
+        <DataTemplate DataType="vm:AntennaEditorViewModel">
+            <views:AntennaEditorView/>
+        </DataTemplate>
+        <DataTemplate DataType="vm:ResultsViewModel">
+            <views:ResultsView/>
+        </DataTemplate>
+    </Window.DataTemplates>
+
+    <ContentControl Content="{Binding CurrentView}"/>
+</Window>

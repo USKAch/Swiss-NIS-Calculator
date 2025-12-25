@@ -1,0 +1,148 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NIS.Desktop.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="700"
+             x:Class="NIS.Desktop.Views.ProjectOverviewView"
+             x:DataType="vm:ProjectOverviewViewModel">
+
+    <Design.DataContext>
+        <vm:ProjectOverviewViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- Header Bar -->
+        <Border Grid.Row="0" Background="#2196F3" Padding="20,15">
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <TextBlock Text="{Binding ProjectName}"
+                                   FontSize="24" FontWeight="Bold" Foreground="White"/>
+                        <TextBlock Text="{Binding DirtyIndicator}"
+                                   FontSize="24" FontWeight="Bold" Foreground="#FFEB3B"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <TextBlock Text="{Binding StationSummary}"
+                               FontSize="12" Foreground="#BBDEFB" Margin="0,3,0,0"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <Button Content="Save" Command="{Binding SaveProjectCommand}"
+                            Background="#1976D2" Foreground="White" Padding="15,8"/>
+                    <Button Content="Save As..." Command="{Binding SaveProjectAsCommand}"
+                            Background="#1976D2" Foreground="White" Padding="15,8"/>
+                    <Button Content="Export" Command="{Binding ExportCommand}"
+                            Background="#4CAF50" Foreground="White" Padding="15,8"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Main Content -->
+        <ScrollViewer Grid.Row="1" Padding="20" VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="20">
+
+                <!-- Station Info Panel -->
+                <Border Background="#F5F5F5" CornerRadius="8" Padding="15">
+                    <Expander Header="Station Information" IsExpanded="True">
+                        <StackPanel Spacing="10" Margin="0,10,0,0">
+                            <Grid ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto,Auto" RowSpacing="8" ColumnSpacing="15">
+                                <TextBlock Text="Callsign:" FontWeight="SemiBold"/>
+                                <TextBlock Grid.Column="1" Text="{Binding Callsign}"/>
+
+                                <TextBlock Grid.Column="2" Text="Operator:" FontWeight="SemiBold"/>
+                                <TextBlock Grid.Column="3" Text="{Binding OperatorName}"/>
+
+                                <TextBlock Grid.Row="1" Text="Address:" FontWeight="SemiBold"/>
+                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Address}"/>
+
+                                <TextBlock Grid.Row="1" Grid.Column="2" Text="Location:" FontWeight="SemiBold"/>
+                                <TextBlock Grid.Row="1" Grid.Column="3" Text="{Binding Location}"/>
+                            </Grid>
+                            <Button Content="Edit Station Info" Command="{Binding EditStationInfoCommand}"
+                                    HorizontalAlignment="Left" Padding="15,8"/>
+                        </StackPanel>
+                    </Expander>
+                </Border>
+
+                <!-- Antenna Configurations Section -->
+                <Border Background="#F5F5F5" CornerRadius="8" Padding="15">
+                    <StackPanel Spacing="10">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Text="Antenna Configurations" FontSize="18" FontWeight="Bold"/>
+                            <Button Grid.Column="1" Content="+ Add Configuration"
+                                    Command="{Binding AddConfigurationCommand}"
+                                    Background="#4CAF50" Foreground="White" Padding="15,8"/>
+                        </Grid>
+
+                        <Border Background="White" CornerRadius="4" Padding="10"
+                                IsVisible="{Binding HasConfigurations}">
+                            <ItemsControl ItemsSource="{Binding Configurations}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush="#E0E0E0" BorderThickness="0,0,0,1" Padding="10,8">
+                                            <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto">
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
+                                                    <TextBlock Foreground="#666" FontSize="12">
+                                                        <TextBlock.Text>
+                                                            <MultiBinding StringFormat="{}{0} | {1} | {2}W">
+                                                                <Binding Path="Radio.DisplayName"/>
+                                                                <Binding Path="Antenna.DisplayName"/>
+                                                                <Binding Path="PowerWatts"/>
+                                                            </MultiBinding>
+                                                        </TextBlock.Text>
+                                                    </TextBlock>
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="15,0">
+                                                    <TextBlock Text="{Binding ModulationDisplay}" Foreground="#666" FontSize="11"/>
+                                                    <TextBlock Text="{Binding OkaSummary}" Foreground="#666" FontSize="11"/>
+                                                </StackPanel>
+                                                <Button Grid.Column="2" Content="Edit"
+                                                        Command="{Binding $parent[ItemsControl].((vm:ProjectOverviewViewModel)DataContext).EditConfigurationCommand}"
+                                                        CommandParameter="{Binding}"
+                                                        Margin="5,0" Padding="10,5"/>
+                                                <Button Grid.Column="3" Content="Delete"
+                                                        Command="{Binding $parent[ItemsControl].((vm:ProjectOverviewViewModel)DataContext).DeleteConfigurationCommand}"
+                                                        CommandParameter="{Binding}"
+                                                        Margin="5,0" Padding="10,5" Foreground="#F44336"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Border>
+
+                        <TextBlock Text="No configurations yet. Click '+ Add Configuration' to create one."
+                                   IsVisible="{Binding !HasConfigurations}"
+                                   Foreground="#999" FontStyle="Italic" Margin="10,5"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Action Buttons -->
+                <Border Background="#E3F2FD" CornerRadius="8" Padding="20">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
+                        <Button Content="Calculate All"
+                                Command="{Binding CalculateAllCommand}"
+                                IsEnabled="{Binding CanCalculate}"
+                                Background="#2196F3" Foreground="White"
+                                Padding="30,15" FontSize="16"/>
+                        <Button Content="Export Report"
+                                Command="{Binding ExportReportCommand}"
+                                IsEnabled="{Binding HasResults}"
+                                Background="#4CAF50" Foreground="White"
+                                Padding="30,15" FontSize="16"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Status Bar -->
+        <Border Grid.Row="2" Background="#EEEEEE" Padding="15,10">
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Text="{Binding StatusMessage}"/>
+                <TextBlock Grid.Column="1" Text="{Binding LanguageDisplay}" Foreground="#666"/>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>
