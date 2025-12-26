@@ -17,8 +17,10 @@
             <Grid ColumnDefinitions="*,Auto">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal" Spacing="10">
-                        <TextBlock Text="{Binding ProjectName}"
-                                   FontSize="24" FontWeight="Bold" Foreground="White"/>
+                        <TextBox Text="{Binding ProjectName}"
+                                 FontSize="24" FontWeight="Bold"
+                                 Background="White" BorderThickness="1" BorderBrush="#1976D2"
+                                 Padding="5,2" MinWidth="200"/>
                         <TextBlock Text="{Binding DirtyIndicator}"
                                    FontSize="24" FontWeight="Bold" Foreground="#FFEB3B"
                                    VerticalAlignment="Center"/>
@@ -44,32 +46,25 @@
 
                 <!-- Station Info Panel -->
                 <Border Background="#F5F5F5" CornerRadius="8" Padding="15">
-                    <Expander Header="Station Information" IsExpanded="True">
-                        <StackPanel Spacing="10" Margin="0,10,0,0">
-                            <Grid ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto,Auto" RowSpacing="8" ColumnSpacing="15">
-                                <TextBlock Text="Callsign:" FontWeight="SemiBold"/>
-                                <TextBlock Grid.Column="1" Text="{Binding Callsign}"/>
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="Station Information" FontSize="16" FontWeight="Bold"/>
+                        <Grid ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto" ColumnSpacing="15">
+                            <TextBlock Text="Callsign:" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Column="1" Text="{Binding Callsign}"/>
 
-                                <TextBlock Grid.Column="2" Text="Operator:" FontWeight="SemiBold"/>
-                                <TextBlock Grid.Column="3" Text="{Binding OperatorName}"/>
-
-                                <TextBlock Grid.Row="1" Text="Address:" FontWeight="SemiBold"/>
-                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Address}"/>
-
-                                <TextBlock Grid.Row="1" Grid.Column="2" Text="Location:" FontWeight="SemiBold"/>
-                                <TextBlock Grid.Row="1" Grid.Column="3" Text="{Binding Location}"/>
-                            </Grid>
-                            <Button Content="Edit Station Info" Command="{Binding EditStationInfoCommand}"
-                                    HorizontalAlignment="Left" Padding="15,8"/>
-                        </StackPanel>
-                    </Expander>
+                            <TextBlock Grid.Column="2" Text="Address:" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Column="3" Text="{Binding Address}"/>
+                        </Grid>
+                        <Button Content="Edit Station Info" Command="{Binding EditStationInfoCommand}"
+                                HorizontalAlignment="Left" Padding="15,8"/>
+                    </StackPanel>
                 </Border>
 
-                <!-- Antenna Configurations Section -->
+                <!-- Configurations Section -->
                 <Border Background="#F5F5F5" CornerRadius="8" Padding="15">
                     <StackPanel Spacing="10">
                         <Grid ColumnDefinitions="*,Auto">
-                            <TextBlock Text="Antenna Configurations" FontSize="18" FontWeight="Bold"/>
+                            <TextBlock Text="Configurations" FontSize="18" FontWeight="Bold"/>
                             <Button Grid.Column="1" Content="+ Add Configuration"
                                     Command="{Binding AddConfigurationCommand}"
                                     Background="#4CAF50" Foreground="White" Padding="15,8"/>
@@ -83,13 +78,13 @@
                                         <Border BorderBrush="#E0E0E0" BorderThickness="0,0,0,1" Padding="10,8">
                                             <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto">
                                                 <StackPanel>
-                                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
+                                                    <TextBlock Text="{Binding Antenna.DisplayName}" FontWeight="SemiBold"/>
                                                     <TextBlock Foreground="#666" FontSize="12">
                                                         <TextBlock.Text>
-                                                            <MultiBinding StringFormat="{}{0} | {1} | {2}W">
+                                                            <MultiBinding StringFormat="{}{0} {1}W | {2}">
                                                                 <Binding Path="Radio.DisplayName"/>
-                                                                <Binding Path="Antenna.DisplayName"/>
                                                                 <Binding Path="PowerWatts"/>
+                                                                <Binding Path="Cable.Type"/>
                                                             </MultiBinding>
                                                         </TextBlock.Text>
                                                     </TextBlock>

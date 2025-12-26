@@ -48,13 +48,17 @@ public partial class ProjectOverviewViewModel : ViewModelBase
     }
 
     // Project info
-    public string ProjectName => _projectViewModel.ProjectName;
+    public string ProjectName
+    {
+        get => _projectViewModel.ProjectName;
+        set => _projectViewModel.ProjectName = value;
+    }
     public string DirtyIndicator => _projectViewModel.IsDirty ? "*" : "";
     public string Callsign => _projectViewModel.Project.Station.Callsign;
     public string OperatorName => _projectViewModel.Project.Station.Operator;
     public string Address => _projectViewModel.Project.Station.Address;
     public string Location => _projectViewModel.Project.Station.Location;
-    public string StationSummary => string.IsNullOrEmpty(Callsign) ? "No station info" : $"{Callsign} - {OperatorName}";
+    public string StationSummary => string.IsNullOrEmpty(Callsign) ? "No station info" : Callsign;
 
     // Language
     public string LanguageDisplay => _projectViewModel.Project.Language switch

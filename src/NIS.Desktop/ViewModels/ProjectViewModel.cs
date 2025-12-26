@@ -24,8 +24,19 @@ public partial class ProjectViewModel : ViewModelBase
     [ObservableProperty]
     private bool _isDirty;
 
-    [ObservableProperty]
-    private string _projectName = "Untitled Project";
+    public string ProjectName
+    {
+        get => Project.Name;
+        set
+        {
+            if (Project.Name != value)
+            {
+                Project.Name = value;
+                OnPropertyChanged();
+                MarkDirty();
+            }
+        }
+    }
 
     [ObservableProperty]
     private AntennaConfiguration? _selectedConfiguration;
@@ -46,9 +57,9 @@ public partial class ProjectViewModel : ViewModelBase
 
     public void NewProject(string language)
     {
-        Project = new Project { Language = language };
+        Project = new Project { Language = language, Name = "New Project" };
         _projectFilePath = null;
-        ProjectName = "New Project";
+        OnPropertyChanged(nameof(ProjectName));
         IsDirty = false;
         OnPropertyChanged(nameof(Configurations));
     }
@@ -65,7 +76,12 @@ public partial class ProjectViewModel : ViewModelBase
             {
                 Project = project;
                 _projectFilePath = filePath;
-                ProjectName = Path.GetFileNameWithoutExtension(filePath);
+                // If project has no name, use filename as fallback
+                if (string.IsNullOrWhiteSpace(Project.Name))
+                {
+                    Project.Name = Path.GetFileNameWithoutExtension(filePath);
+                }
+                OnPropertyChanged(nameof(ProjectName));
                 IsDirty = false;
                 OnPropertyChanged(nameof(Configurations));
                 return true;
@@ -94,7 +110,7 @@ public partial class ProjectViewModel : ViewModelBase
             await File.WriteAllTextAsync(filePath, json);
 
             _projectFilePath = filePath;
-            ProjectName = Path.GetFileNameWithoutExtension(filePath);
+            OnPropertyChanged(nameof(ProjectName));
             IsDirty = false;
             return true;
         }

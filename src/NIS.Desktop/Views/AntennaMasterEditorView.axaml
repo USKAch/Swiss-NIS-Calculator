@@ -53,13 +53,18 @@
                                     <Border Background="White" CornerRadius="6" Padding="15" Margin="0,8">
                                         <StackPanel Spacing="12">
                                             <!-- Frequency and Gain row -->
-                                            <Grid ColumnDefinitions="Auto,150,Auto,150,*,Auto">
+                                            <Grid ColumnDefinitions="Auto,120,Auto,100,*,Auto">
                                                 <TextBlock Text="Frequency:" VerticalAlignment="Center" Margin="0,0,8,0" FontWeight="SemiBold"/>
-                                                <NumericUpDown Grid.Column="1" Value="{Binding FrequencyMHz}"
-                                                               Minimum="1" Maximum="50000" Increment="1" FormatString="F1"/>
-                                                <TextBlock Grid.Column="2" Text="MHz     Gain:" VerticalAlignment="Center" Margin="15,0,8,0" FontWeight="SemiBold"/>
-                                                <NumericUpDown Grid.Column="3" Value="{Binding GainDbi}"
-                                                               Minimum="-20" Maximum="50" Increment="0.5" FormatString="F1"/>
+                                                <ComboBox Grid.Column="1" SelectedItem="{Binding FrequencyMHz}"
+                                                          ItemsSource="{Binding $parent[ItemsControl].((vm:AntennaMasterEditorViewModel)DataContext).AvailableFrequencies}">
+                                                    <ComboBox.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <TextBlock Text="{Binding StringFormat={}{0} MHz}"/>
+                                                        </DataTemplate>
+                                                    </ComboBox.ItemTemplate>
+                                                </ComboBox>
+                                                <TextBlock Grid.Column="2" Text="Gain:" VerticalAlignment="Center" Margin="15,0,8,0" FontWeight="SemiBold"/>
+                                                <TextBox Grid.Column="3" Text="{Binding GainDbi}" Width="80"/>
                                                 <TextBlock Grid.Column="4" Text="dBi" VerticalAlignment="Center" Margin="5,0,0,0"/>
                                                 <Button Grid.Column="5" Content="Remove"
                                                         Command="{Binding $parent[ItemsControl].((vm:AntennaMasterEditorViewModel)DataContext).RemoveBandCommand}"
@@ -73,46 +78,46 @@
                                                 <Grid ColumnDefinitions="*,*,*,*,*,*,*,*,*,*" ColumnSpacing="8">
                                                     <StackPanel Spacing="2">
                                                         <TextBlock Text="0°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
-                                                        <NumericUpDown Value="{Binding Pattern0}" Minimum="0" Maximum="100" Increment="0.1" FormatString="F1" Width="70"/>
+                                                        <TextBox Text="{Binding Pattern0}" Width="60" HorizontalContentAlignment="Center"/>
                                                     </StackPanel>
                                                     <StackPanel Grid.Column="1" Spacing="2">
                                                         <TextBlock Text="10°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
-                                                        <NumericUpDown Value="{Binding Pattern10}" Minimum="0" Maximum="100" Increment="0.1" FormatString="F1" Width="70"/>
+                                                        <TextBox Text="{Binding Pattern10}" Width="60" HorizontalContentAlignment="Center"/>
                                                     </StackPanel>
                                                     <StackPanel Grid.Column="2" Spacing="2">
                                                         <TextBlock Text="20°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
-                                                        <NumericUpDown Value="{Binding Pattern20}" Minimum="0" Maximum="100" Increment="0.1" FormatString="F1" Width="70"/>
+                                                        <TextBox Text="{Binding Pattern20}" Width="60" HorizontalContentAlignment="Center"/>
                                                     </StackPanel>
                                                     <StackPanel Grid.Column="3" Spacing="2">
                                                         <TextBlock Text="30°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
-                                                        <NumericUpDown Value="{Binding Pattern30}" Minimum="0" Maximum="100" Increment="0.1" FormatString="F1" Width="70"/>
+                                                        <TextBox Text="{Binding Pattern30}" Width="60" HorizontalContentAlignment="Center"/>
                                                     </StackPanel>
                                                     <StackPanel Grid.Column="4" Spacing="2">
                                                         <TextBlock Text="40°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
-                                                        <NumericUpDown Value="{Binding Pattern40}" Minimum="0" Maximum="100" Increment="0.1" FormatString="F1" Width="70"/>
+                                                        <TextBox Text="{Binding Pattern40}" Width="60" HorizontalContentAlignment="Center"/>
                                                     </StackPanel>
                                                     <StackPanel Grid.Column="5" Spacing="2">
                                                         <TextBlock Text="50°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
-                                                        <NumericUpDown Value="{Binding Pattern50}" Minimum="0" Maximum="100" Increment="0.1" FormatString="F1" Width="70"/>
+                                                        <TextBox Text="{Binding Pattern50}" Width="60" HorizontalContentAlignment="Center"/>
                                                     </StackPanel>
                                                     <StackPanel Grid.Column="6" Spacing="2">
                                                         <TextBlock Text="60°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
-                                                        <NumericUpDown Value="{Binding Pattern60}" Minimum="0" Maximum="100" Increment="0.1" FormatString="F1" Width="70"/>
+                                                        <TextBox Text="{Binding Pattern60}" Width="60" HorizontalContentAlignment="Center"/>
                                                     </StackPanel>
                                                     <StackPanel Grid.Column="7" Spacing="2">
                                                         <TextBlock Text="70°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
-                                                        <NumericUpDown Value="{Binding Pattern70}" Minimum="0" Maximum="100" Increment="0.1" FormatString="F1" Width="70"/>
+                                                        <TextBox Text="{Binding Pattern70}" Width="60" HorizontalContentAlignment="Center"/>
                                                     </StackPanel>
                                                     <StackPanel Grid.Column="8" Spacing="2">
                                                         <TextBlock Text="80°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
-                                                        <NumericUpDown Value="{Binding Pattern80}" Minimum="0" Maximum="100" Increment="0.1" FormatString="F1" Width="70"/>
+                                                        <TextBox Text="{Binding Pattern80}" Width="60" HorizontalContentAlignment="Center"/>
                                                     </StackPanel>
                                                     <StackPanel Grid.Column="9" Spacing="2">
                                                         <TextBlock Text="90°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
-                                                        <NumericUpDown Value="{Binding Pattern90}" Minimum="0" Maximum="100" Increment="0.1" FormatString="F1" Width="70"/>
+                                                        <TextBox Text="{Binding Pattern90}" Width="60" HorizontalContentAlignment="Center"/>
                                                     </StackPanel>
                                                 </Grid>
-                                                <TextBlock Text="0° = Horizon (max radiation), 90° = Straight down toward OKA. Values are attenuation in dB."
+                                                <TextBlock Text="0° = Horizon (max radiation), 90° = Straight up. Values are attenuation in dB."
                                                            FontSize="10" Foreground="#888" FontStyle="Italic"/>
                                             </StackPanel>
                                         </StackPanel>

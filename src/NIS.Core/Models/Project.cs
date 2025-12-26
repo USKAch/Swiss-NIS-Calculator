@@ -211,6 +211,9 @@ public enum ProjectLanguage
 /// </summary>
 public class Project
 {
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = "New Project";
+
     [JsonPropertyName("language")]
     public string Language { get; set; } = "de";
 

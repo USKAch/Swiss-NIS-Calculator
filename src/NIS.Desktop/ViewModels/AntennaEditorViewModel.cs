@@ -25,6 +25,11 @@ public partial class AntennaEditorViewModel : ViewModelBase
     // Project custom antennas (set by MainShellViewModel)
     public List<Antenna>? ProjectAntennas { get; set; }
 
+    /// <summary>
+    /// Available HAM radio frequencies for selection.
+    /// </summary>
+    public static IReadOnlyList<double> AvailableFrequencies => SwissNisLimits.StandardFrequencies;
+
     [ObservableProperty]
     private bool _isAddingNew;
 
@@ -86,6 +91,11 @@ public partial class AntennaEditorViewModel : ViewModelBase
     partial void OnSelectedAntennaChanged(Antenna? value)
     {
         OnPropertyChanged(nameof(HasSelection));
+        // Auto-select and close when antenna is selected from dropdown
+        if (value != null && !IsAddingNew)
+        {
+            OnSelect?.Invoke(value);
+        }
     }
 
     [ObservableProperty]

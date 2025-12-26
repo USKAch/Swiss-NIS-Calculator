@@ -29,23 +29,27 @@ Below language/theme selection:
 Primary workspace after project is loaded/created. Users can edit and add configurations here.
 
 **Header Bar**:
-- Project name (editable)
-- Station info summary (callsign, operator)
+- Project name (editable text field with white background)
+- Station info summary (callsign)
 - Save / Export buttons
 
-**Station Info Panel** (collapsible, editable):
+**Station Info Panel** (non-collapsible):
 - Callsign: HB9FS/HB9BL
-- Operator: Max Mustermann
-- Address: Musterstrasse 1
-- Location: 8000 Zürich
-- Click "Edit" → Navigates to Project Info screen to modify (file name unchanged)
+- Address: Musterstrasse 1, 8000 Zürich
+- Click "Edit" → Navigates to Project Info screen to modify
 
-**Antenna Configurations List**:
-| Name | Radio | Antenna | Bands | OKA | Actions |
-|------|-------|---------|-------|-----|---------|
-| HF Station | Yaesu FT-1000 | Opti-Beam OB9-5 | 14,18,21,24,28 | 5.4m | Edit / Delete |
-| 6m Station | Yaesu FT-991 | Wimo ZX6-2 | 50 | 7.4m | Edit / Delete |
+**Configurations List**:
+Each configuration card shows:
+- **Primary line**: Antenna name (bold, as primary identifier)
+- **Secondary line**: Radio Power | Cable type
 
+Example:
+| Antenna (bold) | Details | OKA | Actions |
+|----------------|---------|-----|---------|
+| Opti-Beam OB9-5 | Yaesu FT-1000 100W \| EcoFlex10 | 5.4m | Edit / Delete |
+| Wimo ZX6-2 | Yaesu FT-991 100W \| Aircom-plus | 7.4m | Edit / Delete |
+
+- Configurations are identified by their antenna (no user-defined name)
 - "+ Add Configuration" button → Navigates to Configuration Editor (2.4)
 - Edit button → Navigates to Configuration Editor with existing data
 - Each configuration has its own OKA (evaluation point) with distance and damping
@@ -54,36 +58,24 @@ Primary workspace after project is loaded/created. Users can edit and add config
 - "Calculate All" → Runs calculation for all configs → Navigates to Results (2.5)
 - "Export Report" → Navigates to Results view with export options (2.5)
 
-### 2.3 Antenna Editor
+### 2.3 Antenna Selection
 
-Accessed from Configuration Editor when selecting antenna:
-
-**Antenna Repository View** (default mode):
-
-- List of all antennas (project custom antennas shown first, then master data)
-- Search/filter by manufacturer, model, frequency
-- Select button → Returns to Configuration Editor with selected antenna
-- "+ Add New Antenna" button → Switches to Add New Antenna mode
-
-**Add New Antenna Mode**:
-
-- Form fields:
-  - Manufacturer: [text field]
-  - Model: [text field]
-  - Rotatable: [checkbox] "Horizontally rotatable"
-- Frequency Bands section:
-  - "+ Add Band" button to add frequency/gain entries
-  - Each band shows: Frequency (MHz) NumericUpDown, Gain (dBi) NumericUpDown, Remove button
-  - Default: Adds 14 MHz band at 6 dBi gain
-- "Save Antenna" → Adds to project's customAntennas, returns to list mode, auto-selects new antenna
-- "Cancel" → Returns to list mode without saving
+Antennas are selected via dropdown in the Configuration Editor (same as radios and cables).
+- Dropdown shows all antennas from master data
+- [Edit] button opens Antenna Master Editor (Section 7.1)
+- [+ Add] button opens Antenna Master Editor for new antenna
 
 ### 2.4 Configuration Editor
 
-Screen for creating or editing one antenna configuration.
+Screen for creating or editing one antenna configuration. Configurations are numbered automatically.
 
-**Section 1: Basic Info**
-- Configuration Name: [text field]
+**Section 1: Antenna** (first, most important)
+- Antenna: [dropdown from master data] [Edit] [+ Add]
+  - Edit → Navigates to Antenna Master Editor (Section 7.1) with selected antenna
+  - Add → Navigates to Antenna Master Editor (Section 7.1) for new antenna
+- Height: [number] m
+- Polarization: [radio buttons] Horizontal | Vertical (mutually exclusive)
+  - If Horizontal: Rotation Angle: [number] degrees (default 360)
 
 **Section 2: Transmitter**
 - Radio: [dropdown from master data] [Edit] [+ Add]
@@ -101,16 +93,7 @@ Screen for creating or editing one antenna configuration.
 - Additional Losses: [number] dB
 - Loss Description: [text] (e.g., "Connectors, switch")
 
-**Section 4: Antenna**
-- Antenna: [display selected] [Select...] [Edit] [+ Add]
-  - Select → Navigates to Antenna Repository (Section 2.3)
-  - Edit → Navigates to Antenna Master Editor (Section 7.1) with selected antenna
-  - Add → Navigates to Antenna Master Editor (Section 7.1) for new antenna
-- Height: [number] m
-- Polarization: [radio buttons] Horizontal | Vertical (mutually exclusive)
-  - If Horizontal: Rotation Angle: [number] degrees (default 360)
-
-**Section 5: Operating Parameters**
+**Section 4: Operating Parameters**
 - Modulation: [dropdown] SSB (0.2) | CW (0.4) | FM/Digital (1.0)
 - Activity Factor: [number] (default 0.5)
 
@@ -397,17 +380,15 @@ One table per antenna configuration:
 **HB9FS_Station.nisproj**
 ```json
 {
+  "name": "HB9FS Station",
   "language": "de",
   "station": {
     "callsign": "HB9FS/HB9BL",
-    "operator": "Max Mustermann",
-    "address": "Musterstrasse 1",
-    "location": "8000 Zürich"
+    "address": "Musterstrasse 1, 8000 Zürich"
   },
 
-  "antennaConfigurations": [
+  "configurations": [
     {
-      "name": "HF Station",
       "radio": {
         "manufacturer": "Yaesu",
         "model": "FT-1000"

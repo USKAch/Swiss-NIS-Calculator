@@ -21,11 +21,67 @@
         <ScrollViewer Grid.Row="1" Padding="20" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled">
             <StackPanel Spacing="20" Margin="0,0,0,20">
 
-                <!-- Configuration Name -->
+                <!-- Antenna Section (first, most important) -->
                 <Border Background="#F5F5F5" CornerRadius="8" Padding="15">
-                    <StackPanel Spacing="8">
-                        <TextBlock Text="Configuration Name" FontWeight="SemiBold" FontSize="14"/>
-                        <TextBox Text="{Binding Name}" Watermark="e.g. HF Station"/>
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="Antenna" FontWeight="Bold" FontSize="16"/>
+
+                        <Grid ColumnDefinitions="100,*,Auto,Auto" RowDefinitions="Auto,Auto,Auto" RowSpacing="8" ColumnSpacing="10">
+                            <TextBlock Text="Antenna:" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <ComboBox Grid.Column="1" ItemsSource="{Binding Antennas}"
+                                      SelectedItem="{Binding SelectedAntenna}" HorizontalAlignment="Stretch">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding DisplayName}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                            <Button Grid.Column="2" Content="Edit" Command="{Binding EditAntennaCommand}"
+                                    IsEnabled="{Binding SelectedAntenna, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                    Padding="10,5"/>
+                            <Button Grid.Column="3" Content="+ Add" Command="{Binding AddAntennaCommand}"
+                                    Background="#4CAF50" Foreground="White" Padding="10,5"/>
+
+                            <TextBlock Grid.Row="1" Text="Height:" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="5">
+                                <NumericUpDown Value="{Binding HeightMeters}"
+                                               Minimum="0" Maximum="100" Increment="0.5" Width="120"/>
+                                <TextBlock Text="m" VerticalAlignment="Center"/>
+                            </StackPanel>
+
+                            <TextBlock Grid.Row="2" Text="Polarization:" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <StackPanel Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="15">
+                                <RadioButton Content="Horizontal" IsChecked="{Binding IsHorizontallyRotatable}" GroupName="Polarization"/>
+                                <RadioButton Content="Vertical" IsChecked="{Binding IsVerticallyRotatable}" GroupName="Polarization"/>
+                                <NumericUpDown Value="{Binding HorizontalAngleDegrees}"
+                                               IsVisible="{Binding IsHorizontallyRotatable}"
+                                               Minimum="0" Maximum="360" Increment="10" Width="130"/>
+                                <TextBlock Text="deg" VerticalAlignment="Center"
+                                           IsVisible="{Binding IsHorizontallyRotatable}"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Antenna Bands Display -->
+                        <Border Background="White" CornerRadius="4" Padding="10" Margin="0,8,0,0"
+                                IsVisible="{Binding SelectedAntenna, Converter={x:Static ObjectConverters.IsNotNull}}">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="Frequency Bands:" FontWeight="SemiBold" FontSize="12"/>
+                                <ItemsControl ItemsSource="{Binding SelectedAntenna.Bands}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="#F8F8F8" CornerRadius="3" Padding="8,4" Margin="0,2">
+                                                <Grid ColumnDefinitions="80,80,*">
+                                                    <TextBlock Text="{Binding FrequencyMHz, StringFormat='{}{0} MHz'}" FontWeight="SemiBold"/>
+                                                    <TextBlock Grid.Column="1" Text="{Binding GainDbi, StringFormat='{}{0:F1} dBi'}" Foreground="#666"/>
+                                                    <TextBlock Grid.Column="2" FontSize="10" Foreground="#888"
+                                                               Text="{Binding Pattern, Converter={x:Static vm:PatternConverter.Instance}}"/>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
                     </StackPanel>
                 </Border>
 
@@ -78,7 +134,7 @@
                     </StackPanel>
                 </Border>
 
-                <!-- Cable Section -->
+                <!-- Feed Line Section -->
                 <Border Background="#F5F5F5" CornerRadius="8" Padding="15">
                     <StackPanel Spacing="12">
                         <TextBlock Text="Feed Line" FontWeight="Bold" FontSize="16"/>
@@ -117,68 +173,6 @@
                             <TextBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding AdditionalLossDescription}"
                                      Watermark="e.g. Connectors, switch"/>
                         </Grid>
-                    </StackPanel>
-                </Border>
-
-                <!-- Antenna Section -->
-                <Border Background="#F5F5F5" CornerRadius="8" Padding="15">
-                    <StackPanel Spacing="12">
-                        <TextBlock Text="Antenna" FontWeight="Bold" FontSize="16"/>
-
-                        <Grid ColumnDefinitions="100,*,Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto" RowSpacing="8" ColumnSpacing="10">
-                            <TextBlock Text="Antenna:" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                            <Border Grid.Column="1" Background="White" BorderBrush="#E0E0E0" BorderThickness="1"
-                                    CornerRadius="4" Padding="10,8">
-                                <TextBlock Text="{Binding SelectedAntenna.DisplayName, FallbackValue='(none selected)'}"
-                                           Foreground="{Binding SelectedAntenna, Converter={x:Static ObjectConverters.IsNull}, ConverterParameter=#999:#000}"/>
-                            </Border>
-                            <Button Grid.Column="2" Content="Select..." Command="{Binding SelectAntennaCommand}" Padding="10,5"/>
-                            <Button Grid.Column="3" Content="Edit" Command="{Binding EditAntennaCommand}"
-                                    IsEnabled="{Binding SelectedAntenna, Converter={x:Static ObjectConverters.IsNotNull}}"
-                                    Padding="10,5"/>
-                            <Button Grid.Column="4" Content="+ Add" Command="{Binding AddAntennaCommand}"
-                                    Background="#4CAF50" Foreground="White" Padding="10,5"/>
-
-                            <TextBlock Grid.Row="1" Text="Height:" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                            <StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="4" Orientation="Horizontal" Spacing="5">
-                                <NumericUpDown Value="{Binding HeightMeters}"
-                                               Minimum="0" Maximum="100" Increment="0.5" Width="120"/>
-                                <TextBlock Text="m" VerticalAlignment="Center"/>
-                            </StackPanel>
-
-                            <TextBlock Grid.Row="2" Text="Polarization:" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                            <StackPanel Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Orientation="Horizontal" Spacing="15">
-                                <RadioButton Content="Horizontal" IsChecked="{Binding IsHorizontallyRotatable}" GroupName="Polarization"/>
-                                <RadioButton Content="Vertical" IsChecked="{Binding IsVerticallyRotatable}" GroupName="Polarization"/>
-                                <NumericUpDown Value="{Binding HorizontalAngleDegrees}"
-                                               IsVisible="{Binding IsHorizontallyRotatable}"
-                                               Minimum="0" Maximum="360" Increment="10" Width="130"/>
-                                <TextBlock Text="deg" VerticalAlignment="Center"
-                                           IsVisible="{Binding IsHorizontallyRotatable}"/>
-                            </StackPanel>
-                        </Grid>
-
-                        <!-- Antenna Bands Display -->
-                        <Border Background="White" CornerRadius="4" Padding="10" Margin="0,8,0,0"
-                                IsVisible="{Binding SelectedAntenna, Converter={x:Static ObjectConverters.IsNotNull}}">
-                            <StackPanel Spacing="8">
-                                <TextBlock Text="Frequency Bands:" FontWeight="SemiBold" FontSize="12"/>
-                                <ItemsControl ItemsSource="{Binding SelectedAntenna.Bands}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <Border Background="#F8F8F8" CornerRadius="3" Padding="8,4" Margin="0,2">
-                                                <Grid ColumnDefinitions="80,80,*">
-                                                    <TextBlock Text="{Binding FrequencyMHz, StringFormat='{}{0} MHz'}" FontWeight="SemiBold"/>
-                                                    <TextBlock Grid.Column="1" Text="{Binding GainDbi, StringFormat='{}{0:F1} dBi'}" Foreground="#666"/>
-                                                    <TextBlock Grid.Column="2" FontSize="10" Foreground="#888"
-                                                               Text="{Binding Pattern, Converter={x:Static vm:PatternConverter.Instance}}"/>
-                                                </Grid>
-                                            </Border>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </StackPanel>
-                        </Border>
                     </StackPanel>
                 </Border>
 

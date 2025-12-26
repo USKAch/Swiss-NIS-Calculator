@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using NIS.Core.Data;
 using NIS.Core.Models;
 
 namespace NIS.Desktop.ViewModels;
@@ -98,6 +100,11 @@ public partial class EditableBandItem : ObservableObject
 public partial class AntennaMasterEditorViewModel : ViewModelBase
 {
     private Antenna? _originalAntenna;
+
+    /// <summary>
+    /// Available HAM radio frequencies for selection.
+    /// </summary>
+    public static IReadOnlyList<double> AvailableFrequencies => SwissNisLimits.StandardFrequencies;
 
     // Navigation callbacks
     public Action? NavigateBack { get; set; }

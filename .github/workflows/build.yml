@@ -1,0 +1,91 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            rid: win-x64
+            artifact: SwissNISCalculator-Windows
+          - os: macos-latest
+            rid: osx-x64
+            artifact: SwissNISCalculator-macOS
+          - os: ubuntu-latest
+            rid: linux-x64
+            artifact: SwissNISCalculator-Linux
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+
+    - name: Test
+      run: dotnet test --no-build --configuration Release --verbosity normal
+
+    - name: Publish
+      run: dotnet publish src/NIS.Desktop/NIS.Desktop.csproj -c Release -r ${{ matrix.rid }} -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --self-contained true -o publish
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.artifact }}
+        path: publish/
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+    - name: Download Windows artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: SwissNISCalculator-Windows
+        path: windows
+
+    - name: Download macOS artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: SwissNISCalculator-macOS
+        path: macos
+
+    - name: Download Linux artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: SwissNISCalculator-Linux
+        path: linux
+
+    - name: Create archives
+      run: |
+        cd windows && zip -r ../SwissNISCalculator-Windows.zip . && cd ..
+        cd macos && zip -r ../SwissNISCalculator-macOS.zip . && cd ..
+        cd linux && tar -czvf ../SwissNISCalculator-Linux.tar.gz . && cd ..
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          SwissNISCalculator-Windows.zip
+          SwissNISCalculator-macOS.zip
+          SwissNISCalculator-Linux.tar.gz
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

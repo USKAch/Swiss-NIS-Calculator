@@ -31,22 +31,10 @@
                     <TextBox Text="{Binding Callsign}" Watermark="e.g. HB9FS"/>
                 </StackPanel>
 
-                <!-- Operator -->
-                <StackPanel Spacing="5">
-                    <TextBlock Text="{Binding OperatorLabel}" FontWeight="SemiBold"/>
-                    <TextBox Text="{Binding OperatorName}" Watermark="e.g. Max Mustermann"/>
-                </StackPanel>
-
                 <!-- Address -->
                 <StackPanel Spacing="5">
                     <TextBlock Text="{Binding AddressLabel}" FontWeight="SemiBold"/>
-                    <TextBox Text="{Binding Address}" Watermark="e.g. Musterstrasse 1"/>
-                </StackPanel>
-
-                <!-- Location -->
-                <StackPanel Spacing="5">
-                    <TextBlock Text="{Binding LocationLabel}" FontWeight="SemiBold"/>
-                    <TextBox Text="{Binding Location}" Watermark="e.g. 8000 Zürich"/>
+                    <TextBox Text="{Binding Address}" Watermark="e.g. Musterstrasse 1, 8000 Zürich"/>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

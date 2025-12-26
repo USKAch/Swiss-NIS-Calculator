@@ -1,9 +1,13 @@
 # Swiss NIS Calculator
 
+[![Build](https://github.com/yourusername/Swiss-NIS-Calculator/actions/workflows/build.yml/badge.svg)](https://github.com/yourusername/Swiss-NIS-Calculator/actions/workflows/build.yml)
 [![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
-[![Avalonia UI](https://img.shields.io/badge/Avalonia-11.x-8B44AC?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xMiAyTDEgMjFoMjJMMTIgMnoiLz48L3N2Zz4=)](https://avaloniaui.net/)
-[![Platform](https://img.shields.io/badge/Platform-Windows-0078D4?logo=windows&logoColor=white)](https://github.com/)
+[![Avalonia UI](https://img.shields.io/badge/Avalonia-11.x-8B44AC)](https://avaloniaui.net/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+[![Windows](https://img.shields.io/badge/Windows-x64-0078D4?logo=windows&logoColor=white)](../../releases)
+[![macOS](https://img.shields.io/badge/macOS-x64-000000?logo=apple&logoColor=white)](../../releases)
+[![Linux](https://img.shields.io/badge/Linux-x64-FCC624?logo=linux&logoColor=black)](../../releases)
 
 > RF field strength calculator for Swiss amateur radio antenna approval (NISV compliance)
 
@@ -28,11 +32,28 @@ Swiss NIS Calculator is a modern desktop application for calculating electromagn
 
 ## Installation
 
-### Windows (Portable)
+### Download Pre-built Binaries
 
-1. Download the latest release from [Releases](../../releases)
-2. Extract `SwissNISCalculator-win-x64.zip`
-3. Run `NIS.Desktop.exe`
+Download the latest release for your platform from [Releases](../../releases):
+
+| Platform | Download |
+|----------|----------|
+| Windows | `SwissNISCalculator-Windows.zip` |
+| macOS | `SwissNISCalculator-macOS.zip` |
+| Linux | `SwissNISCalculator-Linux.tar.gz` |
+
+### Windows
+1. Extract the ZIP file
+2. Run `SwissNISCalculator.exe`
+
+### macOS
+1. Extract the ZIP file
+2. Run `SwissNISCalculator` (you may need to allow it in Security & Privacy settings)
+
+### Linux
+1. Extract: `tar -xzvf SwissNISCalculator-Linux.tar.gz`
+2. Make executable: `chmod +x SwissNISCalculator`
+3. Run: `./SwissNISCalculator`
 
 ### Build from Source
 
@@ -46,6 +67,11 @@ dotnet build
 
 # Run
 dotnet run --project src/NIS.Desktop
+
+# Publish for your platform
+dotnet publish src/NIS.Desktop -c Release -r win-x64 --self-contained
+dotnet publish src/NIS.Desktop -c Release -r osx-x64 --self-contained
+dotnet publish src/NIS.Desktop -c Release -r linux-x64 --self-contained
 ```
 
 ## Usage
