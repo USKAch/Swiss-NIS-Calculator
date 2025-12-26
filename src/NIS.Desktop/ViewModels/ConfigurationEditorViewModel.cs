@@ -60,7 +60,7 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
         _cableDatabase.LoadDefaults();
         _radioDatabase.LoadDefaults();
 
-        Antennas = new ObservableCollection<Antenna>(_antennaDatabase.Antennas);
+        Antennas = new ObservableCollection<Antenna>(_antennaDatabase.Antennas.OrderBy(a => a.DisplayName));
         Cables = new ObservableCollection<Cable>(_cableDatabase.Cables);
         Radios = new ObservableCollection<Radio>(_radioDatabase.Radios);
     }
@@ -69,6 +69,17 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
     public ObservableCollection<Antenna> Antennas { get; }
     public ObservableCollection<Cable> Cables { get; }
     public ObservableCollection<Radio> Radios { get; }
+
+    // Configuration Number (1-based)
+    [ObservableProperty]
+    private int _configurationNumber = 1;
+
+    public string HeaderText => $"Configuration {ConfigurationNumber}";
+
+    partial void OnConfigurationNumberChanged(int value)
+    {
+        OnPropertyChanged(nameof(HeaderText));
+    }
 
     // Configuration Name
     [ObservableProperty]

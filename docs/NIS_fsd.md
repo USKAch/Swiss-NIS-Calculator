@@ -61,7 +61,7 @@ Example:
 ### 2.3 Antenna Selection
 
 Antennas are selected via dropdown in the Configuration Editor (same as radios and cables).
-- Dropdown shows all antennas from master data
+- Dropdown shows all antennas from master data, **sorted alphabetically** by manufacturer and model
 - [Edit] button opens Antenna Master Editor (Section 7.1)
 - [+ Add] button opens Antenna Master Editor for new antenna
 

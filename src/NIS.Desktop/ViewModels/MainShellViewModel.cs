@@ -105,7 +105,13 @@ public partial class MainShellViewModel : ViewModelBase
         _configurationEditorViewModel = new ConfigurationEditorViewModel();
         if (existing != null)
         {
+            var index = ProjectViewModel.Project.AntennaConfigurations.IndexOf(existing);
+            _configurationEditorViewModel.ConfigurationNumber = index + 1;
             _configurationEditorViewModel.LoadFromConfiguration(existing);
+        }
+        else
+        {
+            _configurationEditorViewModel.ConfigurationNumber = ProjectViewModel.Project.AntennaConfigurations.Count + 1;
         }
         _configurationEditorViewModel.NavigateBack = NavigateToProjectOverview;
         _configurationEditorViewModel.NavigateToAntennaSelector = NavigateToAntennaSelector;
@@ -155,7 +161,7 @@ public partial class MainShellViewModel : ViewModelBase
             NavigateToProjectOverview();
         };
         CurrentView = _configurationEditorViewModel;
-        WindowTitle = existing != null ? "Swiss NIS Calculator - Edit Configuration" : "Swiss NIS Calculator - New Configuration";
+        WindowTitle = $"Swiss NIS Calculator - Configuration {_configurationEditorViewModel.ConfigurationNumber}";
     }
 
     public void NavigateToAntennaSelector()

@@ -1,6 +1,6 @@
 # Swiss NIS Calculator
 
-[![Build](https://github.com/yourusername/Swiss-NIS-Calculator/actions/workflows/build.yml/badge.svg)](https://github.com/yourusername/Swiss-NIS-Calculator/actions/workflows/build.yml)
+[![Build](https://github.com/USKAch/Swiss-NIS-Calculator/actions/workflows/build.yml/badge.svg)](https://github.com/USKAch/Swiss-NIS-Calculator/actions/workflows/build.yml)
 [![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 [![Avalonia UI](https://img.shields.io/badge/Avalonia-11.x-8B44AC)](https://avaloniaui.net/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
@@ -59,7 +59,7 @@ Download the latest release for your platform from [Releases](../../releases):
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/Swiss-NIS-Calculator.git
+git clone https://github.com/USKAch/Swiss-NIS-Calculator.git
 cd Swiss-NIS-Calculator
 
 # Build
