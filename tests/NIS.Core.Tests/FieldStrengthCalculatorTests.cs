@@ -26,7 +26,7 @@ public class FieldStrengthCalculatorTests
         // Assert
         Assert.True(result.FieldStrengthVm > 0);
         Assert.True(result.PowerDensityWm2 > 0);
-        Assert.Equal(280, result.NisLimitVm); // 144 MHz limit
+        Assert.Equal(28, result.NisLimitVm); // 144 MHz limit
     }
 
     [Fact]
@@ -231,14 +231,14 @@ public class FieldStrengthCalculatorTests
     }
 
     [Theory]
-    [InlineData(1.8, 647)]
-    [InlineData(3.5, 465)]
-    [InlineData(7.0, 324)]
-    [InlineData(14.0, 280)]
-    [InlineData(144.0, 280)]
-    [InlineData(432.0, 286)]
-    [InlineData(1296.0, 485)]
-    [InlineData(2400.0, 610)]
+    [InlineData(1.8, 87)]      // < 10 MHz: 87 V/m
+    [InlineData(3.5, 87)]      // < 10 MHz: 87 V/m
+    [InlineData(7.0, 87)]      // < 10 MHz: 87 V/m
+    [InlineData(14.0, 28)]     // 10-400 MHz: 28 V/m
+    [InlineData(144.0, 28)]    // 10-400 MHz: 28 V/m
+    [InlineData(432.0, 28.5)]  // 400-2000 MHz: 28.5 V/m
+    [InlineData(1296.0, 28.5)] // 400-2000 MHz: 28.5 V/m
+    [InlineData(2400.0, 61)]   // >= 2000 MHz: 61 V/m
     public void Calculate_ReturnsCorrectNisLimit(double frequencyMHz, double expectedLimit)
     {
         // Arrange
@@ -268,7 +268,8 @@ public class FieldStrengthCalculatorTests
         {
             FrequencyMHz = 14.0,
             TxPowerWatts = 200,
-            ModulationFactor = 0.2, // Activity 0.5 * Modulation 0.4 = 0.2
+            ActivityFactor = 0.5,
+            ModulationFactor = 0.4, // CW
             DistanceMeters = 3.0,
             AntennaGainDbi = 6.29,
             AngleAttenuationDb = 0.50,
@@ -281,7 +282,7 @@ public class FieldStrengthCalculatorTests
 
         // Assert - VB6 calculated 29.52 V/m, allow 1% tolerance
         Assert.InRange(result.FieldStrengthVm, 29.52 * 0.99, 29.52 * 1.01);
-        Assert.Equal(280, result.NisLimitVm); // 14 MHz limit
+        Assert.Equal(28, result.NisLimitVm); // 14 MHz limit (10-400 MHz: 28 V/m)
     }
 
     /// <summary>
@@ -296,7 +297,8 @@ public class FieldStrengthCalculatorTests
         {
             FrequencyMHz = 7.0,
             TxPowerWatts = 200,
-            ModulationFactor = 0.2, // Activity 0.5 * Modulation 0.4 = 0.2
+            ActivityFactor = 0.5,
+            ModulationFactor = 0.4, // CW
             DistanceMeters = 3.0,
             AntennaGainDbi = 5.61,
             AngleAttenuationDb = 0.39,
@@ -309,7 +311,7 @@ public class FieldStrengthCalculatorTests
 
         // Assert - VB6 calculated 28.45 V/m, allow 1% tolerance
         Assert.InRange(result.FieldStrengthVm, 28.45 * 0.99, 28.45 * 1.01);
-        Assert.Equal(324, result.NisLimitVm); // 7 MHz limit (changed from 32.40)
+        Assert.Equal(87, result.NisLimitVm); // 7 MHz limit (< 10 MHz: 87 V/m)
     }
 
     /// <summary>
@@ -324,7 +326,8 @@ public class FieldStrengthCalculatorTests
         {
             FrequencyMHz = 28.0,
             TxPowerWatts = 200,
-            ModulationFactor = 0.2, // Activity 0.5 * Modulation 0.4 = 0.2
+            ActivityFactor = 0.5,
+            ModulationFactor = 0.4, // CW
             DistanceMeters = 3.0,
             AntennaGainDbi = 8.04,
             AngleAttenuationDb = 0.75,
@@ -337,6 +340,6 @@ public class FieldStrengthCalculatorTests
 
         // Assert - VB6 calculated 33.70 V/m, allow 1% tolerance
         Assert.InRange(result.FieldStrengthVm, 33.70 * 0.99, 33.70 * 1.01);
-        Assert.Equal(280, result.NisLimitVm); // 28 MHz limit
+        Assert.Equal(28, result.NisLimitVm); // 28 MHz limit (10-400 MHz: 28 V/m)
     }
 }
