@@ -85,7 +85,7 @@
                                                     </ComboBox.ItemTemplate>
                                                 </ComboBox>
                                                 <TextBlock Grid.Column="2" Text="Gain:" VerticalAlignment="Center" Margin="15,0,8,0" FontWeight="SemiBold"/>
-                                                <TextBox Grid.Column="3" Text="{Binding GainDbi}" Width="60"/>
+                                                <NumericUpDown Grid.Column="3" Value="{Binding GainDbi}" ShowButtonSpinner="False" Minimum="-20" Maximum="50" Increment="0.5" FormatString="F1" Width="80"/>
                                                 <TextBlock Grid.Column="4" Text="dBi" VerticalAlignment="Center" Margin="5,0,0,0"/>
                                                 <Button Grid.Column="5" Content="Remove"
                                                         Command="{Binding $parent[ItemsControl].((vm:AntennaEditorViewModel)DataContext).RemoveBandCommand}"
@@ -95,47 +95,47 @@
 
                                             <!-- Pattern section -->
                                             <StackPanel Spacing="8">
-                                                <TextBlock Text="Vertical Pattern (attenuation in dB at each angle):" FontSize="12" Foreground="#666"/>
-                                                <Grid ColumnDefinitions="*,*,*,*,*,*,*,*,*,*" ColumnSpacing="8">
+                                                <TextBlock Text="Vertical Pattern (attenuation 0-60 dB at each angle):" FontSize="12" Foreground="#666"/>
+                                                <Grid ColumnDefinitions="*,*,*,*,*,*,*,*,*,*" ColumnSpacing="4">
                                                     <StackPanel Spacing="2">
                                                         <TextBlock Text="0°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
-                                                        <TextBox Text="{Binding Pattern0}" Width="55" HorizontalContentAlignment="Center"/>
+                                                        <NumericUpDown Value="{Binding Pattern0}" Minimum="0" Maximum="60" Increment="1" FormatString="F1" Width="60" ShowButtonSpinner="False"/>
                                                     </StackPanel>
                                                     <StackPanel Grid.Column="1" Spacing="2">
                                                         <TextBlock Text="10°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
-                                                        <TextBox Text="{Binding Pattern10}" Width="55" HorizontalContentAlignment="Center"/>
+                                                        <NumericUpDown Value="{Binding Pattern10}" Minimum="0" Maximum="60" Increment="1" FormatString="F1" Width="60" ShowButtonSpinner="False"/>
                                                     </StackPanel>
                                                     <StackPanel Grid.Column="2" Spacing="2">
                                                         <TextBlock Text="20°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
-                                                        <TextBox Text="{Binding Pattern20}" Width="55" HorizontalContentAlignment="Center"/>
+                                                        <NumericUpDown Value="{Binding Pattern20}" Minimum="0" Maximum="60" Increment="1" FormatString="F1" Width="60" ShowButtonSpinner="False"/>
                                                     </StackPanel>
                                                     <StackPanel Grid.Column="3" Spacing="2">
                                                         <TextBlock Text="30°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
-                                                        <TextBox Text="{Binding Pattern30}" Width="55" HorizontalContentAlignment="Center"/>
+                                                        <NumericUpDown Value="{Binding Pattern30}" Minimum="0" Maximum="60" Increment="1" FormatString="F1" Width="60" ShowButtonSpinner="False"/>
                                                     </StackPanel>
                                                     <StackPanel Grid.Column="4" Spacing="2">
                                                         <TextBlock Text="40°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
-                                                        <TextBox Text="{Binding Pattern40}" Width="55" HorizontalContentAlignment="Center"/>
+                                                        <NumericUpDown Value="{Binding Pattern40}" Minimum="0" Maximum="60" Increment="1" FormatString="F1" Width="60" ShowButtonSpinner="False"/>
                                                     </StackPanel>
                                                     <StackPanel Grid.Column="5" Spacing="2">
                                                         <TextBlock Text="50°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
-                                                        <TextBox Text="{Binding Pattern50}" Width="55" HorizontalContentAlignment="Center"/>
+                                                        <NumericUpDown Value="{Binding Pattern50}" Minimum="0" Maximum="60" Increment="1" FormatString="F1" Width="60" ShowButtonSpinner="False"/>
                                                     </StackPanel>
                                                     <StackPanel Grid.Column="6" Spacing="2">
                                                         <TextBlock Text="60°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
-                                                        <TextBox Text="{Binding Pattern60}" Width="55" HorizontalContentAlignment="Center"/>
+                                                        <NumericUpDown Value="{Binding Pattern60}" Minimum="0" Maximum="60" Increment="1" FormatString="F1" Width="60" ShowButtonSpinner="False"/>
                                                     </StackPanel>
                                                     <StackPanel Grid.Column="7" Spacing="2">
                                                         <TextBlock Text="70°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
-                                                        <TextBox Text="{Binding Pattern70}" Width="55" HorizontalContentAlignment="Center"/>
+                                                        <NumericUpDown Value="{Binding Pattern70}" Minimum="0" Maximum="60" Increment="1" FormatString="F1" Width="60" ShowButtonSpinner="False"/>
                                                     </StackPanel>
                                                     <StackPanel Grid.Column="8" Spacing="2">
                                                         <TextBlock Text="80°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
-                                                        <TextBox Text="{Binding Pattern80}" Width="55" HorizontalContentAlignment="Center"/>
+                                                        <NumericUpDown Value="{Binding Pattern80}" Minimum="0" Maximum="60" Increment="1" FormatString="F1" Width="60" ShowButtonSpinner="False"/>
                                                     </StackPanel>
                                                     <StackPanel Grid.Column="9" Spacing="2">
                                                         <TextBlock Text="90°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
-                                                        <TextBox Text="{Binding Pattern90}" Width="55" HorizontalContentAlignment="Center"/>
+                                                        <NumericUpDown Value="{Binding Pattern90}" Minimum="0" Maximum="60" Increment="1" FormatString="F1" Width="60" ShowButtonSpinner="False"/>
                                                     </StackPanel>
                                                 </Grid>
                                             </StackPanel>

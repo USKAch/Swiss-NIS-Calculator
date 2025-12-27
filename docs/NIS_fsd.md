@@ -58,16 +58,17 @@ Example:
 - "Calculate All" → Runs calculation for all configs → Navigates to Results (2.5)
 - "Export Report" → Navigates to Results view with export options (2.5)
 
-### 2.3 Antenna Selection
+### 2.3 Component Selection
 
-Antennas are selected via dropdown in the Configuration Editor (same as radios and cables).
-- Dropdown shows all antennas from master data, **sorted alphabetically** by manufacturer and model
-- [Edit] button opens Antenna Master Editor (Section 7.1)
-- [+ Add] button opens Antenna Master Editor for new antenna
+All component dropdowns (Antenna, Radio, Cable) share the same behavior:
+- **Sorted alphabetically** by name/manufacturer
+- **Text search enabled**: Type characters to jump to matching item (e.g., type "Y" to jump to "Yaesu")
+- [Edit] button opens the respective Master Editor
+- [+ Add] button opens the Master Editor for a new item
 
 ### 2.4 Configuration Editor
 
-Screen for creating or editing one antenna configuration. Configurations are numbered automatically.
+Screen for creating or editing one antenna configuration. Header shows "Configuration {number}" (e.g., "Configuration 1").
 
 **Section 1: Antenna** (first, most important)
 - Antenna: [dropdown from master data] [Edit] [+ Add]
@@ -75,7 +76,7 @@ Screen for creating or editing one antenna configuration. Configurations are num
   - Add → Navigates to Antenna Master Editor (Section 7.1) for new antenna
 - Height: [number] m
 - Polarization: [radio buttons] Horizontal | Vertical (mutually exclusive)
-  - If Horizontal: Rotation Angle: [number] degrees (default 360)
+  - If Horizontal: Rotation Angle: [number] degrees (default 360) - *information only, not used in calculation*
 
 **Section 2: Transmitter**
 - Radio: [dropdown from master data] [Edit] [+ Add]
@@ -446,16 +447,26 @@ All master data editors follow a full-width layout and can be accessed from:
 
 When accessed from Configuration Editor, the editor returns to the configuration after save.
 
+**UI Controls**:
+- All numeric input fields use NumericUpDown controls without spinner buttons for clean appearance
+- Validation errors are displayed in the footer bar with clear, actionable messages
+- Required fields show validation message when empty on save attempt
+
 ### 7.1 Antenna Master Editor
 
 Full-featured editor for antenna definitions with complete band and pattern data.
 
 **Layout**: Full window width with scrollable content
 
-**Header Section**:
-- Manufacturer: [text field, required]
-- Model: [text field, required]
-- Is Rotatable: [checkbox] "Horizontally rotatable"
+**Antenna Details Section** (two-line layout):
+- Line 1: Manufacturer [text field, wide] + Model [text field, wide]
+- Line 2: Polarization [Horizontal | Vertical radio buttons] + Rotatable options
+
+**Polarization and Rotation Logic**:
+- Polarization: Radio buttons for Horizontal or Vertical (mutually exclusive)
+- Rotatable: Checkbox only visible for horizontally polarized antennas
+- Rotation Angle: Numeric field (0-360°) only visible when Rotatable is checked
+- **Vertical antennas cannot be rotatable** (checkbox hidden)
 
 **Frequency Bands Section**:
 
@@ -478,14 +489,20 @@ Each band in an expandable card showing:
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-**Pattern Values**:
-- 0° = Horizon (typically 0 dB, maximum radiation)
-- 90° = Straight down toward OKA (higher attenuation)
-- Values represent attenuation in dB relative to maximum gain
+**Vertical Radiation Pattern** (confirmed from VB6 source: "Vertikale Winkeldämpfung"):
+- 0° = Horizon (typically 0 dB, maximum radiation direction)
+- 90° = Straight up (or down, pattern is symmetric)
+- Values represent attenuation in dB relative to maximum gain at each elevation angle
+- Used to calculate field strength reduction when OKA is not at antenna height
+
+**Input Validation**:
+- Gain: -20 to 50 dBi
+- Pattern values: 0 to 60 dB attenuation
+- Rotation angle: 0 to 360 degrees
 
 **Actions**:
 - [+ Add Band] → Adds new band with default values (50 MHz, 0 dBi, flat pattern)
-- [Save] → Saves to master data (antennas.json)
+- [Save] → Validates all fields, shows error message if invalid
 - [Cancel] → Returns without saving
 
 ### 7.2 Cable Master Editor
@@ -524,8 +541,12 @@ Table showing attenuation per 100m at standard frequencies:
 - Calculation will interpolate between available frequencies
 - Standard amateur radio frequencies are pre-populated
 
+**Input Validation**:
+- Cable name: Required, cannot be empty
+- Attenuation values: 0 to 500 dB/100m (varies by frequency band)
+
 **Actions**:
-- [Save] → Saves to master data (cables.json)
+- [Save] → Validates all fields, shows error message if invalid
 - [Cancel] → Returns without saving
 
 ### 7.3 Radio Master Editor
@@ -537,14 +558,17 @@ Editor for radio/transceiver definitions.
 **Fields**:
 - Manufacturer: [text field, required] (e.g., "Yaesu", "Icom", "Kenwood")
 - Model: [text field, required] (e.g., "FT-1000", "IC-7300")
-- Max Power: [number] W (maximum output power rating)
+- Max Power: [number] W (maximum output power rating, 1-10000W)
 
-**Optional Fields**:
-- Frequency Coverage: [text] (e.g., "HF+6m", "VHF/UHF", "All-band")
-- Notes: [text area] (additional information)
+**Input Validation**:
+- Manufacturer: Required, cannot be empty
+- Model: Required, cannot be empty
+- Max Power: 1 to 10000 W
+
+**Note**: The radio is used for documentation purposes in the NIS report. The actual output power is specified in each antenna configuration.
 
 **Actions**:
-- [Save] → Saves to master data (radios.json)
+- [Save] → Validates all fields, shows error message if invalid
 - [Cancel] → Returns without saving
 
 ### 7.4 Master Data Storage
@@ -604,7 +628,22 @@ Project Overview
 - **Dark Mode**: Toggle available on Welcome screen
 - Theme applies globally to the entire application
 
-## 10. Example: HB9FS Station
+## 10. Unsaved Changes Protection
+
+When the user attempts to close the application with unsaved project changes:
+
+**Dialog**: "Unsaved Changes"
+- Message: "Do you want to save your changes before closing?"
+- Buttons: [Yes] [No] [Cancel]
+
+**Behavior**:
+- **Yes**: Save project, then close application
+- **No**: Discard changes, close application
+- **Cancel**: Return to application, do not close
+
+This ensures users don't accidentally lose their work.
+
+## 11. Example: HB9FS Station
 
 | Config | Radio | Cable | Antenna | Height | Bands | OKA |
 |--------|-------|-------|---------|--------|-------|-----|

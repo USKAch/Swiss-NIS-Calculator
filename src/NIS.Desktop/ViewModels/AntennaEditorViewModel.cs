@@ -160,13 +160,13 @@ public partial class AntennaEditorViewModel : ViewModelBase
         IsAddingNew = true;
         ClearNewAntennaForm();
         // Add default HF bands
-        NewBands.Add(new EditableBand { FrequencyMHz = 14, GainDbi = 6 });
+        NewBands.Add(new EditableBand { FrequencyMHz = 14, GainDbi = 6m });
     }
 
     [RelayCommand]
     private void AddBand()
     {
-        NewBands.Add(new EditableBand { FrequencyMHz = 21, GainDbi = 6 });
+        NewBands.Add(new EditableBand { FrequencyMHz = 21, GainDbi = 6m });
     }
 
     [RelayCommand]
@@ -195,7 +195,7 @@ public partial class AntennaEditorViewModel : ViewModelBase
             antenna.Bands.Add(new AntennaBand
             {
                 FrequencyMHz = band.FrequencyMHz,
-                GainDbi = band.GainDbi,
+                GainDbi = (double)(band.GainDbi ?? 0),
                 Pattern = band.GetPatternArray()
             });
         }
@@ -230,45 +230,45 @@ public partial class EditableBand : ObservableObject
     private double _frequencyMHz;
 
     [ObservableProperty]
-    private double _gainDbi;
+    private decimal? _gainDbi = 0;
 
     // Vertical radiation pattern - attenuation in dB at angles 0°, 10°, 20°... 90°
     [ObservableProperty]
-    private double _pattern0;  // 0° (horizon)
+    private decimal? _pattern0 = 0;  // 0° (horizon)
 
     [ObservableProperty]
-    private double _pattern10; // 10°
+    private decimal? _pattern10 = 0; // 10°
 
     [ObservableProperty]
-    private double _pattern20; // 20°
+    private decimal? _pattern20 = 0; // 20°
 
     [ObservableProperty]
-    private double _pattern30; // 30°
+    private decimal? _pattern30 = 0; // 30°
 
     [ObservableProperty]
-    private double _pattern40; // 40°
+    private decimal? _pattern40 = 0; // 40°
 
     [ObservableProperty]
-    private double _pattern50; // 50°
+    private decimal? _pattern50 = 0; // 50°
 
     [ObservableProperty]
-    private double _pattern60; // 60°
+    private decimal? _pattern60 = 0; // 60°
 
     [ObservableProperty]
-    private double _pattern70; // 70°
+    private decimal? _pattern70 = 0; // 70°
 
     [ObservableProperty]
-    private double _pattern80; // 80°
+    private decimal? _pattern80 = 0; // 80°
 
     [ObservableProperty]
-    private double _pattern90; // 90° (straight up)
+    private decimal? _pattern90 = 0; // 90° (straight up)
 
     /// <summary>
     /// Gets the pattern as an array for saving.
     /// </summary>
     public double[] GetPatternArray()
     {
-        return new[] { Pattern0, Pattern10, Pattern20, Pattern30, Pattern40,
-                       Pattern50, Pattern60, Pattern70, Pattern80, Pattern90 };
+        return new[] { (double)(Pattern0 ?? 0), (double)(Pattern10 ?? 0), (double)(Pattern20 ?? 0), (double)(Pattern30 ?? 0), (double)(Pattern40 ?? 0),
+                       (double)(Pattern50 ?? 0), (double)(Pattern60 ?? 0), (double)(Pattern70 ?? 0), (double)(Pattern80 ?? 0), (double)(Pattern90 ?? 0) };
     }
 }

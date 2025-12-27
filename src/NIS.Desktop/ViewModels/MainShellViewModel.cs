@@ -103,6 +103,10 @@ public partial class MainShellViewModel : ViewModelBase
     public void NavigateToConfigurationEditor(NIS.Core.Models.AntennaConfiguration? existing = null)
     {
         _configurationEditorViewModel = new ConfigurationEditorViewModel();
+
+        // Add project's custom antennas to the dropdown
+        _configurationEditorViewModel.AddProjectAntennas(ProjectViewModel.Project.CustomAntennas);
+
         if (existing != null)
         {
             var index = ProjectViewModel.Project.AntennaConfigurations.IndexOf(existing);
@@ -301,17 +305,26 @@ public partial class MainShellViewModel : ViewModelBase
         _antennaMasterEditorViewModel.NavigateBack = () => CurrentView = _configurationEditorViewModel;
         _antennaMasterEditorViewModel.OnSave = (antenna) =>
         {
-            // Add to config editor's antenna list if not already there
             if (_configurationEditorViewModel != null)
             {
+                // Find existing antenna in collection
                 var existingAntenna = _configurationEditorViewModel.Antennas.FirstOrDefault(a =>
                     a.Manufacturer.Equals(antenna.Manufacturer, StringComparison.OrdinalIgnoreCase) &&
                     a.Model.Equals(antenna.Model, StringComparison.OrdinalIgnoreCase));
-                if (existingAntenna == null)
+
+                if (existingAntenna != null)
                 {
-                    _configurationEditorViewModel.Antennas.Add(antenna);
+                    // Update existing and select it
+                    var index = _configurationEditorViewModel.Antennas.IndexOf(existingAntenna);
+                    _configurationEditorViewModel.Antennas[index] = antenna;
+                    _configurationEditorViewModel.SelectedAntenna = antenna;
                 }
-                _configurationEditorViewModel.SelectedAntenna = antenna;
+                else
+                {
+                    // Add new and select it
+                    _configurationEditorViewModel.Antennas.Add(antenna);
+                    _configurationEditorViewModel.SelectedAntenna = antenna;
+                }
             }
             CurrentView = _configurationEditorViewModel;
         };

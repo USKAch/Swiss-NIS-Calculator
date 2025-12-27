@@ -94,7 +94,7 @@ public partial class ProjectOverviewViewModel : ViewModelBase
         }
 
         var success = await _projectViewModel.SaveProjectAsync();
-        StatusMessage = success ? "Project saved" : "Failed to save project";
+        StatusMessage = success ? "Project saved" : "Could not save project. Please check file permissions.";
     }
 
     [RelayCommand]
@@ -116,7 +116,7 @@ public partial class ProjectOverviewViewModel : ViewModelBase
         if (file != null)
         {
             var success = await _projectViewModel.SaveProjectAsync(file.Path.LocalPath);
-            StatusMessage = success ? $"Project saved to {file.Name}" : "Failed to save project";
+            StatusMessage = success ? $"Project saved to {file.Name}" : "Could not save project. Please check file permissions.";
         }
     }
 

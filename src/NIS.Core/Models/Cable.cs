@@ -80,4 +80,9 @@ public class Cable
         double attenuationPer100m = GetAttenuationAt(frequencyMHz);
         return attenuationPer100m * lengthMeters / 100.0;
     }
+
+    /// <summary>
+    /// Returns Name for text search in ComboBox.
+    /// </summary>
+    public override string ToString() => Name;
 }

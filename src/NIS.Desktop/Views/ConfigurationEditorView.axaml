@@ -26,10 +26,11 @@
                     <StackPanel Spacing="12">
                         <TextBlock Text="Antenna" FontWeight="Bold" FontSize="16"/>
 
-                        <Grid ColumnDefinitions="100,*,Auto,Auto" RowDefinitions="Auto,Auto,Auto" RowSpacing="8" ColumnSpacing="10">
+                        <Grid ColumnDefinitions="100,*,Auto,Auto" RowDefinitions="Auto,Auto" RowSpacing="8" ColumnSpacing="10">
                             <TextBlock Text="Antenna:" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <ComboBox Grid.Column="1" ItemsSource="{Binding Antennas}"
-                                      SelectedItem="{Binding SelectedAntenna}" HorizontalAlignment="Stretch">
+                                      SelectedItem="{Binding SelectedAntenna}" HorizontalAlignment="Stretch"
+                                      IsTextSearchEnabled="True">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding DisplayName}"/>
@@ -39,26 +40,16 @@
                             <Button Grid.Column="2" Content="Edit" Command="{Binding EditAntennaCommand}"
                                     IsEnabled="{Binding SelectedAntenna, Converter={x:Static ObjectConverters.IsNotNull}}"
                                     Padding="10,5"/>
-                            <Button Grid.Column="3" Content="+ Add" Command="{Binding AddAntennaCommand}"
+                            <Button Grid.Column="3" Content="New" Command="{Binding AddAntennaCommand}"
                                     Background="#4CAF50" Foreground="White" Padding="10,5"/>
 
                             <TextBlock Grid.Row="1" Text="Height:" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="5">
-                                <NumericUpDown Value="{Binding HeightMeters}"
-                                               Minimum="0" Maximum="100" Increment="0.5" Width="120"/>
+                                <NumericUpDown Value="{Binding HeightMeters}" ShowButtonSpinner="False"
+                                               Minimum="0" Maximum="100" Increment="0.5" Width="100"/>
                                 <TextBlock Text="m" VerticalAlignment="Center"/>
                             </StackPanel>
 
-                            <TextBlock Grid.Row="2" Text="Polarization:" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                            <StackPanel Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="15">
-                                <RadioButton Content="Horizontal" IsChecked="{Binding IsHorizontallyRotatable}" GroupName="Polarization"/>
-                                <RadioButton Content="Vertical" IsChecked="{Binding IsVerticallyRotatable}" GroupName="Polarization"/>
-                                <NumericUpDown Value="{Binding HorizontalAngleDegrees}"
-                                               IsVisible="{Binding IsHorizontallyRotatable}"
-                                               Minimum="0" Maximum="360" Increment="10" Width="130"/>
-                                <TextBlock Text="deg (information only)" VerticalAlignment="Center" Foreground="#666"
-                                           IsVisible="{Binding IsHorizontallyRotatable}"/>
-                            </StackPanel>
                         </Grid>
 
                         <!-- Antenna Bands Display -->
@@ -94,7 +85,8 @@
                         <Grid ColumnDefinitions="100,*,Auto,Auto" RowDefinitions="Auto" ColumnSpacing="10">
                             <TextBlock Text="Radio:" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <ComboBox Grid.Column="1" ItemsSource="{Binding Radios}"
-                                      SelectedItem="{Binding SelectedRadio}" HorizontalAlignment="Stretch">
+                                      SelectedItem="{Binding SelectedRadio}" HorizontalAlignment="Stretch"
+                                      IsTextSearchEnabled="True">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock>
@@ -112,7 +104,7 @@
                             <Button Grid.Column="2" Content="Edit" Command="{Binding EditRadioCommand}"
                                     IsEnabled="{Binding SelectedRadio, Converter={x:Static ObjectConverters.IsNotNull}}"
                                     Padding="10,5"/>
-                            <Button Grid.Column="3" Content="+ Add" Command="{Binding AddRadioCommand}"
+                            <Button Grid.Column="3" Content="New" Command="{Binding AddRadioCommand}"
                                     Background="#4CAF50" Foreground="White" Padding="10,5"/>
                         </Grid>
 
@@ -127,8 +119,8 @@
                         <!-- Power -->
                         <Grid ColumnDefinitions="100,150,Auto" ColumnSpacing="10">
                             <TextBlock Text="Power:" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                            <NumericUpDown Grid.Column="1" Value="{Binding PowerWatts}"
-                                           Minimum="1" Maximum="10000" Increment="10"/>
+                            <NumericUpDown Grid.Column="1" Value="{Binding PowerWatts}" ShowButtonSpinner="False"
+                                           Minimum="1" Maximum="10000" Increment="10" Width="100"/>
                             <TextBlock Grid.Column="2" Text="W" VerticalAlignment="Center"/>
                         </Grid>
                     </StackPanel>
@@ -142,7 +134,8 @@
                         <Grid ColumnDefinitions="100,*,Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="8" ColumnSpacing="10">
                             <TextBlock Text="Cable:" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <ComboBox Grid.Column="1" ItemsSource="{Binding Cables}"
-                                      SelectedItem="{Binding SelectedCable}" HorizontalAlignment="Stretch">
+                                      SelectedItem="{Binding SelectedCable}" HorizontalAlignment="Stretch"
+                                      IsTextSearchEnabled="True">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding Name}"/>
@@ -152,20 +145,20 @@
                             <Button Grid.Column="2" Content="Edit" Command="{Binding EditCableCommand}"
                                     IsEnabled="{Binding SelectedCable, Converter={x:Static ObjectConverters.IsNotNull}}"
                                     Padding="10,5"/>
-                            <Button Grid.Column="3" Content="+ Add" Command="{Binding AddCableCommand}"
+                            <Button Grid.Column="3" Content="New" Command="{Binding AddCableCommand}"
                                     Background="#4CAF50" Foreground="White" Padding="10,5"/>
 
                             <TextBlock Grid.Row="1" Text="Length:" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="5">
-                                <NumericUpDown Value="{Binding CableLengthMeters}"
-                                               Minimum="0" Maximum="500" Increment="1" Width="120"/>
+                                <NumericUpDown Value="{Binding CableLengthMeters}" ShowButtonSpinner="False"
+                                               Minimum="0" Maximum="500" Increment="1" Width="100"/>
                                 <TextBlock Text="m" VerticalAlignment="Center"/>
                             </StackPanel>
 
                             <TextBlock Grid.Row="2" Text="Add. Loss:" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <StackPanel Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="5">
-                                <NumericUpDown Value="{Binding AdditionalLossDb}"
-                                               Minimum="0" Maximum="20" Increment="0.5" Width="120"/>
+                                <NumericUpDown Value="{Binding AdditionalLossDb}" ShowButtonSpinner="False"
+                                               Minimum="0" Maximum="20" Increment="0.5" Width="100"/>
                                 <TextBlock Text="dB" VerticalAlignment="Center"/>
                             </StackPanel>
 
@@ -190,8 +183,8 @@
 
                             <TextBlock Grid.Row="1" Text="Activity:" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="5">
-                                <NumericUpDown Value="{Binding ActivityFactor}"
-                                               Minimum="0" Maximum="1" Increment="0.1" Width="130"
+                                <NumericUpDown Value="{Binding ActivityFactor}" ShowButtonSpinner="False"
+                                               Minimum="0" Maximum="1" Increment="0.1" Width="100"
                                                FormatString="0.0"/>
                                 <TextBlock Text="(default 0.5)" VerticalAlignment="Center" Foreground="#666"/>
                             </StackPanel>
@@ -214,15 +207,15 @@
 
                             <TextBlock Grid.Row="1" Text="Distance:" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="5">
-                                <NumericUpDown Value="{Binding OkaDistanceMeters}"
-                                               Minimum="0.1" Maximum="1000" Increment="0.5" Width="120"/>
+                                <NumericUpDown Value="{Binding OkaDistanceMeters}" ShowButtonSpinner="False"
+                                               Minimum="0.1" Maximum="1000" Increment="0.5" Width="100"/>
                                 <TextBlock Text="m" VerticalAlignment="Center"/>
                             </StackPanel>
 
                             <TextBlock Grid.Row="2" Text="Damping:" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Spacing="5">
-                                <NumericUpDown Value="{Binding OkaBuildingDampingDb}"
-                                               Minimum="0" Maximum="30" Increment="1" Width="120"/>
+                                <NumericUpDown Value="{Binding OkaBuildingDampingDb}" ShowButtonSpinner="False"
+                                               Minimum="0" Maximum="30" Increment="1" Width="100"/>
                                 <TextBlock Text="dB (building attenuation)" VerticalAlignment="Center" Foreground="#666"/>
                             </StackPanel>
                         </Grid>

@@ -18,58 +18,58 @@ public partial class EditableBandItem : ObservableObject
     private double _frequencyMHz = 14;
 
     [ObservableProperty]
-    private double _gainDbi = 0;
+    private decimal? _gainDbi = 0;
 
     [ObservableProperty]
-    private double _pattern0;
+    private decimal? _pattern0 = 0;
 
     [ObservableProperty]
-    private double _pattern10;
+    private decimal? _pattern10 = 0;
 
     [ObservableProperty]
-    private double _pattern20;
+    private decimal? _pattern20 = 0;
 
     [ObservableProperty]
-    private double _pattern30;
+    private decimal? _pattern30 = 0;
 
     [ObservableProperty]
-    private double _pattern40;
+    private decimal? _pattern40 = 0;
 
     [ObservableProperty]
-    private double _pattern50;
+    private decimal? _pattern50 = 0;
 
     [ObservableProperty]
-    private double _pattern60;
+    private decimal? _pattern60 = 0;
 
     [ObservableProperty]
-    private double _pattern70;
+    private decimal? _pattern70 = 0;
 
     [ObservableProperty]
-    private double _pattern80;
+    private decimal? _pattern80 = 0;
 
     [ObservableProperty]
-    private double _pattern90;
+    private decimal? _pattern90 = 0;
 
     public double[] GetPatternArray()
     {
-        return new[] { Pattern0, Pattern10, Pattern20, Pattern30, Pattern40,
-                       Pattern50, Pattern60, Pattern70, Pattern80, Pattern90 };
+        return new[] { (double)(Pattern0 ?? 0), (double)(Pattern10 ?? 0), (double)(Pattern20 ?? 0), (double)(Pattern30 ?? 0), (double)(Pattern40 ?? 0),
+                       (double)(Pattern50 ?? 0), (double)(Pattern60 ?? 0), (double)(Pattern70 ?? 0), (double)(Pattern80 ?? 0), (double)(Pattern90 ?? 0) };
     }
 
     public void SetPatternFromArray(double[]? pattern)
     {
         if (pattern == null || pattern.Length == 0) return;
 
-        Pattern0 = pattern.Length > 0 ? pattern[0] : 0;
-        Pattern10 = pattern.Length > 1 ? pattern[1] : 0;
-        Pattern20 = pattern.Length > 2 ? pattern[2] : 0;
-        Pattern30 = pattern.Length > 3 ? pattern[3] : 0;
-        Pattern40 = pattern.Length > 4 ? pattern[4] : 0;
-        Pattern50 = pattern.Length > 5 ? pattern[5] : 0;
-        Pattern60 = pattern.Length > 6 ? pattern[6] : 0;
-        Pattern70 = pattern.Length > 7 ? pattern[7] : 0;
-        Pattern80 = pattern.Length > 8 ? pattern[8] : 0;
-        Pattern90 = pattern.Length > 9 ? pattern[9] : 0;
+        Pattern0 = pattern.Length > 0 ? (decimal)pattern[0] : 0;
+        Pattern10 = pattern.Length > 1 ? (decimal)pattern[1] : 0;
+        Pattern20 = pattern.Length > 2 ? (decimal)pattern[2] : 0;
+        Pattern30 = pattern.Length > 3 ? (decimal)pattern[3] : 0;
+        Pattern40 = pattern.Length > 4 ? (decimal)pattern[4] : 0;
+        Pattern50 = pattern.Length > 5 ? (decimal)pattern[5] : 0;
+        Pattern60 = pattern.Length > 6 ? (decimal)pattern[6] : 0;
+        Pattern70 = pattern.Length > 7 ? (decimal)pattern[7] : 0;
+        Pattern80 = pattern.Length > 8 ? (decimal)pattern[8] : 0;
+        Pattern90 = pattern.Length > 9 ? (decimal)pattern[9] : 0;
     }
 
     public AntennaBand ToBand()
@@ -77,7 +77,7 @@ public partial class EditableBandItem : ObservableObject
         return new AntennaBand
         {
             FrequencyMHz = FrequencyMHz,
-            GainDbi = GainDbi,
+            GainDbi = (double)(GainDbi ?? 0),
             Pattern = GetPatternArray()
         };
     }
@@ -87,7 +87,7 @@ public partial class EditableBandItem : ObservableObject
         var item = new EditableBandItem
         {
             FrequencyMHz = band.FrequencyMHz,
-            GainDbi = band.GainDbi
+            GainDbi = (decimal)band.GainDbi
         };
         item.SetPatternFromArray(band.Pattern);
         return item;
@@ -122,7 +122,32 @@ public partial class AntennaMasterEditorViewModel : ViewModelBase
     [ObservableProperty]
     private bool _isRotatable = true;
 
+    [ObservableProperty]
+    private bool _isHorizontallyPolarized = true;
+
+    [ObservableProperty]
+    private double _horizontalAngleDegrees = 360;
+
+    public bool IsVerticallyPolarized
+    {
+        get => !IsHorizontallyPolarized;
+        set => IsHorizontallyPolarized = !value;
+    }
+
+    partial void OnIsHorizontallyPolarizedChanged(bool value)
+    {
+        OnPropertyChanged(nameof(IsVerticallyPolarized));
+        // Vertical antennas cannot be rotatable
+        if (!value)
+        {
+            IsRotatable = false;
+        }
+    }
+
     public ObservableCollection<EditableBandItem> Bands { get; } = new();
+
+    [ObservableProperty]
+    private string _validationMessage = string.Empty;
 
     public string Title => IsEditing ? "Edit Antenna" : "Add New Antenna";
 
@@ -136,6 +161,8 @@ public partial class AntennaMasterEditorViewModel : ViewModelBase
         Manufacturer = string.Empty;
         Model = string.Empty;
         IsRotatable = true;
+        IsHorizontallyPolarized = true;
+        HorizontalAngleDegrees = 360;
         Bands.Clear();
 
         // Add a default band
@@ -152,6 +179,8 @@ public partial class AntennaMasterEditorViewModel : ViewModelBase
         Manufacturer = antenna.Manufacturer;
         Model = antenna.Model;
         IsRotatable = antenna.IsRotatable;
+        IsHorizontallyPolarized = antenna.IsHorizontallyPolarized;
+        HorizontalAngleDegrees = antenna.HorizontalAngleDegrees;
 
         Bands.Clear();
         foreach (var band in antenna.Bands)
@@ -183,8 +212,50 @@ public partial class AntennaMasterEditorViewModel : ViewModelBase
     [RelayCommand]
     private void Save()
     {
-        if (string.IsNullOrWhiteSpace(Manufacturer) || string.IsNullOrWhiteSpace(Model))
+        ValidationMessage = string.Empty;
+
+        if (string.IsNullOrWhiteSpace(Manufacturer))
         {
+            ValidationMessage = "Please enter a manufacturer.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(Model))
+        {
+            ValidationMessage = "Please enter a model.";
+            return;
+        }
+
+        if (Bands.Count == 0)
+        {
+            ValidationMessage = "Please add at least one frequency band.";
+            return;
+        }
+
+        // Validate bands
+        foreach (var band in Bands)
+        {
+            if (band.GainDbi < -20 || band.GainDbi > 50)
+            {
+                ValidationMessage = $"Gain for {band.FrequencyMHz} MHz must be between -20 and 50 dBi.";
+                return;
+            }
+
+            // Check pattern values (attenuation should be 0-60 dB)
+            var pattern = band.GetPatternArray();
+            for (int i = 0; i < pattern.Length; i++)
+            {
+                if (pattern[i] < 0 || pattern[i] > 60)
+                {
+                    ValidationMessage = $"Pattern attenuation values must be between 0 and 60 dB.";
+                    return;
+                }
+            }
+        }
+
+        if (IsRotatable && (HorizontalAngleDegrees < 0 || HorizontalAngleDegrees > 360))
+        {
+            ValidationMessage = "Rotation angle must be between 0 and 360 degrees.";
             return;
         }
 
@@ -193,6 +264,8 @@ public partial class AntennaMasterEditorViewModel : ViewModelBase
             Manufacturer = Manufacturer.Trim(),
             Model = Model.Trim(),
             IsRotatable = IsRotatable,
+            IsHorizontallyPolarized = IsHorizontallyPolarized,
+            HorizontalAngleDegrees = HorizontalAngleDegrees,
             Bands = Bands.Select(b => b.ToBand()).ToList()
         };
 

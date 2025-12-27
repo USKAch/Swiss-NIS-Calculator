@@ -262,7 +262,7 @@ public partial class ResultsViewModel : ViewModelBase
     {
         if (StorageProvider == null || _project == null)
         {
-            StatusMessage = "Cannot export: storage provider not available";
+            StatusMessage = "Cannot export. Please save the project first.";
             return;
         }
 

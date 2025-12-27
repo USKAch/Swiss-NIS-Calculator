@@ -28,6 +28,9 @@ public partial class RadioMasterEditorViewModel : ViewModelBase
     [ObservableProperty]
     private double _maxPowerWatts = 100;
 
+    [ObservableProperty]
+    private string _validationMessage = string.Empty;
+
     public string Title => IsEditing ? "Edit Radio" : "Add New Radio";
 
     /// <summary>
@@ -57,8 +60,23 @@ public partial class RadioMasterEditorViewModel : ViewModelBase
     [RelayCommand]
     private void Save()
     {
-        if (string.IsNullOrWhiteSpace(Manufacturer) || string.IsNullOrWhiteSpace(Model))
+        ValidationMessage = string.Empty;
+
+        if (string.IsNullOrWhiteSpace(Manufacturer))
         {
+            ValidationMessage = "Please enter a manufacturer.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(Model))
+        {
+            ValidationMessage = "Please enter a model.";
+            return;
+        }
+
+        if (MaxPowerWatts <= 0)
+        {
+            ValidationMessage = "Power must be greater than 0 W.";
             return;
         }
 

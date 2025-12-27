@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
@@ -69,6 +70,30 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
     public ObservableCollection<Antenna> Antennas { get; }
     public ObservableCollection<Cable> Cables { get; }
     public ObservableCollection<Radio> Radios { get; }
+
+    /// <summary>
+    /// Add project's custom antennas to the dropdown list.
+    /// </summary>
+    public void AddProjectAntennas(IEnumerable<Antenna> projectAntennas)
+    {
+        foreach (var antenna in projectAntennas)
+        {
+            var exists = Antennas.Any(a =>
+                a.Manufacturer.Equals(antenna.Manufacturer, StringComparison.OrdinalIgnoreCase) &&
+                a.Model.Equals(antenna.Model, StringComparison.OrdinalIgnoreCase));
+            if (!exists)
+            {
+                Antennas.Add(antenna);
+            }
+        }
+        // Re-sort after adding
+        var sorted = Antennas.OrderBy(a => a.DisplayName).ToList();
+        Antennas.Clear();
+        foreach (var a in sorted)
+        {
+            Antennas.Add(a);
+        }
+    }
 
     // Configuration Number (1-based)
     [ObservableProperty]
@@ -190,10 +215,10 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
         AdditionalLossDb = config.Cable.AdditionalLossDb;
         AdditionalLossDescription = config.Cable.AdditionalLossDescription;
 
-        // Antenna
+        // Antenna - use case-insensitive comparison
         SelectedAntenna = Antennas.FirstOrDefault(a =>
-            a.Manufacturer == config.Antenna.Manufacturer &&
-            a.Model == config.Antenna.Model);
+            a.Manufacturer.Equals(config.Antenna.Manufacturer, StringComparison.OrdinalIgnoreCase) &&
+            a.Model.Equals(config.Antenna.Model, StringComparison.OrdinalIgnoreCase));
         HeightMeters = config.Antenna.HeightMeters;
         IsHorizontallyRotatable = config.Antenna.IsHorizontallyRotatable;
         HorizontalAngleDegrees = config.Antenna.HorizontalAngleDegrees;

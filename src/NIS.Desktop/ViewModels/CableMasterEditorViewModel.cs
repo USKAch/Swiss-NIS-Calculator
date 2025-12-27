@@ -73,6 +73,9 @@ public partial class CableMasterEditorViewModel : ViewModelBase
     [ObservableProperty]
     private double? _atten10000;
 
+    [ObservableProperty]
+    private string _validationMessage = string.Empty;
+
     public string Title => IsEditing ? "Edit Cable" : "Add New Cable";
 
     /// <summary>
@@ -175,8 +178,11 @@ public partial class CableMasterEditorViewModel : ViewModelBase
     [RelayCommand]
     private void Save()
     {
+        ValidationMessage = string.Empty;
+
         if (string.IsNullOrWhiteSpace(Name))
         {
+            ValidationMessage = "Please enter a cable name.";
             return;
         }
 

@@ -76,6 +76,18 @@ public class Antenna
     public bool IsRotatable { get; set; }
 
     /// <summary>
+    /// Whether the antenna is horizontally polarized.
+    /// </summary>
+    [JsonPropertyName("isHorizontallyPolarized")]
+    public bool IsHorizontallyPolarized { get; set; } = true;
+
+    /// <summary>
+    /// Horizontal rotation angle in degrees (information only, not used in calculation).
+    /// </summary>
+    [JsonPropertyName("horizontalAngleDegrees")]
+    public double HorizontalAngleDegrees { get; set; } = 360;
+
+    /// <summary>
     /// Frequency bands supported by this antenna with gain and pattern data.
     /// </summary>
     [JsonPropertyName("bands")]
@@ -118,6 +130,11 @@ public class Antenna
     /// </summary>
     [JsonIgnore]
     public string DisplayName => $"{Manufacturer} {Model}".Trim();
+
+    /// <summary>
+    /// Returns DisplayName for text search in ComboBox.
+    /// </summary>
+    public override string ToString() => DisplayName;
 
     /// <summary>
     /// Gets the band data for a specific frequency, or null if not supported.
