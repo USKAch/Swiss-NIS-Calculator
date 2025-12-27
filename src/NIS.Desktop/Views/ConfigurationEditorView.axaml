@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:NIS.Desktop.ViewModels"
+             xmlns:loc="using:NIS.Desktop.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="780" d:DesignHeight="900"
@@ -24,26 +25,27 @@
                 <!-- Antenna Section (first, most important) -->
                 <Border Background="#F5F5F5" CornerRadius="8" Padding="15">
                     <StackPanel Spacing="12">
-                        <TextBlock Text="Antenna" FontWeight="Bold" FontSize="16"/>
+                        <TextBlock Text="{Binding Antenna, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
 
                         <Grid ColumnDefinitions="100,*,Auto,Auto" RowDefinitions="Auto,Auto" RowSpacing="8" ColumnSpacing="10">
-                            <TextBlock Text="Antenna:" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding Antenna, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <ComboBox Grid.Column="1" ItemsSource="{Binding Antennas}"
                                       SelectedItem="{Binding SelectedAntenna}" HorizontalAlignment="Stretch"
-                                      IsTextSearchEnabled="True">
+                                      IsTextSearchEnabled="True"
+                                      PlaceholderText="{Binding SelectAntenna, Source={x:Static loc:Strings.Instance}}">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding DisplayName}"/>
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
-                            <Button Grid.Column="2" Content="Edit" Command="{Binding EditAntennaCommand}"
+                            <Button Grid.Column="2" Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Command="{Binding EditAntennaCommand}"
                                     IsEnabled="{Binding SelectedAntenna, Converter={x:Static ObjectConverters.IsNotNull}}"
                                     Padding="10,5"/>
-                            <Button Grid.Column="3" Content="New" Command="{Binding AddAntennaCommand}"
+                            <Button Grid.Column="3" Content="{Binding New, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddAntennaCommand}"
                                     Background="#4CAF50" Foreground="White" Padding="10,5"/>
 
-                            <TextBlock Grid.Row="1" Text="Height:" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="1" Text="{Binding Height, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="5">
                                 <NumericUpDown Value="{Binding HeightMeters}" ShowButtonSpinner="False"
                                                Minimum="0" Maximum="100" Increment="0.5" Width="100"/>
@@ -56,7 +58,7 @@
                         <Border Background="White" CornerRadius="4" Padding="10" Margin="0,8,0,0"
                                 IsVisible="{Binding SelectedAntenna, Converter={x:Static ObjectConverters.IsNotNull}}">
                             <StackPanel Spacing="8">
-                                <TextBlock Text="Frequency Bands:" FontWeight="SemiBold" FontSize="12"/>
+                                <TextBlock Text="{Binding FrequencyBands, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" FontSize="12"/>
                                 <ItemsControl ItemsSource="{Binding SelectedAntenna.Bands}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
@@ -79,14 +81,15 @@
                 <!-- Transmitter Section -->
                 <Border Background="#F5F5F5" CornerRadius="8" Padding="15">
                     <StackPanel Spacing="12">
-                        <TextBlock Text="Transmitter" FontWeight="Bold" FontSize="16"/>
+                        <TextBlock Text="{Binding Transmitter, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
 
                         <!-- Radio -->
                         <Grid ColumnDefinitions="100,*,Auto,Auto" RowDefinitions="Auto" ColumnSpacing="10">
-                            <TextBlock Text="Radio:" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding Radio, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <ComboBox Grid.Column="1" ItemsSource="{Binding Radios}"
                                       SelectedItem="{Binding SelectedRadio}" HorizontalAlignment="Stretch"
-                                      IsTextSearchEnabled="True">
+                                      IsTextSearchEnabled="True"
+                                      PlaceholderText="{Binding SelectRadio, Source={x:Static loc:Strings.Instance}}">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock>
@@ -101,24 +104,24 @@
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
-                            <Button Grid.Column="2" Content="Edit" Command="{Binding EditRadioCommand}"
+                            <Button Grid.Column="2" Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Command="{Binding EditRadioCommand}"
                                     IsEnabled="{Binding SelectedRadio, Converter={x:Static ObjectConverters.IsNotNull}}"
                                     Padding="10,5"/>
-                            <Button Grid.Column="3" Content="New" Command="{Binding AddRadioCommand}"
+                            <Button Grid.Column="3" Content="{Binding New, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddRadioCommand}"
                                     Background="#4CAF50" Foreground="White" Padding="10,5"/>
                         </Grid>
 
                         <!-- Linear (optional) -->
-                        <CheckBox Content="Use Linear Amplifier" IsChecked="{Binding HasLinear}"/>
+                        <CheckBox Content="{Binding UseLinearAmplifier, Source={x:Static loc:Strings.Instance}}" IsChecked="{Binding HasLinear}"/>
                         <Grid ColumnDefinitions="100,*,*" IsVisible="{Binding HasLinear}" ColumnSpacing="10">
-                            <TextBlock Text="Linear:" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                            <TextBox Grid.Column="1" Text="{Binding LinearManufacturer}" Watermark="Manufacturer"/>
-                            <TextBox Grid.Column="2" Text="{Binding LinearModel}" Watermark="Model"/>
+                            <TextBlock Text="{Binding Linear, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <TextBox Grid.Column="1" Text="{Binding LinearManufacturer}" Watermark="{Binding Manufacturer, Source={x:Static loc:Strings.Instance}}"/>
+                            <TextBox Grid.Column="2" Text="{Binding LinearModel}" Watermark="{Binding Model, Source={x:Static loc:Strings.Instance}}"/>
                         </Grid>
 
                         <!-- Power -->
                         <Grid ColumnDefinitions="100,150,Auto" ColumnSpacing="10">
-                            <TextBlock Text="Power:" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding Power, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <NumericUpDown Grid.Column="1" Value="{Binding PowerWatts}" ShowButtonSpinner="False"
                                            Minimum="1" Maximum="10000" Increment="10" Width="100"/>
                             <TextBlock Grid.Column="2" Text="W" VerticalAlignment="Center"/>
@@ -129,42 +132,43 @@
                 <!-- Feed Line Section -->
                 <Border Background="#F5F5F5" CornerRadius="8" Padding="15">
                     <StackPanel Spacing="12">
-                        <TextBlock Text="Feed Line" FontWeight="Bold" FontSize="16"/>
+                        <TextBlock Text="{Binding FeedLine, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
 
                         <Grid ColumnDefinitions="100,*,Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="8" ColumnSpacing="10">
-                            <TextBlock Text="Cable:" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding Cable, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <ComboBox Grid.Column="1" ItemsSource="{Binding Cables}"
                                       SelectedItem="{Binding SelectedCable}" HorizontalAlignment="Stretch"
-                                      IsTextSearchEnabled="True">
+                                      IsTextSearchEnabled="True"
+                                      PlaceholderText="{Binding SelectCable, Source={x:Static loc:Strings.Instance}}">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding Name}"/>
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
-                            <Button Grid.Column="2" Content="Edit" Command="{Binding EditCableCommand}"
+                            <Button Grid.Column="2" Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Command="{Binding EditCableCommand}"
                                     IsEnabled="{Binding SelectedCable, Converter={x:Static ObjectConverters.IsNotNull}}"
                                     Padding="10,5"/>
-                            <Button Grid.Column="3" Content="New" Command="{Binding AddCableCommand}"
+                            <Button Grid.Column="3" Content="{Binding New, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddCableCommand}"
                                     Background="#4CAF50" Foreground="White" Padding="10,5"/>
 
-                            <TextBlock Grid.Row="1" Text="Length:" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="1" Text="{Binding CableLength, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="5">
                                 <NumericUpDown Value="{Binding CableLengthMeters}" ShowButtonSpinner="False"
                                                Minimum="0" Maximum="500" Increment="1" Width="100"/>
                                 <TextBlock Text="m" VerticalAlignment="Center"/>
                             </StackPanel>
 
-                            <TextBlock Grid.Row="2" Text="Add. Loss:" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="2" Text="{Binding AdditionalLoss, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <StackPanel Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" Orientation="Horizontal" Spacing="5">
                                 <NumericUpDown Value="{Binding AdditionalLossDb}" ShowButtonSpinner="False"
                                                Minimum="0" Maximum="20" Increment="0.5" Width="100"/>
                                 <TextBlock Text="dB" VerticalAlignment="Center"/>
                             </StackPanel>
 
-                            <TextBlock Grid.Row="3" Text="Description:" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="3" Text="{Binding LossDescription, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <TextBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding AdditionalLossDescription}"
-                                     Watermark="e.g. Connectors, switch"/>
+                                     Watermark="{Binding AdditionalLossExample, Source={x:Static loc:Strings.Instance}}"/>
                         </Grid>
                     </StackPanel>
                 </Border>
@@ -172,25 +176,25 @@
                 <!-- Operating Parameters Section -->
                 <Border Background="#F5F5F5" CornerRadius="8" Padding="15">
                     <StackPanel Spacing="12">
-                        <TextBlock Text="Operating Parameters" FontWeight="Bold" FontSize="16"/>
+                        <TextBlock Text="{Binding OperatingParameters, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
 
                         <Grid ColumnDefinitions="100,*" RowDefinitions="Auto,Auto" RowSpacing="8" ColumnSpacing="10">
-                            <TextBlock Text="Modulation:" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding Modulation, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <ComboBox Grid.Column="1"
                                       ItemsSource="{Binding ModulationOptions}"
                                       SelectedIndex="{Binding SelectedModulationIndex}"
                                       HorizontalAlignment="Left" Width="150"/>
 
-                            <TextBlock Grid.Row="1" Text="Activity:" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="1" Text="{Binding ActivityFactor, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="5">
                                 <NumericUpDown Value="{Binding ActivityFactor}" ShowButtonSpinner="False"
                                                Minimum="0" Maximum="1" Increment="0.1" Width="100"
                                                FormatString="0.0"/>
-                                <TextBlock Text="(default 0.5)" VerticalAlignment="Center" Foreground="#666"/>
+                                <TextBlock Text="{Binding ActivityFactorHint, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" Foreground="#666"/>
                             </StackPanel>
                         </Grid>
 
-                        <TextBlock Text="These parameters apply to all bands of the selected antenna."
+                        <TextBlock Text="{Binding ParametersApplyToAllBands, Source={x:Static loc:Strings.Instance}}"
                                    Foreground="#666" FontSize="11" FontStyle="Italic"/>
                     </StackPanel>
                 </Border>
@@ -198,29 +202,29 @@
                 <!-- OKA Section -->
                 <Border Background="#F5F5F5" CornerRadius="8" Padding="15">
                     <StackPanel Spacing="12">
-                        <TextBlock Text="Evaluation Point (OKA)" FontWeight="Bold" FontSize="16"/>
+                        <TextBlock Text="{Binding EvaluationPoint, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
 
                         <Grid ColumnDefinitions="100,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="8" ColumnSpacing="10">
-                            <TextBlock Text="Name:" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding OkaName, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <TextBox Grid.Column="1" Text="{Binding OkaName}"
-                                     Watermark="e.g. Neighbor's balcony"/>
+                                     Watermark="{Binding OkaNameExample, Source={x:Static loc:Strings.Instance}}"/>
 
-                            <TextBlock Grid.Row="1" Text="Distance:" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="1" Text="{Binding OkaDistance, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="5">
                                 <NumericUpDown Value="{Binding OkaDistanceMeters}" ShowButtonSpinner="False"
                                                Minimum="0.1" Maximum="1000" Increment="0.5" Width="100"/>
                                 <TextBlock Text="m" VerticalAlignment="Center"/>
                             </StackPanel>
 
-                            <TextBlock Grid.Row="2" Text="Damping:" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="2" Text="{Binding OkaDamping, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Spacing="5">
                                 <NumericUpDown Value="{Binding OkaBuildingDampingDb}" ShowButtonSpinner="False"
                                                Minimum="0" Maximum="30" Increment="1" Width="100"/>
-                                <TextBlock Text="dB (building attenuation)" VerticalAlignment="Center" Foreground="#666"/>
+                                <TextBlock Text="{Binding OkaDampingHint, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" Foreground="#666"/>
                             </StackPanel>
                         </Grid>
 
-                        <TextBlock Text="OKA = Ort des kurzfristigen Aufenthalts (place of short-term stay)"
+                        <TextBlock Text="{Binding OkaExplanation, Source={x:Static loc:Strings.Instance}}"
                                    Foreground="#666" FontSize="11" FontStyle="Italic"/>
                     </StackPanel>
                 </Border>
@@ -231,8 +235,8 @@
         <!-- Buttons -->
         <Border Grid.Row="2" Background="#F5F5F5" Padding="20,15">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
-                <Button Content="Cancel" Command="{Binding CancelCommand}" Padding="20,10"/>
-                <Button Content="Save" Command="{Binding SaveCommand}"
+                <Button Content="{Binding Cancel, Source={x:Static loc:Strings.Instance}}" Command="{Binding CancelCommand}" Padding="20,10"/>
+                <Button Content="{Binding Save, Source={x:Static loc:Strings.Instance}}" Command="{Binding SaveCommand}"
                         Background="#4CAF50" Foreground="White" Padding="20,10"/>
             </StackPanel>
         </Border>

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using NIS.Desktop.Localization;
 
 namespace NIS.Desktop.ViewModels;
 
@@ -44,6 +45,7 @@ public partial class WelcomeViewModel : ViewModelBase
     private void SelectLanguage(string language)
     {
         SelectedLanguage = language;
+        Strings.Instance.Language = language;
     }
 
     [RelayCommand]

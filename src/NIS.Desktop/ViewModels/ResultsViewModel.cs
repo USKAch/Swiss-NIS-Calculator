@@ -10,6 +10,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NIS.Core.Data;
 using NIS.Core.Models;
+using NIS.Core.Services;
 
 namespace NIS.Desktop.ViewModels;
 
@@ -74,6 +75,7 @@ public partial class ResultsViewModel : ViewModelBase
 {
     private readonly AntennaDatabase _antennaDatabase = new();
     private readonly CableDatabase _cableDatabase = new();
+    private readonly FieldStrengthCalculator _calculator = new();
     private Project? _project;
 
     // Storage provider for file dialogs (set by view)
@@ -178,82 +180,49 @@ public partial class ResultsViewModel : ViewModelBase
 
     private BandResult CalculateBand(AntennaConfiguration config, AntennaBand band, Cable? cable)
     {
-        double power = config.PowerWatts;
-        double modulationFactor = config.ModulationFactor;
-        double activityFactor = config.ActivityFactor;
-        double distance = config.OkaDistanceMeters;
-        double buildingDamping = config.OkaBuildingDampingDb;
+        double distance = Math.Max(config.OkaDistanceMeters, 0.001); // Guard against division by zero
         double frequencyMHz = band.FrequencyMHz;
-
-        // Mean power: Pm = P × AF × MF
-        double meanPower = power * modulationFactor * activityFactor;
 
         // Cable loss calculation
         double cableLossDb = cable?.CalculateLoss(config.Cable.LengthMeters, frequencyMHz) ?? 0;
-        double additionalLossDb = config.Cable.AdditionalLossDb;
-        double totalLossDb = cableLossDb + additionalLossDb;
-
-        // Antenna gain and vertical attenuation
-        double gainDbi = band.GainDbi;
 
         // Calculate vertical angle to OKA based on antenna height and distance
         double antennaHeight = config.Antenna.HeightMeters;
         double verticalAngle = Math.Atan(antennaHeight / distance) * 180 / Math.PI;
         double verticalAttenuation = band.GetAttenuationAtAngle(verticalAngle);
-        double totalGainDbi = gainDbi - verticalAttenuation;
 
-        // Calculate factors
-        double attenuationFactor = Math.Pow(10, -totalLossDb / 10);  // A = 10^(-a/10)
-        double gainFactor = Math.Pow(10, totalGainDbi / 10);          // G = 10^(g/10)
-        double buildingFactor = Math.Pow(10, -buildingDamping / 10);  // AG = 10^(-ag/10)
+        // Use Core calculator for field strength computation
+        var input = new CalculationInput
+        {
+            FrequencyMHz = frequencyMHz,
+            DistanceMeters = distance,
+            TxPowerWatts = config.PowerWatts,
+            ActivityFactor = config.ActivityFactor,
+            ModulationFactor = config.ModulationFactor,
+            AntennaGainDbi = band.GainDbi,
+            AngleAttenuationDb = verticalAttenuation,
+            TotalCableLossDb = cableLossDb,
+            AdditionalLossDb = config.Cable.AdditionalLossDb,
+            BuildingDampingDb = config.OkaBuildingDampingDb
+        };
 
-        // EIRP: Ps = Pm × A × G
-        double eirp = meanPower * attenuationFactor * gainFactor;
-
-        // ERP: P's = Ps / 1.64
-        double erp = eirp / 1.64;
-
-        // Field strength (V/m): E' = 1.6 × sqrt(30 × Pm × A × G × AG) / d
-        double fieldStrength = 1.6 * Math.Sqrt(30 * meanPower * attenuationFactor * gainFactor * buildingFactor) / distance;
-
-        // Get limit for frequency
-        double limit = GetNisLimit(frequencyMHz);
-
-        // Safety distance: ds = 1.6 × sqrt(30 × Pm × A × G × AG) / EIGW
-        double safetyDistance = 1.6 * Math.Sqrt(30 * meanPower * attenuationFactor * gainFactor * buildingFactor) / limit;
+        var result = _calculator.Calculate(input);
 
         return new BandResult
         {
             FrequencyMHz = frequencyMHz,
-            GainDbi = gainDbi,
+            GainDbi = band.GainDbi,
             VerticalAttenuation = verticalAttenuation,
-            TotalGainDbi = totalGainDbi,
+            TotalGainDbi = result.TotalAntennaGainDb,
             CableLossDb = cableLossDb,
-            AdditionalLossDb = additionalLossDb,
-            TotalLossDb = totalLossDb,
-            MeanPowerW = meanPower,
-            Eirp = eirp,
-            Erp = erp,
-            FieldStrength = fieldStrength,
-            Limit = limit,
-            SafetyDistance = safetyDistance
-        };
-    }
-
-    private double GetNisLimit(double frequencyMHz)
-    {
-        // Swiss NISV limits (from VB6 legacy code)
-        return frequencyMHz switch
-        {
-            < 2.5 => 64.7,    // 1.8 MHz
-            < 5 => 46.5,      // 3.5 MHz
-            < 9 => 32.4,      // 7 MHz
-            < 40 => 28,       // 10-28 MHz
-            < 100 => 28,      // 50 MHz
-            < 300 => 28,      // 144 MHz
-            < 800 => 28.6,    // 432 MHz
-            < 2000 => 48.5,   // 1240 MHz
-            _ => 61           // 2300+ MHz
+            AdditionalLossDb = config.Cable.AdditionalLossDb,
+            TotalLossDb = result.TotalAttenuationDb,
+            MeanPowerW = result.MeanPowerWatts,
+            Eirp = result.EirpWatts,
+            Erp = result.ErpWatts,
+            FieldStrength = result.FieldStrengthVm,
+            Limit = result.NisLimitVm,
+            SafetyDistance = result.SafetyDistanceMeters
         };
     }
 

@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:NIS.Desktop.ViewModels"
+             xmlns:loc="using:NIS.Desktop.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="700"
@@ -30,11 +31,11 @@
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                    <Button Content="Save" Command="{Binding SaveProjectCommand}"
+                    <Button Content="{Binding Save, Source={x:Static loc:Strings.Instance}}" Command="{Binding SaveProjectCommand}"
                             Background="#1976D2" Foreground="White" Padding="15,8"/>
-                    <Button Content="Save As..." Command="{Binding SaveProjectAsCommand}"
+                    <Button Content="{Binding SaveAs, Source={x:Static loc:Strings.Instance}}" Command="{Binding SaveProjectAsCommand}"
                             Background="#1976D2" Foreground="White" Padding="15,8"/>
-                    <Button Content="Export" Command="{Binding ExportCommand}"
+                    <Button Content="{Binding Export, Source={x:Static loc:Strings.Instance}}" Command="{Binding ExportCommand}"
                             Background="#4CAF50" Foreground="White" Padding="15,8"/>
                 </StackPanel>
             </Grid>
@@ -47,15 +48,15 @@
                 <!-- Station Info Panel -->
                 <Border Background="#F5F5F5" CornerRadius="8" Padding="15">
                     <StackPanel Spacing="10">
-                        <TextBlock Text="Station Information" FontSize="16" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding StationInfo, Source={x:Static loc:Strings.Instance}}" FontSize="16" FontWeight="Bold"/>
                         <Grid ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto" ColumnSpacing="15">
-                            <TextBlock Text="Callsign:" FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding Callsign, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold"/>
                             <TextBlock Grid.Column="1" Text="{Binding Callsign}"/>
 
-                            <TextBlock Grid.Column="2" Text="Address:" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Column="2" Text="{Binding Address, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold"/>
                             <TextBlock Grid.Column="3" Text="{Binding Address}"/>
                         </Grid>
-                        <Button Content="Edit Station Info" Command="{Binding EditStationInfoCommand}"
+                        <Button Content="{Binding EditStationInfo, Source={x:Static loc:Strings.Instance}}" Command="{Binding EditStationInfoCommand}"
                                 HorizontalAlignment="Left" Padding="15,8"/>
                     </StackPanel>
                 </Border>
@@ -64,8 +65,8 @@
                 <Border Background="#F5F5F5" CornerRadius="8" Padding="15">
                     <StackPanel Spacing="10">
                         <Grid ColumnDefinitions="*,Auto">
-                            <TextBlock Text="Configurations" FontSize="18" FontWeight="Bold"/>
-                            <Button Grid.Column="1" Content="+ Add Configuration"
+                            <TextBlock Text="{Binding Configurations, Source={x:Static loc:Strings.Instance}}" FontSize="18" FontWeight="Bold"/>
+                            <Button Grid.Column="1" Content="{Binding AddConfiguration, Source={x:Static loc:Strings.Instance}}"
                                     Command="{Binding AddConfigurationCommand}"
                                     Background="#4CAF50" Foreground="White" Padding="15,8"/>
                         </Grid>
@@ -93,11 +94,11 @@
                                                     <TextBlock Text="{Binding ModulationDisplay}" Foreground="#666" FontSize="11"/>
                                                     <TextBlock Text="{Binding OkaSummary}" Foreground="#666" FontSize="11"/>
                                                 </StackPanel>
-                                                <Button Grid.Column="2" Content="Edit"
+                                                <Button Grid.Column="2" Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}"
                                                         Command="{Binding $parent[ItemsControl].((vm:ProjectOverviewViewModel)DataContext).EditConfigurationCommand}"
                                                         CommandParameter="{Binding}"
                                                         Margin="5,0" Padding="10,5"/>
-                                                <Button Grid.Column="3" Content="Delete"
+                                                <Button Grid.Column="3" Content="{Binding Delete, Source={x:Static loc:Strings.Instance}}"
                                                         Command="{Binding $parent[ItemsControl].((vm:ProjectOverviewViewModel)DataContext).DeleteConfigurationCommand}"
                                                         CommandParameter="{Binding}"
                                                         Margin="5,0" Padding="10,5" Foreground="#F44336"/>
@@ -108,7 +109,7 @@
                             </ItemsControl>
                         </Border>
 
-                        <TextBlock Text="No configurations yet. Click '+ Add Configuration' to create one."
+                        <TextBlock Text="{Binding NoConfigurations, Source={x:Static loc:Strings.Instance}}"
                                    IsVisible="{Binding !HasConfigurations}"
                                    Foreground="#999" FontStyle="Italic" Margin="10,5"/>
                     </StackPanel>
@@ -117,12 +118,12 @@
                 <!-- Action Buttons -->
                 <Border Background="#E3F2FD" CornerRadius="8" Padding="20">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
-                        <Button Content="Calculate All"
+                        <Button Content="{Binding CalculateAll, Source={x:Static loc:Strings.Instance}}"
                                 Command="{Binding CalculateAllCommand}"
                                 IsEnabled="{Binding CanCalculate}"
                                 Background="#2196F3" Foreground="White"
                                 Padding="30,15" FontSize="16"/>
-                        <Button Content="Export Report"
+                        <Button Content="{Binding ExportReport, Source={x:Static loc:Strings.Instance}}"
                                 Command="{Binding ExportReportCommand}"
                                 IsEnabled="{Binding HasResults}"
                                 Background="#4CAF50" Foreground="White"

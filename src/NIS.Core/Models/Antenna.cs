@@ -3,6 +3,22 @@ using System.Text.Json.Serialization;
 namespace NIS.Core.Models;
 
 /// <summary>
+/// Antenna type classification for vertical pattern determination.
+/// </summary>
+public static class AntennaTypes
+{
+    public const string LogPeriodic = "log-periodic";
+    public const string Loop = "loop";
+    public const string Other = "other";
+    public const string Quad = "quad";
+    public const string Vertical = "vertical";
+    public const string Wire = "wire";
+    public const string Yagi = "yagi";
+
+    public static readonly string[] All = { LogPeriodic, Loop, Other, Quad, Vertical, Wire, Yagi };
+}
+
+/// <summary>
 /// Represents a frequency band supported by an antenna.
 /// </summary>
 public class AntennaBand
@@ -28,6 +44,7 @@ public class AntennaBand
 
     /// <summary>
     /// Gets the vertical attenuation at a specific angle (0-90 degrees).
+    /// Uses linear interpolation between pattern data points.
     /// </summary>
     public double GetAttenuationAtAngle(double angleDegrees)
     {
@@ -36,9 +53,21 @@ public class AntennaBand
         angleDegrees = Math.Abs(angleDegrees);
         if (angleDegrees > 90) angleDegrees = 180 - angleDegrees;
 
-        int index = (int)Math.Round(angleDegrees / 10);
-        index = Math.Clamp(index, 0, Pattern.Length - 1);
-        return Pattern[index];
+        // Calculate position in the pattern array (0-9 for 0-90 degrees)
+        double position = angleDegrees / 10.0;
+        int lowerIndex = (int)Math.Floor(position);
+        int upperIndex = (int)Math.Ceiling(position);
+
+        lowerIndex = Math.Clamp(lowerIndex, 0, Pattern.Length - 1);
+        upperIndex = Math.Clamp(upperIndex, 0, Pattern.Length - 1);
+
+        // If same index (exact match or at boundary), return directly
+        if (lowerIndex == upperIndex)
+            return Pattern[lowerIndex];
+
+        // Linear interpolation between the two nearest pattern values
+        double fraction = position - lowerIndex;
+        return Pattern[lowerIndex] + fraction * (Pattern[upperIndex] - Pattern[lowerIndex]);
     }
 }
 
@@ -74,6 +103,13 @@ public class Antenna
     /// </summary>
     [JsonPropertyName("isRotatable")]
     public bool IsRotatable { get; set; }
+
+    /// <summary>
+    /// Antenna type classification. See <see cref="AntennaTypes"/> for valid values.
+    /// Used to determine if vertical pattern formulas apply.
+    /// </summary>
+    [JsonPropertyName("antennaType")]
+    public string AntennaType { get; set; } = AntennaTypes.Other;
 
     /// <summary>
     /// Whether the antenna is horizontally polarized.

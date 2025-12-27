@@ -231,14 +231,14 @@ public class FieldStrengthCalculatorTests
     }
 
     [Theory]
-    [InlineData(1.8, 87)]      // < 10 MHz: 87 V/m
-    [InlineData(3.5, 87)]      // < 10 MHz: 87 V/m
-    [InlineData(7.0, 87)]      // < 10 MHz: 87 V/m
-    [InlineData(14.0, 28)]     // 10-400 MHz: 28 V/m
-    [InlineData(144.0, 28)]    // 10-400 MHz: 28 V/m
-    [InlineData(432.0, 28.5)]  // 400-2000 MHz: 28.5 V/m
-    [InlineData(1296.0, 28.5)] // 400-2000 MHz: 28.5 V/m
-    [InlineData(2400.0, 61)]   // >= 2000 MHz: 61 V/m
+    [InlineData(1.8, 64.7)]    // 160m band
+    [InlineData(3.5, 46.5)]    // 80m band
+    [InlineData(7.0, 32.4)]    // 40m band
+    [InlineData(14.0, 28)]     // 20m band
+    [InlineData(144.0, 28)]    // 2m band
+    [InlineData(432.0, 28.6)]  // 70cm band
+    [InlineData(1296.0, 48.5)] // 23cm band
+    [InlineData(2400.0, 61)]   // 13cm band
     public void Calculate_ReturnsCorrectNisLimit(double frequencyMHz, double expectedLimit)
     {
         // Arrange
@@ -311,7 +311,7 @@ public class FieldStrengthCalculatorTests
 
         // Assert - VB6 calculated 28.45 V/m, allow 1% tolerance
         Assert.InRange(result.FieldStrengthVm, 28.45 * 0.99, 28.45 * 1.01);
-        Assert.Equal(87, result.NisLimitVm); // 7 MHz limit (< 10 MHz: 87 V/m)
+        Assert.Equal(32.4, result.NisLimitVm); // 7 MHz limit (40m band)
     }
 
     /// <summary>

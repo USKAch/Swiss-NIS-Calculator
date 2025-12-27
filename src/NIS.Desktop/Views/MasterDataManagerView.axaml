@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:NIS.Desktop.ViewModels"
+             xmlns:loc="using:NIS.Desktop.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="700"
@@ -14,21 +15,21 @@
     <Grid RowDefinitions="Auto,*,Auto">
         <!-- Header -->
         <Border Grid.Row="0" Background="#FF9800" Padding="20,15">
-            <TextBlock Text="Master Data Manager" FontSize="20" FontWeight="Bold" Foreground="White"/>
+            <TextBlock Text="{Binding MasterDataManager, Source={x:Static loc:Strings.Instance}}" FontSize="20" FontWeight="Bold" Foreground="White"/>
         </Border>
 
         <!-- Tab Control -->
         <TabControl Grid.Row="1" SelectedIndex="{Binding SelectedTabIndex}" Margin="20">
 
             <!-- Antennas Tab -->
-            <TabItem Header="Antennas">
+            <TabItem Header="{Binding Antennas, Source={x:Static loc:Strings.Instance}}">
                 <Grid RowDefinitions="Auto,*,Auto" Margin="0,10,0,0">
                     <!-- Search -->
                     <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,10">
                         <TextBox Text="{Binding AntennaSearchText}"
-                                 Watermark="Search by manufacturer or model..."
+                                 Watermark="{Binding SearchAntennas, Source={x:Static loc:Strings.Instance}}"
                                  Padding="10,8"/>
-                        <Button Grid.Column="1" Content="Clear"
+                        <Button Grid.Column="1" Content="{Binding Clear, Source={x:Static loc:Strings.Instance}}"
                                 Command="{Binding ClearAntennaSearchCommand}"
                                 Margin="10,0,0,0" Padding="15,8"/>
                     </Grid>
@@ -87,12 +88,12 @@
 
                     <!-- Action buttons -->
                     <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
-                        <Button Content="+ Add Antenna" Command="{Binding AddAntennaCommand}"
+                        <Button Content="{Binding AddAntennaButton, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddAntennaCommand}"
                                 Background="#4CAF50" Foreground="White" Padding="15,8"/>
-                        <Button Content="Edit" Command="{Binding EditAntennaCommand}"
+                        <Button Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Command="{Binding EditAntennaCommand}"
                                 IsEnabled="{Binding SelectedAntenna, Converter={x:Static ObjectConverters.IsNotNull}}"
                                 Padding="15,8"/>
-                        <Button Content="Delete" Command="{Binding DeleteAntennaCommand}"
+                        <Button Content="{Binding Delete, Source={x:Static loc:Strings.Instance}}" Command="{Binding DeleteAntennaCommand}"
                                 IsEnabled="{Binding SelectedAntenna, Converter={x:Static ObjectConverters.IsNotNull}}"
                                 Foreground="#F44336" Padding="15,8"/>
                     </StackPanel>
@@ -100,14 +101,14 @@
             </TabItem>
 
             <!-- Cables Tab -->
-            <TabItem Header="Cables">
+            <TabItem Header="{Binding Cables, Source={x:Static loc:Strings.Instance}}">
                 <Grid RowDefinitions="Auto,*,Auto" Margin="0,10,0,0">
                     <!-- Search -->
                     <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,10">
                         <TextBox Text="{Binding CableSearchText}"
-                                 Watermark="Search by cable name..."
+                                 Watermark="{Binding SearchCables, Source={x:Static loc:Strings.Instance}}"
                                  Padding="10,8"/>
-                        <Button Grid.Column="1" Content="Clear"
+                        <Button Grid.Column="1" Content="{Binding Clear, Source={x:Static loc:Strings.Instance}}"
                                 Command="{Binding ClearCableSearchCommand}"
                                 Margin="10,0,0,0" Padding="15,8"/>
                     </Grid>
@@ -138,12 +139,12 @@
 
                     <!-- Action buttons -->
                     <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
-                        <Button Content="+ Add Cable" Command="{Binding AddCableCommand}"
+                        <Button Content="{Binding AddCableButton, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddCableCommand}"
                                 Background="#4CAF50" Foreground="White" Padding="15,8"/>
-                        <Button Content="Edit" Command="{Binding EditCableCommand}"
+                        <Button Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Command="{Binding EditCableCommand}"
                                 IsEnabled="{Binding SelectedCable, Converter={x:Static ObjectConverters.IsNotNull}}"
                                 Padding="15,8"/>
-                        <Button Content="Delete" Command="{Binding DeleteCableCommand}"
+                        <Button Content="{Binding Delete, Source={x:Static loc:Strings.Instance}}" Command="{Binding DeleteCableCommand}"
                                 IsEnabled="{Binding SelectedCable, Converter={x:Static ObjectConverters.IsNotNull}}"
                                 Foreground="#F44336" Padding="15,8"/>
                     </StackPanel>
@@ -151,14 +152,14 @@
             </TabItem>
 
             <!-- Radios Tab -->
-            <TabItem Header="Radios">
+            <TabItem Header="{Binding Radios, Source={x:Static loc:Strings.Instance}}">
                 <Grid RowDefinitions="Auto,*,Auto" Margin="0,10,0,0">
                     <!-- Search -->
                     <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,10">
                         <TextBox Text="{Binding RadioSearchText}"
-                                 Watermark="Search by manufacturer or model..."
+                                 Watermark="{Binding SearchRadios, Source={x:Static loc:Strings.Instance}}"
                                  Padding="10,8"/>
-                        <Button Grid.Column="1" Content="Clear"
+                        <Button Grid.Column="1" Content="{Binding Clear, Source={x:Static loc:Strings.Instance}}"
                                 Command="{Binding ClearRadioSearchCommand}"
                                 Margin="10,0,0,0" Padding="15,8"/>
                     </Grid>
@@ -198,14 +199,72 @@
 
                     <!-- Action buttons -->
                     <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
-                        <Button Content="+ Add Radio" Command="{Binding AddRadioCommand}"
+                        <Button Content="{Binding AddRadioButton, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddRadioCommand}"
                                 Background="#4CAF50" Foreground="White" Padding="15,8"/>
-                        <Button Content="Edit" Command="{Binding EditRadioCommand}"
+                        <Button Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Command="{Binding EditRadioCommand}"
                                 IsEnabled="{Binding SelectedRadio, Converter={x:Static ObjectConverters.IsNotNull}}"
                                 Padding="15,8"/>
-                        <Button Content="Delete" Command="{Binding DeleteRadioCommand}"
+                        <Button Content="{Binding Delete, Source={x:Static loc:Strings.Instance}}" Command="{Binding DeleteRadioCommand}"
                                 IsEnabled="{Binding SelectedRadio, Converter={x:Static ObjectConverters.IsNotNull}}"
                                 Foreground="#F44336" Padding="15,8"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <!-- Translations Tab -->
+            <TabItem Header="{Binding Translations, Source={x:Static loc:Strings.Instance}}">
+                <Grid RowDefinitions="Auto,Auto,*,Auto,Auto" Margin="0,10,0,0" DataContext="{Binding TranslationEditor}">
+                    <!-- Search and Filter -->
+                    <Grid ColumnDefinitions="*,Auto,Auto" Margin="0,0,0,10">
+                        <TextBox Text="{Binding SearchText}"
+                                 Watermark="{Binding SearchTranslations, Source={x:Static loc:Strings.Instance}}"
+                                 Padding="10,8"/>
+                        <Button Grid.Column="1" Content="{Binding Clear, Source={x:Static loc:Strings.Instance}}"
+                                Command="{Binding ClearSearchCommand}"
+                                Margin="10,0,0,0" Padding="15,8"/>
+                        <ComboBox Grid.Column="2" ItemsSource="{Binding Categories}"
+                                  SelectedItem="{Binding SelectedCategory}"
+                                  Margin="10,0,0,0" MinWidth="150"/>
+                    </Grid>
+
+                    <!-- Info banner -->
+                    <Border Grid.Row="1" Background="#E3F2FD" CornerRadius="4" Padding="12,8" Margin="0,0,0,10">
+                        <TextBlock Text="{Binding TranslationEditorInfo, Source={x:Static loc:Strings.Instance}}"
+                                   Foreground="#1565C0" FontSize="12"/>
+                    </Border>
+
+                    <!-- Translation list -->
+                    <Border Grid.Row="2" Background="White" CornerRadius="4" BorderBrush="#E0E0E0" BorderThickness="1">
+                        <DataGrid ItemsSource="{Binding FilteredTranslations}"
+                                  SelectedItem="{Binding SelectedItem}"
+                                  AutoGenerateColumns="False"
+                                  CanUserResizeColumns="True"
+                                  CanUserReorderColumns="False"
+                                  GridLinesVisibility="Horizontal"
+                                  HeadersVisibility="Column"
+                                  IsReadOnly="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="{Binding ColumnKey, Source={x:Static loc:Strings.Instance}}" Binding="{Binding Key}" IsReadOnly="True" Width="150"/>
+                                <DataGridTextColumn Header="{Binding ColumnCategory, Source={x:Static loc:Strings.Instance}}" Binding="{Binding Category}" IsReadOnly="True" Width="100"/>
+                                <DataGridTextColumn Header="{Binding ColumnGerman, Source={x:Static loc:Strings.Instance}}" Binding="{Binding German}" Width="*"/>
+                                <DataGridTextColumn Header="{Binding ColumnFrench, Source={x:Static loc:Strings.Instance}}" Binding="{Binding French}" Width="*"/>
+                                <DataGridTextColumn Header="{Binding ColumnItalian, Source={x:Static loc:Strings.Instance}}" Binding="{Binding Italian}" Width="*"/>
+                                <DataGridTextColumn Header="{Binding ColumnEnglish, Source={x:Static loc:Strings.Instance}}" Binding="{Binding English}" Width="*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Border>
+
+                    <!-- Status message -->
+                    <TextBlock Grid.Row="3" Text="{Binding StatusMessage}" Margin="0,10,0,0"
+                               Foreground="#666" FontSize="12"
+                               IsVisible="{Binding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+
+                    <!-- Action buttons -->
+                    <StackPanel Grid.Row="4" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
+                        <Button Content="{Binding SaveChanges, Source={x:Static loc:Strings.Instance}}" Command="{Binding SaveTranslationsCommand}"
+                                Background="#4CAF50" Foreground="White" Padding="15,8"/>
+                        <Button Content="{Binding Cancel, Source={x:Static loc:Strings.Instance}}" Command="{Binding CancelChangesCommand}"
+                                Padding="15,8"/>
                     </StackPanel>
                 </Grid>
             </TabItem>
@@ -213,7 +272,7 @@
 
         <!-- Footer -->
         <Border Grid.Row="2" Background="#F5F5F5" Padding="20,15">
-            <Button Content="Back to Welcome" Command="{Binding BackCommand}" Padding="20,10"/>
+            <Button Content="{Binding BackToWelcome, Source={x:Static loc:Strings.Instance}}" Command="{Binding BackCommand}" Padding="20,10"/>
         </Border>
     </Grid>
 </UserControl>

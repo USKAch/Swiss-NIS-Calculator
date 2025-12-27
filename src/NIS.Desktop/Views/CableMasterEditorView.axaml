@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:NIS.Desktop.ViewModels"
+             xmlns:loc="using:NIS.Desktop.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="700"
@@ -23,10 +24,10 @@
                 <!-- Cable Name -->
                 <Border Background="#F5F5F5" CornerRadius="8" Padding="20">
                     <StackPanel Spacing="12">
-                        <TextBlock Text="Cable Details" FontWeight="Bold" FontSize="16"/>
+                        <TextBlock Text="{Binding CableDetails, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
                         <Grid ColumnDefinitions="120,*" ColumnSpacing="15">
-                            <TextBlock Text="Cable Name:" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                            <TextBox Grid.Column="1" Text="{Binding Name}" Watermark="e.g. EcoFlex10, RG-213"/>
+                            <TextBlock Text="{Binding CableName, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <TextBox Grid.Column="1" Text="{Binding Name}" Watermark="{Binding CableNameExample, Source={x:Static loc:Strings.Instance}}"/>
                         </Grid>
                     </StackPanel>
                 </Border>
@@ -34,14 +35,14 @@
                 <!-- Attenuation Data -->
                 <Border Background="#F5F5F5" CornerRadius="8" Padding="20">
                     <StackPanel Spacing="12">
-                        <TextBlock Text="Attenuation Data (dB per 100m)" FontWeight="Bold" FontSize="16"/>
-                        <TextBlock Text="Enter attenuation values for the frequencies you have data for. Leave empty if unknown."
+                        <TextBlock Text="{Binding AttenuationData, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
+                        <TextBlock Text="{Binding AttenuationHint, Source={x:Static loc:Strings.Instance}}"
                                    Foreground="#666" FontSize="12"/>
 
                         <Grid ColumnDefinitions="*,*" ColumnSpacing="40">
                             <!-- HF Bands -->
                             <StackPanel Spacing="10">
-                                <TextBlock Text="HF Bands" FontWeight="SemiBold" Foreground="#666"/>
+                                <TextBlock Text="{Binding HfBands, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" Foreground="#666"/>
 
                                 <Grid ColumnDefinitions="100,*,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="8" ColumnSpacing="10">
                                     <TextBlock Text="1.8 MHz:" VerticalAlignment="Center"/>
@@ -84,7 +85,7 @@
 
                             <!-- VHF/UHF/SHF Bands -->
                             <StackPanel Spacing="10">
-                                <TextBlock Text="VHF / UHF / SHF Bands" FontWeight="SemiBold" Foreground="#666"/>
+                                <TextBlock Text="{Binding VhfUhfShfBands, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" Foreground="#666"/>
 
                                 <Grid ColumnDefinitions="100,*,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="8" ColumnSpacing="10">
                                     <TextBlock Text="50 MHz:" VerticalAlignment="Center"/>
@@ -128,8 +129,8 @@
                 <TextBlock Text="{Binding ValidationMessage}" Foreground="#F44336" VerticalAlignment="Center"
                            IsVisible="{Binding ValidationMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
                 <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
-                    <Button Content="Cancel" Command="{Binding CancelCommand}" Padding="20,10"/>
-                    <Button Content="Save" Command="{Binding SaveCommand}"
+                    <Button Content="{Binding Cancel, Source={x:Static loc:Strings.Instance}}" Command="{Binding CancelCommand}" Padding="20,10"/>
+                    <Button Content="{Binding Save, Source={x:Static loc:Strings.Instance}}" Command="{Binding SaveCommand}"
                             Background="#4CAF50" Foreground="White" Padding="20,10"/>
                 </StackPanel>
             </Grid>

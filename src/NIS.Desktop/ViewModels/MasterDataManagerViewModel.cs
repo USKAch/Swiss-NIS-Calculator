@@ -1,15 +1,19 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
 using NIS.Core.Data;
 using NIS.Core.Models;
+using NIS.Desktop.Localization;
 
 namespace NIS.Desktop.ViewModels;
 
 /// <summary>
-/// ViewModel for the Master Data Manager view with tabs for Antennas, Cables, Radios.
+/// ViewModel for the Master Data Manager view with tabs for Antennas, Cables, Radios, Translations.
 /// </summary>
 public partial class MasterDataManagerViewModel : ViewModelBase
 {
@@ -23,8 +27,20 @@ public partial class MasterDataManagerViewModel : ViewModelBase
     public Action<Cable?>? NavigateToCableEditor { get; set; }
     public Action<Radio?>? NavigateToRadioEditor { get; set; }
 
+    // Translation editor
+    public TranslationEditorViewModel TranslationEditor { get; } = new();
+
     public MasterDataManagerViewModel()
     {
+        // Set up confirmation dialog for translation editor
+        TranslationEditor.ConfirmDiscardChanges = async (title, message) =>
+        {
+            var result = await MessageBoxManager
+                .GetMessageBoxStandard(title, message, ButtonEnum.YesNo, Icon.Question)
+                .ShowAsync();
+            return result == ButtonResult.Yes;
+        };
+
         _antennaDatabase.LoadDefaults();
         _cableDatabase.LoadDefaults();
         _radioDatabase.LoadDefaults();
@@ -150,8 +166,22 @@ public partial class MasterDataManagerViewModel : ViewModelBase
 
     // Commands
     [RelayCommand]
-    private void Back()
+    private async Task Back()
     {
+        // Check for unsaved translation changes
+        if (TranslationEditor.HasModifiedItems)
+        {
+            var result = await MessageBoxManager
+                .GetMessageBoxStandard(
+                    Strings.Instance.UnsavedChanges,
+                    Strings.Instance.DiscardChangesPrompt,
+                    ButtonEnum.YesNo, Icon.Question)
+                .ShowAsync();
+
+            if (result != ButtonResult.Yes)
+                return;
+        }
+
         NavigateBack?.Invoke();
     }
 

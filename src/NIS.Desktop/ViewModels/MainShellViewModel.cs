@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using NIS.Desktop.Localization;
 
 namespace NIS.Desktop.ViewModels;
 
@@ -64,12 +65,18 @@ public partial class MainShellViewModel : ViewModelBase
         ProjectViewModel.NewProject(vm.Language);
         ProjectViewModel.UpdateStationInfo(vm.ToStationInfo());
 
+        // Update localization
+        Strings.Instance.Language = vm.Language;
+
         NavigateToProjectOverview();
     }
 
     private void NavigateToProjectOverviewAfterOpen()
     {
         // Project already loaded by WelcomeViewModel
+        // Update localization from project language
+        Strings.Instance.Language = ProjectViewModel.Project.Language;
+
         NavigateToProjectOverview();
     }
 

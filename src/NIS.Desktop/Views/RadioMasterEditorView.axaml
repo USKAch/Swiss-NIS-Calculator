@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:NIS.Desktop.ViewModels"
+             xmlns:loc="using:NIS.Desktop.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="500"
@@ -23,21 +24,21 @@
                 <!-- Radio Details -->
                 <Border Background="#F5F5F5" CornerRadius="8" Padding="20">
                     <StackPanel Spacing="12">
-                        <TextBlock Text="Radio / Transceiver Details" FontWeight="Bold" FontSize="16"/>
+                        <TextBlock Text="{Binding RadioDetails, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
 
                         <Grid ColumnDefinitions="120,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="12" ColumnSpacing="15">
-                            <TextBlock Text="Manufacturer:" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                            <TextBox Grid.Column="1" Text="{Binding Manufacturer}" Watermark="e.g. Yaesu, Icom, Kenwood"/>
+                            <TextBlock Text="{Binding Manufacturer, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <TextBox Grid.Column="1" Text="{Binding Manufacturer}" Watermark="{Binding RadioManufacturerExample, Source={x:Static loc:Strings.Instance}}"/>
 
-                            <TextBlock Grid.Row="1" Text="Model:" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Model}" Watermark="e.g. FT-1000, IC-7300"/>
+                            <TextBlock Grid.Row="1" Text="{Binding Model, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Model}" Watermark="{Binding RadioModelExample, Source={x:Static loc:Strings.Instance}}"/>
 
-                            <TextBlock Grid.Row="2" Text="Max Power:" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="2" Text="{Binding MaxPower, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Spacing="10">
                                 <NumericUpDown Value="{Binding MaxPowerWatts}" ShowButtonSpinner="False"
                                                Minimum="1" Maximum="10000" Increment="10"
                                                FormatString="F0" Width="100"/>
-                                <TextBlock Text="W (maximum output power)" VerticalAlignment="Center" Foreground="#666"/>
+                                <TextBlock Text="{Binding MaxPowerHint, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" Foreground="#666"/>
                             </StackPanel>
                         </Grid>
                     </StackPanel>
@@ -45,8 +46,8 @@
 
                 <Border Background="#FFF3E0" CornerRadius="8" Padding="15">
                     <StackPanel Spacing="8">
-                        <TextBlock Text="Note" FontWeight="SemiBold" Foreground="#E65100"/>
-                        <TextBlock Text="The radio is used for documentation purposes in the NIS report. The actual output power is specified in each antenna configuration."
+                        <TextBlock Text="{Binding Note, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" Foreground="#E65100"/>
+                        <TextBlock Text="{Binding RadioNote, Source={x:Static loc:Strings.Instance}}"
                                    Foreground="#666" TextWrapping="Wrap"/>
                     </StackPanel>
                 </Border>
@@ -59,8 +60,8 @@
                 <TextBlock Text="{Binding ValidationMessage}" Foreground="#F44336" VerticalAlignment="Center"
                            IsVisible="{Binding ValidationMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
                 <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
-                    <Button Content="Cancel" Command="{Binding CancelCommand}" Padding="20,10"/>
-                    <Button Content="Save" Command="{Binding SaveCommand}"
+                    <Button Content="{Binding Cancel, Source={x:Static loc:Strings.Instance}}" Command="{Binding CancelCommand}" Padding="20,10"/>
+                    <Button Content="{Binding Save, Source={x:Static loc:Strings.Instance}}" Command="{Binding SaveCommand}"
                             Background="#4CAF50" Foreground="White" Padding="20,10"/>
                 </StackPanel>
             </Grid>

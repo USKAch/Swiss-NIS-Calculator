@@ -10,19 +10,12 @@ Calculate RF field strength for Swiss amateur radio antenna approval (NISV compl
 
 First screen shown when app launches:
 
-- **Language Selection**: de | fr | it | en (4 toggle buttons)
-- Default selection: de (Deutsch)
+- **Language Selection**: de | fr | it | en (4 toggle buttons, see Section 6 for details)
 - **Theme Toggle**: Light / Dark mode switch
-- Theme applies immediately and persists for the session
-
-### 2.1a Project Selection
-
-Below language/theme selection:
-
 - **New Project** → Navigates to Project Info screen (station details), then Project Overview
 - **Open Project** → File picker for .nisproj files, then Project Overview
 - **Recent Projects** → List of recently opened projects (optional enhancement)
-- **Master Data** → Navigates to Master Data Manager (Section 2.6)
+- **Master Data** → Navigates to Master Data Manager (Section 2.5)
 
 ### 2.2 Project Overview (Main Screen)
 
@@ -50,13 +43,13 @@ Example:
 | Wimo ZX6-2 | Yaesu FT-991 100W \| Aircom-plus | 7.4m | Edit / Delete |
 
 - Configurations are identified by their antenna (no user-defined name)
-- "+ Add Configuration" button → Navigates to Configuration Editor (2.4)
+- "+ Add Configuration" button → Navigates to Configuration Editor (Section 2.4)
 - Edit button → Navigates to Configuration Editor with existing data
 - Each configuration has its own OKA (evaluation point) with distance and damping
 
 **Action Buttons**:
-- "Calculate All" → Runs calculation for all configs → Navigates to Results (2.5)
-- "Export Report" → Navigates to Results view with export options (2.5)
+- "Calculate All" → Runs calculation for all configs → Navigates to Results (Section 2.6)
+- "Export Report" → Navigates to Results view with export options (Section 2.6)
 
 ### 2.3 Component Selection
 
@@ -111,7 +104,7 @@ Note: Each configuration has exactly one OKA. OKA = Ort des kurzfristigen Aufent
 - Save → Returns to Project Overview
 - Cancel → Discards changes, returns to Project Overview
 
-### 2.6 Master Data Manager
+### 2.5 Master Data Manager
 
 Central hub for managing all master data (antennas, cables, radios). Accessed via "Master Data" button on Welcome screen.
 
@@ -141,7 +134,7 @@ Master Data Manager
 **Integration with Configuration Editor**:
 When editing a configuration, "Edit" buttons next to antenna/cable/radio selections navigate to the respective Master Data Editor. After saving, user returns to Configuration Editor with updated selection.
 
-### 2.5 Calculation & Results
+### 2.6 Calculation & Results
 
 Results displayed after "Calculate All":
 
@@ -211,7 +204,20 @@ The pattern array contains 10 values representing attenuation in dB at angles 0�
 - Vertical angle: atan(12/5.4) = 65.8° ≈ 66°
 - Pattern lookup: interpolate between index 6 (60°) and index 7 (70°)
 
-### 3.3 Formulas
+### 3.3 Ground Reflection Factor (kr)
+
+The ground reflection factor (Bodenreflexionsfaktor) accounts for constructive interference between the direct wave from the antenna and its reflection from the ground at evaluation points near ground level.
+
+**Value:** kr = 1.6 (fixed, per NISV Anhang 2)
+
+**Physical Effect:**
+- Field strength (E) is multiplied by 1.6
+- Power density (S = E²/377) is multiplied by 1.6² = **2.56**
+- Equivalent to adding **4.08 dB** to the effective gain
+
+This factor ensures worst-case field strength estimation at locations where a person might stand, where direct and reflected waves can combine constructively.
+
+### 3.4 Formulas
 
 ```
 Mean power:           Pm = P × AF × MF
@@ -226,7 +232,7 @@ Field strength:       E' = 1.6 × sqrt(30 × Pm × A × G × AG) / d
 Safety distance:      ds = 1.6 × sqrt(30 × Pm × A × G × AG) / EIGW
 ```
 
-### 3.3 NIS Limits (Swiss NISV)
+### 3.5 NIS Limits (Swiss NISV)
 
 | Frequency | Limit (V/m) |
 |-----------|-------------|
@@ -331,16 +337,17 @@ One table per antenna configuration:
       "manufacturer": "Opti-Beam",
       "model": "OB9-5",
       "isRotatable": true,
+      "antennaType": "yagi",
       "bands": [
         {
           "frequencyMHz": 14,
           "gainDbi": 6.33,
-          "pattern": [0, 0.04, 0.21, 0.48, 0.93, 1.54, 2.32, 3.30, 4.48, 5.90]
+          "pattern": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         },
         {
           "frequencyMHz": 18,
           "gainDbi": 6.71,
-          "pattern": [0, 0.07, 0.28, 0.63, 1.14, 1.83, 2.71, 3.80, 5.12, 6.72]
+          "pattern": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         }
       ]
     }
@@ -388,8 +395,9 @@ One table per antenna configuration:
     "address": "Musterstrasse 1, 8000 Zürich"
   },
 
-  "configurations": [
+  "antennaConfigurations": [
     {
+      "name": "HF Station",
       "radio": {
         "manufacturer": "Yaesu",
         "model": "FT-1000"
@@ -424,20 +432,135 @@ One table per antenna configuration:
 }
 ```
 
-## 6. Languages
+## 6. Language Handling
 
-Application and output must support 4 languages:
+### 6.1 Supported Languages
 
-| Code | Language |
-|------|----------|
-| de   | Deutsch (German) |
-| fr   | Français (French) |
-| it   | Italiano (Italian) |
-| en   | English |
+| Code | Language | Display Name |
+|------|----------|--------------|
+| de   | German   | Deutsch      |
+| fr   | French   | Français     |
+| it   | Italian  | Italiano     |
+| en   | English  | English      |
 
-- All UI labels, parameter names, explanations, and output documents available in all 4 languages
-- Language is selected per project (selected when a new project is started and stored in project file)
-- Output document uses project language
+Default language: **de** (Deutsch)
+
+### 6.2 Language Selection
+
+**On Welcome Screen:**
+- Four toggle buttons displayed horizontally: de | fr | it | en
+- Language change takes effect immediately across the entire UI
+- Selected language persists for the session
+
+**Per Project:**
+- Language selected when creating a new project is stored in project file
+- Export/report output uses the project's language setting
+
+### 6.3 Localization Architecture
+
+The application uses a centralized localization system:
+
+**Strings Singleton (`NIS.Desktop.Localization.Strings`):**
+- Single source of truth for all translatable strings
+- Implements `INotifyPropertyChanged` for live UI updates
+- Properties for each translatable string (e.g., `Save`, `Cancel`, `Antenna`)
+- `Language` property controls active language
+
+**XAML Binding Pattern:**
+```xml
+<TextBlock Text="{Binding Save, Source={x:Static loc:Strings.Instance}}"/>
+<Button Content="{Binding Cancel, Source={x:Static loc:Strings.Instance}}"/>
+```
+
+### 6.4 Translation Storage
+
+**Embedded Translations:**
+- Default translations are compiled into the application
+- Stored in a dictionary structure: `Key → { Language → Value }`
+- Covers all UI strings, labels, messages, and tooltips
+
+**Custom Translations (AppData):**
+- User modifications saved to: `%APPDATA%/SwissNISCalculator/translations.json`
+- Merged with embedded translations at startup
+- Custom translations override embedded defaults
+
+### 6.5 In-App Translation Editor
+
+Accessible via: **Welcome Screen → Master Data → Translations Tab**
+
+**Features:**
+- DataGrid showing all translatable strings
+- Columns: Key | Category | German | French | Italian | English
+- Inline editing for all language values
+- Search/filter by key or text content
+- Category filter dropdown
+
+**Categories:**
+- Welcome, ProjectInfo, ProjectOverview, ConfigEditor
+- AntennaEditor, CableEditor, RadioEditor
+- MasterData, Results, Validation, Common
+
+**Workflow:**
+1. Navigate to Master Data → Translations tab
+2. Search or filter to find desired string
+3. Edit values directly in the grid
+4. Click "Save" to persist changes
+5. Changes take effect immediately
+
+**Unsaved Changes Protection:**
+- Warning dialog when leaving with unsaved changes
+- Options: Save / Discard / Cancel
+
+### 6.6 String Categories
+
+| Category | Description | Examples |
+|----------|-------------|----------|
+| Common | Shared buttons, labels | Save, Cancel, Edit, Delete, Close |
+| Welcome | Welcome screen elements | NewProject, OpenProject, MasterData |
+| ProjectInfo | Station information | Callsign, Address, CreateProject |
+| ProjectOverview | Main project screen | Configurations, CalculateAll |
+| ConfigEditor | Configuration editing | Antenna, Transmitter, FeedLine |
+| AntennaEditor | Antenna management | FrequencyBands, Gain, Pattern |
+| CableEditor | Cable management | CableDetails, AttenuationData |
+| RadioEditor | Radio management | RadioDetails, MaxPower |
+| MasterData | Master data manager | Antennas, Cables, Radios |
+| Results | Calculation results | Pass, Fail, FieldStrength |
+| Validation | Error messages | ValidationRequired, ValidationModel |
+
+### 6.7 Adding New Translations
+
+When adding new UI elements:
+
+1. Add property to `Strings.cs`:
+   ```csharp
+   public string NewLabel => Get("NewLabel");
+   ```
+
+2. Add category mapping:
+   ```csharp
+   ["NewLabel"] = "CategoryName",
+   ```
+
+3. Add translations for all 4 languages:
+   ```csharp
+   ["NewLabel"] = new() {
+       ["de"] = "Neue Beschriftung",
+       ["fr"] = "Nouvelle étiquette",
+       ["it"] = "Nuova etichetta",
+       ["en"] = "New Label"
+   },
+   ```
+
+4. Use in XAML:
+   ```xml
+   <TextBlock Text="{Binding NewLabel, Source={x:Static loc:Strings.Instance}}"/>
+   ```
+
+### 6.8 Output Document Language
+
+- Markdown export uses the project's stored language
+- All parameter names, descriptions, and explanations are translated
+- Numerical values and units remain unchanged across languages
 
 ## 7. Master Data Editors
 
@@ -643,7 +766,103 @@ When the user attempts to close the application with unsaved project changes:
 
 This ensures users don't accidentally lose their work.
 
-## 11. Example: HB9FS Station
+## 11. Antenna Type Classification
+
+### 11.1 Overview
+
+Each antenna in the master data includes an `antennaType` field that classifies the antenna type. This classification is used to determine which antennas can have vertical radiation patterns applied for NIS calculations.
+
+### 11.2 The antennaType Field
+
+```json
+{
+  "manufacturer": "Cushcraft",
+  "model": "A-3-S",
+  "isRotatable": true,
+  "antennaType": "yagi",
+  "bands": [...]
+}
+```
+
+Valid values (alphabetical order):
+| Value | Description |
+|-------|-------------|
+| `log-periodic` | Log-periodic dipole arrays (LPDA) |
+| `loop` | Loop antennas (delta loops, magnetic loops) |
+| `other` | Antennas not fitting other categories |
+| `quad` | Quad antennas (cubical quad, X-Quad) |
+| `vertical` | Vertical antennas (ground planes, collinear) |
+| `wire` | Wire antennas (dipoles, G5RV, longwires) |
+| `yagi` | Yagi-Uda directional beam antennas |
+
+### 11.3 Vertical Pattern Data Format
+
+Each antenna band includes a `pattern` array with 10 values representing attenuation at elevation angles 0° to 90° in 10° steps:
+- Index 0: 0° (horizon) - typically 0 dB (maximum radiation)
+- Index 1: 10°
+- ...
+- Index 9: 90° (zenith)
+
+Currently all patterns are set to `[0,0,0,0,0,0,0,0,0,0]`. When specific manufacturer pattern data becomes available, it can be entered here.
+
+### 11.4 Pattern Generation Formulas (Reference)
+
+#### 11.4.1 Directional Antennas (Yagi, Quad, Log-Periodic)
+
+For generating patterns for directional antennas based on gain:
+
+**Vertical Half-Power Beamwidth (HPBW):**
+```
+HPBW = 105° / √(G_linear)
+where: G_linear = 10^(G_dBi / 10)
+```
+
+**Attenuation at angle θ:**
+```
+For θ ≤ θ_hp (θ_hp = HPBW / 2):
+  Attenuation(θ) = 3 × (θ / θ_hp)²
+
+For θ > θ_hp:
+  Attenuation(θ) = 3 + ((θ - θ_hp) / (90 - θ_hp)) × (A_zenith - 3)
+  where: A_zenith = min(35, max(20, 20 + (G_dBi - 6)))
+```
+
+#### 11.4.2 Vertical Antennas (Omnidirectional)
+
+For generating patterns for omnidirectional vertical antennas based on gain:
+
+**Vertical Half-Power Beamwidth (HPBW):**
+```
+HPBW = 105° / √(G_linear)
+where: G_linear = 10^(G_dBi / 10)
+```
+
+**Attenuation at angle θ:**
+```
+Attenuation(θ) = min(A_zenith, Rolloff × (θ / θ_hp)²)
+
+where:
+  θ_hp = HPBW / 2
+  Rolloff = 3.0 (ensures 3 dB loss at half beamwidth)
+  A_zenith = 20 + (G_dBi × 1.5)
+```
+
+The vertical antenna formula uses a simpler quadratic rolloff model with a gain-dependent zenith attenuation cap, appropriate for the broader vertical patterns of collinear and ground-plane antennas.
+
+### 11.5 Antenna Classification Summary
+
+| antennaType | Count | Examples |
+|-------------|-------|----------|
+| log-periodic | 14 | Titanex LP series, Titan DLP/LP, Cushcraft ASL201 |
+| loop | 9 | DeltaLoop, Magnetic Loop |
+| quad | 7 | Quad-2El, Quad-3El, X-Quad, Cubex |
+| vertical | 34 | GP, Diamond X series, Cushcraft R series |
+| wire | 26 | Dipol, G5RV, W3DZZ, Doublet, Langdraht |
+| yagi | 229 | Cushcraft A-3-S, Opti-Beam, Hy-Gain TH series, SteppIR |
+
+*Total: 319 antennas. See antennas.json for complete data.*
+
+## 12. Example: HB9FS Station
 
 | Config | Radio | Cable | Antenna | Height | Bands | OKA |
 |--------|-------|-------|---------|--------|-------|-----|
@@ -652,3 +871,299 @@ This ensures users don't accidentally lose their work.
 | VHF/UHF | 100W | Aircom-plus 17m | Diamond X-50 | 14m | 144, 432 MHz | Terrace @ 10.4m |
 
 Each configuration includes antenna height and its own evaluation point (OKA) with distance and optional building damping.
+
+## Appendix A: Antennas with Generated Vertical Radiation Patterns
+
+The following antennas have vertical radiation patterns generated using the gain-based formulas from Section 11.4. Directional antennas (Yagi, Quad, Log-Periodic) use the formula from Section 11.4.1, while omnidirectional vertical antennas use Section 11.4.2. Patterns are calculated for each frequency band based on antenna gain.
+
+### A.1 Log-Periodic Antennas
+
+| Manufacturer | Model | Gain (dBi) | Bands |
+|--------------|-------|------------|-------|
+| Cushcraft | ASL201 | 6.4 | 5 |
+| Titan | DLP-19 | 1.0-7.2 | 7 |
+| Titan | LP-8 | 5.2-6.0 | 5 |
+| Titanex | DLP-10_6 | 8.2 | 2 |
+| Titanex | LP-10 | 9.2 | 5 |
+| Titanex | LP-1030 | 9.2 | 6 |
+| Titanex | LP-11 | 5.6-6.2 | 5 |
+| Titanex | LP-12 | 10.2 | 5 |
+| Titanex | LP-15 | 4.0-7.2 | 5 |
+| Titanex | LP-1830 | 3.8-5.0 | 4 |
+| Titanex | LP-5 | 4.2-5.6 | 5 |
+| Titanex | LP-6 | 7.7 | 5 |
+| Titanex | LP-7 | 7.8 | 6 |
+| Titanex | LPDA-5 | 4.2-5.6 | 5 |
+
+### A.2 Quad Antennas
+
+| Manufacturer | Model | Gain (dBi) | Bands |
+|--------------|-------|------------|-------|
+| Allgemein | Quad-2El | 7.2 | 5 |
+| Allgemein | Quad-3El | 8.9 | 5 |
+| Cubex | 2-El_Cubex | 0.0-7.7 | 6 |
+| Cubex | 2-El_SpitzCu | 6.6-7.9 | 5 |
+| Hy-Gain | 2-El_Quad | 7.7-7.8 | 3 |
+| Wimo | X-Quad-2 | 12.7 | 1 |
+| Wimo | X-Quad-70 | 14.9 | 1 |
+
+### A.3 Yagi Antennas
+
+| Manufacturer | Model | Gain (dBi) | Bands |
+|--------------|-------|------------|-------|
+| Allgemei | Yagi-3El | 6.2-6.7 | 11 |
+| Allgemein | HB9CV | 2.2-6.7 | 9 |
+| Allgemein | Helix | 9.7 | 3 |
+| Allgemein | Helix-2 | 10.9-17.1 | 3 |
+| Allgemein | Yagi-2El | 5.9-6.2 | 11 |
+| Allgemein | Yagi-4El | 6.2-8.4 | 11 |
+| Allgemein | Yagi-5El | 6.2-10.2 | 11 |
+| Allgemein | Yagi-6El | 6.2-11.3 | 11 |
+| Allgemein | Yagi-7El | 6.2-12.6 | 11 |
+| Allgemein | Yagi-8El | 13.4 | 10 |
+| Barker & Williamson | BWD-90 | 0.6-3.0 | 6 |
+| Butterfly | HF-5 | 2.0-6.3 | 5 |
+| Comet | CA-52HB4 | 10.4 | 1 |
+| Cush-Craft | R8 | 0.2-1.8 | 7 |
+| Cush-Craft | XM510 | 9.1 | 1 |
+| Cush-Craft | XM515 | 8.9 | 1 |
+| Cush-Craft | XM520 | 8.6 | 1 |
+| Cush_Craft | X7 | 7.1-8.4 | 3 |
+| Cushcraft | 10-3CD | 8.0 | 1 |
+| Cushcraft | 124WB | 10.2 | 1 |
+| Cushcraft | 13B2N | 15.8 | 1 |
+| Cushcraft | 15-4CD | 10.0 | 1 |
+| Cushcraft | 20-4CD | 10.0 | 1 |
+| Cushcraft | 40-2CD | 5.5 | 1 |
+| Cushcraft | 719B | 15.3 | 1 |
+| Cushcraft | 729B | 17.6 | 1 |
+| Cushcraft | A-3-S | 8.0 | 3 |
+| Cushcraft | A-3-WS | 7.0-8.1 | 2 |
+| Cushcraft | A-4-S | 7.4-7.5 | 3 |
+| Cushcraft | A14410SN | 13.2 | 1 |
+| Cushcraft | A27-10S | 12.2 | 2 |
+| Cushcraft | A270-6S | 9.9 | 2 |
+| Cushcraft | A43011N | 17.8 | 1 |
+| Cushcraft | A50-3S | 10.2 | 1 |
+| Cushcraft | A50-5S | 12.6 | 1 |
+| Cushcraft | A503S | 8.0 | 1 |
+| Cushcraft | A505S | 10.5 | 1 |
+| Cushcraft | A506S | 11.6 | 1 |
+| DJ2UT | P5C | 9.5-11.2 | 3 |
+| Diamon | V-2000 | 2.1-8.4 | 3 |
+| Diamon | V2000 | 2.1-8.4 | 3 |
+| Diamond | G-200 | 11.0 | 1 |
+| Eigenbau | Bi-Square | 5.2 | 1 |
+| Flexa | 2xFX213hor | 14.8 | 1 |
+| Flexa | 2xFX217hor | 16.0 | 1 |
+| Flexa | 2xFx224hor | 16.6 | 1 |
+| Flexa | 2xFx2304horiz | 16.9 | 1 |
+| Flexa | 2xFx2317hor | 24.2 | 1 |
+| Flexa | 4xFX213hor | 18.0 | 1 |
+| Flexa | 4xFx2317hor | 27.2 | 1 |
+| Flexa | FX1308-V | 15.3 | 1 |
+| Flexa | FX210 | 11.2 | 1 |
+| Flexa | FX213 | 12.3 | 1 |
+| Flexa | Fx205v | 9.7 | 1 |
+| Flexa | Fx217 | 12.9 | 1 |
+| Flexa | Fx224 | 13.5 | 1 |
+| Flexa | Fx2304horiz | 14.6 | 1 |
+| Flexa | Fx2304v | 16.4 | 1 |
+| Flexa | Fx2309 | 18.1 | 1 |
+| Flexa | Fx2317 | 20.1 | 1 |
+| Flexa | Fx2317hor | 20.1 | 1 |
+| Flexa | Fx2317vert | 20.1 | 1 |
+| Flexa | Fx7015v | 12.3 | 1 |
+| Flexa | Fx7033 | 15.3 | 1 |
+| Flexa | Fx7033hor | 15.3 | 1 |
+| Flexa | Fx7033vert | 15.3 | 1 |
+| Flexa | Fx7044 | 16.6 | 1 |
+| Flexa | Fx7044-4 | 21.7 | 1 |
+| Flexa | Fx7056 | 17.4 | 1 |
+| Flexa | Fx7073 | 17.8 | 1 |
+| Flexa | Fx7073hor | 17.8 | 1 |
+| Flexa | Fx7073vert | 17.8 | 1 |
+| Fritzel | FB-DX460 | 2.1-9.2 | 6 |
+| Fritzel | FB-DX660 | 8.2-9.0 | 3 |
+| Fritzel | FB-Do450 | 2.1-8.9 | 5 |
+| Fritzel | FB-Do505 | 6.3-8.9 | 5 |
+| Fritzel | FB-Dx506 | 5.6-8.9 | 6 |
+| Fritzel | FB13 | 2.1 | 3 |
+| Fritzel | FB23 | 5.9-6.5 | 3 |
+| Fritzel | FB33 | 7.4-9.1 | 3 |
+| Fritzel | FB34 | 2.1-9.2 | 4 |
+| Fritzel | FB53 | 7.6-8.8 | 3 |
+| Fritzel | MFB23 | 4.5-6.2 | 3 |
+| Fritzel | UFB12 | 2.1 | 2 |
+| Fritzel | UFB13 | 2.1 | 3 |
+| Fritzel | UFB33 | 6.9-7.5 | 3 |
+| Hy-Gain | 103BAS | 7.2 | 1 |
+| Hy-Gain | 105BAS | 10.8 | 1 |
+| Hy-Gain | 155BAS | 9.8 | 1 |
+| Hy-Gain | 204BAS | 8.2 | 1 |
+| Hy-Gain | 205BAS | 9.8 | 1 |
+| Hy-Gain | AV-640 | 1.0-1.8 | 7 |
+| Hy-Gain | CA-2x4max | 8.5-11.9 | 2 |
+| Hy-Gain | TH11DX | 7.5-9.2 | 5 |
+| Hy-Gain | TH2Mk3 | 6.1-6.2 | 3 |
+| Hy-Gain | TH3JRS | 7.0-8.9 | 3 |
+| Hy-Gain | TH3Mk3 | 7.1-8.4 | 3 |
+| Hy-Gain | TH5Mk2 | 7.8-9.0 | 3 |
+| Hy-Gain | TH6DXX | 8.2-9.8 | 3 |
+| Hy-Gain | TH7DX | 8.2-9.4 | 3 |
+| KLM | KT-34A | 7.5-8.9 | 3 |
+| KLM | KT-34XA | 9.0-10.9 | 3 |
+| Maspr | WHS-32N | 12.8-14.8 | 2 |
+| Maspro | WH-59hor | 9.2 | 2 |
+| Maspro | WH-59vert | 9.2 | 2 |
+| Mosle | TA-33M | 8.7-10.4 | 3 |
+| Mosle | TA-33M warc | 2.1-10.4 | 5 |
+| Mosle | TA-33jrn warc | 2.1-8.1 | 5 |
+| Mosle | TA-34xl | 11.2-11.7 | 3 |
+| Mosle | TA-34xl warc | 2.1-11.7 | 5 |
+| Mosle | TW-23M | 8.9-9.3 | 2 |
+| Mosle | TW-24xl | 10.6-11.2 | 2 |
+| Mosle | TW-31xl | 2.1 | 3 |
+| Mosle | TW-32xl | 5.7-7.3 | 3 |
+| Mosle | TW-33xl | 8.2-9.3 | 3 |
+| Mosley | CL-33-M | 8.1-9.4 | 3 |
+| Mosley | CL-33warc | 2.1-10.7 | 5 |
+| Mosley | CL-36-M | 7.1-9.4 | 3 |
+| Mosley | MP-33N | 8.0-10.2 | 3 |
+| Mosley | MP-33N warc | 2.1-10.2 | 5 |
+| Mosley | Mini-33 | 5.3-6.7 | 3 |
+| Mosley | Pro-57B | 7.6-8.2 | 5 |
+| Mosley | Pro-57B-40 | 2.1-11.6 | 6 |
+| Mosley | Pro-67A | 7.3-8.6 | 5 |
+| Mosley | Pro-67B | 7.6-8.2 | 5 |
+| Mosley | Pro-67c-3 | 2.1-11.4 | 7 |
+| Mosley | Pro-77A | 2.1-11.6 | 7 |
+| Mosley | Pro-95 | 11.1-12.7 | 5 |
+| Mosley | Pro-96 | 9.9-12.7 | 6 |
+| Mosley | TA-31M | 2.1 | 3 |
+| Mosley | TA-31jrn | 2.1 | 3 |
+| Mosley | TA-32M | 6.0-7.7 | 3 |
+| Mosley | TA-32jrn | 5.2-7.7 | 3 |
+| Mosley | TA-33jrn | 6.7-8.1 | 3 |
+| Mosley | TA-53M | 5.9-8.1 | 5 |
+| Muehla | DX2000 | -4.7--1.1 | 8 |
+| Opti-Beam | OB10-3W | 7.4-8.7 | 3 |
+| Opti-Beam | OB11-3 | 7.2-8.8 | 3 |
+| Opti-Beam | OB11-5 | 7.3-7.6 | 5 |
+| Opti-Beam | OB12-4 | 5.8-8.9 | 4 |
+| Opti-Beam | OB12-4WARC | 5.8-8.9 | 4 |
+| Opti-Beam | OB13-6 | 5.8-8.9 | 6 |
+| Opti-Beam | OB15-7 | 5.6-8.0 | 7 |
+| Opti-Beam | OB16-3 | 9.2-10.7 | 3 |
+| Opti-Beam | OB16-5 | 8.0-9.8 | 5 |
+| Opti-Beam | OB17-4 | 7.0-10.2 | 4 |
+| Opti-Beam | OB18-6 | 6.9-9.7 | 6 |
+| Opti-Beam | OB2-30 | 6.0 | 1 |
+| Opti-Beam | OB2-40 | 5.8 | 1 |
+| Opti-Beam | OB2-40M | 5.7 | 1 |
+| Opti-Beam | OB2-80 | 6.0 | 1 |
+| Opti-Beam | OB3-30 | 7.9 | 1 |
+| Opti-Beam | OB3-80 | 7.0 | 1 |
+| Opti-Beam | OB4-2W | 6.4-6.8 | 2 |
+| Opti-Beam | OB4-2WARC | 6.4-6.8 | 2 |
+| Opti-Beam | OB4-40 | 7.2 | 1 |
+| Opti-Beam | OB4020 | 7.4-10.4 | 2 |
+| Opti-Beam | OB4030 | 5.8-6.0 | 2 |
+| Opti-Beam | OB5-10 | 10.5 | 1 |
+| Opti-Beam | OB5-12 | 10.8 | 1 |
+| Opti-Beam | OB5-15 | 10.5 | 1 |
+| Opti-Beam | OB5-17 | 10.7 | 1 |
+| Opti-Beam | OB5-20 | 10.6 | 1 |
+| Opti-Beam | OB5-6 | 10.9 | 1 |
+| Opti-Beam | OB6-10 | 11.7 | 1 |
+| Opti-Beam | OB6-2WARC | 7.3-8.6 | 2 |
+| Opti-Beam | OB6-3M | 6.2-6.8 | 3 |
+| Opti-Beam | OB6-6 | 11.7 | 1 |
+| Opti-Beam | OB7-2W | 7.2-8.0 | 2 |
+| Opti-Beam | OB7-2WARC | 7.2-8.0 | 2 |
+| Opti-Beam | OB7-3 | 6.2-7.6 | 3 |
+| Opti-Beam | OB7-3M | 6.2-7.6 | 3 |
+| Opti-Beam | OB804020 | 6.0-10.5 | 3 |
+| Opti-Beam | OB9-2W | 9.2-10.0 | 2 |
+| Opti-Beam | OB9-2WARC | 9.2-10.0 | 2 |
+| Opti-Beam | OB9-5 | 6.3-6.8 | 5 |
+| Opti-Beam | OBW10-5 | 6.7-7.0 | 5 |
+| Optibeam | OB12-6 | 5.8-7.0 | 6 |
+| Optibeam | OB8-4M | 5.7-7.0 | 4 |
+| Optibeam | OB8_4M | 5.7-7.0 | 4 |
+| SHF | SHF1340 | 18.8 | 1 |
+| SHF | SHF1367 | 22.1 | 1 |
+| SHF | SHF2328 | 17.6 | 1 |
+| SHF | SHF2344 | 20.2 | 1 |
+| SHF | SHF2367 | 22.1 | 1 |
+| Somme | XP406 | 2.1-8.2 | 6 |
+| Somme | XP507 | 2.1-9.2 | 7 |
+| Somme | XP707 | 2.1-11.7 | 7 |
+| Somme | XP807 | 2.1-13.2 | 7 |
+| SteppIR | SteppIR_2El | 6.4-6.8 | 6 |
+| SteppIR | SteppIR_3El | 3.9-7.9 | 6 |
+| SteppIR | SteppIR_4El | 9.4-12.0 | 6 |
+| SteppIR | Stepp_3El | 3.0-6.3 | 6 |
+| Tonna | 20089 | 12.4 | 1 |
+| Tonna | 20505 | 10.0 | 1 |
+| Tonna | 20623 | 17.2 | 1 |
+| Tonna | 20624 | 17.2 | 1 |
+| Tonna | 20635 | 19.6 | 1 |
+| Tonna | 20636 | 19.6 | 1 |
+| Tonna | 20650 | 20.1 | 1 |
+| Tonna | 20655 | 20.1 | 1 |
+| Tonna | 20725 | 17.6 | 1 |
+| Tonna | 20804 | 8.9 | 1 |
+| Tonna | 20808 | 8.1 | 1 |
+| Tonna | 20809 | 12.4 | 1 |
+| Tonna | 20813 | 15.3 | 1 |
+| Tonna | 20818 | 12.2 | 1 |
+| Tonna | 20919 | 15.3 | 1 |
+| Tonna | 20922 | 17.4 | 1 |
+| Tonna | F9FT-horiz | 8.9 | 1 |
+| Tonna | F9FT-vert | 8.9 | 1 |
+| Tonna | T-17El-horiz | 15.0 | 1 |
+| Tonna | T-17El-vert | 15.0 | 1 |
+| Tonna | T-4x17El-horiz | 21.0 | 1 |
+| Tonna | T-4x17El-vert | 21.0 | 1 |
+| Wimo | D2T | -9.6-4.8 | 7 |
+| Wimo | Wx208 | 9.2 | 1 |
+| Wimo | Wx214 | 12.2 | 1 |
+| Wimo | Wx220 | 14.9 | 1 |
+| Wimo | Wx7020 | 13.7 | 1 |
+| Wimo | Wx7036 | 16.1 | 1 |
+| Wimo | Wy204 | 9.2 | 1 |
+| Wimo | Wy207 | 12.2 | 1 |
+| Wimo | Wy210 | 14.4 | 1 |
+| Wimo | Wy7010 | 13.7 | 1 |
+| Wimo | Wy7018 | 16.1 | 1 |
+| Wimo | Wy7023 | 17.1 | 1 |
+| Wimo | Wy706 | 10.2 | 1 |
+| Wimo | ZX6-2 | 6.2 | 1 |
+
+### A.4 Vertical Antennas
+
+Vertical antennas have patterns generated using the omnidirectional formula from Section 11.4.2.
+
+| Manufacturer | Model | Gain (dBi) | Bands |
+|--------------|-------|------------|-------|
+| Allgemein | GP Triple | 2.2 | 4 |
+| Allgemein | Ringo Range | 8.2 | 2 |
+| Comet | CX-725 | 2.2-8.4 | 3 |
+| Comet | CX-901 | 3.0-8.4 | 3 |
+| Comet | CX-902 | 4.4-6.9 | 3 |
+| Comet | GP-15 | 3.0-8.6 | 3 |
+| Comet | GP-21 | 14.8 | 1 |
+| Comet | GP-3N | 4.5-7.2 | 2 |
+| Comet | GP-91 | 5.3-10.6 | 3 |
+| Comet | GP-95 | 6.0-12.8 | 3 |
+| Comet | GP-9N | 8.5-11.9 | 2 |
+| Cushcraft | R6000 | 1.5 | 1 |
+| Cushcraft | R6xyz | 1.5 | 1 |
+| Diamond | DP-CP6 | 1.0-3.0 | 5 |
+| Diamond | F-23 | 7.8 | 1 |
+| Fritzel | GPA30 | 1.6 | 3 |
+| Fritzel | GPA404 | 1.6 | 4 |
+| Fritzel | GPA50 | 1.6 | 5 |
+
+*Summary: 14 Log-Periodic, 7 Quad, 229 Yagi, 18 Vertical antennas with generated patterns (total: 268 antennas).*

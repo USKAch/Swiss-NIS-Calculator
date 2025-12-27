@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:NIS.Desktop.ViewModels"
+             xmlns:loc="using:NIS.Desktop.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="700"
@@ -15,9 +16,9 @@
         <!-- Header -->
         <Border Grid.Row="0" Background="#2196F3" Padding="20,15">
             <Panel>
-                <TextBlock Text="Add New Antenna" IsVisible="{Binding IsAddingNew}"
+                <TextBlock Text="{Binding AddNewAntenna, Source={x:Static loc:Strings.Instance}}" IsVisible="{Binding IsAddingNew}"
                            FontSize="20" FontWeight="Bold" Foreground="White"/>
-                <TextBlock Text="Antenna Repository" IsVisible="{Binding !IsAddingNew}"
+                <TextBlock Text="{Binding AntennaRepository, Source={x:Static loc:Strings.Instance}}" IsVisible="{Binding !IsAddingNew}"
                            FontSize="20" FontWeight="Bold" Foreground="White"/>
             </Panel>
         </Border>
@@ -26,11 +27,11 @@
         <Border Grid.Row="1" Grid.RowSpan="2" Margin="15" Background="White" CornerRadius="4" Padding="20"
                 IsVisible="{Binding !IsAddingNew}">
             <StackPanel Spacing="15">
-                <TextBlock Text="Select Antenna" FontSize="16" FontWeight="Bold"/>
-                <TextBlock Text="Type to search by manufacturer or model:" Foreground="#666"/>
+                <TextBlock Text="{Binding SelectAntennaPrompt, Source={x:Static loc:Strings.Instance}}" FontSize="16" FontWeight="Bold"/>
+                <TextBlock Text="{Binding TypeToSearchDescription, Source={x:Static loc:Strings.Instance}}" Foreground="#666"/>
                 <AutoCompleteBox ItemsSource="{Binding FilteredAntennas}"
                                  FilterMode="Contains"
-                                 Watermark="Start typing to search..."
+                                 Watermark="{Binding TypeToSearch, Source={x:Static loc:Strings.Instance}}"
                                  MinimumPrefixLength="0"
                                  IsTextCompletionEnabled="True"
                                  SelectedItem="{Binding SelectedAntenna}"
@@ -45,17 +46,17 @@
             <StackPanel Spacing="15">
                 <Border Background="#F5F5F5" CornerRadius="8" Padding="20">
                     <StackPanel Spacing="12">
-                        <TextBlock Text="Antenna Details" FontWeight="Bold" FontSize="16"/>
+                        <TextBlock Text="{Binding AntennaDetails, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
 
                         <Grid ColumnDefinitions="120,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="12" ColumnSpacing="15">
-                            <TextBlock Text="Manufacturer:" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                            <TextBox Grid.Column="1" Text="{Binding NewManufacturer}" Watermark="e.g. Cushcraft" MinWidth="250"/>
+                            <TextBlock Text="{Binding Manufacturer, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <TextBox Grid.Column="1" Text="{Binding NewManufacturer}" Watermark="{Binding ManufacturerExample, Source={x:Static loc:Strings.Instance}}" MinWidth="250"/>
 
-                            <TextBlock Grid.Row="1" Text="Model:" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding NewModel}" Watermark="e.g. A3S" MinWidth="250"/>
+                            <TextBlock Grid.Row="1" Text="{Binding Model, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding NewModel}" Watermark="{Binding ModelExample, Source={x:Static loc:Strings.Instance}}" MinWidth="250"/>
 
-                            <TextBlock Grid.Row="2" Text="Rotatable:" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                            <CheckBox Grid.Row="2" Grid.Column="1" IsChecked="{Binding NewIsRotatable}" Content="Horizontally rotatable"/>
+                            <TextBlock Grid.Row="2" Text="{Binding Rotatable, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <CheckBox Grid.Row="2" Grid.Column="1" IsChecked="{Binding NewIsRotatable}" Content="{Binding HorizontallyRotatable, Source={x:Static loc:Strings.Instance}}"/>
                         </Grid>
                     </StackPanel>
                 </Border>
@@ -63,8 +64,8 @@
                 <Border Background="#F5F5F5" CornerRadius="8" Padding="20">
                     <StackPanel Spacing="12">
                         <Grid ColumnDefinitions="*,Auto">
-                            <TextBlock Text="Frequency Bands" FontWeight="Bold" FontSize="16"/>
-                            <Button Grid.Column="1" Content="+ Add Band" Command="{Binding AddBandCommand}"
+                            <TextBlock Text="{Binding FrequencyBands, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
+                            <Button Grid.Column="1" Content="{Binding AddBand, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddBandCommand}"
                                     Background="#4CAF50" Foreground="White" Padding="12,6"/>
                         </Grid>
 
@@ -75,7 +76,7 @@
                                         <StackPanel Spacing="12">
                                             <!-- Frequency and Gain row -->
                                             <Grid ColumnDefinitions="Auto,120,Auto,80,*,Auto">
-                                                <TextBlock Text="Frequency:" VerticalAlignment="Center" Margin="0,0,8,0" FontWeight="SemiBold"/>
+                                                <TextBlock Text="{Binding Frequency, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" Margin="0,0,8,0" FontWeight="SemiBold"/>
                                                 <ComboBox Grid.Column="1" SelectedItem="{Binding FrequencyMHz}"
                                                           ItemsSource="{Binding $parent[ItemsControl].((vm:AntennaEditorViewModel)DataContext).AvailableFrequencies}">
                                                     <ComboBox.ItemTemplate>
@@ -84,10 +85,10 @@
                                                         </DataTemplate>
                                                     </ComboBox.ItemTemplate>
                                                 </ComboBox>
-                                                <TextBlock Grid.Column="2" Text="Gain:" VerticalAlignment="Center" Margin="15,0,8,0" FontWeight="SemiBold"/>
+                                                <TextBlock Grid.Column="2" Text="{Binding Gain, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" Margin="15,0,8,0" FontWeight="SemiBold"/>
                                                 <NumericUpDown Grid.Column="3" Value="{Binding GainDbi}" ShowButtonSpinner="False" Minimum="-20" Maximum="50" Increment="0.5" FormatString="F1" Width="80"/>
                                                 <TextBlock Grid.Column="4" Text="dBi" VerticalAlignment="Center" Margin="5,0,0,0"/>
-                                                <Button Grid.Column="5" Content="Remove"
+                                                <Button Grid.Column="5" Content="{Binding Remove, Source={x:Static loc:Strings.Instance}}"
                                                         Command="{Binding $parent[ItemsControl].((vm:AntennaEditorViewModel)DataContext).RemoveBandCommand}"
                                                         CommandParameter="{Binding}"
                                                         Padding="10,5" Foreground="#F44336"/>
@@ -95,7 +96,7 @@
 
                                             <!-- Pattern section -->
                                             <StackPanel Spacing="8">
-                                                <TextBlock Text="Vertical Pattern (attenuation 0-60 dB at each angle):" FontSize="12" Foreground="#666"/>
+                                                <TextBlock Text="{Binding VerticalRadiationPattern, Source={x:Static loc:Strings.Instance}}" FontSize="12" Foreground="#666"/>
                                                 <Grid ColumnDefinitions="*,*,*,*,*,*,*,*,*,*" ColumnSpacing="4">
                                                     <StackPanel Spacing="2">
                                                         <TextBlock Text="0°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
@@ -145,7 +146,7 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
-                        <TextBlock Text="Add at least one frequency band. Pattern values are vertical attenuation in dB (0° = horizon, 90° = straight up)."
+                        <TextBlock Text="{Binding AddAtLeastOneBand, Source={x:Static loc:Strings.Instance}}"
                                    Foreground="#666" FontSize="11" FontStyle="Italic" TextWrapping="Wrap"
                                    IsVisible="{Binding !NewBands.Count}"/>
                     </StackPanel>
@@ -157,16 +158,16 @@
         <Border Grid.Row="3" Background="#F5F5F5" Padding="20,15">
             <Grid ColumnDefinitions="Auto,*,Auto">
                 <!-- Add New button (shown in list mode) -->
-                <Button Content="+ Add New Antenna"
+                <Button Content="{Binding AddNewAntenna, Source={x:Static loc:Strings.Instance}}"
                         Command="{Binding StartAddNewCommand}"
                         IsVisible="{Binding !IsAddingNew}"
                         Background="#4CAF50" Foreground="White" Padding="15,10"/>
 
                 <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10">
-                    <Button Content="Cancel" Command="{Binding CancelCommand}" Padding="20,10"/>
+                    <Button Content="{Binding Cancel, Source={x:Static loc:Strings.Instance}}" Command="{Binding CancelCommand}" Padding="20,10"/>
 
                     <!-- Save button (shown in add mode) -->
-                    <Button Content="Save Antenna" Command="{Binding SaveNewAntennaCommand}"
+                    <Button Content="{Binding SaveAntenna, Source={x:Static loc:Strings.Instance}}" Command="{Binding SaveNewAntennaCommand}"
                             IsVisible="{Binding IsAddingNew}"
                             Background="#4CAF50" Foreground="White" Padding="20,10"/>
                 </StackPanel>

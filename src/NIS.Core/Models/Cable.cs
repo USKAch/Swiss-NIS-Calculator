@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json.Serialization;
 
 namespace NIS.Core.Models;
@@ -29,9 +30,9 @@ public class Cable
         if (AttenuationPer100m.Count == 0)
             return 0;
 
-        // Convert string keys to doubles and sort
+        // Convert string keys to doubles and sort (use InvariantCulture for consistent parsing)
         var freqValues = AttenuationPer100m
-            .Select(kv => (Freq: double.Parse(kv.Key), Atten: kv.Value))
+            .Select(kv => (Freq: double.Parse(kv.Key, CultureInfo.InvariantCulture), Atten: kv.Value))
             .OrderBy(x => x.Freq)
             .ToList();
 

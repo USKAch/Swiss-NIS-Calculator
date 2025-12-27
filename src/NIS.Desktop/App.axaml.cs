@@ -1,9 +1,12 @@
 using System.Linq;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
+using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
+using Avalonia.Threading;
 using NIS.Desktop.ViewModels;
 using NIS.Desktop.Views;
 
@@ -22,6 +25,9 @@ public partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
+            // Load any custom translations from previous sessions
+            TranslationEditorViewModel.LoadCustomTranslations();
+
             // Avoid duplicate validations from both Avalonia and the CommunityToolkit.
             DisableAvaloniaDataAnnotationValidation();
 
@@ -45,10 +51,22 @@ public partial class App : Application
                 DataContext = _mainShellViewModel
             };
 
+            // Add global handler for NumericUpDown to select all on focus
+            mainWindow.AddHandler(InputElement.GotFocusEvent, OnNumericUpDownGotFocus, handledEventsToo: true);
+
             desktop.MainWindow = mainWindow;
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private void OnNumericUpDownGotFocus(object? sender, GotFocusEventArgs e)
+    {
+        if (e.Source is TextBox textBox && textBox.Parent?.Parent is NumericUpDown)
+        {
+            // Select all text when NumericUpDown's inner TextBox gets focus
+            Dispatcher.UIThread.Post(() => textBox.SelectAll());
+        }
     }
 
     private void DisableAvaloniaDataAnnotationValidation()

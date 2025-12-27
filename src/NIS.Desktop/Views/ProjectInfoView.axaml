@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:NIS.Desktop.ViewModels"
+             xmlns:loc="using:NIS.Desktop.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="650" d:DesignHeight="550"
@@ -28,13 +29,13 @@
                 <!-- Callsign -->
                 <StackPanel Spacing="5">
                     <TextBlock Text="{Binding CallsignLabel}" FontWeight="SemiBold"/>
-                    <TextBox Text="{Binding Callsign}" Watermark="e.g. HB9FS"/>
+                    <TextBox Text="{Binding Callsign}" Watermark="{Binding CallsignExample, Source={x:Static loc:Strings.Instance}}"/>
                 </StackPanel>
 
                 <!-- Address -->
                 <StackPanel Spacing="5">
                     <TextBlock Text="{Binding AddressLabel}" FontWeight="SemiBold"/>
-                    <TextBox Text="{Binding Address}" Watermark="e.g. Musterstrasse 1, 8000 Zürich"/>
+                    <TextBox Text="{Binding Address}" Watermark="{Binding AddressExample, Source={x:Static loc:Strings.Instance}}"/>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

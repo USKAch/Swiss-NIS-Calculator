@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:NIS.Desktop.ViewModels"
+             xmlns:loc="using:NIS.Desktop.Localization"
              xmlns:conv="using:NIS.Desktop.Converters"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -22,11 +23,11 @@
         <Border Grid.Row="0" Background="#2196F3" Padding="20,15">
             <Grid ColumnDefinitions="*,Auto">
                 <StackPanel>
-                    <TextBlock Text="Calculation Results" FontSize="20" FontWeight="Bold" Foreground="White"/>
+                    <TextBlock Text="{Binding CalculationResults, Source={x:Static loc:Strings.Instance}}" FontSize="20" FontWeight="Bold" Foreground="White"/>
                     <TextBlock Text="{Binding ComplianceSummary}" FontSize="12" Foreground="#BBDEFB" Margin="0,3,0,0"/>
                 </StackPanel>
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                    <Button Content="Export Markdown" Command="{Binding ExportMarkdownCommand}"
+                    <Button Content="{Binding ExportMarkdown, Source={x:Static loc:Strings.Instance}}" Command="{Binding ExportMarkdownCommand}"
                             Background="#4CAF50" Foreground="White" Padding="15,8"/>
                 </StackPanel>
             </Grid>
@@ -83,13 +84,13 @@
 
                                         <!-- Table Header -->
                                         <Grid ColumnDefinitions="80,80,80,100,80,80,80" Background="#E0E0E0" Margin="-10,-10,-10,0">
-                                            <TextBlock Text="Freq" FontWeight="SemiBold" Padding="10,8" HorizontalAlignment="Center"/>
-                                            <TextBlock Grid.Column="1" Text="Gain" FontWeight="SemiBold" Padding="10,8" HorizontalAlignment="Center"/>
-                                            <TextBlock Grid.Column="2" Text="Pm" FontWeight="SemiBold" Padding="10,8" HorizontalAlignment="Center"/>
-                                            <TextBlock Grid.Column="3" Text="Field (V/m)" FontWeight="SemiBold" Padding="10,8" HorizontalAlignment="Center"/>
-                                            <TextBlock Grid.Column="4" Text="Limit" FontWeight="SemiBold" Padding="10,8" HorizontalAlignment="Center"/>
-                                            <TextBlock Grid.Column="5" Text="Safety" FontWeight="SemiBold" Padding="10,8" HorizontalAlignment="Center"/>
-                                            <TextBlock Grid.Column="6" Text="Status" FontWeight="SemiBold" Padding="10,8" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="{Binding FreqHeader, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" Padding="10,8" HorizontalAlignment="Center"/>
+                                            <TextBlock Grid.Column="1" Text="{Binding GainHeader, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" Padding="10,8" HorizontalAlignment="Center"/>
+                                            <TextBlock Grid.Column="2" Text="{Binding PmHeader, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" Padding="10,8" HorizontalAlignment="Center"/>
+                                            <TextBlock Grid.Column="3" Text="{Binding FieldHeader, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" Padding="10,8" HorizontalAlignment="Center"/>
+                                            <TextBlock Grid.Column="4" Text="{Binding Limit, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" Padding="10,8" HorizontalAlignment="Center"/>
+                                            <TextBlock Grid.Column="5" Text="{Binding SafetyHeader, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" Padding="10,8" HorizontalAlignment="Center"/>
+                                            <TextBlock Grid.Column="6" Text="{Binding StatusHeader, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" Padding="10,8" HorizontalAlignment="Center"/>
                                         </Grid>
 
                                         <!-- Table Rows -->
@@ -148,7 +149,7 @@
         <Border Grid.Row="2" Background="#EEEEEE" Padding="20,15">
             <Grid ColumnDefinitions="*,Auto">
                 <TextBlock Text="{Binding StatusMessage}" VerticalAlignment="Center"/>
-                <Button Grid.Column="1" Content="Close" Command="{Binding CloseCommand}" Padding="20,10"/>
+                <Button Grid.Column="1" Content="{Binding Close, Source={x:Static loc:Strings.Instance}}" Command="{Binding CloseCommand}" Padding="20,10"/>
             </Grid>
         </Border>
     </Grid>

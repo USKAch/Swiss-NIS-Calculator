@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:NIS.Desktop.ViewModels"
+             xmlns:loc="using:NIS.Desktop.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="650" d:DesignHeight="550"
@@ -19,10 +20,10 @@
         <!-- Header -->
         <Border Grid.Row="0" Background="#2196F3" Padding="30,25">
             <StackPanel HorizontalAlignment="Center">
-                <TextBlock Text="Swiss NIS Calculator"
+                <TextBlock Text="{Binding AppTitle, Source={x:Static loc:Strings.Instance}}"
                            FontSize="28" FontWeight="Bold" Foreground="White"
                            HorizontalAlignment="Center"/>
-                <TextBlock Text="RF Field Strength Calculator for Amateur Radio"
+                <TextBlock Text="{Binding AppSubtitle, Source={x:Static loc:Strings.Instance}}"
                            FontSize="14" Foreground="#BBDEFB" Margin="0,5,0,0"
                            HorizontalAlignment="Center"/>
             </StackPanel>
@@ -33,10 +34,11 @@
 
             <!-- Language & Theme Selection -->
             <StackPanel Spacing="15">
-                <TextBlock Text="Select Language / Sprache wählen"
+                <TextBlock Text="{Binding SelectLanguage, Source={x:Static loc:Strings.Instance}}"
                            FontSize="16" FontWeight="SemiBold"
                            HorizontalAlignment="Center"/>
 
+                <!-- Language names stay in their native language -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="8">
                     <ToggleButton Content="Deutsch"
                                   IsChecked="{Binding SelectedLanguage, Converter={StaticResource EqualsConverter}, ConverterParameter=de}"
@@ -65,15 +67,16 @@
 
                 <!-- Dark Mode Toggle -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10" Margin="0,10,0,0">
-                    <TextBlock Text="Theme:" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding Theme, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center"/>
                     <ToggleSwitch IsChecked="{Binding IsDarkMode}"
-                                  OnContent="Dark" OffContent="Light"/>
+                                  OnContent="{Binding ThemeDark, Source={x:Static loc:Strings.Instance}}"
+                                  OffContent="{Binding ThemeLight, Source={x:Static loc:Strings.Instance}}"/>
                 </StackPanel>
             </StackPanel>
 
             <!-- Action Buttons -->
             <StackPanel Spacing="12" Width="300">
-                <Button Content="New Project"
+                <Button Content="{Binding NewProject, Source={x:Static loc:Strings.Instance}}"
                         Command="{Binding NewProjectCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Center"
@@ -81,7 +84,7 @@
                         Padding="20,15"
                         FontSize="16"/>
 
-                <Button Content="Open Project..."
+                <Button Content="{Binding OpenProject, Source={x:Static loc:Strings.Instance}}"
                         Command="{Binding OpenProjectCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Center"
@@ -89,7 +92,7 @@
                         Padding="20,15"
                         FontSize="16"/>
 
-                <Button Content="Master Data"
+                <Button Content="{Binding MasterData, Source={x:Static loc:Strings.Instance}}"
                         Command="{Binding MasterDataCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Center"
@@ -101,7 +104,7 @@
 
         <!-- Footer -->
         <Border Grid.Row="2" Background="#EEEEEE" Padding="15,10">
-            <TextBlock Text="NISV Compliance Calculator for Swiss Amateur Radio Stations"
+            <TextBlock Text="{Binding NisvCompliance, Source={x:Static loc:Strings.Instance}}"
                        HorizontalAlignment="Center" Foreground="#666"/>
         </Border>
     </Grid>
