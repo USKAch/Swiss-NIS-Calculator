@@ -231,4 +231,7 @@ public class Project
 
     [JsonPropertyName("customRadios")]
     public List<Radio> CustomRadios { get; set; } = new();
+
+    [JsonPropertyName("okas")]
+    public List<Oka> Okas { get; set; } = new();
 }

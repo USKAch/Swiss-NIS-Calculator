@@ -25,9 +25,108 @@ public class Strings : INotifyPropertyChanged
             if (_language != value)
             {
                 _language = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));
+                // Notify all properties have changed - raise for each bound property
+                RaiseAllPropertiesChanged();
             }
         }
+    }
+
+    private void RaiseAllPropertiesChanged()
+    {
+        // Raise PropertyChanged for all localized string properties
+        // This ensures Avalonia bindings update correctly
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Language)));
+
+        // Common
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Save)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SaveAs)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Cancel)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Edit)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(New)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Delete)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Add)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Remove)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Back)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Close)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Calculate)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Export)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Yes)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(No)));
+
+        // Welcome
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AppTitle)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AppSubtitle)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectLanguage)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Theme)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ThemeLight)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ThemeDark)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NewProject)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentProject)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(OpenProject)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MasterData)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MasterDataShort)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NisvCompliance)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Home)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Project)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Settings)));
+
+        // Project Info
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StationInfo)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Callsign)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Address)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CreateProject)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(EditStationInfo)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CallsignExample)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AddressExample)));
+
+        // Project Overview
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Configurations)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AddConfiguration)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalculateAll)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ExportReport)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NoConfigurations)));
+
+        // Configuration Editor
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Configuration)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Antenna)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Transmitter)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FeedLine)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(OperatingParameters)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(EvaluationPoint)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectAntenna)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Height)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FrequencyBands)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Radio)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectRadio)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UseLinearAmplifier)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Power)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Cable)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectCable)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CableLength)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AdditionalLoss)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Modulation)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ActivityFactor)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(OkaName)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(OkaDistance)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(OkaDamping)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(OkaExplanation)));
+
+        // Master Data
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Antennas)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Cables)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Radios)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Search)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MasterDataManager)));
+
+        // Results
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Results)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalculationResults)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Pass)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Fail)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FieldStrength)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SafetyDistance)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Limit)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ExportMarkdown)));
     }
 
     private string Get(string key) =>
@@ -62,9 +161,14 @@ public class Strings : INotifyPropertyChanged
     public string ThemeLight => Get("ThemeLight");
     public string ThemeDark => Get("ThemeDark");
     public string NewProject => Get("NewProject");
+    public string CurrentProject => Get("CurrentProject");
     public string OpenProject => Get("OpenProject");
     public string MasterData => Get("MasterData");
+    public string MasterDataShort => Get("MasterDataShort");
     public string NisvCompliance => Get("NisvCompliance");
+    public string Home => Get("Home");
+    public string Project => Get("Project");
+    public string Settings => Get("Settings");
 
     // ============================================================
     // PROJECT INFO
@@ -101,6 +205,8 @@ public class Strings : INotifyPropertyChanged
     public string Height => Get("Height");
     public string HeightUnit => Get("HeightUnit");
     public string FrequencyBands => Get("FrequencyBands");
+    public string Bands => Get("Bands");
+    public string Distance => Get("OkaDistance");
 
     // Transmitter section
     public string Radio => Get("Radio");
@@ -131,6 +237,19 @@ public class Strings : INotifyPropertyChanged
     public string OkaExplanation => Get("OkaExplanation");
     public string AdditionalLossExample => Get("AdditionalLossExample");
     public string OkaNameExample => Get("OkaNameExample");
+
+    // OKA Master Editor
+    public string OkaDetails => Get("OkaDetails");
+    public string OkaNumber => Get("OkaNumber");
+    public string OkaNameLabel => Get("OkaNameLabel");
+    public string OkaNameRequired => Get("OkaNameRequired");
+    public string DefaultDamping => Get("DefaultDamping");
+    public string DefaultDampingHint => Get("DefaultDampingHint");
+    public string DefaultDistance => Get("DefaultDistance");
+    public string DefaultDistanceHint => Get("DefaultDistanceHint");
+    public string AddOka => Get("AddOka");
+    public string EditOka => Get("EditOka");
+    public string SelectOka => Get("SelectOka");
 
     // ============================================================
     // ANTENNA EDITOR
@@ -203,6 +322,7 @@ public class Strings : INotifyPropertyChanged
     public string SearchAntennas => Get("SearchAntennas");
     public string SearchCables => Get("SearchCables");
     public string SearchRadios => Get("SearchRadios");
+    public string SearchOkas => Get("SearchOkas");
     public string SearchTranslations => Get("SearchTranslations");
     public string AddAntennaButton => Get("AddAntennaButton");
     public string AddCableButton => Get("AddCableButton");
@@ -301,7 +421,7 @@ public class Strings : INotifyPropertyChanged
             TranslationData[key] = new Dictionary<string, string> { [language] = value };
         }
         // Notify UI to refresh
-        Instance.PropertyChanged?.Invoke(Instance, new PropertyChangedEventArgs(null));
+        Instance.RaiseAllPropertiesChanged();
     }
 
     /// <summary>
@@ -311,7 +431,7 @@ public class Strings : INotifyPropertyChanged
     {
         TranslationData[key] = new Dictionary<string, string>(values);
         Categories[key] = category;
-        Instance.PropertyChanged?.Invoke(Instance, new PropertyChangedEventArgs(null));
+        Instance.RaiseAllPropertiesChanged();
     }
 
     // ============================================================
@@ -327,7 +447,7 @@ public class Strings : INotifyPropertyChanged
         // Welcome
         ["AppTitle"] = "Welcome", ["AppSubtitle"] = "Welcome", ["SelectLanguage"] = "Welcome",
         ["Theme"] = "Welcome", ["ThemeLight"] = "Welcome", ["ThemeDark"] = "Welcome",
-        ["NewProject"] = "Welcome", ["OpenProject"] = "Welcome", ["MasterData"] = "Welcome", ["NisvCompliance"] = "Welcome",
+        ["NewProject"] = "Welcome", ["CurrentProject"] = "Welcome", ["OpenProject"] = "Welcome", ["MasterData"] = "Welcome", ["NisvCompliance"] = "Welcome",
 
         // ProjectInfo
         ["StationInfo"] = "ProjectInfo", ["Callsign"] = "ProjectInfo", ["Address"] = "ProjectInfo",
@@ -426,9 +546,14 @@ public class Strings : INotifyPropertyChanged
         ["ThemeLight"] = new() { ["de"] = "Hell", ["fr"] = "Clair", ["it"] = "Chiaro", ["en"] = "Light" },
         ["ThemeDark"] = new() { ["de"] = "Dunkel", ["fr"] = "Sombre", ["it"] = "Scuro", ["en"] = "Dark" },
         ["NewProject"] = new() { ["de"] = "Neues Projekt", ["fr"] = "Nouveau projet", ["it"] = "Nuovo progetto", ["en"] = "New Project" },
+        ["CurrentProject"] = new() { ["de"] = "Aktuelles Projekt", ["fr"] = "Projet actuel", ["it"] = "Progetto corrente", ["en"] = "Current Project" },
         ["OpenProject"] = new() { ["de"] = "Projekt öffnen...", ["fr"] = "Ouvrir projet...", ["it"] = "Apri progetto...", ["en"] = "Open Project..." },
         ["MasterData"] = new() { ["de"] = "Stammdaten", ["fr"] = "Données de base", ["it"] = "Dati master", ["en"] = "Master Data" },
+        ["MasterDataShort"] = new() { ["de"] = "Daten", ["fr"] = "Données", ["it"] = "Dati", ["en"] = "Data" },
         ["NisvCompliance"] = new() { ["de"] = "NISV-Konformitätsrechner für Schweizer Amateurfunkstationen", ["fr"] = "Calculateur de conformité ORNI pour stations radioamateurs suisses", ["it"] = "Calcolatore conformità ORNI per stazioni radioamatoriali svizzere", ["en"] = "NISV Compliance Calculator for Swiss Amateur Radio Stations" },
+        ["Home"] = new() { ["de"] = "Start", ["fr"] = "Accueil", ["it"] = "Home", ["en"] = "Home" },
+        ["Project"] = new() { ["de"] = "Projekt", ["fr"] = "Projet", ["it"] = "Progetto", ["en"] = "Project" },
+        ["Settings"] = new() { ["de"] = "Einstellungen", ["fr"] = "Paramètres", ["it"] = "Impostazioni", ["en"] = "Settings" },
 
         // Project Info
         ["StationInfo"] = new() { ["de"] = "Stationsinformationen", ["fr"] = "Informations station", ["it"] = "Informazioni stazione", ["en"] = "Station Information" },
@@ -458,6 +583,7 @@ public class Strings : INotifyPropertyChanged
         ["Height"] = new() { ["de"] = "Höhe", ["fr"] = "Hauteur", ["it"] = "Altezza", ["en"] = "Height" },
         ["HeightUnit"] = new() { ["de"] = "m", ["fr"] = "m", ["it"] = "m", ["en"] = "m" },
         ["FrequencyBands"] = new() { ["de"] = "Frequenzbänder", ["fr"] = "Bandes de fréquence", ["it"] = "Bande di frequenza", ["en"] = "Frequency Bands" },
+        ["Bands"] = new() { ["de"] = "Bänder", ["fr"] = "Bandes", ["it"] = "Bande", ["en"] = "Bands" },
 
         ["Radio"] = new() { ["de"] = "Transceiver", ["fr"] = "Émetteur-récepteur", ["it"] = "Ricetrasmettitore", ["en"] = "Radio" },
         ["SelectRadio"] = new() { ["de"] = "-- Transceiver wählen --", ["fr"] = "-- Sélectionner émetteur --", ["it"] = "-- Seleziona ricetrasmettitore --", ["en"] = "-- Select Radio --" },
@@ -480,10 +606,23 @@ public class Strings : INotifyPropertyChanged
         ["OkaName"] = new() { ["de"] = "Name", ["fr"] = "Nom", ["it"] = "Nome", ["en"] = "Name" },
         ["OkaDistance"] = new() { ["de"] = "Distanz", ["fr"] = "Distance", ["it"] = "Distanza", ["en"] = "Distance" },
         ["OkaDamping"] = new() { ["de"] = "Gebäudedämpfung", ["fr"] = "Atténuation bâtiment", ["it"] = "Attenuazione edificio", ["en"] = "Building Damping" },
-        ["OkaDampingHint"] = new() { ["de"] = "dB (Gebäudedämpfung)", ["fr"] = "dB (atténuation bâtiment)", ["it"] = "dB (attenuazione edificio)", ["en"] = "dB (building attenuation)" },
+        ["OkaDampingHint"] = new() { ["de"] = "(0 aussen, 6-12 innen)", ["fr"] = "(0 extérieur, 6-12 intérieur)", ["it"] = "(0 esterno, 6-12 interno)", ["en"] = "(0 outdoor, 6-12 indoor)" },
         ["OkaExplanation"] = new() { ["de"] = "OKA = Ort des kurzfristigen Aufenthalts", ["fr"] = "OKA = Lieu de séjour de courte durée", ["it"] = "OKA = Luogo di soggiorno breve", ["en"] = "OKA = Place of short-term stay" },
         ["AdditionalLossExample"] = new() { ["de"] = "z.B. Stecker, Schalter", ["fr"] = "ex. Connecteurs, commutateur", ["it"] = "es. Connettori, interruttore", ["en"] = "e.g. Connectors, switch" },
         ["OkaNameExample"] = new() { ["de"] = "z.B. Balkon des Nachbarn", ["fr"] = "ex. Balcon du voisin", ["it"] = "es. Balcone del vicino", ["en"] = "e.g. Neighbor's balcony" },
+
+        // OKA Master Editor
+        ["OkaDetails"] = new() { ["de"] = "OKA Details", ["fr"] = "Détails OKA", ["it"] = "Dettagli OKA", ["en"] = "OKA Details" },
+        ["OkaNumber"] = new() { ["de"] = "Nummer", ["fr"] = "Numéro", ["it"] = "Numero", ["en"] = "Number" },
+        ["OkaNameLabel"] = new() { ["de"] = "Bezeichnung", ["fr"] = "Désignation", ["it"] = "Designazione", ["en"] = "Name" },
+        ["OkaNameRequired"] = new() { ["de"] = "Bitte eine Bezeichnung eingeben.", ["fr"] = "Veuillez entrer une désignation.", ["it"] = "Inserire una designazione.", ["en"] = "Please enter a name." },
+        ["DefaultDamping"] = new() { ["de"] = "Standard-Dämpfung", ["fr"] = "Atténuation par défaut", ["it"] = "Attenuazione predefinita", ["en"] = "Default Damping" },
+        ["DefaultDampingHint"] = new() { ["de"] = "0 dB für Aussenbereich, typisch 6-12 dB für Innenräume", ["fr"] = "0 dB pour l'extérieur, typiquement 6-12 dB pour l'intérieur", ["it"] = "0 dB per l'esterno, tipicamente 6-12 dB per interni", ["en"] = "0 dB for outdoor, typically 6-12 dB for indoor" },
+        ["DefaultDistance"] = new() { ["de"] = "Horizontale Distanz", ["fr"] = "Distance horizontale", ["it"] = "Distanza orizzontale", ["en"] = "Horizontal Distance" },
+        ["DefaultDistanceHint"] = new() { ["de"] = "Distanz von der Antenne", ["fr"] = "Distance de l'antenne", ["it"] = "Distanza dall'antenna", ["en"] = "Distance from antenna" },
+        ["AddOka"] = new() { ["de"] = "OKA hinzufügen", ["fr"] = "Ajouter OKA", ["it"] = "Aggiungi OKA", ["en"] = "Add OKA" },
+        ["EditOka"] = new() { ["de"] = "OKA bearbeiten", ["fr"] = "Modifier OKA", ["it"] = "Modifica OKA", ["en"] = "Edit OKA" },
+        ["SelectOka"] = new() { ["de"] = "-- OKA wählen --", ["fr"] = "-- Sélectionner OKA --", ["it"] = "-- Seleziona OKA --", ["en"] = "-- Select OKA --" },
 
         // Antenna Editor
         ["AntennaDetails"] = new() { ["de"] = "Antennendetails", ["fr"] = "Détails antenne", ["it"] = "Dettagli antenna", ["en"] = "Antenna Details" },
@@ -548,6 +687,7 @@ public class Strings : INotifyPropertyChanged
         ["SearchAntennas"] = new() { ["de"] = "Hersteller oder Modell suchen...", ["fr"] = "Rechercher fabricant ou modèle...", ["it"] = "Cerca produttore o modello...", ["en"] = "Search by manufacturer or model..." },
         ["SearchCables"] = new() { ["de"] = "Kabelname suchen...", ["fr"] = "Rechercher nom du câble...", ["it"] = "Cerca nome cavo...", ["en"] = "Search by cable name..." },
         ["SearchRadios"] = new() { ["de"] = "Hersteller oder Modell suchen...", ["fr"] = "Rechercher fabricant ou modèle...", ["it"] = "Cerca produttore o modello...", ["en"] = "Search by manufacturer or model..." },
+        ["SearchOkas"] = new() { ["de"] = "OKA suchen...", ["fr"] = "Rechercher OKA...", ["it"] = "Cerca OKA...", ["en"] = "Search OKA..." },
         ["SearchTranslations"] = new() { ["de"] = "Übersetzungen suchen...", ["fr"] = "Rechercher traductions...", ["it"] = "Cerca traduzioni...", ["en"] = "Search translations..." },
         ["AddAntennaButton"] = new() { ["de"] = "+ Antenne hinzufügen", ["fr"] = "+ Ajouter antenne", ["it"] = "+ Aggiungi antenna", ["en"] = "+ Add Antenna" },
         ["AddCableButton"] = new() { ["de"] = "+ Kabel hinzufügen", ["fr"] = "+ Ajouter câble", ["it"] = "+ Aggiungi cavo", ["en"] = "+ Add Cable" },

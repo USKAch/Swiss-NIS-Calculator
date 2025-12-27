@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NIS.Core.Data;
 using NIS.Core.Models;
+using NIS.Desktop.Services;
 
 namespace NIS.Desktop.ViewModels;
 
@@ -54,6 +55,7 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
     public Action<Antenna?>? NavigateToAntennaEditor { get; set; }
     public Action<Cable?>? NavigateToCableEditor { get; set; }
     public Action<Radio?>? NavigateToRadioEditor { get; set; }
+    public Action<Oka?, int>? NavigateToOkaEditor { get; set; }
 
     public ConfigurationEditorViewModel()
     {
@@ -64,12 +66,17 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
         Antennas = new ObservableCollection<Antenna>(_antennaDatabase.Antennas.OrderBy(a => a.DisplayName));
         Cables = new ObservableCollection<Cable>(_cableDatabase.Cables);
         Radios = new ObservableCollection<Radio>(_radioDatabase.Radios);
+        // OKAs from shared storage service (persisted to file)
+        Okas = new ObservableCollection<Oka>(OkaStorageService.Instance.Okas.OrderBy(o => o.Id));
     }
 
     // Collections
     public ObservableCollection<Antenna> Antennas { get; }
     public ObservableCollection<Cable> Cables { get; }
     public ObservableCollection<Radio> Radios { get; }
+    public ObservableCollection<Oka> Okas { get; }
+
+    public int NextOkaId => OkaStorageService.Instance.NextId;
 
     /// <summary>
     /// Add project's custom antennas to the dropdown list.
@@ -180,6 +187,9 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
 
     // OKA (single evaluation point per configuration)
     [ObservableProperty]
+    private Oka? _selectedOka;
+
+    [ObservableProperty]
     private string _okaName = string.Empty;
 
     [ObservableProperty]
@@ -187,6 +197,22 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
 
     [ObservableProperty]
     private double _okaBuildingDampingDb;
+
+    partial void OnSelectedOkaChanged(Oka? value)
+    {
+        if (value != null)
+        {
+            OkaName = value.Name;
+            OkaDistanceMeters = value.DefaultDistanceMeters;
+            OkaBuildingDampingDb = value.DefaultDampingDb;
+        }
+    }
+
+    [RelayCommand]
+    private void AddOka()
+    {
+        NavigateToOkaEditor?.Invoke(null, NextOkaId);
+    }
 
     /// <summary>
     /// Load from existing configuration for editing.
@@ -235,7 +261,25 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
             _ => 1
         };
 
-        // OKA
+        // OKA - if the OkaName doesn't exist in the list, create and persist it
+        if (!string.IsNullOrWhiteSpace(config.OkaName))
+        {
+            SelectedOka = Okas.FirstOrDefault(o => o.Name.Equals(config.OkaName, StringComparison.OrdinalIgnoreCase));
+            if (SelectedOka == null)
+            {
+                // Create and persist new OKA from configuration data
+                var newOka = new Oka
+                {
+                    Id = NextOkaId,
+                    Name = config.OkaName,
+                    DefaultDistanceMeters = config.OkaDistanceMeters,
+                    DefaultDampingDb = config.OkaBuildingDampingDb
+                };
+                OkaStorageService.Instance.AddOrUpdate(newOka);
+                Okas.Add(newOka);
+                SelectedOka = newOka;
+            }
+        }
         OkaName = config.OkaName;
         OkaDistanceMeters = config.OkaDistanceMeters;
         OkaBuildingDampingDb = config.OkaBuildingDampingDb;

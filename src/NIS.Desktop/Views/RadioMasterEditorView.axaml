@@ -22,7 +22,7 @@
         <ScrollViewer Grid.Row="1" Padding="20" VerticalScrollBarVisibility="Auto">
             <StackPanel Spacing="20">
                 <!-- Radio Details -->
-                <Border Background="#F5F5F5" CornerRadius="8" Padding="20">
+                <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="20">
                     <StackPanel Spacing="12">
                         <TextBlock Text="{Binding RadioDetails, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
 
@@ -38,24 +38,17 @@
                                 <NumericUpDown Value="{Binding MaxPowerWatts}" ShowButtonSpinner="False"
                                                Minimum="1" Maximum="10000" Increment="10"
                                                FormatString="F0" Width="100"/>
-                                <TextBlock Text="{Binding MaxPowerHint, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" Foreground="#666"/>
+                                <TextBlock Text="{Binding MaxPowerHint, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" Opacity="0.6"/>
                             </StackPanel>
                         </Grid>
                     </StackPanel>
                 </Border>
 
-                <Border Background="#FFF3E0" CornerRadius="8" Padding="15">
-                    <StackPanel Spacing="8">
-                        <TextBlock Text="{Binding Note, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" Foreground="#E65100"/>
-                        <TextBlock Text="{Binding RadioNote, Source={x:Static loc:Strings.Instance}}"
-                                   Foreground="#666" TextWrapping="Wrap"/>
-                    </StackPanel>
-                </Border>
             </StackPanel>
         </ScrollViewer>
 
         <!-- Footer -->
-        <Border Grid.Row="2" Background="#F5F5F5" Padding="20,15">
+        <Border Grid.Row="2" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" Padding="20,15">
             <Grid ColumnDefinitions="*,Auto">
                 <TextBlock Text="{Binding ValidationMessage}" Foreground="#F44336" VerticalAlignment="Center"
                            IsVisible="{Binding ValidationMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>

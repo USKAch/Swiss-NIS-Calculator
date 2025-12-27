@@ -23,7 +23,7 @@
             <StackPanel Spacing="20" Margin="0,0,0,20">
 
                 <!-- Antenna Section (first, most important) -->
-                <Border Background="#F5F5F5" CornerRadius="8" Padding="15">
+                <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="15">
                     <StackPanel Spacing="12">
                         <TextBlock Text="{Binding Antenna, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
 
@@ -65,8 +65,8 @@
                                             <Border Background="#F8F8F8" CornerRadius="3" Padding="8,4" Margin="0,2">
                                                 <Grid ColumnDefinitions="80,80,*">
                                                     <TextBlock Text="{Binding FrequencyMHz, StringFormat='{}{0} MHz'}" FontWeight="SemiBold"/>
-                                                    <TextBlock Grid.Column="1" Text="{Binding GainDbi, StringFormat='{}{0:F1} dBi'}" Foreground="#666"/>
-                                                    <TextBlock Grid.Column="2" FontSize="10" Foreground="#888"
+                                                    <TextBlock Grid.Column="1" Text="{Binding GainDbi, StringFormat='{}{0:F1} dBi'}" Opacity="0.6"/>
+                                                    <TextBlock Grid.Column="2" FontSize="10" Opacity="0.5"
                                                                Text="{Binding Pattern, Converter={x:Static vm:PatternConverter.Instance}}"/>
                                                 </Grid>
                                             </Border>
@@ -79,7 +79,7 @@
                 </Border>
 
                 <!-- Transmitter Section -->
-                <Border Background="#F5F5F5" CornerRadius="8" Padding="15">
+                <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="15">
                     <StackPanel Spacing="12">
                         <TextBlock Text="{Binding Transmitter, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
 
@@ -130,7 +130,7 @@
                 </Border>
 
                 <!-- Feed Line Section -->
-                <Border Background="#F5F5F5" CornerRadius="8" Padding="15">
+                <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="15">
                     <StackPanel Spacing="12">
                         <TextBlock Text="{Binding FeedLine, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
 
@@ -174,7 +174,7 @@
                 </Border>
 
                 <!-- Operating Parameters Section -->
-                <Border Background="#F5F5F5" CornerRadius="8" Padding="15">
+                <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="15">
                     <StackPanel Spacing="12">
                         <TextBlock Text="{Binding OperatingParameters, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
 
@@ -190,42 +190,61 @@
                                 <NumericUpDown Value="{Binding ActivityFactor}" ShowButtonSpinner="False"
                                                Minimum="0" Maximum="1" Increment="0.1" Width="100"
                                                FormatString="0.0"/>
-                                <TextBlock Text="{Binding ActivityFactorHint, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" Foreground="#666"/>
+                                <TextBlock Text="{Binding ActivityFactorHint, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" Opacity="0.6"/>
                             </StackPanel>
                         </Grid>
 
                         <TextBlock Text="{Binding ParametersApplyToAllBands, Source={x:Static loc:Strings.Instance}}"
-                                   Foreground="#666" FontSize="11" FontStyle="Italic"/>
+                                   Opacity="0.6" FontSize="11" FontStyle="Italic"/>
                     </StackPanel>
                 </Border>
 
                 <!-- OKA Section -->
-                <Border Background="#F5F5F5" CornerRadius="8" Padding="15">
+                <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="15">
                     <StackPanel Spacing="12">
                         <TextBlock Text="{Binding EvaluationPoint, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
 
-                        <Grid ColumnDefinitions="100,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="8" ColumnSpacing="10">
-                            <TextBlock Text="{Binding OkaName, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                            <TextBox Grid.Column="1" Text="{Binding OkaName}"
-                                     Watermark="{Binding OkaNameExample, Source={x:Static loc:Strings.Instance}}"/>
+                        <!-- OKA Name/Dropdown -->
+                        <Grid ColumnDefinitions="100,3*,Auto" ColumnSpacing="10">
+                            <TextBlock Text="{Binding OkaNameLabel, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <ComboBox Grid.Column="1" ItemsSource="{Binding Okas}"
+                                      SelectedItem="{Binding SelectedOka}"
+                                      IsEditable="True"
+                                      Text="{Binding OkaName}"
+                                      PlaceholderText="{Binding SelectOka, Source={x:Static loc:Strings.Instance}}"
+                                      MinWidth="300">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding DisplayName}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                            <Button Grid.Column="2" Content="{Binding New, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddOkaCommand}"
+                                    Padding="10,5" ToolTip.Tip="{Binding AddOka, Source={x:Static loc:Strings.Instance}}"/>
+                        </Grid>
 
-                            <TextBlock Grid.Row="1" Text="{Binding OkaDistance, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="5">
-                                <NumericUpDown Value="{Binding OkaDistanceMeters}" ShowButtonSpinner="False"
-                                               Minimum="0.1" Maximum="1000" Increment="0.5" Width="100"/>
-                                <TextBlock Text="m" VerticalAlignment="Center"/>
-                            </StackPanel>
+                        <!-- OKA Distance -->
+                        <Grid ColumnDefinitions="100,Auto,Auto,*" ColumnSpacing="10">
+                            <TextBlock Text="{Binding OkaDistance, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <NumericUpDown Grid.Column="1" Value="{Binding OkaDistanceMeters}" ShowButtonSpinner="False"
+                                           Minimum="0.1" Maximum="1000" Increment="0.5" Width="100"/>
+                            <TextBlock Grid.Column="2" Text="m" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="3" Text="{Binding DefaultDistanceHint, Source={x:Static loc:Strings.Instance}}"
+                                       VerticalAlignment="Center" Opacity="0.6" FontSize="12"/>
+                        </Grid>
 
-                            <TextBlock Grid.Row="2" Text="{Binding OkaDamping, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                            <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Spacing="5">
-                                <NumericUpDown Value="{Binding OkaBuildingDampingDb}" ShowButtonSpinner="False"
-                                               Minimum="0" Maximum="30" Increment="1" Width="100"/>
-                                <TextBlock Text="{Binding OkaDampingHint, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" Foreground="#666"/>
-                            </StackPanel>
+                        <!-- OKA Building Damping -->
+                        <Grid ColumnDefinitions="100,Auto,Auto,*" ColumnSpacing="10">
+                            <TextBlock Text="{Binding OkaDamping, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <NumericUpDown Grid.Column="1" Value="{Binding OkaBuildingDampingDb}" ShowButtonSpinner="False"
+                                           Minimum="0" Maximum="30" Increment="1" Width="100"/>
+                            <TextBlock Grid.Column="2" Text="dB" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="3" Text="{Binding OkaDampingHint, Source={x:Static loc:Strings.Instance}}"
+                                       VerticalAlignment="Center" Opacity="0.6" FontSize="12"/>
                         </Grid>
 
                         <TextBlock Text="{Binding OkaExplanation, Source={x:Static loc:Strings.Instance}}"
-                                   Foreground="#666" FontSize="11" FontStyle="Italic"/>
+                                   Opacity="0.6" FontSize="11" FontStyle="Italic"/>
                     </StackPanel>
                 </Border>
 
@@ -233,7 +252,7 @@
         </ScrollViewer>
 
         <!-- Buttons -->
-        <Border Grid.Row="2" Background="#F5F5F5" Padding="20,15">
+        <Border Grid.Row="2" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" Padding="20,15">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
                 <Button Content="{Binding Cancel, Source={x:Static loc:Strings.Instance}}" Command="{Binding CancelCommand}" Padding="20,10"/>
                 <Button Content="{Binding Save, Source={x:Static loc:Strings.Instance}}" Command="{Binding SaveCommand}"

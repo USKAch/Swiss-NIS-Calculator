@@ -38,7 +38,7 @@
             <ItemsControl ItemsSource="{Binding Results}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Background="#F5F5F5" CornerRadius="8" Padding="15" Margin="0,0,0,15">
+                        <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="15" Margin="0,0,0,15">
                             <StackPanel Spacing="10">
                                 <!-- Configuration Header -->
                                 <Grid ColumnDefinitions="*,Auto">
@@ -51,7 +51,7 @@
                                                            Foreground="White" FontWeight="SemiBold" FontSize="11"/>
                                             </Border>
                                         </StackPanel>
-                                        <TextBlock Foreground="#666" FontSize="12" Margin="0,3,0,0">
+                                        <TextBlock Opacity="0.6" FontSize="12" Margin="0,3,0,0">
                                             <TextBlock.Text>
                                                 <MultiBinding StringFormat="{}{0} | {1}W | {2}">
                                                     <Binding Path="AntennaName"/>
@@ -63,7 +63,7 @@
                                     </StackPanel>
                                     <StackPanel Grid.Column="1" HorizontalAlignment="Right">
                                         <TextBlock Text="{Binding OkaName}" FontWeight="SemiBold"/>
-                                        <TextBlock Foreground="#666" FontSize="12">
+                                        <TextBlock Opacity="0.6" FontSize="12">
                                             <TextBlock.Text>
                                                 <MultiBinding StringFormat="{}Distance: {0:F1}m | Damping: {1:F0}dB">
                                                     <Binding Path="OkaDistance"/>
@@ -146,7 +146,7 @@
         </ScrollViewer>
 
         <!-- Footer -->
-        <Border Grid.Row="2" Background="#EEEEEE" Padding="20,15">
+        <Border Grid.Row="2" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Padding="20,15">
             <Grid ColumnDefinitions="*,Auto">
                 <TextBlock Text="{Binding StatusMessage}" VerticalAlignment="Center"/>
                 <Button Grid.Column="1" Content="{Binding Close, Source={x:Static loc:Strings.Instance}}" Command="{Binding CloseCommand}" Padding="20,10"/>

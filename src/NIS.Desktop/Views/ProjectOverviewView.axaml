@@ -16,11 +16,10 @@
         <!-- Header Bar -->
         <Border Grid.Row="0" Background="#2196F3" Padding="20,15">
             <Grid ColumnDefinitions="*,Auto">
-                <StackPanel>
+                <StackPanel Grid.Column="0">
                     <StackPanel Orientation="Horizontal" Spacing="10">
                         <TextBox Text="{Binding ProjectName}"
                                  FontSize="24" FontWeight="Bold"
-                                 Background="White" BorderThickness="1" BorderBrush="#1976D2"
                                  Padding="5,2" MinWidth="200"/>
                         <TextBlock Text="{Binding DirtyIndicator}"
                                    FontSize="24" FontWeight="Bold" Foreground="#FFEB3B"
@@ -46,7 +45,8 @@
             <StackPanel Spacing="20">
 
                 <!-- Station Info Panel -->
-                <Border Background="#F5F5F5" CornerRadius="8" Padding="15">
+                <Border BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                        BorderThickness="1" CornerRadius="8" Padding="15">
                     <StackPanel Spacing="10">
                         <TextBlock Text="{Binding StationInfo, Source={x:Static loc:Strings.Instance}}" FontSize="16" FontWeight="Bold"/>
                         <Grid ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto" ColumnSpacing="15">
@@ -62,7 +62,8 @@
                 </Border>
 
                 <!-- Configurations Section -->
-                <Border Background="#F5F5F5" CornerRadius="8" Padding="15">
+                <Border BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                        BorderThickness="1" CornerRadius="8" Padding="15">
                     <StackPanel Spacing="10">
                         <Grid ColumnDefinitions="*,Auto">
                             <TextBlock Text="{Binding Configurations, Source={x:Static loc:Strings.Instance}}" FontSize="18" FontWeight="Bold"/>
@@ -71,52 +72,63 @@
                                     Background="#4CAF50" Foreground="White" Padding="15,8"/>
                         </Grid>
 
-                        <Border Background="White" CornerRadius="4" Padding="10"
+                        <Border BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                BorderThickness="1" CornerRadius="4" Padding="10"
                                 IsVisible="{Binding HasConfigurations}">
-                            <ItemsControl ItemsSource="{Binding Configurations}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border BorderBrush="#E0E0E0" BorderThickness="0,0,0,1" Padding="10,8">
-                                            <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto">
-                                                <StackPanel>
-                                                    <TextBlock Text="{Binding Antenna.DisplayName}" FontWeight="SemiBold"/>
-                                                    <TextBlock Foreground="#666" FontSize="12">
-                                                        <TextBlock.Text>
-                                                            <MultiBinding StringFormat="{}{0} {1}W | {2}">
-                                                                <Binding Path="Radio.DisplayName"/>
-                                                                <Binding Path="PowerWatts"/>
-                                                                <Binding Path="Cable.Type"/>
-                                                            </MultiBinding>
-                                                        </TextBlock.Text>
-                                                    </TextBlock>
-                                                </StackPanel>
-                                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="15,0">
-                                                    <TextBlock Text="{Binding ModulationDisplay}" Foreground="#666" FontSize="11"/>
-                                                    <TextBlock Text="{Binding OkaSummary}" Foreground="#666" FontSize="11"/>
-                                                </StackPanel>
-                                                <Button Grid.Column="2" Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}"
-                                                        Command="{Binding $parent[ItemsControl].((vm:ProjectOverviewViewModel)DataContext).EditConfigurationCommand}"
-                                                        CommandParameter="{Binding}"
-                                                        Margin="5,0" Padding="10,5"/>
-                                                <Button Grid.Column="3" Content="{Binding Delete, Source={x:Static loc:Strings.Instance}}"
-                                                        Command="{Binding $parent[ItemsControl].((vm:ProjectOverviewViewModel)DataContext).DeleteConfigurationCommand}"
-                                                        CommandParameter="{Binding}"
-                                                        Margin="5,0" Padding="10,5" Foreground="#F44336"/>
-                                            </Grid>
-                                        </Border>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
+                            <Grid RowDefinitions="Auto,Auto,*">
+                                <!-- Column Headers -->
+                                <Grid Grid.Row="0" ColumnDefinitions="25,2*,1.5*,50,70,55,1.2*,60,50,55" Margin="0,0,0,5">
+                                    <TextBlock Grid.Column="0" Text="#" FontWeight="Bold" Opacity="0.6"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding Antenna, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" Opacity="0.6"/>
+                                    <TextBlock Grid.Column="2" Text="{Binding Bands, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" Opacity="0.6"/>
+                                    <TextBlock Grid.Column="3" Text="{Binding Height, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" Opacity="0.6"/>
+                                    <TextBlock Grid.Column="4" Text="{Binding Cable, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" Opacity="0.6"/>
+                                    <TextBlock Grid.Column="5" Text="{Binding Power, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" Opacity="0.6"/>
+                                    <TextBlock Grid.Column="6" Text="OKA" FontWeight="Bold" Opacity="0.6"/>
+                                    <TextBlock Grid.Column="7" Text="{Binding Distance, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" Opacity="0.6"/>
+                                </Grid>
+                                <Border Grid.Row="1" Height="1" Background="{DynamicResource SystemControlForegroundBaseMediumBrush}" Opacity="0.3" Margin="0,0,0,5"/>
+
+                                <!-- Data Rows -->
+                                <ItemsControl Grid.Row="2" ItemsSource="{Binding ConfigurationItems}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                                    BorderThickness="0,0,0,1" Padding="0,6" Opacity="0.8">
+                                                <Grid ColumnDefinitions="25,2*,1.5*,50,70,55,1.2*,60,50,55">
+                                                    <TextBlock Grid.Column="0" Text="{Binding NumberDisplay}" FontWeight="Bold"/>
+                                                    <TextBlock Grid.Column="1" Text="{Binding AntennaDisplay}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                                                    <TextBlock Grid.Column="2" Text="{Binding FrequencyDisplay}" Opacity="0.7" FontSize="11" TextTrimming="CharacterEllipsis"/>
+                                                    <TextBlock Grid.Column="3" Text="{Binding HeightDisplay}" Opacity="0.7"/>
+                                                    <TextBlock Grid.Column="4" Text="{Binding CableDisplay}" Opacity="0.7"/>
+                                                    <TextBlock Grid.Column="5" Text="{Binding PowerDisplay}" Opacity="0.7"/>
+                                                    <TextBlock Grid.Column="6" Text="{Binding OkaNameDisplay}" Foreground="#1976D2" TextTrimming="CharacterEllipsis"/>
+                                                    <TextBlock Grid.Column="7" Text="{Binding OkaDistanceDisplay}" Opacity="0.7"/>
+                                                    <Button Grid.Column="8" Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}"
+                                                            Command="{Binding $parent[ItemsControl].((vm:ProjectOverviewViewModel)DataContext).EditConfigurationCommand}"
+                                                            CommandParameter="{Binding}"
+                                                            Padding="8,3"/>
+                                                    <Button Grid.Column="9" Content="{Binding Delete, Source={x:Static loc:Strings.Instance}}"
+                                                            Command="{Binding $parent[ItemsControl].((vm:ProjectOverviewViewModel)DataContext).DeleteConfigurationCommand}"
+                                                            CommandParameter="{Binding}"
+                                                            Padding="8,3" Foreground="#F44336"/>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Grid>
                         </Border>
 
                         <TextBlock Text="{Binding NoConfigurations, Source={x:Static loc:Strings.Instance}}"
                                    IsVisible="{Binding !HasConfigurations}"
-                                   Foreground="#999" FontStyle="Italic" Margin="10,5"/>
+                                   Opacity="0.5" FontStyle="Italic" Margin="10,5"/>
                     </StackPanel>
                 </Border>
 
                 <!-- Action Buttons -->
-                <Border Background="#E3F2FD" CornerRadius="8" Padding="20">
+                <Border Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                        CornerRadius="8" Padding="20">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
                         <Button Content="{Binding CalculateAll, Source={x:Static loc:Strings.Instance}}"
                                 Command="{Binding CalculateAllCommand}"
@@ -134,10 +146,10 @@
         </ScrollViewer>
 
         <!-- Status Bar -->
-        <Border Grid.Row="2" Background="#EEEEEE" Padding="15,10">
+        <Border Grid.Row="2" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Padding="15,10">
             <Grid ColumnDefinitions="*,Auto">
                 <TextBlock Text="{Binding StatusMessage}"/>
-                <TextBlock Grid.Column="1" Text="{Binding LanguageDisplay}" Foreground="#666"/>
+                <TextBlock Grid.Column="1" Text="{Binding LanguageDisplay}" Opacity="0.6"/>
             </Grid>
         </Border>
     </Grid>

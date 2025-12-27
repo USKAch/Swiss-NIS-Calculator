@@ -1,0 +1,53 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ui="using:FluentAvalonia.UI.Controls"
+        xmlns:vm="using:NIS.Desktop.New.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
+        x:Class="NIS.Desktop.New.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="Swiss NIS Calculator"
+        Width="900" Height="650"
+        MinWidth="700" MinHeight="500">
+
+    <ui:NavigationView x:Name="NavView"
+                       PaneDisplayMode="Left"
+                       IsSettingsVisible="False"
+                       IsPaneOpen="True"
+                       OpenPaneLength="200"
+                       SelectionChanged="OnNavigationSelectionChanged">
+
+        <ui:NavigationView.MenuItems>
+            <ui:NavigationViewItem Content="Home" Tag="Home">
+                <ui:NavigationViewItem.IconSource>
+                    <ui:SymbolIconSource Symbol="Home"/>
+                </ui:NavigationViewItem.IconSource>
+            </ui:NavigationViewItem>
+
+            <ui:NavigationViewItem Content="Project" Tag="Project" IsEnabled="{Binding HasProject}">
+                <ui:NavigationViewItem.IconSource>
+                    <ui:SymbolIconSource Symbol="Document"/>
+                </ui:NavigationViewItem.IconSource>
+            </ui:NavigationViewItem>
+
+            <ui:NavigationViewItem Content="Master Data" Tag="MasterData">
+                <ui:NavigationViewItem.IconSource>
+                    <ui:SymbolIconSource Symbol="Library"/>
+                </ui:NavigationViewItem.IconSource>
+            </ui:NavigationViewItem>
+        </ui:NavigationView.MenuItems>
+
+        <ui:NavigationView.FooterMenuItems>
+            <ui:NavigationViewItem Content="Settings" Tag="Settings">
+                <ui:NavigationViewItem.IconSource>
+                    <ui:SymbolIconSource Symbol="Setting"/>
+                </ui:NavigationViewItem.IconSource>
+            </ui:NavigationViewItem>
+        </ui:NavigationView.FooterMenuItems>
+
+        <!-- Content area -->
+        <ContentControl Content="{Binding CurrentView}" Margin="10"/>
+
+    </ui:NavigationView>
+</Window>

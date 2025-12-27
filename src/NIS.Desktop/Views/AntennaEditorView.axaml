@@ -28,7 +28,7 @@
                 IsVisible="{Binding !IsAddingNew}">
             <StackPanel Spacing="15">
                 <TextBlock Text="{Binding SelectAntennaPrompt, Source={x:Static loc:Strings.Instance}}" FontSize="16" FontWeight="Bold"/>
-                <TextBlock Text="{Binding TypeToSearchDescription, Source={x:Static loc:Strings.Instance}}" Foreground="#666"/>
+                <TextBlock Text="{Binding TypeToSearchDescription, Source={x:Static loc:Strings.Instance}}" Opacity="0.6"/>
                 <AutoCompleteBox ItemsSource="{Binding FilteredAntennas}"
                                  FilterMode="Contains"
                                  Watermark="{Binding TypeToSearch, Source={x:Static loc:Strings.Instance}}"
@@ -44,7 +44,7 @@
         <!-- Add New Antenna Form (shown when adding new) -->
         <ScrollViewer Grid.Row="2" Padding="20" IsVisible="{Binding IsAddingNew}" VerticalScrollBarVisibility="Auto">
             <StackPanel Spacing="15">
-                <Border Background="#F5F5F5" CornerRadius="8" Padding="20">
+                <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="20">
                     <StackPanel Spacing="12">
                         <TextBlock Text="{Binding AntennaDetails, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
 
@@ -61,7 +61,7 @@
                     </StackPanel>
                 </Border>
 
-                <Border Background="#F5F5F5" CornerRadius="8" Padding="20">
+                <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="20">
                     <StackPanel Spacing="12">
                         <Grid ColumnDefinitions="*,Auto">
                             <TextBlock Text="{Binding FrequencyBands, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
@@ -96,46 +96,46 @@
 
                                             <!-- Pattern section -->
                                             <StackPanel Spacing="8">
-                                                <TextBlock Text="{Binding VerticalRadiationPattern, Source={x:Static loc:Strings.Instance}}" FontSize="12" Foreground="#666"/>
+                                                <TextBlock Text="{Binding VerticalRadiationPattern, Source={x:Static loc:Strings.Instance}}" FontSize="12" Opacity="0.6"/>
                                                 <Grid ColumnDefinitions="*,*,*,*,*,*,*,*,*,*" ColumnSpacing="4">
                                                     <StackPanel Spacing="2">
-                                                        <TextBlock Text="0°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
+                                                        <TextBlock Text="0°" FontSize="11" HorizontalAlignment="Center" Opacity="0.5"/>
                                                         <NumericUpDown Value="{Binding Pattern0}" Minimum="0" Maximum="60" Increment="1" FormatString="F1" Width="60" ShowButtonSpinner="False"/>
                                                     </StackPanel>
                                                     <StackPanel Grid.Column="1" Spacing="2">
-                                                        <TextBlock Text="10°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
+                                                        <TextBlock Text="10°" FontSize="11" HorizontalAlignment="Center" Opacity="0.5"/>
                                                         <NumericUpDown Value="{Binding Pattern10}" Minimum="0" Maximum="60" Increment="1" FormatString="F1" Width="60" ShowButtonSpinner="False"/>
                                                     </StackPanel>
                                                     <StackPanel Grid.Column="2" Spacing="2">
-                                                        <TextBlock Text="20°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
+                                                        <TextBlock Text="20°" FontSize="11" HorizontalAlignment="Center" Opacity="0.5"/>
                                                         <NumericUpDown Value="{Binding Pattern20}" Minimum="0" Maximum="60" Increment="1" FormatString="F1" Width="60" ShowButtonSpinner="False"/>
                                                     </StackPanel>
                                                     <StackPanel Grid.Column="3" Spacing="2">
-                                                        <TextBlock Text="30°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
+                                                        <TextBlock Text="30°" FontSize="11" HorizontalAlignment="Center" Opacity="0.5"/>
                                                         <NumericUpDown Value="{Binding Pattern30}" Minimum="0" Maximum="60" Increment="1" FormatString="F1" Width="60" ShowButtonSpinner="False"/>
                                                     </StackPanel>
                                                     <StackPanel Grid.Column="4" Spacing="2">
-                                                        <TextBlock Text="40°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
+                                                        <TextBlock Text="40°" FontSize="11" HorizontalAlignment="Center" Opacity="0.5"/>
                                                         <NumericUpDown Value="{Binding Pattern40}" Minimum="0" Maximum="60" Increment="1" FormatString="F1" Width="60" ShowButtonSpinner="False"/>
                                                     </StackPanel>
                                                     <StackPanel Grid.Column="5" Spacing="2">
-                                                        <TextBlock Text="50°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
+                                                        <TextBlock Text="50°" FontSize="11" HorizontalAlignment="Center" Opacity="0.5"/>
                                                         <NumericUpDown Value="{Binding Pattern50}" Minimum="0" Maximum="60" Increment="1" FormatString="F1" Width="60" ShowButtonSpinner="False"/>
                                                     </StackPanel>
                                                     <StackPanel Grid.Column="6" Spacing="2">
-                                                        <TextBlock Text="60°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
+                                                        <TextBlock Text="60°" FontSize="11" HorizontalAlignment="Center" Opacity="0.5"/>
                                                         <NumericUpDown Value="{Binding Pattern60}" Minimum="0" Maximum="60" Increment="1" FormatString="F1" Width="60" ShowButtonSpinner="False"/>
                                                     </StackPanel>
                                                     <StackPanel Grid.Column="7" Spacing="2">
-                                                        <TextBlock Text="70°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
+                                                        <TextBlock Text="70°" FontSize="11" HorizontalAlignment="Center" Opacity="0.5"/>
                                                         <NumericUpDown Value="{Binding Pattern70}" Minimum="0" Maximum="60" Increment="1" FormatString="F1" Width="60" ShowButtonSpinner="False"/>
                                                     </StackPanel>
                                                     <StackPanel Grid.Column="8" Spacing="2">
-                                                        <TextBlock Text="80°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
+                                                        <TextBlock Text="80°" FontSize="11" HorizontalAlignment="Center" Opacity="0.5"/>
                                                         <NumericUpDown Value="{Binding Pattern80}" Minimum="0" Maximum="60" Increment="1" FormatString="F1" Width="60" ShowButtonSpinner="False"/>
                                                     </StackPanel>
                                                     <StackPanel Grid.Column="9" Spacing="2">
-                                                        <TextBlock Text="90°" FontSize="11" HorizontalAlignment="Center" Foreground="#888"/>
+                                                        <TextBlock Text="90°" FontSize="11" HorizontalAlignment="Center" Opacity="0.5"/>
                                                         <NumericUpDown Value="{Binding Pattern90}" Minimum="0" Maximum="60" Increment="1" FormatString="F1" Width="60" ShowButtonSpinner="False"/>
                                                     </StackPanel>
                                                 </Grid>
@@ -147,7 +147,7 @@
                         </ItemsControl>
 
                         <TextBlock Text="{Binding AddAtLeastOneBand, Source={x:Static loc:Strings.Instance}}"
-                                   Foreground="#666" FontSize="11" FontStyle="Italic" TextWrapping="Wrap"
+                                   Opacity="0.6" FontSize="11" FontStyle="Italic" TextWrapping="Wrap"
                                    IsVisible="{Binding !NewBands.Count}"/>
                     </StackPanel>
                 </Border>
@@ -155,7 +155,7 @@
         </ScrollViewer>
 
         <!-- Buttons -->
-        <Border Grid.Row="3" Background="#F5F5F5" Padding="20,15">
+        <Border Grid.Row="3" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" Padding="20,15">
             <Grid ColumnDefinitions="Auto,*,Auto">
                 <!-- Add New button (shown in list mode) -->
                 <Button Content="{Binding AddNewAntenna, Source={x:Static loc:Strings.Instance}}"

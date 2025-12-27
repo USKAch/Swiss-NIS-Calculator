@@ -41,7 +41,7 @@
         </ScrollViewer>
 
         <!-- Buttons -->
-        <Border Grid.Row="2" Background="#F5F5F5" Padding="20,15">
+        <Border Grid.Row="2" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Padding="20,15">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
                 <Button Content="{Binding CancelButtonLabel}"
                         Command="{Binding CancelCommand}"

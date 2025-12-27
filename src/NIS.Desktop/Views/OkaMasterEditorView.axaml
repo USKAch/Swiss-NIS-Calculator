@@ -1,0 +1,80 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NIS.Desktop.ViewModels"
+             xmlns:loc="using:NIS.Desktop.Localization"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="400"
+             x:Class="NIS.Desktop.Views.OkaMasterEditorView"
+             x:DataType="vm:OkaMasterEditorViewModel">
+
+    <Design.DataContext>
+        <vm:OkaMasterEditorViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- Header -->
+        <Border Grid.Row="0" Background="#9C27B0" Padding="20,15">
+            <TextBlock Text="{Binding Title}" FontSize="20" FontWeight="Bold" Foreground="White"/>
+        </Border>
+
+        <!-- Main Content -->
+        <ScrollViewer Grid.Row="1" Padding="20" VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="20" MaxWidth="600" HorizontalAlignment="Left">
+                <!-- OKA Details -->
+                <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="20">
+                    <StackPanel Spacing="15">
+                        <TextBlock Text="{Binding OkaDetails, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
+
+                        <!-- ID (read-only) -->
+                        <Grid ColumnDefinitions="150,*" ColumnSpacing="15">
+                            <TextBlock Text="{Binding OkaNumber, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Column="1" Text="{Binding Id}" VerticalAlignment="Center" FontSize="16" FontWeight="Bold"/>
+                        </Grid>
+
+                        <!-- Name -->
+                        <Grid ColumnDefinitions="150,3*" ColumnSpacing="15">
+                            <TextBlock Text="{Binding OkaNameLabel, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <TextBox Grid.Column="1" Text="{Binding Name}"
+                                     Watermark="{Binding OkaNameExample, Source={x:Static loc:Strings.Instance}}"
+                                     MinWidth="400"/>
+                        </Grid>
+
+                        <!-- Horizontal Distance -->
+                        <Grid ColumnDefinitions="150,Auto,Auto,*" ColumnSpacing="10">
+                            <TextBlock Text="{Binding DefaultDistance, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <NumericUpDown Grid.Column="1" Value="{Binding DefaultDistanceMeters}" ShowButtonSpinner="False"
+                                           Minimum="0.1" Maximum="1000" Increment="0.5" Width="100"/>
+                            <TextBlock Grid.Column="2" Text="m" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="3" Text="{Binding DefaultDistanceHint, Source={x:Static loc:Strings.Instance}}"
+                                       Opacity="0.6" FontSize="12" VerticalAlignment="Center"/>
+                        </Grid>
+
+                        <!-- Default Damping -->
+                        <Grid ColumnDefinitions="150,Auto,Auto,*" ColumnSpacing="10">
+                            <TextBlock Text="{Binding DefaultDamping, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <NumericUpDown Grid.Column="1" Value="{Binding DefaultDampingDb}" ShowButtonSpinner="False"
+                                           Minimum="0" Maximum="30" Increment="1" Width="100"/>
+                            <TextBlock Grid.Column="2" Text="dB" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="3" Text="{Binding DefaultDampingHint, Source={x:Static loc:Strings.Instance}}"
+                                       Opacity="0.6" FontSize="12" VerticalAlignment="Center"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Footer -->
+        <Border Grid.Row="2" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" Padding="20,15">
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Text="{Binding ValidationMessage}" Foreground="#F44336" VerticalAlignment="Center"
+                           IsVisible="{Binding ValidationMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                    <Button Content="{Binding Cancel, Source={x:Static loc:Strings.Instance}}" Command="{Binding CancelCommand}" Padding="20,10"/>
+                    <Button Content="{Binding Save, Source={x:Static loc:Strings.Instance}}" Command="{Binding SaveCommand}"
+                            Background="#4CAF50" Foreground="White" Padding="20,10"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

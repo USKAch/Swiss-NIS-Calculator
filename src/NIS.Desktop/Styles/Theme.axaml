@@ -1,0 +1,50 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--
+    Custom brushes for Swiss NIS Calculator
+    FluentAvalonia provides semantic brushes for most uses:
+    - Text: TextFillColorPrimary, TextFillColorSecondary, TextFillColorTertiary
+    - Backgrounds: CardBackgroundFillColorDefault, LayerFillColorDefault
+    - Status: SystemFillColorSuccess, SystemFillColorCaution, SystemFillColorCritical
+
+    This file defines only the custom brushes we need beyond FluentAvalonia's defaults.
+    -->
+
+    <ResourceDictionary.ThemeDictionaries>
+        <!-- Light Theme -->
+        <ResourceDictionary x:Key="Light">
+            <!-- Sidebar -->
+            <SolidColorBrush x:Key="SidebarBackgroundBrush" Color="#1E3A5F"/>
+
+            <!-- Headers - using accent for primary, orange for secondary (master data) -->
+            <SolidColorBrush x:Key="HeaderSecondaryBrush" Color="#E65100"/>
+
+            <!-- Action buttons with white text -->
+            <SolidColorBrush x:Key="SuccessButtonBrush" Color="#2E7D32"/>
+            <SolidColorBrush x:Key="WarningButtonBrush" Color="#E65100"/>
+            <SolidColorBrush x:Key="DangerButtonBrush" Color="#C62828"/>
+
+            <!-- Dirty indicator -->
+            <SolidColorBrush x:Key="DirtyIndicatorBrush" Color="#FFEB3B"/>
+        </ResourceDictionary>
+
+        <!-- Dark Theme -->
+        <ResourceDictionary x:Key="Dark">
+            <!-- Sidebar - slightly lighter in dark mode -->
+            <SolidColorBrush x:Key="SidebarBackgroundBrush" Color="#1E3A5F"/>
+
+            <!-- Headers -->
+            <SolidColorBrush x:Key="HeaderSecondaryBrush" Color="#BF360C"/>
+
+            <!-- Action buttons - adjusted for dark theme -->
+            <SolidColorBrush x:Key="SuccessButtonBrush" Color="#388E3C"/>
+            <SolidColorBrush x:Key="WarningButtonBrush" Color="#F57C00"/>
+            <SolidColorBrush x:Key="DangerButtonBrush" Color="#D32F2F"/>
+
+            <!-- Dirty indicator -->
+            <SolidColorBrush x:Key="DirtyIndicatorBrush" Color="#FFD600"/>
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+
+</ResourceDictionary>

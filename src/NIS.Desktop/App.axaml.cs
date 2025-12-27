@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -7,6 +8,9 @@ using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
 using Avalonia.Threading;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
+using NIS.Desktop.Services;
 using NIS.Desktop.ViewModels;
 using NIS.Desktop.Views;
 
@@ -33,18 +37,45 @@ public partial class App : Application
 
             _mainShellViewModel = new MainShellViewModel();
 
+            // Set up confirmation dialog callback
+            _mainShellViewModel.ShowConfirmDialog = async (title, message) =>
+            {
+                var msgBox = MessageBoxManager.GetMessageBoxStandard(
+                    title,
+                    message,
+                    ButtonEnum.YesNo,
+                    Icon.Question);
+                var result = await msgBox.ShowAsync();
+                return result == ButtonResult.Yes;
+            };
+
             // Subscribe to dark mode changes from WelcomeViewModel
+            WelcomeViewModel? subscribedWelcomeVm = null;
             _mainShellViewModel.PropertyChanged += (s, e) =>
             {
                 if (e.PropertyName == nameof(MainShellViewModel.CurrentView) &&
-                    _mainShellViewModel.CurrentView is WelcomeViewModel welcomeVm)
+                    _mainShellViewModel.CurrentView is WelcomeViewModel welcomeVm &&
+                    welcomeVm != subscribedWelcomeVm)
                 {
+                    subscribedWelcomeVm = welcomeVm;
                     welcomeVm.DarkModeChanged += isDark =>
                     {
                         RequestedThemeVariant = isDark ? ThemeVariant.Dark : ThemeVariant.Light;
                     };
+                    // Apply initial dark mode setting
+                    if (welcomeVm.IsDarkMode)
+                    {
+                        RequestedThemeVariant = ThemeVariant.Dark;
+                    }
                 }
             };
+
+            // Apply initial dark mode from settings
+            var settings = Services.AppSettings.Load();
+            if (settings.DarkMode)
+            {
+                RequestedThemeVariant = ThemeVariant.Dark;
+            }
 
             var mainWindow = new MainShellWindow
             {

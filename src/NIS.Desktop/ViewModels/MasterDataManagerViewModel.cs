@@ -9,11 +9,12 @@ using MsBox.Avalonia.Enums;
 using NIS.Core.Data;
 using NIS.Core.Models;
 using NIS.Desktop.Localization;
+using NIS.Desktop.Services;
 
 namespace NIS.Desktop.ViewModels;
 
 /// <summary>
-/// ViewModel for the Master Data Manager view with tabs for Antennas, Cables, Radios, Translations.
+/// ViewModel for the Master Data Manager view with tabs for Antennas, Cables, Radios, OKAs, Translations.
 /// </summary>
 public partial class MasterDataManagerViewModel : ViewModelBase
 {
@@ -26,6 +27,7 @@ public partial class MasterDataManagerViewModel : ViewModelBase
     public Action<Antenna?>? NavigateToAntennaEditor { get; set; }
     public Action<Cable?>? NavigateToCableEditor { get; set; }
     public Action<Radio?>? NavigateToRadioEditor { get; set; }
+    public Action<Oka?, int>? NavigateToOkaEditor { get; set; }
 
     // Translation editor
     public TranslationEditorViewModel TranslationEditor { get; } = new();
@@ -61,9 +63,13 @@ public partial class MasterDataManagerViewModel : ViewModelBase
             .ThenBy(r => r.Model);
         AllRadios = new ObservableCollection<Radio>(sortedRadios);
 
+        // OKAs from shared storage service (persisted to file)
+        AllOkas = new ObservableCollection<Oka>(OkaStorageService.Instance.Okas.OrderBy(o => o.Id));
+
         FilteredAntennas = new ObservableCollection<Antenna>(AllAntennas);
         FilteredCables = new ObservableCollection<Cable>(AllCables);
         FilteredRadios = new ObservableCollection<Radio>(AllRadios);
+        FilteredOkas = new ObservableCollection<Oka>(AllOkas);
     }
 
     // Tab selection
@@ -161,6 +167,38 @@ public partial class MasterDataManagerViewModel : ViewModelBase
         foreach (var radio in filtered.OrderBy(r => r.Manufacturer).ThenBy(r => r.Model))
         {
             FilteredRadios.Add(radio);
+        }
+    }
+
+    // OKA data
+    public ObservableCollection<Oka> AllOkas { get; }
+    public ObservableCollection<Oka> FilteredOkas { get; }
+
+    [ObservableProperty]
+    private string _okaSearchText = string.Empty;
+
+    [ObservableProperty]
+    private Oka? _selectedOka;
+
+    public int NextOkaId => OkaStorageService.Instance.NextId;
+
+    partial void OnOkaSearchTextChanged(string value)
+    {
+        FilterOkas();
+    }
+
+    private void FilterOkas()
+    {
+        FilteredOkas.Clear();
+        var search = OkaSearchText.ToLowerInvariant();
+        var filtered = string.IsNullOrWhiteSpace(search)
+            ? AllOkas
+            : AllOkas.Where(o => o.Name.ToLowerInvariant().Contains(search));
+
+        // Maintain ID sorting
+        foreach (var oka in filtered.OrderBy(o => o.Id))
+        {
+            FilteredOkas.Add(oka);
         }
     }
 
@@ -281,6 +319,39 @@ public partial class MasterDataManagerViewModel : ViewModelBase
         RadioSearchText = string.Empty;
     }
 
+    [RelayCommand]
+    private void AddOka()
+    {
+        NavigateToOkaEditor?.Invoke(null, NextOkaId);
+    }
+
+    [RelayCommand]
+    private void EditOka()
+    {
+        if (SelectedOka != null)
+        {
+            NavigateToOkaEditor?.Invoke(SelectedOka, SelectedOka.Id);
+        }
+    }
+
+    [RelayCommand]
+    private void DeleteOka()
+    {
+        if (SelectedOka != null)
+        {
+            OkaStorageService.Instance.Remove(SelectedOka.Id);
+            AllOkas.Remove(SelectedOka);
+            FilteredOkas.Remove(SelectedOka);
+            SelectedOka = null;
+        }
+    }
+
+    [RelayCommand]
+    private void ClearOkaSearch()
+    {
+        OkaSearchText = string.Empty;
+    }
+
     /// <summary>
     /// Add a new antenna to the local collection.
     /// </summary>
@@ -314,6 +385,29 @@ public partial class MasterDataManagerViewModel : ViewModelBase
         FilterRadios();
     }
 
+    /// <summary>
+    /// Add a new OKA to the shared storage and local collection.
+    /// </summary>
+    public void AddOkaToDatabase(Oka oka)
+    {
+        // Save to shared storage (persists to file)
+        OkaStorageService.Instance.AddOrUpdate(oka);
+
+        // Update local collection
+        var existing = AllOkas.FirstOrDefault(o => o.Id == oka.Id);
+        if (existing != null)
+        {
+            var index = AllOkas.IndexOf(existing);
+            AllOkas[index] = oka;
+        }
+        else
+        {
+            AllOkas.Add(oka);
+        }
+        ResortOkas();
+        FilterOkas();
+    }
+
     private void ResortAntennas()
     {
         var sorted = AllAntennas.OrderBy(a => a.Manufacturer).ThenBy(a => a.Model).ToList();
@@ -341,6 +435,16 @@ public partial class MasterDataManagerViewModel : ViewModelBase
         foreach (var radio in sorted)
         {
             AllRadios.Add(radio);
+        }
+    }
+
+    private void ResortOkas()
+    {
+        var sorted = AllOkas.OrderBy(o => o.Id).ToList();
+        AllOkas.Clear();
+        foreach (var oka in sorted)
+        {
+            AllOkas.Add(oka);
         }
     }
 }
