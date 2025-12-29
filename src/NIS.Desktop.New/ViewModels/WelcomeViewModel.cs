@@ -85,7 +85,10 @@ public partial class WelcomeViewModel : ViewModelBase
     // Navigation callbacks
     public Action<string>? NavigateToProjectInfo { get; set; }
     public Action? NavigateToProjectOverview { get; set; }
-    public Action? NavigateToMasterData { get; set; }
+    /// <summary>
+    /// Navigate to Master Data. Parameter is isAdminMode (true if Shift+Click).
+    /// </summary>
+    public Action<bool>? NavigateToMasterData { get; set; }
 
     // Dialog callback (set by view)
     public Func<string, string, Task<bool>>? ShowConfirmDialog { get; set; }

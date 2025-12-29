@@ -139,7 +139,7 @@ public partial class MainShellViewModel : ViewModelBase
         _welcomeViewModel ??= new WelcomeViewModel();
         _welcomeViewModel.NavigateToProjectInfo = NavigateToProjectInfo;
         _welcomeViewModel.NavigateToProjectOverview = NavigateToProjectOverviewAfterOpen;
-        _welcomeViewModel.NavigateToMasterData = NavigateToMasterDataManager;
+        _welcomeViewModel.NavigateToMasterData = (isAdminMode) => NavigateToMasterDataManager(isAdminMode);
         _welcomeViewModel.ProjectViewModel = ProjectViewModel;
         _welcomeViewModel.ShowConfirmDialog = ShowConfirmDialog;
         CurrentView = _welcomeViewModel;
@@ -362,19 +362,24 @@ public partial class MainShellViewModel : ViewModelBase
     [RelayCommand]
     public void NavigateToMasterData()
     {
-        NavigateToMasterDataManager();
+        NavigateToMasterDataManager(false);
     }
 
-    public void NavigateToMasterDataManager()
+    /// <summary>
+    /// Navigates to Master Data Manager.
+    /// </summary>
+    /// <param name="isAdminMode">When true, allows editing embedded master data (Shift+Click)</param>
+    public void NavigateToMasterDataManager(bool isAdminMode = false)
     {
         _masterDataManagerViewModel = new MasterDataManagerViewModel(ProjectViewModel);
+        _masterDataManagerViewModel.IsAdminMode = isAdminMode;
         _masterDataManagerViewModel.NavigateBack = HasProject ? NavigateToProjectOverview : NavigateToWelcome;
-        _masterDataManagerViewModel.NavigateToAntennaEditor = NavigateToAntennaMasterEditor;
-        _masterDataManagerViewModel.NavigateToCableEditor = NavigateToCableMasterEditor;
-        _masterDataManagerViewModel.NavigateToRadioEditor = NavigateToRadioMasterEditor;
+        _masterDataManagerViewModel.NavigateToAntennaEditor = (a, ro) => NavigateToAntennaMasterEditor(a, ro);
+        _masterDataManagerViewModel.NavigateToCableEditor = (c, ro) => NavigateToCableMasterEditor(c, ro);
+        _masterDataManagerViewModel.NavigateToRadioEditor = (r, ro) => NavigateToRadioMasterEditor(r, ro);
         _masterDataManagerViewModel.NavigateToOkaEditor = NavigateToOkaMasterEditor;
         CurrentView = _masterDataManagerViewModel;
-        WindowTitle = "Swiss NIS Calculator - Master Data";
+        WindowTitle = isAdminMode ? "Swiss NIS Calculator - Master Data (Admin)" : "Swiss NIS Calculator - Master Data";
     }
 
     [RelayCommand]
@@ -394,7 +399,7 @@ public partial class MainShellViewModel : ViewModelBase
         WindowTitle = "Swiss NIS Calculator - Settings";
     }
 
-    public void NavigateToAntennaMasterEditor(NIS.Core.Models.Antenna? existing)
+    public void NavigateToAntennaMasterEditor(NIS.Core.Models.Antenna? existing, bool isReadOnly = false)
     {
         _antennaMasterEditorViewModel = new AntennaMasterEditorViewModel();
         if (existing != null)
@@ -405,13 +410,16 @@ public partial class MainShellViewModel : ViewModelBase
         {
             _antennaMasterEditorViewModel.InitializeNew();
         }
+        _antennaMasterEditorViewModel.IsReadOnly = isReadOnly;
         _antennaMasterEditorViewModel.NavigateBack = () =>
         {
             if (_masterDataManagerViewModel != null)
             {
                 _masterDataManagerViewModel.SelectedTabIndex = 0; // Antennas tab
                 CurrentView = _masterDataManagerViewModel;
-                WindowTitle = "Swiss NIS Calculator - Master Data";
+                WindowTitle = _masterDataManagerViewModel.IsAdminMode
+                    ? "Swiss NIS Calculator - Master Data (Admin)"
+                    : "Swiss NIS Calculator - Master Data";
             }
         };
         _antennaMasterEditorViewModel.OnSave = (antenna) =>
@@ -421,14 +429,17 @@ public partial class MainShellViewModel : ViewModelBase
             {
                 _masterDataManagerViewModel.SelectedTabIndex = 0; // Antennas tab
                 CurrentView = _masterDataManagerViewModel;
-                WindowTitle = "Swiss NIS Calculator - Master Data";
+                WindowTitle = _masterDataManagerViewModel.IsAdminMode
+                    ? "Swiss NIS Calculator - Master Data (Admin)"
+                    : "Swiss NIS Calculator - Master Data";
             }
         };
         CurrentView = _antennaMasterEditorViewModel;
-        WindowTitle = existing != null ? "Swiss NIS Calculator - Edit Antenna" : "Swiss NIS Calculator - Add Antenna";
+        WindowTitle = isReadOnly ? "Swiss NIS Calculator - View Antenna"
+            : (existing != null ? "Swiss NIS Calculator - Edit Antenna" : "Swiss NIS Calculator - Add Antenna");
     }
 
-    public void NavigateToCableMasterEditor(NIS.Core.Models.Cable? existing)
+    public void NavigateToCableMasterEditor(NIS.Core.Models.Cable? existing, bool isReadOnly = false)
     {
         _cableMasterEditorViewModel = new CableMasterEditorViewModel();
         if (existing != null)
@@ -439,13 +450,16 @@ public partial class MainShellViewModel : ViewModelBase
         {
             _cableMasterEditorViewModel.InitializeNew();
         }
+        _cableMasterEditorViewModel.IsReadOnly = isReadOnly;
         _cableMasterEditorViewModel.NavigateBack = () =>
         {
             if (_masterDataManagerViewModel != null)
             {
                 _masterDataManagerViewModel.SelectedTabIndex = 1; // Cables tab
                 CurrentView = _masterDataManagerViewModel;
-                WindowTitle = "Swiss NIS Calculator - Master Data";
+                WindowTitle = _masterDataManagerViewModel.IsAdminMode
+                    ? "Swiss NIS Calculator - Master Data (Admin)"
+                    : "Swiss NIS Calculator - Master Data";
             }
         };
         _cableMasterEditorViewModel.OnSave = (cable) =>
@@ -455,14 +469,17 @@ public partial class MainShellViewModel : ViewModelBase
             {
                 _masterDataManagerViewModel.SelectedTabIndex = 1; // Cables tab
                 CurrentView = _masterDataManagerViewModel;
-                WindowTitle = "Swiss NIS Calculator - Master Data";
+                WindowTitle = _masterDataManagerViewModel.IsAdminMode
+                    ? "Swiss NIS Calculator - Master Data (Admin)"
+                    : "Swiss NIS Calculator - Master Data";
             }
         };
         CurrentView = _cableMasterEditorViewModel;
-        WindowTitle = existing != null ? "Swiss NIS Calculator - Edit Cable" : "Swiss NIS Calculator - Add Cable";
+        WindowTitle = isReadOnly ? "Swiss NIS Calculator - View Cable"
+            : (existing != null ? "Swiss NIS Calculator - Edit Cable" : "Swiss NIS Calculator - Add Cable");
     }
 
-    public void NavigateToRadioMasterEditor(NIS.Core.Models.Radio? existing)
+    public void NavigateToRadioMasterEditor(NIS.Core.Models.Radio? existing, bool isReadOnly = false)
     {
         _radioMasterEditorViewModel = new RadioMasterEditorViewModel();
         if (existing != null)
@@ -473,13 +490,16 @@ public partial class MainShellViewModel : ViewModelBase
         {
             _radioMasterEditorViewModel.InitializeNew();
         }
+        _radioMasterEditorViewModel.IsReadOnly = isReadOnly;
         _radioMasterEditorViewModel.NavigateBack = () =>
         {
             if (_masterDataManagerViewModel != null)
             {
                 _masterDataManagerViewModel.SelectedTabIndex = 2; // Radios tab
                 CurrentView = _masterDataManagerViewModel;
-                WindowTitle = "Swiss NIS Calculator - Master Data";
+                WindowTitle = _masterDataManagerViewModel.IsAdminMode
+                    ? "Swiss NIS Calculator - Master Data (Admin)"
+                    : "Swiss NIS Calculator - Master Data";
             }
         };
         _radioMasterEditorViewModel.OnSave = (radio) =>
@@ -489,11 +509,14 @@ public partial class MainShellViewModel : ViewModelBase
             {
                 _masterDataManagerViewModel.SelectedTabIndex = 2; // Radios tab
                 CurrentView = _masterDataManagerViewModel;
-                WindowTitle = "Swiss NIS Calculator - Master Data";
+                WindowTitle = _masterDataManagerViewModel.IsAdminMode
+                    ? "Swiss NIS Calculator - Master Data (Admin)"
+                    : "Swiss NIS Calculator - Master Data";
             }
         };
         CurrentView = _radioMasterEditorViewModel;
-        WindowTitle = existing != null ? "Swiss NIS Calculator - Edit Radio" : "Swiss NIS Calculator - Add Radio";
+        WindowTitle = isReadOnly ? "Swiss NIS Calculator - View Radio"
+            : (existing != null ? "Swiss NIS Calculator - Edit Radio" : "Swiss NIS Calculator - Add Radio");
     }
 
     public void NavigateToOkaMasterEditor(NIS.Core.Models.Oka? existing, int nextId)

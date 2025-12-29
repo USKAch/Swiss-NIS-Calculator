@@ -53,6 +53,9 @@ public class Strings : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Save)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Cancel)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Edit)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(View)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ProjectSpecific)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DuplicateNameError)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(New)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Delete)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Remove)));
@@ -156,6 +159,9 @@ public class Strings : INotifyPropertyChanged
     public string Save => Get("Save");
     public string Cancel => Get("Cancel");
     public string Edit => Get("Edit");
+    public string View => Get("View");
+    public string ProjectSpecific => Get("ProjectSpecific");
+    public string DuplicateNameError => Get("DuplicateNameError");
     public string New => Get("New");
     public string Delete => Get("Delete");
     public string Actions => Get("Actions");
@@ -593,6 +599,9 @@ public class Strings : INotifyPropertyChanged
         ["Save"] = new() { ["de"] = "Speichern", ["fr"] = "Enregistrer", ["it"] = "Salva", ["en"] = "Save" },
         ["Cancel"] = new() { ["de"] = "Abbrechen", ["fr"] = "Annuler", ["it"] = "Annulla", ["en"] = "Cancel" },
         ["Edit"] = new() { ["de"] = "Bearbeiten", ["fr"] = "Modifier", ["it"] = "Modifica", ["en"] = "Edit" },
+        ["View"] = new() { ["de"] = "Anzeigen", ["fr"] = "Afficher", ["it"] = "Visualizza", ["en"] = "View" },
+        ["ProjectSpecific"] = new() { ["de"] = "[Projekt]", ["fr"] = "[Projet]", ["it"] = "[Progetto]", ["en"] = "[Project]" },
+        ["DuplicateNameError"] = new() { ["de"] = "Ein Eintrag mit diesem Namen existiert bereits", ["fr"] = "Une entrée avec ce nom existe déjà", ["it"] = "Esiste già una voce con questo nome", ["en"] = "An item with this name already exists" },
         ["New"] = new() { ["de"] = "Neu", ["fr"] = "Nouveau", ["it"] = "Nuovo", ["en"] = "New" },
         ["Delete"] = new() { ["de"] = "Löschen", ["fr"] = "Supprimer", ["it"] = "Elimina", ["en"] = "Delete" },
         ["Actions"] = new() { ["de"] = "Aktionen", ["fr"] = "Actions", ["it"] = "Azioni", ["en"] = "Actions" },

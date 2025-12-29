@@ -146,6 +146,18 @@ public partial class AntennaMasterEditorViewModel : ViewModelBase
     [ObservableProperty]
     private bool _isEditing;
 
+    /// <summary>
+    /// When true, the editor is in read-only mode (viewing master data).
+    /// </summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanEdit))]
+    private bool _isReadOnly;
+
+    /// <summary>
+    /// Whether editing is allowed (inverse of IsReadOnly).
+    /// </summary>
+    public bool CanEdit => !IsReadOnly;
+
     [ObservableProperty]
     private string _manufacturer = string.Empty;
 

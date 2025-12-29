@@ -24,10 +24,31 @@ public partial class MasterDataManagerViewModel : ViewModelBase
 
     // Navigation callbacks
     public Action? NavigateBack { get; set; }
-    public Action<Antenna?>? NavigateToAntennaEditor { get; set; }
-    public Action<Cable?>? NavigateToCableEditor { get; set; }
-    public Action<Radio?>? NavigateToRadioEditor { get; set; }
+    /// <summary>
+    /// Navigate to antenna editor. Parameters: antenna (null for new), isReadOnly
+    /// </summary>
+    public Action<Antenna?, bool>? NavigateToAntennaEditor { get; set; }
+    /// <summary>
+    /// Navigate to cable editor. Parameters: cable (null for new), isReadOnly
+    /// </summary>
+    public Action<Cable?, bool>? NavigateToCableEditor { get; set; }
+    /// <summary>
+    /// Navigate to radio editor. Parameters: radio (null for new), isReadOnly
+    /// </summary>
+    public Action<Radio?, bool>? NavigateToRadioEditor { get; set; }
     public Action<Oka?, int>? NavigateToOkaEditor { get; set; }
+
+    /// <summary>
+    /// Admin mode allows editing embedded master data (activated by Shift+Click).
+    /// </summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanEditMasterData))]
+    private bool _isAdminMode;
+
+    /// <summary>
+    /// Whether embedded master data can be edited (admin mode only).
+    /// </summary>
+    public bool CanEditMasterData => IsAdminMode;
 
     // Translation editor
     public TranslationEditorViewModel TranslationEditor { get; } = new();
@@ -48,21 +69,33 @@ public partial class MasterDataManagerViewModel : ViewModelBase
         _cableDatabase.LoadDefaults();
         _radioDatabase.LoadDefaults();
 
-        // Sort alphabetically by manufacturer then model
-        var sortedAntennas = _antennaDatabase.Antennas
+        // Mark master data as not project-specific (read-only for normal users)
+        foreach (var a in _antennaDatabase.Antennas) a.IsProjectSpecific = false;
+        foreach (var c in _cableDatabase.Cables) c.IsProjectSpecific = false;
+        foreach (var r in _radioDatabase.Radios) r.IsProjectSpecific = false;
+
+        // Mark project custom data as project-specific (always editable)
+        foreach (var a in _projectViewModel.Project.CustomAntennas) a.IsProjectSpecific = true;
+        foreach (var c in _projectViewModel.Project.CustomCables) c.IsProjectSpecific = true;
+        foreach (var r in _projectViewModel.Project.CustomRadios) r.IsProjectSpecific = true;
+
+        // Combine master data + project-specific data, sorted alphabetically
+        var allAntennas = _antennaDatabase.Antennas
+            .Concat(_projectViewModel.Project.CustomAntennas)
             .OrderBy(a => a.Manufacturer)
             .ThenBy(a => a.Model);
-        AllAntennas = new ObservableCollection<Antenna>(sortedAntennas);
+        AllAntennas = new ObservableCollection<Antenna>(allAntennas);
 
-        // Sort cables alphabetically by name
-        var sortedCables = _cableDatabase.Cables.OrderBy(c => c.Name);
-        AllCables = new ObservableCollection<Cable>(sortedCables);
+        var allCables = _cableDatabase.Cables
+            .Concat(_projectViewModel.Project.CustomCables)
+            .OrderBy(c => c.Name);
+        AllCables = new ObservableCollection<Cable>(allCables);
 
-        // Sort radios alphabetically by manufacturer then model
-        var sortedRadios = _radioDatabase.Radios
+        var allRadios = _radioDatabase.Radios
+            .Concat(_projectViewModel.Project.CustomRadios)
             .OrderBy(r => r.Manufacturer)
             .ThenBy(r => r.Model);
-        AllRadios = new ObservableCollection<Radio>(sortedRadios);
+        AllRadios = new ObservableCollection<Radio>(allRadios);
 
         // OKAs belong to the current project
         AllOkas = _projectViewModel.Okas;
@@ -85,6 +118,8 @@ public partial class MasterDataManagerViewModel : ViewModelBase
     private string _antennaSearchText = string.Empty;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanEditSelectedAntenna))]
+    [NotifyPropertyChangedFor(nameof(CanDeleteSelectedAntenna))]
     private Antenna? _selectedAntenna;
 
     partial void OnAntennaSearchTextChanged(string value)
@@ -117,6 +152,8 @@ public partial class MasterDataManagerViewModel : ViewModelBase
     private string _cableSearchText = string.Empty;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanEditSelectedCable))]
+    [NotifyPropertyChangedFor(nameof(CanDeleteSelectedCable))]
     private Cable? _selectedCable;
 
     partial void OnCableSearchTextChanged(string value)
@@ -147,6 +184,8 @@ public partial class MasterDataManagerViewModel : ViewModelBase
     private string _radioSearchText = string.Empty;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanEditSelectedRadio))]
+    [NotifyPropertyChangedFor(nameof(CanDeleteSelectedRadio))]
     private Radio? _selectedRadio;
 
     partial void OnRadioSearchTextChanged(string value)
@@ -227,23 +266,47 @@ public partial class MasterDataManagerViewModel : ViewModelBase
     [RelayCommand]
     private void AddAntenna()
     {
-        NavigateToAntennaEditor?.Invoke(null);
+        // New items are always project-specific and editable
+        NavigateToAntennaEditor?.Invoke(null, false);
     }
 
+    /// <summary>
+    /// Edit or View antenna based on permissions.
+    /// </summary>
     [RelayCommand]
     private void EditAntenna()
     {
         if (SelectedAntenna != null)
         {
-            NavigateToAntennaEditor?.Invoke(SelectedAntenna);
+            // Can edit if: project-specific OR admin mode
+            var isReadOnly = !SelectedAntenna.IsProjectSpecific && !IsAdminMode;
+            NavigateToAntennaEditor?.Invoke(SelectedAntenna, isReadOnly);
         }
     }
+
+    /// <summary>
+    /// Check if selected antenna can be edited (not just viewed).
+    /// </summary>
+    public bool CanEditSelectedAntenna => SelectedAntenna != null &&
+        (SelectedAntenna.IsProjectSpecific || IsAdminMode);
+
+    /// <summary>
+    /// Check if selected antenna can be deleted.
+    /// </summary>
+    public bool CanDeleteSelectedAntenna => SelectedAntenna != null &&
+        (SelectedAntenna.IsProjectSpecific || IsAdminMode);
 
     [RelayCommand]
     private void DeleteAntenna()
     {
-        if (SelectedAntenna != null)
+        if (SelectedAntenna != null && (SelectedAntenna.IsProjectSpecific || IsAdminMode))
         {
+            // If project-specific, also remove from project
+            if (SelectedAntenna.IsProjectSpecific)
+            {
+                _projectViewModel.Project.CustomAntennas.Remove(SelectedAntenna);
+                _projectViewModel.MarkDirty();
+            }
             AllAntennas.Remove(SelectedAntenna);
             FilteredAntennas.Remove(SelectedAntenna);
             SelectedAntenna = null;
@@ -253,7 +316,8 @@ public partial class MasterDataManagerViewModel : ViewModelBase
     [RelayCommand]
     private void AddCable()
     {
-        NavigateToCableEditor?.Invoke(null);
+        // New items are always project-specific and editable
+        NavigateToCableEditor?.Invoke(null, false);
     }
 
     [RelayCommand]
@@ -261,15 +325,27 @@ public partial class MasterDataManagerViewModel : ViewModelBase
     {
         if (SelectedCable != null)
         {
-            NavigateToCableEditor?.Invoke(SelectedCable);
+            var isReadOnly = !SelectedCable.IsProjectSpecific && !IsAdminMode;
+            NavigateToCableEditor?.Invoke(SelectedCable, isReadOnly);
         }
     }
+
+    public bool CanEditSelectedCable => SelectedCable != null &&
+        (SelectedCable.IsProjectSpecific || IsAdminMode);
+
+    public bool CanDeleteSelectedCable => SelectedCable != null &&
+        (SelectedCable.IsProjectSpecific || IsAdminMode);
 
     [RelayCommand]
     private void DeleteCable()
     {
-        if (SelectedCable != null)
+        if (SelectedCable != null && (SelectedCable.IsProjectSpecific || IsAdminMode))
         {
+            if (SelectedCable.IsProjectSpecific)
+            {
+                _projectViewModel.Project.CustomCables.Remove(SelectedCable);
+                _projectViewModel.MarkDirty();
+            }
             AllCables.Remove(SelectedCable);
             FilteredCables.Remove(SelectedCable);
             SelectedCable = null;
@@ -279,7 +355,8 @@ public partial class MasterDataManagerViewModel : ViewModelBase
     [RelayCommand]
     private void AddRadio()
     {
-        NavigateToRadioEditor?.Invoke(null);
+        // New items are always project-specific and editable
+        NavigateToRadioEditor?.Invoke(null, false);
     }
 
     [RelayCommand]
@@ -287,15 +364,27 @@ public partial class MasterDataManagerViewModel : ViewModelBase
     {
         if (SelectedRadio != null)
         {
-            NavigateToRadioEditor?.Invoke(SelectedRadio);
+            var isReadOnly = !SelectedRadio.IsProjectSpecific && !IsAdminMode;
+            NavigateToRadioEditor?.Invoke(SelectedRadio, isReadOnly);
         }
     }
+
+    public bool CanEditSelectedRadio => SelectedRadio != null &&
+        (SelectedRadio.IsProjectSpecific || IsAdminMode);
+
+    public bool CanDeleteSelectedRadio => SelectedRadio != null &&
+        (SelectedRadio.IsProjectSpecific || IsAdminMode);
 
     [RelayCommand]
     private void DeleteRadio()
     {
-        if (SelectedRadio != null)
+        if (SelectedRadio != null && (SelectedRadio.IsProjectSpecific || IsAdminMode))
         {
+            if (SelectedRadio.IsProjectSpecific)
+            {
+                _projectViewModel.Project.CustomRadios.Remove(SelectedRadio);
+                _projectViewModel.MarkDirty();
+            }
             AllRadios.Remove(SelectedRadio);
             FilteredRadios.Remove(SelectedRadio);
             SelectedRadio = null;
@@ -353,10 +442,15 @@ public partial class MasterDataManagerViewModel : ViewModelBase
     }
 
     /// <summary>
-    /// Add a new antenna to the local collection.
+    /// Add a new antenna to the local collection and project.
     /// </summary>
     public void AddAntennaToDatabase(Antenna antenna)
     {
+        // Mark as project-specific and add to project
+        antenna.IsProjectSpecific = true;
+        _projectViewModel.Project.CustomAntennas.Add(antenna);
+        _projectViewModel.MarkDirty();
+
         // Add to local collection and resort
         AllAntennas.Add(antenna);
         ResortAntennas();
@@ -364,10 +458,15 @@ public partial class MasterDataManagerViewModel : ViewModelBase
     }
 
     /// <summary>
-    /// Add a new cable to the local collection.
+    /// Add a new cable to the local collection and project.
     /// </summary>
     public void AddCableToDatabase(Cable cable)
     {
+        // Mark as project-specific and add to project
+        cable.IsProjectSpecific = true;
+        _projectViewModel.Project.CustomCables.Add(cable);
+        _projectViewModel.MarkDirty();
+
         // Add to local collection and resort
         AllCables.Add(cable);
         ResortCables();
@@ -375,10 +474,15 @@ public partial class MasterDataManagerViewModel : ViewModelBase
     }
 
     /// <summary>
-    /// Add a new radio to the local collection.
+    /// Add a new radio to the local collection and project.
     /// </summary>
     public void AddRadioToDatabase(Radio radio)
     {
+        // Mark as project-specific and add to project
+        radio.IsProjectSpecific = true;
+        _projectViewModel.Project.CustomRadios.Add(radio);
+        _projectViewModel.MarkDirty();
+
         // Add to local collection and resort
         AllRadios.Add(radio);
         ResortRadios();

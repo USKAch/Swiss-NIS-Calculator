@@ -1,0 +1,272 @@
+
+## Appendix A: Antennas with Generated Vertical Radiation Patterns
+
+The following directional antennas (Yagi, Quad, Log-Periodic) have vertical radiation patterns generated using the gain-based formula from Section 11.4. Patterns are calculated for each frequency band based on antenna gain.
+
+### A.1 Log-Periodic Antennas
+
+| Manufacturer | Model | Gain (dBi) | Bands |
+|--------------|-------|------------|-------|
+| Cushcraft | ASL201 | 6.4 | 5 |
+| Titan | DLP-19 | 1.0-7.2 | 7 |
+| Titan | LP-8 | 5.2-6.0 | 5 |
+| Titanex | DLP-10_6 | 8.2 | 2 |
+| Titanex | LP-10 | 9.2 | 5 |
+| Titanex | LP-1030 | 9.2 | 6 |
+| Titanex | LP-11 | 5.6-6.2 | 5 |
+| Titanex | LP-12 | 10.2 | 5 |
+| Titanex | LP-15 | 4.0-7.2 | 5 |
+| Titanex | LP-1830 | 3.8-5.0 | 4 |
+| Titanex | LP-5 | 4.2-5.6 | 5 |
+| Titanex | LP-6 | 7.7 | 5 |
+| Titanex | LP-7 | 7.8 | 6 |
+| Titanex | LPDA-5 | 4.2-5.6 | 5 |
+
+### A.2 Quad Antennas
+
+| Manufacturer | Model | Gain (dBi) | Bands |
+|--------------|-------|------------|-------|
+| Allgemein | Quad-2El | 7.2 | 5 |
+| Allgemein | Quad-3El | 8.9 | 5 |
+| Cubex | 2-El_Cubex | 0.0-7.7 | 6 |
+| Cubex | 2-El_SpitzCu | 6.6-7.9 | 5 |
+| Hy-Gain | 2-El_Quad | 7.7-7.8 | 3 |
+| Wimo | X-Quad-2 | 12.7 | 1 |
+| Wimo | X-Quad-70 | 14.9 | 1 |
+
+### A.3 Yagi Antennas
+
+| Manufacturer | Model | Gain (dBi) | Bands |
+|--------------|-------|------------|-------|
+| Allgemei | Yagi-3El | 6.2-6.7 | 11 |
+| Allgemein | HB9CV | 2.2-6.7 | 9 |
+| Allgemein | Helix | 9.7 | 3 |
+| Allgemein | Helix-2 | 10.9-17.1 | 3 |
+| Allgemein | Yagi-2El | 5.9-6.2 | 11 |
+| Allgemein | Yagi-4El | 6.2-8.4 | 11 |
+| Allgemein | Yagi-5El | 6.2-10.2 | 11 |
+| Allgemein | Yagi-6El | 6.2-11.3 | 11 |
+| Allgemein | Yagi-7El | 6.2-12.6 | 11 |
+| Allgemein | Yagi-8El | 13.4 | 10 |
+| Barker & Williamson | BWD-90 | 0.6-3.0 | 6 |
+| Butterfly | HF-5 | 2.0-6.3 | 5 |
+| Comet | CA-52HB4 | 10.4 | 1 |
+| Cush-Craft | R8 | 0.2-1.8 | 7 |
+| Cush-Craft | XM510 | 9.1 | 1 |
+| Cush-Craft | XM515 | 8.9 | 1 |
+| Cush-Craft | XM520 | 8.6 | 1 |
+| Cush_Craft | X7 | 7.1-8.4 | 3 |
+| Cushcraft | 10-3CD | 8.0 | 1 |
+| Cushcraft | 124WB | 10.2 | 1 |
+| Cushcraft | 13B2N | 15.8 | 1 |
+| Cushcraft | 15-4CD | 10.0 | 1 |
+| Cushcraft | 20-4CD | 10.0 | 1 |
+| Cushcraft | 40-2CD | 5.5 | 1 |
+| Cushcraft | 719B | 15.3 | 1 |
+| Cushcraft | 729B | 17.6 | 1 |
+| Cushcraft | A-3-S | 8.0 | 3 |
+| Cushcraft | A-3-WS | 7.0-8.1 | 2 |
+| Cushcraft | A-4-S | 7.4-7.5 | 3 |
+| Cushcraft | A14410SN | 13.2 | 1 |
+| Cushcraft | A27-10S | 12.2 | 2 |
+| Cushcraft | A270-6S | 9.9 | 2 |
+| Cushcraft | A43011N | 17.8 | 1 |
+| Cushcraft | A50-3S | 10.2 | 1 |
+| Cushcraft | A50-5S | 12.6 | 1 |
+| Cushcraft | A503S | 8.0 | 1 |
+| Cushcraft | A505S | 10.5 | 1 |
+| Cushcraft | A506S | 11.6 | 1 |
+| DJ2UT | P5C | 9.5-11.2 | 3 |
+| Diamon | V-2000 | 2.1-8.4 | 3 |
+| Diamon | V2000 | 2.1-8.4 | 3 |
+| Diamond | G-200 | 11.0 | 1 |
+| Eigenbau | Bi-Square | 5.2 | 1 |
+| Flexa | 2xFX213hor | 14.8 | 1 |
+| Flexa | 2xFX217hor | 16.0 | 1 |
+| Flexa | 2xFx224hor | 16.6 | 1 |
+| Flexa | 2xFx2304horiz | 16.9 | 1 |
+| Flexa | 2xFx2317hor | 24.2 | 1 |
+| Flexa | 4xFX213hor | 18.0 | 1 |
+| Flexa | 4xFx2317hor | 27.2 | 1 |
+| Flexa | FX1308-V | 15.3 | 1 |
+| Flexa | FX210 | 11.2 | 1 |
+| Flexa | FX213 | 12.3 | 1 |
+| Flexa | Fx205v | 9.7 | 1 |
+| Flexa | Fx217 | 12.9 | 1 |
+| Flexa | Fx224 | 13.5 | 1 |
+| Flexa | Fx2304horiz | 14.6 | 1 |
+| Flexa | Fx2304v | 16.4 | 1 |
+| Flexa | Fx2309 | 18.1 | 1 |
+| Flexa | Fx2317 | 20.1 | 1 |
+| Flexa | Fx2317hor | 20.1 | 1 |
+| Flexa | Fx2317vert | 20.1 | 1 |
+| Flexa | Fx7015v | 12.3 | 1 |
+| Flexa | Fx7033 | 15.3 | 1 |
+| Flexa | Fx7033hor | 15.3 | 1 |
+| Flexa | Fx7033vert | 15.3 | 1 |
+| Flexa | Fx7044 | 16.6 | 1 |
+| Flexa | Fx7044-4 | 21.7 | 1 |
+| Flexa | Fx7056 | 17.4 | 1 |
+| Flexa | Fx7073 | 17.8 | 1 |
+| Flexa | Fx7073hor | 17.8 | 1 |
+| Flexa | Fx7073vert | 17.8 | 1 |
+| Fritzel | FB-DX460 | 2.1-9.2 | 6 |
+| Fritzel | FB-DX660 | 8.2-9.0 | 3 |
+| Fritzel | FB-Do450 | 2.1-8.9 | 5 |
+| Fritzel | FB-Do505 | 6.3-8.9 | 5 |
+| Fritzel | FB-Dx506 | 5.6-8.9 | 6 |
+| Fritzel | FB13 | 2.1 | 3 |
+| Fritzel | FB23 | 5.9-6.5 | 3 |
+| Fritzel | FB33 | 7.4-9.1 | 3 |
+| Fritzel | FB34 | 2.1-9.2 | 4 |
+| Fritzel | FB53 | 7.6-8.8 | 3 |
+| Fritzel | MFB23 | 4.5-6.2 | 3 |
+| Fritzel | UFB12 | 2.1 | 2 |
+| Fritzel | UFB13 | 2.1 | 3 |
+| Fritzel | UFB33 | 6.9-7.5 | 3 |
+| Hy-Gain | 103BAS | 7.2 | 1 |
+| Hy-Gain | 105BAS | 10.8 | 1 |
+| Hy-Gain | 155BAS | 9.8 | 1 |
+| Hy-Gain | 204BAS | 8.2 | 1 |
+| Hy-Gain | 205BAS | 9.8 | 1 |
+| Hy-Gain | AV-640 | 1.0-1.8 | 7 |
+| Hy-Gain | CA-2x4max | 8.5-11.9 | 2 |
+| Hy-Gain | TH11DX | 7.5-9.2 | 5 |
+| Hy-Gain | TH2Mk3 | 6.1-6.2 | 3 |
+| Hy-Gain | TH3JRS | 7.0-8.9 | 3 |
+| Hy-Gain | TH3Mk3 | 7.1-8.4 | 3 |
+| Hy-Gain | TH5Mk2 | 7.8-9.0 | 3 |
+| Hy-Gain | TH6DXX | 8.2-9.8 | 3 |
+| Hy-Gain | TH7DX | 8.2-9.4 | 3 |
+| KLM | KT-34A | 7.5-8.9 | 3 |
+| KLM | KT-34XA | 9.0-10.9 | 3 |
+| Maspr | WHS-32N | 12.8-14.8 | 2 |
+| Maspro | WH-59hor | 9.2 | 2 |
+| Maspro | WH-59vert | 9.2 | 2 |
+| Mosle | TA-33M | 8.7-10.4 | 3 |
+| Mosle | TA-33M warc | 2.1-10.4 | 5 |
+| Mosle | TA-33jrn warc | 2.1-8.1 | 5 |
+| Mosle | TA-34xl | 11.2-11.7 | 3 |
+| Mosle | TA-34xl warc | 2.1-11.7 | 5 |
+| Mosle | TW-23M | 8.9-9.3 | 2 |
+| Mosle | TW-24xl | 10.6-11.2 | 2 |
+| Mosle | TW-31xl | 2.1 | 3 |
+| Mosle | TW-32xl | 5.7-7.3 | 3 |
+| Mosle | TW-33xl | 8.2-9.3 | 3 |
+| Mosley | CL-33-M | 8.1-9.4 | 3 |
+| Mosley | CL-33warc | 2.1-10.7 | 5 |
+| Mosley | CL-36-M | 7.1-9.4 | 3 |
+| Mosley | MP-33N | 8.0-10.2 | 3 |
+| Mosley | MP-33N warc | 2.1-10.2 | 5 |
+| Mosley | Mini-33 | 5.3-6.7 | 3 |
+| Mosley | Pro-57B | 7.6-8.2 | 5 |
+| Mosley | Pro-57B-40 | 2.1-11.6 | 6 |
+| Mosley | Pro-67A | 7.3-8.6 | 5 |
+| Mosley | Pro-67B | 7.6-8.2 | 5 |
+| Mosley | Pro-67c-3 | 2.1-11.4 | 7 |
+| Mosley | Pro-77A | 2.1-11.6 | 7 |
+| Mosley | Pro-95 | 11.1-12.7 | 5 |
+| Mosley | Pro-96 | 9.9-12.7 | 6 |
+| Mosley | TA-31M | 2.1 | 3 |
+| Mosley | TA-31jrn | 2.1 | 3 |
+| Mosley | TA-32M | 6.0-7.7 | 3 |
+| Mosley | TA-32jrn | 5.2-7.7 | 3 |
+| Mosley | TA-33jrn | 6.7-8.1 | 3 |
+| Mosley | TA-53M | 5.9-8.1 | 5 |
+| Muehla | DX2000 | -4.7--1.1 | 8 |
+| Opti-Beam | OB10-3W | 7.4-8.7 | 3 |
+| Opti-Beam | OB11-3 | 7.2-8.8 | 3 |
+| Opti-Beam | OB11-5 | 7.3-7.6 | 5 |
+| Opti-Beam | OB12-4 | 5.8-8.9 | 4 |
+| Opti-Beam | OB12-4WARC | 5.8-8.9 | 4 |
+| Opti-Beam | OB13-6 | 5.8-8.9 | 6 |
+| Opti-Beam | OB15-7 | 5.6-8.0 | 7 |
+| Opti-Beam | OB16-3 | 9.2-10.7 | 3 |
+| Opti-Beam | OB16-5 | 8.0-9.8 | 5 |
+| Opti-Beam | OB17-4 | 7.0-10.2 | 4 |
+| Opti-Beam | OB18-6 | 6.9-9.7 | 6 |
+| Opti-Beam | OB2-30 | 6.0 | 1 |
+| Opti-Beam | OB2-40 | 5.8 | 1 |
+| Opti-Beam | OB2-40M | 5.7 | 1 |
+| Opti-Beam | OB2-80 | 6.0 | 1 |
+| Opti-Beam | OB3-30 | 7.9 | 1 |
+| Opti-Beam | OB3-80 | 7.0 | 1 |
+| Opti-Beam | OB4-2W | 6.4-6.8 | 2 |
+| Opti-Beam | OB4-2WARC | 6.4-6.8 | 2 |
+| Opti-Beam | OB4-40 | 7.2 | 1 |
+| Opti-Beam | OB4020 | 7.4-10.4 | 2 |
+| Opti-Beam | OB4030 | 5.8-6.0 | 2 |
+| Opti-Beam | OB5-10 | 10.5 | 1 |
+| Opti-Beam | OB5-12 | 10.8 | 1 |
+| Opti-Beam | OB5-15 | 10.5 | 1 |
+| Opti-Beam | OB5-17 | 10.7 | 1 |
+| Opti-Beam | OB5-20 | 10.6 | 1 |
+| Opti-Beam | OB5-6 | 10.9 | 1 |
+| Opti-Beam | OB6-10 | 11.7 | 1 |
+| Opti-Beam | OB6-2WARC | 7.3-8.6 | 2 |
+| Opti-Beam | OB6-3M | 6.2-6.8 | 3 |
+| Opti-Beam | OB6-6 | 11.7 | 1 |
+| Opti-Beam | OB7-2W | 7.2-8.0 | 2 |
+| Opti-Beam | OB7-2WARC | 7.2-8.0 | 2 |
+| Opti-Beam | OB7-3 | 6.2-7.6 | 3 |
+| Opti-Beam | OB7-3M | 6.2-7.6 | 3 |
+| Opti-Beam | OB804020 | 6.0-10.5 | 3 |
+| Opti-Beam | OB9-2W | 9.2-10.0 | 2 |
+| Opti-Beam | OB9-2WARC | 9.2-10.0 | 2 |
+| Opti-Beam | OB9-5 | 6.3-6.8 | 5 |
+| Opti-Beam | OBW10-5 | 6.7-7.0 | 5 |
+| Optibeam | OB12-6 | 5.8-7.0 | 6 |
+| Optibeam | OB8-4M | 5.7-7.0 | 4 |
+| Optibeam | OB8_4M | 5.7-7.0 | 4 |
+| SHF | SHF1340 | 18.8 | 1 |
+| SHF | SHF1367 | 22.1 | 1 |
+| SHF | SHF2328 | 17.6 | 1 |
+| SHF | SHF2344 | 20.2 | 1 |
+| SHF | SHF2367 | 22.1 | 1 |
+| Somme | XP406 | 2.1-8.2 | 6 |
+| Somme | XP507 | 2.1-9.2 | 7 |
+| Somme | XP707 | 2.1-11.7 | 7 |
+| Somme | XP807 | 2.1-13.2 | 7 |
+| SteppIR | SteppIR_2El | 6.4-6.8 | 6 |
+| SteppIR | SteppIR_3El | 3.9-7.9 | 6 |
+| SteppIR | SteppIR_4El | 9.4-12.0 | 6 |
+| SteppIR | Stepp_3El | 3.0-6.3 | 6 |
+| Tonna | 20089 | 12.4 | 1 |
+| Tonna | 20505 | 10.0 | 1 |
+| Tonna | 20623 | 17.2 | 1 |
+| Tonna | 20624 | 17.2 | 1 |
+| Tonna | 20635 | 19.6 | 1 |
+| Tonna | 20636 | 19.6 | 1 |
+| Tonna | 20650 | 20.1 | 1 |
+| Tonna | 20655 | 20.1 | 1 |
+| Tonna | 20725 | 17.6 | 1 |
+| Tonna | 20804 | 8.9 | 1 |
+| Tonna | 20808 | 8.1 | 1 |
+| Tonna | 20809 | 12.4 | 1 |
+| Tonna | 20813 | 15.3 | 1 |
+| Tonna | 20818 | 12.2 | 1 |
+| Tonna | 20919 | 15.3 | 1 |
+| Tonna | 20922 | 17.4 | 1 |
+| Tonna | F9FT-horiz | 8.9 | 1 |
+| Tonna | F9FT-vert | 8.9 | 1 |
+| Tonna | T-17El-horiz | 15.0 | 1 |
+| Tonna | T-17El-vert | 15.0 | 1 |
+| Tonna | T-4x17El-horiz | 21.0 | 1 |
+| Tonna | T-4x17El-vert | 21.0 | 1 |
+| Wimo | D2T | -9.6-4.8 | 7 |
+| Wimo | Wx208 | 9.2 | 1 |
+| Wimo | Wx214 | 12.2 | 1 |
+| Wimo | Wx220 | 14.9 | 1 |
+| Wimo | Wx7020 | 13.7 | 1 |
+| Wimo | Wx7036 | 16.1 | 1 |
+| Wimo | Wy204 | 9.2 | 1 |
+| Wimo | Wy207 | 12.2 | 1 |
+| Wimo | Wy210 | 14.4 | 1 |
+| Wimo | Wy7010 | 13.7 | 1 |
+| Wimo | Wy7018 | 16.1 | 1 |
+| Wimo | Wy7023 | 17.1 | 1 |
+| Wimo | Wy706 | 10.2 | 1 |
+| Wimo | ZX6-2 | 6.2 | 1 |
+
+*Summary: 14 Log-Periodic, 7 Quad, 229 Yagi antennas with generated patterns.*
+
