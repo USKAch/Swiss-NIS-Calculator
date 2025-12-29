@@ -157,6 +157,7 @@ public class Strings : INotifyPropertyChanged
     // COMMON / BUTTONS
     // ============================================================
     public string Save => Get("Save");
+    public string SaveAs => Get("SaveAs");
     public string Cancel => Get("Cancel");
     public string Edit => Get("Edit");
     public string View => Get("View");
@@ -597,6 +598,7 @@ public class Strings : INotifyPropertyChanged
     {
         // Common
         ["Save"] = new() { ["de"] = "Speichern", ["fr"] = "Enregistrer", ["it"] = "Salva", ["en"] = "Save" },
+        ["SaveAs"] = new() { ["de"] = "Speichern unter...", ["fr"] = "Enregistrer sous...", ["it"] = "Salva con nome...", ["en"] = "Save As..." },
         ["Cancel"] = new() { ["de"] = "Abbrechen", ["fr"] = "Annuler", ["it"] = "Annulla", ["en"] = "Cancel" },
         ["Edit"] = new() { ["de"] = "Bearbeiten", ["fr"] = "Modifier", ["it"] = "Modifica", ["en"] = "Edit" },
         ["View"] = new() { ["de"] = "Anzeigen", ["fr"] = "Afficher", ["it"] = "Visualizza", ["en"] = "View" },

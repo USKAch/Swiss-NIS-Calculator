@@ -38,6 +38,8 @@
                 <ui:NavigationViewItem.MenuItems>
                     <ui:NavigationViewItem Content="{Binding NewProject, Source={x:Static loc:Strings.Instance}}" Tag="NewProject"/>
                     <ui:NavigationViewItem Content="{Binding OpenProject, Source={x:Static loc:Strings.Instance}}" Tag="OpenProject"/>
+                    <ui:NavigationViewItem Content="{Binding Save, Source={x:Static loc:Strings.Instance}}" Tag="Save"/>
+                    <ui:NavigationViewItem Content="{Binding SaveAs, Source={x:Static loc:Strings.Instance}}" Tag="SaveAs"/>
                     <ui:NavigationViewItem Content="{Binding RecentProjects, Source={x:Static loc:Strings.Instance}}" Tag="RecentProjects"/>
                 </ui:NavigationViewItem.MenuItems>
             </ui:NavigationViewItem>

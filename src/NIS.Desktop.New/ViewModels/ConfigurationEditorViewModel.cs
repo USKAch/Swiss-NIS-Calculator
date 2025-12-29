@@ -6,8 +6,8 @@ using System.Linq;
 using Avalonia.Data.Converters;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using NIS.Core.Data;
 using NIS.Core.Models;
+using NIS.Desktop.New.Services;
 
 namespace NIS.Desktop.New.ViewModels;
 
@@ -43,10 +43,6 @@ public class PatternConverter : IValueConverter
 /// </summary>
 public partial class ConfigurationEditorViewModel : ViewModelBase
 {
-    private readonly AntennaDatabase _antennaDatabase = new();
-    private readonly CableDatabase _cableDatabase = new();
-    private readonly RadioDatabase _radioDatabase = new();
-
     // Navigation callbacks
     public Action? NavigateBack { get; set; }
     public Action? NavigateToAntennaSelector { get; set; }
@@ -59,13 +55,10 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
 
     public ConfigurationEditorViewModel()
     {
-        _antennaDatabase.LoadDefaults();
-        _cableDatabase.LoadDefaults();
-        _radioDatabase.LoadDefaults();
-
-        Antennas = new ObservableCollection<Antenna>(_antennaDatabase.Antennas.OrderBy(a => a.DisplayName));
-        Cables = new ObservableCollection<Cable>(_cableDatabase.Cables);
-        Radios = new ObservableCollection<Radio>(_radioDatabase.Radios);
+        // Load all data from MasterDataStore (single source of truth, already sorted)
+        Antennas = new ObservableCollection<Antenna>(MasterDataStore.Instance.Antennas);
+        Cables = new ObservableCollection<Cable>(MasterDataStore.Instance.Cables);
+        Radios = new ObservableCollection<Radio>(MasterDataStore.Instance.Radios);
     }
 
     // Collections
@@ -80,30 +73,6 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
     {
         Okas = okas;
         OnPropertyChanged(nameof(Okas));
-    }
-
-    /// <summary>
-    /// Add project's custom antennas to the dropdown list.
-    /// </summary>
-    public void AddProjectAntennas(IEnumerable<Antenna> projectAntennas)
-    {
-        foreach (var antenna in projectAntennas)
-        {
-            var exists = Antennas.Any(a =>
-                a.Manufacturer.Equals(antenna.Manufacturer, StringComparison.OrdinalIgnoreCase) &&
-                a.Model.Equals(antenna.Model, StringComparison.OrdinalIgnoreCase));
-            if (!exists)
-            {
-                Antennas.Add(antenna);
-            }
-        }
-        // Re-sort after adding
-        var sorted = Antennas.OrderBy(a => a.DisplayName).ToList();
-        Antennas.Clear();
-        foreach (var a in sorted)
-        {
-            Antennas.Add(a);
-        }
     }
 
     // Configuration Number (1-based)

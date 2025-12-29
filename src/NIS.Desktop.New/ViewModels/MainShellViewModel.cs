@@ -5,6 +5,7 @@ using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NIS.Desktop.New.Localization;
+using NIS.Desktop.New.Services;
 
 namespace NIS.Desktop.New.ViewModels;
 
@@ -83,6 +84,12 @@ public partial class MainShellViewModel : ViewModelBase
                 break;
             case "OpenProject":
                 _ = OpenProjectAsync();
+                break;
+            case "Save":
+                _ = Save();
+                break;
+            case "SaveAs":
+                _ = SaveAs();
                 break;
             case "RecentProjects":
                 // Show recent projects in welcome view
@@ -226,8 +233,7 @@ public partial class MainShellViewModel : ViewModelBase
         _configurationEditorViewModel.SetProjectOkas(ProjectViewModel.Okas);
         _configurationEditorViewModel.MarkProjectDirty = ProjectViewModel.MarkDirty;
 
-        // Add project's custom antennas to the dropdown
-        _configurationEditorViewModel.AddProjectAntennas(ProjectViewModel.Project.CustomAntennas);
+        // All master data comes from MasterDataStore (single source of truth)
 
         if (existing != null)
         {
@@ -247,31 +253,6 @@ public partial class MainShellViewModel : ViewModelBase
         _configurationEditorViewModel.NavigateToOkaEditor = NavigateToOkaEditorFromConfig;
         _configurationEditorViewModel.OnSave = (config) =>
         {
-            // Copy selected antenna to project if not already there
-            var selectedAntenna = _configurationEditorViewModel.SelectedAntenna;
-            if (selectedAntenna != null)
-            {
-                var existingAntenna = ProjectViewModel.Project.CustomAntennas.FirstOrDefault(a =>
-                    a.Manufacturer.Equals(selectedAntenna.Manufacturer, StringComparison.OrdinalIgnoreCase) &&
-                    a.Model.Equals(selectedAntenna.Model, StringComparison.OrdinalIgnoreCase));
-                if (existingAntenna == null)
-                {
-                    ProjectViewModel.Project.CustomAntennas.Add(selectedAntenna);
-                }
-            }
-
-            // Copy selected cable to project if not already there
-            var selectedCable = _configurationEditorViewModel.SelectedCable;
-            if (selectedCable != null)
-            {
-                var existingCable = ProjectViewModel.Project.CustomCables.FirstOrDefault(c =>
-                    c.Name.Equals(selectedCable.Name, StringComparison.OrdinalIgnoreCase));
-                if (existingCable == null)
-                {
-                    ProjectViewModel.Project.CustomCables.Add(selectedCable);
-                }
-            }
-
             if (existing != null)
             {
                 var index = ProjectViewModel.Project.AntennaConfigurations.IndexOf(existing);
@@ -294,7 +275,7 @@ public partial class MainShellViewModel : ViewModelBase
     public void NavigateToAntennaSelector()
     {
         _antennaEditorViewModel = new AntennaEditorViewModel();
-        _antennaEditorViewModel.ProjectAntennas = ProjectViewModel.Project.CustomAntennas;
+        // All antennas come from MasterDataStore (single source of truth)
         _antennaEditorViewModel.RefreshAntennaList();
         _antennaEditorViewModel.NavigateBack = () =>
         {
@@ -306,15 +287,6 @@ public partial class MainShellViewModel : ViewModelBase
             if (_configurationEditorViewModel != null)
             {
                 _configurationEditorViewModel.SelectedAntenna = antenna;
-            }
-            // Ensure antenna is in project's CustomAntennas for calculations
-            var existingAntenna = ProjectViewModel.Project.CustomAntennas.FirstOrDefault(a =>
-                a.Manufacturer.Equals(antenna.Manufacturer, StringComparison.OrdinalIgnoreCase) &&
-                a.Model.Equals(antenna.Model, StringComparison.OrdinalIgnoreCase));
-            if (existingAntenna == null)
-            {
-                ProjectViewModel.Project.CustomAntennas.Add(antenna);
-                ProjectViewModel.MarkDirty();
             }
             CurrentView = _configurationEditorViewModel;
         };
@@ -338,9 +310,8 @@ public partial class MainShellViewModel : ViewModelBase
         };
         editorVm.OnSave = (antenna) =>
         {
-            // Add to project's custom antennas
-            ProjectViewModel.Project.CustomAntennas.Add(antenna);
-            ProjectViewModel.MarkDirty();
+            // Save to MasterDataStore (persists to file)
+            Services.MasterDataStore.Instance.SaveAntenna(antenna);
 
             // Go back to selector and select the new antenna
             _antennaEditorViewModel?.AddAntennaToList(antenna);
@@ -424,7 +395,13 @@ public partial class MainShellViewModel : ViewModelBase
         };
         _antennaMasterEditorViewModel.OnSave = (antenna) =>
         {
-            _masterDataManagerViewModel?.AddAntennaToDatabase(antenna);
+            var success = _masterDataManagerViewModel?.AddAntennaToDatabase(antenna) ?? false;
+            if (!success)
+            {
+                // Duplicate exists - show validation message and stay on editor
+                _antennaMasterEditorViewModel!.ValidationMessage = Strings.Instance.DuplicateNameError;
+                return;
+            }
             if (_masterDataManagerViewModel != null)
             {
                 _masterDataManagerViewModel.SelectedTabIndex = 0; // Antennas tab
@@ -464,7 +441,13 @@ public partial class MainShellViewModel : ViewModelBase
         };
         _cableMasterEditorViewModel.OnSave = (cable) =>
         {
-            _masterDataManagerViewModel?.AddCableToDatabase(cable);
+            var success = _masterDataManagerViewModel?.AddCableToDatabase(cable) ?? false;
+            if (!success)
+            {
+                // Duplicate exists - show validation message and stay on editor
+                _cableMasterEditorViewModel!.ValidationMessage = Strings.Instance.DuplicateNameError;
+                return;
+            }
             if (_masterDataManagerViewModel != null)
             {
                 _masterDataManagerViewModel.SelectedTabIndex = 1; // Cables tab
@@ -504,7 +487,13 @@ public partial class MainShellViewModel : ViewModelBase
         };
         _radioMasterEditorViewModel.OnSave = (radio) =>
         {
-            _masterDataManagerViewModel?.AddRadioToDatabase(radio);
+            var success = _masterDataManagerViewModel?.AddRadioToDatabase(radio) ?? false;
+            if (!success)
+            {
+                // Duplicate exists - show validation message and stay on editor
+                _radioMasterEditorViewModel!.ValidationMessage = Strings.Instance.DuplicateNameError;
+                return;
+            }
             if (_masterDataManagerViewModel != null)
             {
                 _masterDataManagerViewModel.SelectedTabIndex = 2; // Radios tab
@@ -564,6 +553,8 @@ public partial class MainShellViewModel : ViewModelBase
         if (existing != null)
         {
             _antennaMasterEditorViewModel.InitializeEdit(existing);
+            // Shipped master data items are read-only in configuration editor
+            _antennaMasterEditorViewModel.IsReadOnly = !existing.IsProjectSpecific;
         }
         else
         {
@@ -572,26 +563,19 @@ public partial class MainShellViewModel : ViewModelBase
         _antennaMasterEditorViewModel.NavigateBack = () => CurrentView = _configurationEditorViewModel;
         _antennaMasterEditorViewModel.OnSave = (antenna) =>
         {
+            // Save to MasterDataStore (persists to file)
+            Services.MasterDataStore.Instance.SaveAntenna(antenna);
+
             if (_configurationEditorViewModel != null)
             {
-                // Find existing antenna in collection
-                var existingAntenna = _configurationEditorViewModel.Antennas.FirstOrDefault(a =>
-                    a.Manufacturer.Equals(antenna.Manufacturer, StringComparison.OrdinalIgnoreCase) &&
-                    a.Model.Equals(antenna.Model, StringComparison.OrdinalIgnoreCase));
+                // Refresh list from store and select the antenna
+                _configurationEditorViewModel.Antennas.Clear();
+                foreach (var a in Services.MasterDataStore.Instance.Antennas)
+                    _configurationEditorViewModel.Antennas.Add(a);
 
-                if (existingAntenna != null)
-                {
-                    // Update existing and select it
-                    var index = _configurationEditorViewModel.Antennas.IndexOf(existingAntenna);
-                    _configurationEditorViewModel.Antennas[index] = antenna;
-                    _configurationEditorViewModel.SelectedAntenna = antenna;
-                }
-                else
-                {
-                    // Add new and select it
-                    _configurationEditorViewModel.Antennas.Add(antenna);
-                    _configurationEditorViewModel.SelectedAntenna = antenna;
-                }
+                _configurationEditorViewModel.SelectedAntenna = Services.MasterDataStore.Instance.Antennas
+                    .FirstOrDefault(a => a.Manufacturer.Equals(antenna.Manufacturer, StringComparison.OrdinalIgnoreCase) &&
+                                         a.Model.Equals(antenna.Model, StringComparison.OrdinalIgnoreCase));
             }
             CurrentView = _configurationEditorViewModel;
         };
@@ -605,6 +589,8 @@ public partial class MainShellViewModel : ViewModelBase
         if (existing != null)
         {
             _cableMasterEditorViewModel.InitializeEdit(existing);
+            // Shipped master data items are read-only in configuration editor
+            _cableMasterEditorViewModel.IsReadOnly = !existing.IsProjectSpecific;
         }
         else
         {
@@ -613,16 +599,18 @@ public partial class MainShellViewModel : ViewModelBase
         _cableMasterEditorViewModel.NavigateBack = () => CurrentView = _configurationEditorViewModel;
         _cableMasterEditorViewModel.OnSave = (cable) =>
         {
-            // Add to config editor's cable list if not already there
+            // Save to MasterDataStore (persists to file)
+            Services.MasterDataStore.Instance.SaveCable(cable);
+
             if (_configurationEditorViewModel != null)
             {
-                var existingCable = _configurationEditorViewModel.Cables.FirstOrDefault(c =>
-                    c.Name.Equals(cable.Name, StringComparison.OrdinalIgnoreCase));
-                if (existingCable == null)
-                {
-                    _configurationEditorViewModel.Cables.Add(cable);
-                }
-                _configurationEditorViewModel.SelectedCable = cable;
+                // Refresh list from store and select the cable
+                _configurationEditorViewModel.Cables.Clear();
+                foreach (var c in Services.MasterDataStore.Instance.Cables)
+                    _configurationEditorViewModel.Cables.Add(c);
+
+                _configurationEditorViewModel.SelectedCable = Services.MasterDataStore.Instance.Cables
+                    .FirstOrDefault(c => c.Name.Equals(cable.Name, StringComparison.OrdinalIgnoreCase));
             }
             CurrentView = _configurationEditorViewModel;
         };
@@ -636,6 +624,8 @@ public partial class MainShellViewModel : ViewModelBase
         if (existing != null)
         {
             _radioMasterEditorViewModel.InitializeEdit(existing);
+            // Shipped master data items are read-only in configuration editor
+            _radioMasterEditorViewModel.IsReadOnly = !existing.IsProjectSpecific;
         }
         else
         {
@@ -644,17 +634,19 @@ public partial class MainShellViewModel : ViewModelBase
         _radioMasterEditorViewModel.NavigateBack = () => CurrentView = _configurationEditorViewModel;
         _radioMasterEditorViewModel.OnSave = (radio) =>
         {
-            // Add to config editor's radio list if not already there
+            // Save to MasterDataStore (persists to file)
+            Services.MasterDataStore.Instance.SaveRadio(radio);
+
             if (_configurationEditorViewModel != null)
             {
-                var existingRadio = _configurationEditorViewModel.Radios.FirstOrDefault(r =>
-                    r.Manufacturer.Equals(radio.Manufacturer, StringComparison.OrdinalIgnoreCase) &&
-                    r.Model.Equals(radio.Model, StringComparison.OrdinalIgnoreCase));
-                if (existingRadio == null)
-                {
-                    _configurationEditorViewModel.Radios.Add(radio);
-                }
-                _configurationEditorViewModel.SelectedRadio = radio;
+                // Refresh list from store and select the radio
+                _configurationEditorViewModel.Radios.Clear();
+                foreach (var r in Services.MasterDataStore.Instance.Radios)
+                    _configurationEditorViewModel.Radios.Add(r);
+
+                _configurationEditorViewModel.SelectedRadio = Services.MasterDataStore.Instance.Radios
+                    .FirstOrDefault(r => r.Manufacturer.Equals(radio.Manufacturer, StringComparison.OrdinalIgnoreCase) &&
+                                         r.Model.Equals(radio.Model, StringComparison.OrdinalIgnoreCase));
             }
             CurrentView = _configurationEditorViewModel;
         };

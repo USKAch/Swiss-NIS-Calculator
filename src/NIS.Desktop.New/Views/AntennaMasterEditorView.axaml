@@ -39,7 +39,7 @@
                             <TextBox Text="{Binding Model}" Watermark="{Binding AntennaModelExample, Source={x:Static loc:Strings.Instance}}" Width="300" IsEnabled="{Binding CanEdit}"/>
                         </StackPanel>
 
-                        <!-- Line 2: Antenna Type and Polarization -->
+                        <!-- Line 2: Antenna Type, Polarization, and Rotatable -->
                         <StackPanel Orientation="Horizontal" Spacing="15">
                             <TextBlock Text="{Binding AntennaTypeLabel, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <ComboBox SelectedItem="{Binding AntennaType}" ItemsSource="{Binding AvailableAntennaTypes}" MinWidth="120" IsEnabled="{Binding CanEdit}"/>
@@ -47,11 +47,10 @@
                             <TextBlock Text="{Binding Polarization, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold" Margin="20,0,0,0"/>
                             <RadioButton Content="{Binding Horizontal, Source={x:Static loc:Strings.Instance}}" IsChecked="{Binding IsHorizontallyPolarized}" GroupName="Polarization" IsEnabled="{Binding CanEdit}"/>
                             <RadioButton Content="{Binding Vertical, Source={x:Static loc:Strings.Instance}}" IsChecked="{Binding IsVerticallyPolarized}" GroupName="Polarization" IsEnabled="{Binding CanEdit}"/>
-                        </StackPanel>
 
-                        <!-- Line 3: Rotatable (only for horizontal) -->
-                        <StackPanel Orientation="Horizontal" Spacing="15" IsVisible="{Binding IsHorizontallyPolarized}">
-                            <CheckBox IsChecked="{Binding IsRotatable}" Content="{Binding Rotatable, Source={x:Static loc:Strings.Instance}}" IsEnabled="{Binding CanEdit}"/>
+                            <!-- Rotatable (only for horizontal polarization) -->
+                            <CheckBox IsChecked="{Binding IsRotatable}" Content="{Binding Rotatable, Source={x:Static loc:Strings.Instance}}" IsEnabled="{Binding CanEdit}"
+                                      IsVisible="{Binding IsHorizontallyPolarized}" Margin="20,0,0,0"/>
                             <NumericUpDown Value="{Binding HorizontalAngleDegrees}" ShowButtonSpinner="False"
                                            Minimum="0" Maximum="360" Increment="10" Width="80"
                                            IsVisible="{Binding IsRotatable}" IsEnabled="{Binding CanEdit}"/>

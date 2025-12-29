@@ -6,9 +6,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
-using NIS.Core.Data;
 using NIS.Core.Models;
 using NIS.Desktop.New.Localization;
+using NIS.Desktop.New.Services;
 
 namespace NIS.Desktop.New.ViewModels;
 
@@ -17,9 +17,6 @@ namespace NIS.Desktop.New.ViewModels;
 /// </summary>
 public partial class MasterDataManagerViewModel : ViewModelBase
 {
-    private readonly AntennaDatabase _antennaDatabase = new();
-    private readonly CableDatabase _cableDatabase = new();
-    private readonly RadioDatabase _radioDatabase = new();
     private readonly ProjectViewModel _projectViewModel;
 
     // Navigation callbacks
@@ -65,37 +62,11 @@ public partial class MasterDataManagerViewModel : ViewModelBase
             return result == ButtonResult.Yes;
         };
 
-        _antennaDatabase.LoadDefaults();
-        _cableDatabase.LoadDefaults();
-        _radioDatabase.LoadDefaults();
-
-        // Mark master data as not project-specific (read-only for normal users)
-        foreach (var a in _antennaDatabase.Antennas) a.IsProjectSpecific = false;
-        foreach (var c in _cableDatabase.Cables) c.IsProjectSpecific = false;
-        foreach (var r in _radioDatabase.Radios) r.IsProjectSpecific = false;
-
-        // Mark project custom data as project-specific (always editable)
-        foreach (var a in _projectViewModel.Project.CustomAntennas) a.IsProjectSpecific = true;
-        foreach (var c in _projectViewModel.Project.CustomCables) c.IsProjectSpecific = true;
-        foreach (var r in _projectViewModel.Project.CustomRadios) r.IsProjectSpecific = true;
-
-        // Combine master data + project-specific data, sorted alphabetically
-        var allAntennas = _antennaDatabase.Antennas
-            .Concat(_projectViewModel.Project.CustomAntennas)
-            .OrderBy(a => a.Manufacturer)
-            .ThenBy(a => a.Model);
-        AllAntennas = new ObservableCollection<Antenna>(allAntennas);
-
-        var allCables = _cableDatabase.Cables
-            .Concat(_projectViewModel.Project.CustomCables)
-            .OrderBy(c => c.Name);
-        AllCables = new ObservableCollection<Cable>(allCables);
-
-        var allRadios = _radioDatabase.Radios
-            .Concat(_projectViewModel.Project.CustomRadios)
-            .OrderBy(r => r.Manufacturer)
-            .ThenBy(r => r.Model);
-        AllRadios = new ObservableCollection<Radio>(allRadios);
+        // Load all data from MasterDataStore (single source of truth)
+        // Data is already sorted alphabetically
+        AllAntennas = new ObservableCollection<Antenna>(MasterDataStore.Instance.Antennas);
+        AllCables = new ObservableCollection<Cable>(MasterDataStore.Instance.Cables);
+        AllRadios = new ObservableCollection<Radio>(MasterDataStore.Instance.Radios);
 
         // OKAs belong to the current project
         AllOkas = _projectViewModel.Okas;
@@ -301,12 +272,8 @@ public partial class MasterDataManagerViewModel : ViewModelBase
     {
         if (SelectedAntenna != null && (SelectedAntenna.IsProjectSpecific || IsAdminMode))
         {
-            // If project-specific, also remove from project
-            if (SelectedAntenna.IsProjectSpecific)
-            {
-                _projectViewModel.Project.CustomAntennas.Remove(SelectedAntenna);
-                _projectViewModel.MarkDirty();
-            }
+            // Delete from MasterDataStore (persists to file)
+            MasterDataStore.Instance.DeleteAntenna(SelectedAntenna);
             AllAntennas.Remove(SelectedAntenna);
             FilteredAntennas.Remove(SelectedAntenna);
             SelectedAntenna = null;
@@ -341,11 +308,8 @@ public partial class MasterDataManagerViewModel : ViewModelBase
     {
         if (SelectedCable != null && (SelectedCable.IsProjectSpecific || IsAdminMode))
         {
-            if (SelectedCable.IsProjectSpecific)
-            {
-                _projectViewModel.Project.CustomCables.Remove(SelectedCable);
-                _projectViewModel.MarkDirty();
-            }
+            // Delete from MasterDataStore (persists to file)
+            MasterDataStore.Instance.DeleteCable(SelectedCable);
             AllCables.Remove(SelectedCable);
             FilteredCables.Remove(SelectedCable);
             SelectedCable = null;
@@ -380,11 +344,8 @@ public partial class MasterDataManagerViewModel : ViewModelBase
     {
         if (SelectedRadio != null && (SelectedRadio.IsProjectSpecific || IsAdminMode))
         {
-            if (SelectedRadio.IsProjectSpecific)
-            {
-                _projectViewModel.Project.CustomRadios.Remove(SelectedRadio);
-                _projectViewModel.MarkDirty();
-            }
+            // Delete from MasterDataStore (persists to file)
+            MasterDataStore.Instance.DeleteRadio(SelectedRadio);
             AllRadios.Remove(SelectedRadio);
             FilteredRadios.Remove(SelectedRadio);
             SelectedRadio = null;
@@ -442,51 +403,96 @@ public partial class MasterDataManagerViewModel : ViewModelBase
     }
 
     /// <summary>
-    /// Add a new antenna to the local collection and project.
+    /// Check if an antenna with the same name already exists.
     /// </summary>
-    public void AddAntennaToDatabase(Antenna antenna)
+    public bool AntennaExists(string manufacturer, string model, Antenna? exclude = null)
     {
-        // Mark as project-specific and add to project
-        antenna.IsProjectSpecific = true;
-        _projectViewModel.Project.CustomAntennas.Add(antenna);
-        _projectViewModel.MarkDirty();
+        return MasterDataStore.Instance.AntennaExists(manufacturer, model, exclude);
+    }
 
-        // Add to local collection and resort
-        AllAntennas.Add(antenna);
-        ResortAntennas();
+    /// <summary>
+    /// Check if a cable with the same name already exists.
+    /// </summary>
+    public bool CableExists(string name, Cable? exclude = null)
+    {
+        return MasterDataStore.Instance.CableExists(name, exclude);
+    }
+
+    /// <summary>
+    /// Check if a radio with the same name already exists.
+    /// </summary>
+    public bool RadioExists(string manufacturer, string model, Radio? exclude = null)
+    {
+        return MasterDataStore.Instance.RadioExists(manufacturer, model, exclude);
+    }
+
+    /// <summary>
+    /// Add a new antenna to MasterDataStore (persists to file).
+    /// Returns false if duplicate exists.
+    /// </summary>
+    public bool AddAntennaToDatabase(Antenna antenna)
+    {
+        // Check for duplicates
+        if (AntennaExists(antenna.Manufacturer, antenna.Model))
+        {
+            return false;
+        }
+
+        // Save to MasterDataStore (marks as IsProjectSpecific and persists)
+        MasterDataStore.Instance.SaveAntenna(antenna);
+
+        // Refresh local collection from store (already sorted)
+        AllAntennas.Clear();
+        foreach (var a in MasterDataStore.Instance.Antennas)
+            AllAntennas.Add(a);
         FilterAntennas();
+        return true;
     }
 
     /// <summary>
-    /// Add a new cable to the local collection and project.
+    /// Add a new cable to MasterDataStore (persists to file).
+    /// Returns false if duplicate exists.
     /// </summary>
-    public void AddCableToDatabase(Cable cable)
+    public bool AddCableToDatabase(Cable cable)
     {
-        // Mark as project-specific and add to project
-        cable.IsProjectSpecific = true;
-        _projectViewModel.Project.CustomCables.Add(cable);
-        _projectViewModel.MarkDirty();
+        // Check for duplicates
+        if (CableExists(cable.Name))
+        {
+            return false;
+        }
 
-        // Add to local collection and resort
-        AllCables.Add(cable);
-        ResortCables();
+        // Save to MasterDataStore (marks as IsProjectSpecific and persists)
+        MasterDataStore.Instance.SaveCable(cable);
+
+        // Refresh local collection from store (already sorted)
+        AllCables.Clear();
+        foreach (var c in MasterDataStore.Instance.Cables)
+            AllCables.Add(c);
         FilterCables();
+        return true;
     }
 
     /// <summary>
-    /// Add a new radio to the local collection and project.
+    /// Add a new radio to MasterDataStore (persists to file).
+    /// Returns false if duplicate exists.
     /// </summary>
-    public void AddRadioToDatabase(Radio radio)
+    public bool AddRadioToDatabase(Radio radio)
     {
-        // Mark as project-specific and add to project
-        radio.IsProjectSpecific = true;
-        _projectViewModel.Project.CustomRadios.Add(radio);
-        _projectViewModel.MarkDirty();
+        // Check for duplicates
+        if (RadioExists(radio.Manufacturer, radio.Model))
+        {
+            return false;
+        }
 
-        // Add to local collection and resort
-        AllRadios.Add(radio);
-        ResortRadios();
+        // Save to MasterDataStore (marks as IsProjectSpecific and persists)
+        MasterDataStore.Instance.SaveRadio(radio);
+
+        // Refresh local collection from store (already sorted)
+        AllRadios.Clear();
+        foreach (var r in MasterDataStore.Instance.Radios)
+            AllRadios.Add(r);
         FilterRadios();
+        return true;
     }
 
     /// <summary>
@@ -497,36 +503,6 @@ public partial class MasterDataManagerViewModel : ViewModelBase
         _projectViewModel.AddOrUpdateOka(oka);
         ResortOkas();
         FilterOkas();
-    }
-
-    private void ResortAntennas()
-    {
-        var sorted = AllAntennas.OrderBy(a => a.Manufacturer).ThenBy(a => a.Model).ToList();
-        AllAntennas.Clear();
-        foreach (var antenna in sorted)
-        {
-            AllAntennas.Add(antenna);
-        }
-    }
-
-    private void ResortCables()
-    {
-        var sorted = AllCables.OrderBy(c => c.Name).ToList();
-        AllCables.Clear();
-        foreach (var cable in sorted)
-        {
-            AllCables.Add(cable);
-        }
-    }
-
-    private void ResortRadios()
-    {
-        var sorted = AllRadios.OrderBy(r => r.Manufacturer).ThenBy(r => r.Model).ToList();
-        AllRadios.Clear();
-        foreach (var radio in sorted)
-        {
-            AllRadios.Add(radio);
-        }
     }
 
     private void ResortOkas()

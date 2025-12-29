@@ -1,11 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using NIS.Core.Data;
 using NIS.Core.Models;
+using NIS.Desktop.New.Services;
 
 namespace NIS.Desktop.New.ViewModels;
 
@@ -14,7 +13,6 @@ namespace NIS.Desktop.New.ViewModels;
 /// </summary>
 public partial class AntennaEditorViewModel : ViewModelBase
 {
-    private readonly AntennaDatabase _antennaDatabase = new();
     private readonly ObservableCollection<Antenna> _allAntennas;
 
     // Navigation callbacks
@@ -22,42 +20,24 @@ public partial class AntennaEditorViewModel : ViewModelBase
     public Action<Antenna>? OnSelect { get; set; }
     public Action? NavigateToAddNew { get; set; }
 
-    // Project custom antennas (set by MainShellViewModel)
-    public List<Antenna>? ProjectAntennas { get; set; }
-
     public AntennaEditorViewModel()
     {
-        _antennaDatabase.LoadDefaults();
-        _allAntennas = new ObservableCollection<Antenna>(_antennaDatabase.Antennas);
+        // All antennas come from MasterDataStore (single source of truth)
+        _allAntennas = new ObservableCollection<Antenna>(MasterDataStore.Instance.Antennas);
         FilteredAntennas = new ObservableCollection<Antenna>(_allAntennas);
     }
 
     /// <summary>
-    /// Refreshes the antenna list including project custom antennas.
+    /// Refreshes the antenna list from MasterDataStore.
     /// </summary>
     public void RefreshAntennaList()
     {
         _allAntennas.Clear();
 
-        // Add project custom antennas first
-        if (ProjectAntennas != null)
+        // Load all antennas from MasterDataStore (already sorted)
+        foreach (var antenna in MasterDataStore.Instance.Antennas)
         {
-            foreach (var antenna in ProjectAntennas)
-            {
-                _allAntennas.Add(antenna);
-            }
-        }
-
-        // Add master data antennas
-        foreach (var antenna in _antennaDatabase.Antennas)
-        {
-            // Skip if already in custom list
-            if (!_allAntennas.Any(a =>
-                a.Manufacturer.Equals(antenna.Manufacturer, StringComparison.OrdinalIgnoreCase) &&
-                a.Model.Equals(antenna.Model, StringComparison.OrdinalIgnoreCase)))
-            {
-                _allAntennas.Add(antenna);
-            }
+            _allAntennas.Add(antenna);
         }
 
         ApplyFilter();
@@ -68,9 +48,11 @@ public partial class AntennaEditorViewModel : ViewModelBase
     /// </summary>
     public void AddAntennaToList(Antenna antenna)
     {
-        _allAntennas.Insert(0, antenna);
-        ApplyFilter();
-        SelectedAntenna = antenna;
+        // Refresh from store to get properly sorted list
+        RefreshAntennaList();
+        SelectedAntenna = _allAntennas.FirstOrDefault(a =>
+            a.Manufacturer.Equals(antenna.Manufacturer, StringComparison.OrdinalIgnoreCase) &&
+            a.Model.Equals(antenna.Model, StringComparison.OrdinalIgnoreCase));
     }
 
     public ObservableCollection<Antenna> FilteredAntennas { get; }

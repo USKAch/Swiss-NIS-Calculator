@@ -8,15 +8,14 @@ namespace NIS.Desktop.New.Services;
 
 /// <summary>
 /// Application settings that persist across sessions.
-/// Stored in %APPDATA%/SwissNISCalculator/settings.json
+/// Stored next to the executable for portability.
 /// </summary>
 public class AppSettings
 {
     private const int MaxRecentProjects = 5;
 
-    private static readonly string SettingsFolder = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-        "SwissNISCalculator");
+    private static readonly string SettingsFolder = Path.GetDirectoryName(
+        System.Reflection.Assembly.GetExecutingAssembly().Location) ?? ".";
 
     private static readonly string SettingsFile = Path.Combine(SettingsFolder, "settings.json");
 

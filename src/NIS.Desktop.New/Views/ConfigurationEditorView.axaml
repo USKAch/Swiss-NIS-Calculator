@@ -28,7 +28,7 @@
 
                 <!-- Top Row: Antenna | Cable | OKA -->
                 <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="15">
-                    <Grid ColumnDefinitions="*,Auto,*,Auto,*">
+                    <Grid ColumnDefinitions="1.3*,Auto,1.2*,Auto,*">
                         <!-- Antenna Section -->
                         <StackPanel Grid.Column="0" Spacing="10">
                             <TextBlock Text="{Binding Antenna, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
@@ -46,9 +46,17 @@
                                     </ComboBox.ItemTemplate>
                                 </ComboBox>
                                 <StackPanel Orientation="Horizontal" Spacing="5">
-                                    <Button Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Command="{Binding EditAntennaCommand}"
+                                    <!-- Edit button (green) for user-created items -->
+                                    <Button Command="{Binding EditAntennaCommand}"
                                             IsEnabled="{Binding SelectedAntenna, Converter={x:Static ObjectConverters.IsNotNull}}"
-                                            Padding="8,4"/>
+                                            IsVisible="{Binding SelectedAntenna.IsProjectSpecific}"
+                                            Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}"
+                                            Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
+                                    <!-- View button (default) for supplied items -->
+                                    <Button Command="{Binding EditAntennaCommand}"
+                                            IsEnabled="{Binding SelectedAntenna, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                            IsVisible="{Binding !SelectedAntenna.IsProjectSpecific}"
+                                            Content="{Binding View, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
                                     <Button Content="{Binding New, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddAntennaCommand}"
                                             Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="8,4"/>
                                 </StackPanel>
@@ -103,9 +111,17 @@
                                     </ComboBox.ItemTemplate>
                                 </ComboBox>
                                 <StackPanel Orientation="Horizontal" Spacing="5">
-                                    <Button Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Command="{Binding EditCableCommand}"
+                                    <!-- Edit button (green) for user-created items -->
+                                    <Button Command="{Binding EditCableCommand}"
                                             IsEnabled="{Binding SelectedCable, Converter={x:Static ObjectConverters.IsNotNull}}"
-                                            Padding="8,4"/>
+                                            IsVisible="{Binding SelectedCable.IsProjectSpecific}"
+                                            Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}"
+                                            Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
+                                    <!-- View button (default) for supplied items -->
+                                    <Button Command="{Binding EditCableCommand}"
+                                            IsEnabled="{Binding SelectedCable, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                            IsVisible="{Binding !SelectedCable.IsProjectSpecific}"
+                                            Content="{Binding View, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
                                     <Button Content="{Binding New, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddCableCommand}"
                                             Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="8,4"/>
                                 </StackPanel>
@@ -154,6 +170,7 @@
                                     </ComboBox.ItemTemplate>
                                 </ComboBox>
                                 <Button Content="{Binding New, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddOkaCommand}"
+                                        Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}"
                                         Padding="8,4" HorizontalAlignment="Left"/>
                             </StackPanel>
 
@@ -181,7 +198,7 @@
 
                 <!-- Transmitter | Operating Parameters -->
                 <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="15">
-                    <Grid ColumnDefinitions="*,Auto,*">
+                    <Grid ColumnDefinitions="1.3*,Auto,*">
                         <!-- Transmitter Section -->
                         <StackPanel Grid.Column="0" Spacing="10">
                             <TextBlock Text="{Binding Transmitter, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
@@ -192,9 +209,17 @@
                                       IsTextSearchEnabled="True"
                                       PlaceholderText="{Binding SelectRadio, Source={x:Static loc:Strings.Instance}}"/>
                             <StackPanel Orientation="Horizontal" Spacing="5">
-                                <Button Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Command="{Binding EditRadioCommand}"
+                                <!-- Edit button (green) for user-created items -->
+                                <Button Command="{Binding EditRadioCommand}"
                                         IsEnabled="{Binding SelectedRadio, Converter={x:Static ObjectConverters.IsNotNull}}"
-                                        Padding="8,4"/>
+                                        IsVisible="{Binding SelectedRadio.IsProjectSpecific}"
+                                        Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}"
+                                        Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
+                                <!-- View button (default) for supplied items -->
+                                <Button Command="{Binding EditRadioCommand}"
+                                        IsEnabled="{Binding SelectedRadio, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                        IsVisible="{Binding !SelectedRadio.IsProjectSpecific}"
+                                        Content="{Binding View, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
                                 <Button Content="{Binding New, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddRadioCommand}"
                                         Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="8,4"/>
                             </StackPanel>

@@ -32,16 +32,16 @@
 
                         <Grid ColumnDefinitions="120,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="12" ColumnSpacing="15">
                             <TextBlock Text="{Binding Manufacturer, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                            <TextBox Grid.Column="1" Text="{Binding Manufacturer}" Watermark="{Binding RadioManufacturerExample, Source={x:Static loc:Strings.Instance}}"/>
+                            <TextBox Grid.Column="1" Text="{Binding Manufacturer}" Watermark="{Binding RadioManufacturerExample, Source={x:Static loc:Strings.Instance}}" IsEnabled="{Binding CanEdit}"/>
 
                             <TextBlock Grid.Row="1" Text="{Binding Model, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Model}" Watermark="{Binding RadioModelExample, Source={x:Static loc:Strings.Instance}}"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Model}" Watermark="{Binding RadioModelExample, Source={x:Static loc:Strings.Instance}}" IsEnabled="{Binding CanEdit}"/>
 
                             <TextBlock Grid.Row="2" Text="{Binding MaxPower, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Spacing="10">
                                 <NumericUpDown Value="{Binding MaxPowerWatts}" ShowButtonSpinner="False"
                                                Minimum="1" Maximum="10000" Increment="10"
-                                               FormatString="F0" Width="100"/>
+                                               FormatString="F0" Width="100" IsEnabled="{Binding CanEdit}"/>
                                 <TextBlock Text="{Binding MaxPowerHint, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" Opacity="0.6"/>
                             </StackPanel>
                         </Grid>
@@ -59,7 +59,8 @@
                 <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
                     <Button Content="{Binding Cancel, Source={x:Static loc:Strings.Instance}}" Command="{Binding CancelCommand}" Padding="20,10"/>
                     <Button Content="{Binding Save, Source={x:Static loc:Strings.Instance}}" Command="{Binding SaveCommand}"
-                            Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="20,10"/>
+                            Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="20,10"
+                            IsVisible="{Binding CanEdit}"/>
                 </StackPanel>
             </Grid>
         </Border>
