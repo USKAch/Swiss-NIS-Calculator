@@ -1,3 +1,4 @@
+using System;
 using Avalonia.Controls;
 using FluentAvalonia.UI.Controls;
 using NIS.Desktop.New.ViewModels;
@@ -11,14 +12,25 @@ public partial class MainWindow : Window
         InitializeComponent();
     }
 
+    protected override void OnOpened(EventArgs e)
+    {
+        base.OnOpened(e);
+
+        // Set StorageProvider for file dialogs
+        if (DataContext is MainShellViewModel vm)
+        {
+            vm.StorageProvider = StorageProvider;
+        }
+    }
+
     private void OnNavigationSelectionChanged(object? sender, NavigationViewSelectionChangedEventArgs e)
     {
-        if (DataContext is MainWindowViewModel vm && e.SelectedItem is NavigationViewItem nvi)
+        if (DataContext is MainShellViewModel vm && e.SelectedItem is NavigationViewItem nvi)
         {
             var tag = nvi.Tag?.ToString();
             if (!string.IsNullOrEmpty(tag))
             {
-                vm.NavigateTo(tag);
+                vm.NavigateByTag(tag);
             }
         }
     }

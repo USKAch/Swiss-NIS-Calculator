@@ -1,44 +1,24 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using NIS.Desktop.New.Services;
+using NIS.Desktop.New.Localization;
 
 namespace NIS.Desktop.New.ViewModels;
 
-/// <summary>
-/// Base class for all ViewModels.
-/// Provides common infrastructure and localization support.
-/// </summary>
 public abstract class ViewModelBase : ObservableObject
 {
-    /// <summary>
-    /// Localization service for translated strings.
-    /// Exposed publicly for XAML binding: {Binding Loc[Key]}
-    /// </summary>
-    public ILocalizationService? Loc { get; protected init; }
-
-    /// <summary>
-    /// Shorthand for getting a localized string.
-    /// Returns the key if Loc is null or key not found.
-    /// </summary>
-    protected string L(string key) => Loc?[key] ?? $"[{key}]";
-
-    /// <summary>
-    /// Called when the language changes.
-    /// Override in derived classes to refresh localized properties.
-    /// </summary>
-    protected virtual void OnLanguageChanged()
+    public ViewModelBase()
     {
-        // Derived classes can override to refresh bindings
-    }
-
-    /// <summary>
-    /// Subscribes to language changes if localization is available.
-    /// Call this in constructor after setting Loc.
-    /// </summary>
-    protected void SubscribeToLanguageChanges()
-    {
-        if (Loc != null)
+        // Subscribe to language changes and notify that Strings property changed
+        Strings.Instance.PropertyChanged += (s, e) =>
         {
-            Loc.LanguageChanged += OnLanguageChanged;
-        }
+            if (e.PropertyName == nameof(Strings.Language) || e.PropertyName == null)
+            {
+                OnPropertyChanged(nameof(Strings));
+            }
+        };
     }
+
+    /// <summary>
+    /// Provides access to localized strings for data binding.
+    /// </summary>
+    public Strings Strings => Strings.Instance;
 }

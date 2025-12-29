@@ -1,6 +1,7 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:ui="using:FluentAvalonia.UI.Controls"
+             xmlns:loc="using:NIS.Desktop.New.Localization"
              xmlns:vm="using:NIS.Desktop.New.ViewModels"
              x:Class="NIS.Desktop.New.Views.SettingsView"
              x:DataType="vm:SettingsViewModel">
@@ -8,58 +9,59 @@
     <ScrollViewer Padding="20">
         <StackPanel Spacing="4" MaxWidth="700">
 
-            <TextBlock Text="{Binding Loc[Settings.Title]}" FontSize="32" FontWeight="Bold" Margin="0,0,0,24"/>
+            <TextBlock Text="{Binding Settings, Source={x:Static loc:Strings.Instance}}" FontSize="32" FontWeight="Bold" Margin="0,0,0,24"/>
 
             <!-- Appearance Section -->
-            <TextBlock Text="{Binding Loc[Settings.Appearance]}" FontSize="14" FontWeight="SemiBold"
+            <TextBlock Text="{Binding SettingsAppearance, Source={x:Static loc:Strings.Instance}}" FontSize="14" FontWeight="SemiBold"
                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                        Margin="0,0,0,8"/>
 
-            <ui:SettingsExpander Header="{Binding Loc[Settings.Theme]}"
-                                 Description="{Binding Loc[Settings.Theme.Description]}"
+            <ui:SettingsExpander Header="{Binding Theme, Source={x:Static loc:Strings.Instance}}"
+                                 Description="{Binding SettingsThemeDescription, Source={x:Static loc:Strings.Instance}}"
                                  IconSource="DarkTheme">
                 <ui:SettingsExpander.Footer>
                     <ComboBox SelectedIndex="{Binding ThemeIndex}" Width="150">
-                        <ComboBoxItem Content="{Binding Loc[Settings.Theme.System]}"/>
-                        <ComboBoxItem Content="{Binding Loc[Settings.Theme.Light]}"/>
-                        <ComboBoxItem Content="{Binding Loc[Settings.Theme.Dark]}"/>
+                        <ComboBoxItem Content="{Binding ThemeSystem, Source={x:Static loc:Strings.Instance}}"/>
+                        <ComboBoxItem Content="{Binding ThemeLight, Source={x:Static loc:Strings.Instance}}"/>
+                        <ComboBoxItem Content="{Binding ThemeDark, Source={x:Static loc:Strings.Instance}}"/>
                     </ComboBox>
                 </ui:SettingsExpander.Footer>
             </ui:SettingsExpander>
 
             <!-- Language Section -->
-            <TextBlock Text="{Binding Loc[Settings.Language]}" FontSize="14" FontWeight="SemiBold"
+            <TextBlock Text="{Binding SettingsLanguage, Source={x:Static loc:Strings.Instance}}" FontSize="14" FontWeight="SemiBold"
                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                        Margin="0,20,0,8"/>
 
-            <ui:SettingsExpander Header="{Binding Loc[Settings.Language]}"
-                                 Description="{Binding Loc[Settings.Language.Description]}"
+            <ui:SettingsExpander Header="{Binding SettingsDisplayLanguage, Source={x:Static loc:Strings.Instance}}"
+                                 Description="{Binding SettingsLanguageDescription, Source={x:Static loc:Strings.Instance}}"
                                  IconSource="Globe">
                 <ui:SettingsExpander.Footer>
                     <ComboBox SelectedIndex="{Binding LanguageIndex}" Width="150">
-                        <ComboBoxItem Content="Deutsch"/>
-                        <ComboBoxItem Content="English"/>
-                        <ComboBoxItem Content="Français"/>
-                        <ComboBoxItem Content="Italiano"/>
+                        <ComboBoxItem Content="{Binding LanguageGerman, Source={x:Static loc:Strings.Instance}}"/>
+                        <ComboBoxItem Content="{Binding LanguageEnglish, Source={x:Static loc:Strings.Instance}}"/>
+                        <ComboBoxItem Content="{Binding LanguageFrench, Source={x:Static loc:Strings.Instance}}"/>
+                        <ComboBoxItem Content="{Binding LanguageItalian, Source={x:Static loc:Strings.Instance}}"/>
                     </ComboBox>
                 </ui:SettingsExpander.Footer>
             </ui:SettingsExpander>
 
             <!-- About Section -->
-            <TextBlock Text="{Binding Loc[Settings.About]}" FontSize="14" FontWeight="SemiBold"
+            <TextBlock Text="{Binding SettingsAbout, Source={x:Static loc:Strings.Instance}}" FontSize="14" FontWeight="SemiBold"
                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                        Margin="0,20,0,8"/>
 
-            <ui:SettingsExpander Header="{Binding Loc[App.Title]}"
-                                 Description="{Binding Loc[Settings.About.Version]}"
+            <ui:SettingsExpander Header="{Binding AppTitle, Source={x:Static loc:Strings.Instance}}"
+                                 Description="{Binding SettingsAboutVersion, Source={x:Static loc:Strings.Instance}}"
                                  IconSource="Info">
                 <ui:SettingsExpander.Items>
-                    <ui:SettingsExpanderItem Content="{Binding Loc[Settings.About.Description]}"/>
-                    <ui:SettingsExpanderItem Content="{Binding Loc[Settings.About.Credits1]}"/>
-                    <ui:SettingsExpanderItem Content="{Binding Loc[Settings.About.Credits2]}"/>
+                    <ui:SettingsExpanderItem Content="{Binding SettingsAboutDescription, Source={x:Static loc:Strings.Instance}}"/>
+                    <ui:SettingsExpanderItem Content="{Binding SettingsAboutCredits1, Source={x:Static loc:Strings.Instance}}"/>
+                    <ui:SettingsExpanderItem Content="{Binding SettingsAboutCredits2, Source={x:Static loc:Strings.Instance}}"/>
                 </ui:SettingsExpander.Items>
             </ui:SettingsExpander>
 
         </StackPanel>
     </ScrollViewer>
 </UserControl>
+

@@ -1,18 +1,19 @@
+using System.Linq;
+using Avalonia;
 using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
+using FluentAvalonia.Styling;
+using NIS.Desktop.New.Localization;
 using NIS.Desktop.New.Services;
 
 namespace NIS.Desktop.New.ViewModels;
 
 /// <summary>
 /// ViewModel for the Settings view.
-/// Handles theme and language preferences.
 /// </summary>
 public partial class SettingsViewModel : ViewModelBase
 {
-    private readonly ISettingsService _settings;
-    private readonly IThemeService _theme;
-    private readonly ILocalizationService _localization;
+    private readonly AppSettings _settings;
 
     [ObservableProperty]
     private int _themeIndex;
@@ -20,35 +21,50 @@ public partial class SettingsViewModel : ViewModelBase
     [ObservableProperty]
     private int _languageIndex;
 
-    public SettingsViewModel(
-        ISettingsService settings,
-        IThemeService theme,
-        ILocalizationService localization)
+    public SettingsViewModel()
     {
-        Loc = localization;
-        _settings = settings;
-        _theme = theme;
-        _localization = localization;
+        _settings = AppSettings.Load();
 
-        // Load current settings
-        ThemeIndex = _settings.ThemeIndex;
-        LanguageIndex = GetLanguageIndex(_settings.Language);
+        ThemeIndex = _settings.ThemeMode;
+        LanguageIndex = _settings.Language switch
+        {
+            "de" => 0,
+            "en" => 1,
+            "fr" => 2,
+            "it" => 3,
+            _ => 0
+        };
 
-        SubscribeToLanguageChanges();
+        Strings.Instance.Language = _settings.Language;
     }
 
     partial void OnThemeIndexChanged(int value)
     {
-        _settings.ThemeIndex = value;
+        _settings.ThemeMode = value;
+        _settings.Save();
 
-        var theme = value switch
+        ApplyTheme(value);
+    }
+
+    public static void ApplyTheme(int themeMode)
+    {
+        if (Application.Current == null) return;
+
+        // Get the FluentAvaloniaTheme to control PreferSystemTheme
+        var faTheme = Application.Current.Styles.OfType<FluentAvaloniaTheme>().FirstOrDefault();
+
+        if (themeMode == 0)
         {
-            1 => ThemeVariant.Light,
-            2 => ThemeVariant.Dark,
-            _ => ThemeVariant.Default
-        };
-
-        _theme.ApplyTheme(theme);
+            // System theme - enable PreferSystemTheme
+            if (faTheme != null) faTheme.PreferSystemTheme = true;
+            Application.Current.RequestedThemeVariant = ThemeVariant.Default;
+        }
+        else
+        {
+            // Manual selection - disable PreferSystemTheme
+            if (faTheme != null) faTheme.PreferSystemTheme = false;
+            Application.Current.RequestedThemeVariant = themeMode == 2 ? ThemeVariant.Dark : ThemeVariant.Light;
+        }
     }
 
     partial void OnLanguageIndexChanged(int value)
@@ -63,15 +79,7 @@ public partial class SettingsViewModel : ViewModelBase
         };
 
         _settings.Language = language;
-        _localization.CurrentLanguage = language;
+        _settings.Save();
+        Strings.Instance.Language = language;
     }
-
-    private static int GetLanguageIndex(string language) => language switch
-    {
-        "de" => 0,
-        "en" => 1,
-        "fr" => 2,
-        "it" => 3,
-        _ => 0
-    };
 }

@@ -1,20 +1,23 @@
-using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Data.Core.Plugins;
+using Avalonia.Input;
 using Avalonia.Markup.Xaml;
-using Microsoft.Extensions.DependencyInjection;
+using Avalonia.Styling;
+using Avalonia.Threading;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
 using NIS.Desktop.New.Services;
 using NIS.Desktop.New.ViewModels;
-using NIS.Desktop.New.Views;
 
 namespace NIS.Desktop.New;
 
 public partial class App : Application
 {
-    /// <summary>
-    /// Global service provider for dependency injection.
-    /// </summary>
-    public static IServiceProvider Services { get; private set; } = null!;
+    private MainShellViewModel? _mainShellViewModel;
 
     public override void Initialize()
     {
@@ -23,64 +26,86 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        // Build the DI container
-        var services = new ServiceCollection();
-        ConfigureServices(services);
-        Services = services.BuildServiceProvider();
-
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            // Initialize services that need early setup
-            var settingsService = Services.GetRequiredService<ISettingsService>();
-            var themeService = Services.GetRequiredService<IThemeService>();
-            var localizationService = Services.GetRequiredService<ILocalizationService>();
+            // Load any custom translations from previous sessions
+            TranslationEditorViewModel.LoadCustomTranslations();
 
-            // Apply saved theme
-            themeService.ApplyTheme(settingsService.ThemeIndex switch
+            // Avoid duplicate validations from both Avalonia and the CommunityToolkit.
+            DisableAvaloniaDataAnnotationValidation();
+
+            _mainShellViewModel = new MainShellViewModel();
+
+            // Set up confirmation dialog callback
+            _mainShellViewModel.ShowConfirmDialog = async (title, message) =>
             {
-                1 => Avalonia.Styling.ThemeVariant.Light,
-                2 => Avalonia.Styling.ThemeVariant.Dark,
-                _ => Avalonia.Styling.ThemeVariant.Default
-            });
-
-            // Set saved language
-            localizationService.CurrentLanguage = settingsService.Language;
-
-            // Create main window with DI
-            desktop.MainWindow = new MainWindow
-            {
-                DataContext = Services.GetRequiredService<MainWindowViewModel>()
+                var msgBox = MessageBoxManager.GetMessageBoxStandard(
+                    title,
+                    message,
+                    ButtonEnum.YesNo,
+                    Icon.Question);
+                var result = await msgBox.ShowAsync();
+                return result == ButtonResult.Yes;
             };
+
+            // Subscribe to dark mode changes from WelcomeViewModel
+            WelcomeViewModel? subscribedWelcomeVm = null;
+            _mainShellViewModel.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(MainShellViewModel.CurrentView) &&
+                    _mainShellViewModel.CurrentView is WelcomeViewModel welcomeVm &&
+                    welcomeVm != subscribedWelcomeVm)
+                {
+                    subscribedWelcomeVm = welcomeVm;
+                    welcomeVm.DarkModeChanged += isDark =>
+                    {
+                        RequestedThemeVariant = isDark ? ThemeVariant.Dark : ThemeVariant.Light;
+                    };
+                    // Apply initial dark mode setting
+                    if (welcomeVm.IsDarkMode)
+                    {
+                        RequestedThemeVariant = ThemeVariant.Dark;
+                    }
+                }
+            };
+
+            // Apply initial theme from settings
+            var settings = Services.AppSettings.Load();
+            SettingsViewModel.ApplyTheme(settings.ThemeMode);
+
+            var mainWindow = new MainWindow
+            {
+                DataContext = _mainShellViewModel
+            };
+
+            // Add global handler for NumericUpDown to select all on focus
+            mainWindow.AddHandler(InputElement.GotFocusEvent, OnNumericUpDownGotFocus, handledEventsToo: true);
+
+            desktop.MainWindow = mainWindow;
         }
 
         base.OnFrameworkInitializationCompleted();
     }
 
-    private void ConfigureServices(IServiceCollection services)
+    private void OnNumericUpDownGotFocus(object? sender, GotFocusEventArgs e)
     {
-        // Core services (singletons - shared state)
-        services.AddSingleton<ISettingsService, SettingsService>();
-        services.AddSingleton<IThemeService, ThemeService>();
-        services.AddSingleton<ILocalizationService, LocalizationService>();
-        services.AddSingleton<ISessionService, SessionService>();
-        services.AddSingleton<INavigationService, NavigationService>();
-        services.AddSingleton<IDialogService, DialogService>();
-        services.AddSingleton<IProjectService, ProjectService>();
+        if (e.Source is TextBox textBox && textBox.Parent?.Parent is NumericUpDown)
+        {
+            // Select all text when NumericUpDown's inner TextBox gets focus
+            Dispatcher.UIThread.Post(() => textBox.SelectAll());
+        }
+    }
 
-        // ViewModels
-        // MainWindowViewModel is singleton (one instance for app lifetime)
-        services.AddSingleton<MainWindowViewModel>();
+    private void DisableAvaloniaDataAnnotationValidation()
+    {
+        // Get an array of plugins to remove
+        var dataValidationPluginsToRemove =
+            BindingPlugins.DataValidators.OfType<DataAnnotationsValidationPlugin>().ToArray();
 
-        // Other ViewModels are transient (created fresh, navigation service may cache)
-        services.AddTransient<HomeViewModel>();
-        services.AddTransient<ProjectViewModel>();
-        services.AddTransient<MasterDataViewModel>();
-        services.AddTransient<SettingsViewModel>();
-
-        // Views (transient)
-        services.AddTransient<HomeView>();
-        services.AddTransient<ProjectView>();
-        services.AddTransient<MasterDataView>();
-        services.AddTransient<SettingsView>();
+        // remove each entry found
+        foreach (var plugin in dataValidationPluginsToRemove)
+        {
+            BindingPlugins.DataValidators.Remove(plugin);
+        }
     }
 }

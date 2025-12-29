@@ -583,7 +583,13 @@ Full-featured editor for antenna definitions with complete band and pattern data
 
 **Antenna Details Section** (two-line layout):
 - Line 1: Manufacturer [text field, wide] + Model [text field, wide]
-- Line 2: Polarization [Horizontal | Vertical radio buttons] + Rotatable options
+- Line 2: Antenna Type [dropdown] + Polarization [Horizontal | Vertical radio buttons] + Rotatable options
+
+**Antenna Type Selection**:
+- Dropdown with types: Yagi, Quad, Log-Periodic, Vertical, Wire, Loop
+- Used to determine which pattern generation formula to apply (see Section 11.4)
+- Directional types (Yagi, Quad, Log-Periodic) use formula 11.4.1
+- Omnidirectional types (Vertical, Wire, Loop) use formula 11.4.2
 
 **Polarization and Rotation Logic**:
 - Polarization: Radio buttons for Horizontal or Vertical (mutually exclusive)
@@ -597,7 +603,7 @@ Each band in an expandable card showing:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ Band: 14 MHz                                                    [Expand] [X]│
+│ Band: 14 MHz                          [Auto-calculate] [Remove] [Expand] [X]│
 ├─────────────────────────────────────────────────────────────────────────────┤
 │ Frequency: [14.0    ] MHz    Gain: [6.33   ] dBi                            │
 │                                                                             │
@@ -612,9 +618,16 @@ Each band in an expandable card showing:
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
+**Auto-calculate Pattern**:
+- [Auto-calculate] button appears for each band
+- Generates vertical radiation pattern using the gain value and antenna type
+- Uses formulas from Section 11.4 (directional or omnidirectional based on antenna type)
+- Requires gain value > 0 dBi to function
+- Overwrites existing pattern values
+
 **Vertical Radiation Pattern** (confirmed from VB6 source: "Vertikale Winkeldämpfung"):
 - 0° = Horizon (typically 0 dB, maximum radiation direction)
-- 90° = Straight up (or down, pattern is symmetric)
+- 90° = Straight down toward OKA (pattern is symmetric, so same as straight up)
 - Values represent attenuation in dB relative to maximum gain at each elevation angle
 - Used to calculate field strength reduction when OKA is not at antenna height
 
@@ -848,6 +861,31 @@ where:
 ```
 
 The vertical antenna formula uses a simpler quadratic rolloff model with a gain-dependent zenith attenuation cap, appropriate for the broader vertical patterns of collinear and ground-plane antennas.
+
+### 11.4.3 Technical Background and Accuracy
+
+The formulas in 11.4.1 and 11.4.2 represent common mathematical approximations used in RF planning and propagation modeling (often seen in tools like HATA or basic GIS plugins). They are generally "correct" in the sense that they are standard heuristics used to estimate antenna patterns when a specific manufacturer's .msi or .pln file is unavailable. However, there are some technical nuances to keep in mind regarding their accuracy and application.
+
+#### 1. The HPBW Approximation
+
+The formula `HPBW = 105° / √(G_linear)` is a variation of the Kraus approximation.
+
+- **Standard Kraus**: Often expressed as `HPBW ≈ √(41253 / G_linear)` for a pencil beam (considering both Azimuth and Elevation).
+- **Our Formula**: Using 105° is a specialized simplification for antennas where we assume a specific relationship between the vertical and horizontal planes. For a Yagi, this is a solid middle-ground estimate. For a Log-Periodic, it may slightly underestimate the beamwidth because LPDAs are wider-band and less efficient per unit of boom length than Yagis.
+
+#### 2. Directional Pattern (Section 11.4.1)
+
+The attenuation model is a dual-segment curve fit:
+
+- **Inner Beam (θ ≤ θ_hp)**: Using `3 × (θ / θ_hp)²` is the standard Gaussian/Quadratic approximation. At the edge of the beam (θ = θ_hp), the formula yields `3 × (1)² = 3 dB`, which correctly defines the Half-Power point.
+- **Outer Beam (θ > θ_hp)**: This linear interpolation toward A_zenith is a "safety" model. It prevents the math from suggesting infinite attenuation at 90° and ensures a realistic front-to-back/front-to-side ratio.
+
+#### 3. Vertical/Omni Pattern (Section 11.4.2)
+
+For omnidirectional antennas (like a collinear array), the logic holds up well:
+
+- **Rolloff**: By setting Rolloff = 3.0, we force the curve to hit the 3 dB mark exactly at the HPBW limit.
+- **Zenith Cap (A_zenith)**: The formula `20 + (G_dBi × 1.5)` accounts for the fact that higher-gain omnis achieve that gain by "squashing" the vertical lobe, which usually results in deeper nulls toward the zenith (directly above the antenna).
 
 ### 11.5 Antenna Classification Summary
 

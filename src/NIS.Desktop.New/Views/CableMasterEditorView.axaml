@@ -1,0 +1,176 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NIS.Desktop.New.ViewModels"
+             xmlns:loc="using:NIS.Desktop.New.Localization"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="700"
+             x:Class="NIS.Desktop.New.Views.CableMasterEditorView"
+             x:DataType="vm:CableMasterEditorViewModel">
+
+    <Design.DataContext>
+        <vm:CableMasterEditorViewModel/>
+    </Design.DataContext>
+
+    <DockPanel LastChildFill="True">
+        <!-- Header -->
+        <Border DockPanel.Dock="Top"
+                Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                BorderBrush="{DynamicResource HeaderSecondaryBrush}"
+                BorderThickness="0,0,0,2"
+                Padding="20,15">
+            <TextBlock Text="{Binding Title}" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+        </Border>
+
+        <!-- Footer -->
+        <Border DockPanel.Dock="Bottom" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Padding="20,15">
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Text="{Binding ValidationMessage}" Foreground="{DynamicResource DangerButtonBrush}" VerticalAlignment="Center"
+                           IsVisible="{Binding ValidationMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                    <Button Content="{Binding Cancel, Source={x:Static loc:Strings.Instance}}" Command="{Binding CancelCommand}" Padding="20,10"/>
+                    <Button Content="{Binding Save, Source={x:Static loc:Strings.Instance}}" Command="{Binding SaveCommand}"
+                            Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="20,10"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Main Content -->
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Margin="20" Spacing="20">
+
+                <!-- Cable Name Section -->
+                <StackPanel Spacing="8">
+                    <TextBlock Text="{Binding CableName, Source={x:Static loc:Strings.Instance}}"
+                               FontWeight="SemiBold" FontSize="14"/>
+                    <TextBox Text="{Binding Name}"
+                             Watermark="{Binding CableNameExample, Source={x:Static loc:Strings.Instance}}"
+                             MaxWidth="400" HorizontalAlignment="Left"/>
+                </StackPanel>
+
+                <Separator/>
+
+                <!-- Attenuation Section Title -->
+                <TextBlock Text="{Binding AttenuationData, Source={x:Static loc:Strings.Instance}}"
+                           FontWeight="Bold" FontSize="16"/>
+                <TextBlock Text="{Binding AttenuationHint, Source={x:Static loc:Strings.Instance}}"
+                           Opacity="0.6" FontSize="12"/>
+
+                <!-- Two Column Attenuation Grid -->
+                <Grid ColumnDefinitions="*,*" Margin="0,10,0,0">
+
+                    <!-- HF Bands Column -->
+                    <StackPanel Grid.Column="0" Spacing="8" Margin="0,0,20,0">
+                        <TextBlock Text="{Binding HfBands, Source={x:Static loc:Strings.Instance}}"
+                                   FontWeight="SemiBold" Opacity="0.7" Margin="0,0,0,5"/>
+
+                        <Grid ColumnDefinitions="90,100,30" RowSpacing="6">
+                            <TextBlock Grid.Row="0" Text="1.8 MHz" VerticalAlignment="Center"/>
+                            <NumericUpDown Grid.Row="0" Grid.Column="1" Value="{Binding Atten1_8}"
+                                          Minimum="0" Maximum="100" Increment="0.1" ShowButtonSpinner="False"/>
+                            <TextBlock Grid.Row="0" Grid.Column="2" Text="dB" VerticalAlignment="Center"/>
+                        </Grid>
+                        <Grid ColumnDefinitions="90,100,30">
+                            <TextBlock Text="3.5 MHz" VerticalAlignment="Center"/>
+                            <NumericUpDown Grid.Column="1" Value="{Binding Atten3_5}"
+                                          Minimum="0" Maximum="100" Increment="0.1" ShowButtonSpinner="False"/>
+                            <TextBlock Grid.Column="2" Text="dB" VerticalAlignment="Center"/>
+                        </Grid>
+                        <Grid ColumnDefinitions="90,100,30">
+                            <TextBlock Text="7 MHz" VerticalAlignment="Center"/>
+                            <NumericUpDown Grid.Column="1" Value="{Binding Atten7}"
+                                          Minimum="0" Maximum="100" Increment="0.1" ShowButtonSpinner="False"/>
+                            <TextBlock Grid.Column="2" Text="dB" VerticalAlignment="Center"/>
+                        </Grid>
+                        <Grid ColumnDefinitions="90,100,30">
+                            <TextBlock Text="10 MHz" VerticalAlignment="Center"/>
+                            <NumericUpDown Grid.Column="1" Value="{Binding Atten10}"
+                                          Minimum="0" Maximum="100" Increment="0.1" ShowButtonSpinner="False"/>
+                            <TextBlock Grid.Column="2" Text="dB" VerticalAlignment="Center"/>
+                        </Grid>
+                        <Grid ColumnDefinitions="90,100,30">
+                            <TextBlock Text="14 MHz" VerticalAlignment="Center"/>
+                            <NumericUpDown Grid.Column="1" Value="{Binding Atten14}"
+                                          Minimum="0" Maximum="100" Increment="0.1" ShowButtonSpinner="False"/>
+                            <TextBlock Grid.Column="2" Text="dB" VerticalAlignment="Center"/>
+                        </Grid>
+                        <Grid ColumnDefinitions="90,100,30">
+                            <TextBlock Text="18 MHz" VerticalAlignment="Center"/>
+                            <NumericUpDown Grid.Column="1" Value="{Binding Atten18}"
+                                          Minimum="0" Maximum="100" Increment="0.1" ShowButtonSpinner="False"/>
+                            <TextBlock Grid.Column="2" Text="dB" VerticalAlignment="Center"/>
+                        </Grid>
+                        <Grid ColumnDefinitions="90,100,30">
+                            <TextBlock Text="21 MHz" VerticalAlignment="Center"/>
+                            <NumericUpDown Grid.Column="1" Value="{Binding Atten21}"
+                                          Minimum="0" Maximum="100" Increment="0.1" ShowButtonSpinner="False"/>
+                            <TextBlock Grid.Column="2" Text="dB" VerticalAlignment="Center"/>
+                        </Grid>
+                        <Grid ColumnDefinitions="90,100,30">
+                            <TextBlock Text="24 MHz" VerticalAlignment="Center"/>
+                            <NumericUpDown Grid.Column="1" Value="{Binding Atten24}"
+                                          Minimum="0" Maximum="100" Increment="0.1" ShowButtonSpinner="False"/>
+                            <TextBlock Grid.Column="2" Text="dB" VerticalAlignment="Center"/>
+                        </Grid>
+                        <Grid ColumnDefinitions="90,100,30">
+                            <TextBlock Text="28 MHz" VerticalAlignment="Center"/>
+                            <NumericUpDown Grid.Column="1" Value="{Binding Atten28}"
+                                          Minimum="0" Maximum="100" Increment="0.1" ShowButtonSpinner="False"/>
+                            <TextBlock Grid.Column="2" Text="dB" VerticalAlignment="Center"/>
+                        </Grid>
+                    </StackPanel>
+
+                    <!-- VHF/UHF/SHF Column -->
+                    <StackPanel Grid.Column="1" Spacing="8" Margin="20,0,0,0">
+                        <TextBlock Text="{Binding VhfUhfShfBands, Source={x:Static loc:Strings.Instance}}"
+                                   FontWeight="SemiBold" Opacity="0.7" Margin="0,0,0,5"/>
+
+                        <Grid ColumnDefinitions="90,100,30">
+                            <TextBlock Text="50 MHz" VerticalAlignment="Center"/>
+                            <NumericUpDown Grid.Column="1" Value="{Binding Atten50}"
+                                          Minimum="0" Maximum="200" Increment="0.1" ShowButtonSpinner="False"/>
+                            <TextBlock Grid.Column="2" Text="dB" VerticalAlignment="Center"/>
+                        </Grid>
+                        <Grid ColumnDefinitions="90,100,30">
+                            <TextBlock Text="144 MHz" VerticalAlignment="Center"/>
+                            <NumericUpDown Grid.Column="1" Value="{Binding Atten144}"
+                                          Minimum="0" Maximum="200" Increment="0.1" ShowButtonSpinner="False"/>
+                            <TextBlock Grid.Column="2" Text="dB" VerticalAlignment="Center"/>
+                        </Grid>
+                        <Grid ColumnDefinitions="90,100,30">
+                            <TextBlock Text="430 MHz" VerticalAlignment="Center"/>
+                            <NumericUpDown Grid.Column="1" Value="{Binding Atten430}"
+                                          Minimum="0" Maximum="200" Increment="0.1" ShowButtonSpinner="False"/>
+                            <TextBlock Grid.Column="2" Text="dB" VerticalAlignment="Center"/>
+                        </Grid>
+                        <Grid ColumnDefinitions="90,100,30">
+                            <TextBlock Text="1240 MHz" VerticalAlignment="Center"/>
+                            <NumericUpDown Grid.Column="1" Value="{Binding Atten1240}"
+                                          Minimum="0" Maximum="300" Increment="0.1" ShowButtonSpinner="False"/>
+                            <TextBlock Grid.Column="2" Text="dB" VerticalAlignment="Center"/>
+                        </Grid>
+                        <Grid ColumnDefinitions="90,100,30">
+                            <TextBlock Text="2300 MHz" VerticalAlignment="Center"/>
+                            <NumericUpDown Grid.Column="1" Value="{Binding Atten2300}"
+                                          Minimum="0" Maximum="300" Increment="0.1" ShowButtonSpinner="False"/>
+                            <TextBlock Grid.Column="2" Text="dB" VerticalAlignment="Center"/>
+                        </Grid>
+                        <Grid ColumnDefinitions="90,100,30">
+                            <TextBlock Text="5650 MHz" VerticalAlignment="Center"/>
+                            <NumericUpDown Grid.Column="1" Value="{Binding Atten5650}"
+                                          Minimum="0" Maximum="500" Increment="0.1" ShowButtonSpinner="False"/>
+                            <TextBlock Grid.Column="2" Text="dB" VerticalAlignment="Center"/>
+                        </Grid>
+                        <Grid ColumnDefinitions="90,100,30">
+                            <TextBlock Text="10 GHz" VerticalAlignment="Center"/>
+                            <NumericUpDown Grid.Column="1" Value="{Binding Atten10000}"
+                                          Minimum="0" Maximum="500" Increment="0.1" ShowButtonSpinner="False"/>
+                            <TextBlock Grid.Column="2" Text="dB" VerticalAlignment="Center"/>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>
+

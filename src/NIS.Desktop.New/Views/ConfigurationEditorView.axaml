@@ -1,0 +1,260 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NIS.Desktop.New.ViewModels"
+             xmlns:loc="using:NIS.Desktop.New.Localization"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="780" d:DesignHeight="900"
+             x:Class="NIS.Desktop.New.Views.ConfigurationEditorView"
+             x:DataType="vm:ConfigurationEditorViewModel">
+
+    <Design.DataContext>
+        <vm:ConfigurationEditorViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- Header -->
+        <Border Grid.Row="0"
+                Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                BorderBrush="{DynamicResource HeaderPrimaryBrush}"
+                BorderThickness="0,0,0,2"
+                Padding="20,15">
+            <TextBlock Text="{Binding HeaderText}" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+        </Border>
+
+        <!-- Main Content -->
+        <ScrollViewer Grid.Row="1" Padding="20" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Spacing="20" Margin="0,0,0,20">
+
+                <!-- Top Row: Antenna | Cable | OKA -->
+                <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="15">
+                    <Grid ColumnDefinitions="*,Auto,*,Auto,*">
+                        <!-- Antenna Section -->
+                        <StackPanel Grid.Column="0" Spacing="10">
+                            <TextBlock Text="{Binding Antenna, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
+
+                            <!-- Antenna Selector -->
+                            <StackPanel Spacing="8">
+                                <ComboBox ItemsSource="{Binding Antennas}"
+                                          SelectedItem="{Binding SelectedAntenna}" HorizontalAlignment="Stretch"
+                                          IsTextSearchEnabled="True"
+                                          PlaceholderText="{Binding SelectAntenna, Source={x:Static loc:Strings.Instance}}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding DisplayName}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                    <Button Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Command="{Binding EditAntennaCommand}"
+                                            IsEnabled="{Binding SelectedAntenna, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                            Padding="8,4"/>
+                                    <Button Content="{Binding New, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddAntennaCommand}"
+                                            Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="8,4"/>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <!-- Antenna Bands Display -->
+                            <Border Background="{DynamicResource CardBackgroundFillColorDefault}" CornerRadius="4" Padding="8"
+                                    IsVisible="{Binding SelectedAntenna, Converter={x:Static ObjectConverters.IsNotNull}}">
+                                <StackPanel Spacing="6">
+                                    <TextBlock Text="{Binding FrequencyBands, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" FontSize="12"/>
+                                    <ItemsControl ItemsSource="{Binding SelectedAntenna.Bands}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Background="{DynamicResource PanelBackgroundBrush}" CornerRadius="3" Padding="6,3" Margin="0,1">
+                                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                                        <TextBlock Text="{Binding FrequencyMHz, StringFormat='{}{0} MHz'}" FontWeight="SemiBold" Width="70"/>
+                                                        <TextBlock Text="{Binding GainDbi, StringFormat='{}{0:F1} dBi'}" Opacity="0.7"/>
+                                                    </StackPanel>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Height -->
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="{Binding Height, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                                <NumericUpDown Value="{Binding HeightMeters}" ShowButtonSpinner="False"
+                                               Minimum="0" Maximum="100" Increment="0.5" Width="80"/>
+                                <TextBlock Text="m" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- Vertical Separator -->
+                        <Border Grid.Column="1" Width="1" Background="{DynamicResource SystemControlForegroundBaseMediumBrush}" Margin="15,0" Opacity="0.3"/>
+
+                        <!-- Cable Section -->
+                        <StackPanel Grid.Column="2" Spacing="10">
+                            <TextBlock Text="{Binding FeedLine, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
+
+                            <!-- Cable Selector -->
+                            <StackPanel Spacing="8">
+                                <ComboBox ItemsSource="{Binding Cables}"
+                                          SelectedItem="{Binding SelectedCable}" HorizontalAlignment="Stretch"
+                                          IsTextSearchEnabled="True"
+                                          PlaceholderText="{Binding SelectCable, Source={x:Static loc:Strings.Instance}}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                    <Button Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Command="{Binding EditCableCommand}"
+                                            IsEnabled="{Binding SelectedCable, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                            Padding="8,4"/>
+                                    <Button Content="{Binding New, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddCableCommand}"
+                                            Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="8,4"/>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <!-- Cable Length -->
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="{Binding CableLength, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                                <NumericUpDown Value="{Binding CableLengthMeters}" ShowButtonSpinner="False"
+                                               Minimum="0" Maximum="500" Increment="1" Width="80"/>
+                                <TextBlock Text="m" VerticalAlignment="Center"/>
+                            </StackPanel>
+
+                            <!-- Additional Loss -->
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="{Binding AdditionalLoss, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                                <NumericUpDown Value="{Binding AdditionalLossDb}" ShowButtonSpinner="False"
+                                               Minimum="0" Maximum="20" Increment="0.5" Width="80"/>
+                                <TextBlock Text="dB" VerticalAlignment="Center"/>
+                            </StackPanel>
+
+                            <!-- Loss Description -->
+                            <TextBox Text="{Binding AdditionalLossDescription}"
+                                     Watermark="{Binding AdditionalLossExample, Source={x:Static loc:Strings.Instance}}"/>
+                        </StackPanel>
+
+                        <!-- Vertical Separator -->
+                        <Border Grid.Column="3" Width="1" Background="{DynamicResource SystemControlForegroundBaseMediumBrush}" Margin="15,0" Opacity="0.3"/>
+
+                        <!-- OKA Section -->
+                        <StackPanel Grid.Column="4" Spacing="10">
+                            <TextBlock Text="{Binding EvaluationPoint, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
+
+                            <!-- OKA Name/Dropdown -->
+                            <StackPanel Spacing="8">
+                                <ComboBox ItemsSource="{Binding Okas}"
+                                          SelectedItem="{Binding SelectedOka}"
+                                          IsEditable="True"
+                                          Text="{Binding OkaName}"
+                                          PlaceholderText="{Binding SelectOka, Source={x:Static loc:Strings.Instance}}"
+                                          HorizontalAlignment="Stretch">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding DisplayName}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                                <Button Content="{Binding New, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddOkaCommand}"
+                                        Padding="8,4" HorizontalAlignment="Left"/>
+                            </StackPanel>
+
+                            <!-- OKA Distance -->
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="{Binding OkaDistance, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                                <NumericUpDown Value="{Binding OkaDistanceMeters}" ShowButtonSpinner="False"
+                                               Minimum="0.1" Maximum="1000" Increment="0.5" Width="80"/>
+                                <TextBlock Text="m" VerticalAlignment="Center"/>
+                            </StackPanel>
+
+                            <!-- OKA Building Damping -->
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="{Binding OkaDamping, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                                <NumericUpDown Value="{Binding OkaBuildingDampingDb}" ShowButtonSpinner="False"
+                                               Minimum="0" Maximum="30" Increment="1" Width="80"/>
+                                <TextBlock Text="dB" VerticalAlignment="Center"/>
+                            </StackPanel>
+
+                            <TextBlock Text="{Binding OkaExplanation, Source={x:Static loc:Strings.Instance}}"
+                                       Opacity="0.6" FontSize="10" FontStyle="Italic" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Transmitter | Operating Parameters -->
+                <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="15">
+                    <Grid ColumnDefinitions="*,Auto,*">
+                        <!-- Transmitter Section -->
+                        <StackPanel Grid.Column="0" Spacing="10">
+                            <TextBlock Text="{Binding Transmitter, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
+
+                            <!-- Radio -->
+                            <ComboBox ItemsSource="{Binding Radios}"
+                                      SelectedItem="{Binding SelectedRadio}" HorizontalAlignment="Stretch"
+                                      IsTextSearchEnabled="True"
+                                      PlaceholderText="{Binding SelectRadio, Source={x:Static loc:Strings.Instance}}"/>
+                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                <Button Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Command="{Binding EditRadioCommand}"
+                                        IsEnabled="{Binding SelectedRadio, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                        Padding="8,4"/>
+                                <Button Content="{Binding New, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddRadioCommand}"
+                                        Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="8,4"/>
+                            </StackPanel>
+
+                            <!-- Linear (optional) -->
+                            <CheckBox Content="{Binding UseLinearAmplifier, Source={x:Static loc:Strings.Instance}}" IsChecked="{Binding HasLinear}"/>
+                            <StackPanel Orientation="Horizontal" Spacing="5" IsVisible="{Binding HasLinear}">
+                                <TextBox Text="{Binding LinearManufacturer}" Watermark="{Binding Manufacturer, Source={x:Static loc:Strings.Instance}}" Width="120"/>
+                                <TextBox Text="{Binding LinearModel}" Watermark="{Binding Model, Source={x:Static loc:Strings.Instance}}" Width="120"/>
+                            </StackPanel>
+
+                            <!-- Power -->
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="{Binding Power, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                                <NumericUpDown Value="{Binding PowerWatts}" ShowButtonSpinner="False"
+                                               Minimum="1" Maximum="10000" Increment="10" Width="80"/>
+                                <TextBlock Text="W" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- Vertical Separator -->
+                        <Border Grid.Column="1" Width="1" Background="{DynamicResource SystemControlForegroundBaseMediumBrush}" Margin="15,0" Opacity="0.3"/>
+
+                        <!-- Operating Parameters Section -->
+                        <StackPanel Grid.Column="2" Spacing="10">
+                            <TextBlock Text="{Binding OperatingParameters, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
+
+                            <!-- Modulation -->
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="{Binding Modulation, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                                <ComboBox ItemsSource="{Binding ModulationOptions}"
+                                          SelectedIndex="{Binding SelectedModulationIndex}"
+                                          Width="120"/>
+                            </StackPanel>
+
+                            <!-- Activity Factor -->
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="{Binding ActivityFactor, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                                <NumericUpDown Value="{Binding ActivityFactor}" ShowButtonSpinner="False"
+                                               Minimum="0" Maximum="1" Increment="0.1" Width="80"
+                                               FormatString="0.0"/>
+                            </StackPanel>
+
+                            <TextBlock Text="{Binding ParametersApplyToAllBands, Source={x:Static loc:Strings.Instance}}"
+                                       Opacity="0.6" FontSize="11" FontStyle="Italic" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Buttons -->
+        <Border Grid.Row="2" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" Padding="20,15">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                <Button Content="{Binding Cancel, Source={x:Static loc:Strings.Instance}}" Command="{Binding CancelCommand}" Padding="20,10"/>
+                <Button Content="{Binding Save, Source={x:Static loc:Strings.Instance}}" Command="{Binding SaveCommand}"
+                        Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="20,10"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>
+

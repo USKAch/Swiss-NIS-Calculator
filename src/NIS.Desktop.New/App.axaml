@@ -1,6 +1,8 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:NIS.Desktop.New"
+             xmlns:loc="using:NIS.Desktop.New.Localization"
+             xmlns:conv="using:NIS.Desktop.New.Converters"
              xmlns:sty="using:FluentAvalonia.Styling"
              x:Class="NIS.Desktop.New.App"
              RequestedThemeVariant="Default">
@@ -8,6 +10,16 @@
     <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <loc:Strings x:Key="Strings"/>
+            <conv:AlternationIndexToBrushConverter x:Key="AlternationIndexToBrushConverter"/>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://NIS.Desktop.New/Styles/Theme.axaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
 
     <Application.Styles>
         <sty:FluentAvaloniaTheme PreferSystemTheme="True"/>
