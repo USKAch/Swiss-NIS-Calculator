@@ -50,7 +50,13 @@
                                     <Border Padding="10,8" BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}" BorderThickness="0,0,0,1">
                                         <Grid ColumnDefinitions="*,Auto">
                                             <StackPanel>
-                                                <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" FontSize="14"/>
+                                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                                    <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" FontSize="14"/>
+                                                    <TextBlock Text="{Binding ProjectSpecific, Source={x:Static loc:Strings.Instance}}"
+                                                               IsVisible="{Binding IsProjectSpecific}"
+                                                               Foreground="{DynamicResource SuccessButtonBrush}"
+                                                               FontSize="12" VerticalAlignment="Center"/>
+                                                </StackPanel>
                                                 <StackPanel Orientation="Horizontal" Spacing="15" Margin="0,3,0,0">
                                                     <TextBlock Opacity="0.6" FontSize="12">
                                                         <TextBlock.Text>
@@ -96,11 +102,19 @@
                     <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
                         <Button Content="{Binding AddAntennaButton, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddAntennaCommand}"
                                 Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,8"/>
-                        <Button Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Command="{Binding EditAntennaCommand}"
+                        <!-- Show Edit if can edit, View otherwise -->
+                        <Button Command="{Binding EditAntennaCommand}"
                                 IsEnabled="{Binding SelectedAntenna, Converter={x:Static ObjectConverters.IsNotNull}}"
-                                Padding="15,8"/>
+                                Padding="15,8">
+                            <Button.Content>
+                                <Panel>
+                                    <TextBlock Text="{Binding Edit, Source={x:Static loc:Strings.Instance}}" IsVisible="{Binding CanEditSelectedAntenna}"/>
+                                    <TextBlock Text="{Binding View, Source={x:Static loc:Strings.Instance}}" IsVisible="{Binding !CanEditSelectedAntenna}"/>
+                                </Panel>
+                            </Button.Content>
+                        </Button>
                         <Button Content="{Binding Delete, Source={x:Static loc:Strings.Instance}}" Command="{Binding DeleteAntennaCommand}"
-                                IsEnabled="{Binding SelectedAntenna, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                IsEnabled="{Binding CanDeleteSelectedAntenna}"
                                 Foreground="{DynamicResource DangerButtonBrush}" Padding="15,8"/>
                     </StackPanel>
                 </Grid>
@@ -130,7 +144,13 @@
                                 <DataTemplate>
                                     <Border Padding="10,8" BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}" BorderThickness="0,0,0,1">
                                         <Grid ColumnDefinitions="*,Auto">
-                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="14"/>
+                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="14"/>
+                                                <TextBlock Text="{Binding ProjectSpecific, Source={x:Static loc:Strings.Instance}}"
+                                                           IsVisible="{Binding IsProjectSpecific}"
+                                                           Foreground="{DynamicResource SuccessButtonBrush}"
+                                                           FontSize="12" VerticalAlignment="Center"/>
+                                            </StackPanel>
                                             <TextBlock Grid.Column="1" Opacity="0.6" FontSize="12" VerticalAlignment="Center">
                                                 <TextBlock.Text>
                                                     <MultiBinding StringFormat="{}{0} frequency points">
@@ -149,11 +169,18 @@
                     <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
                         <Button Content="{Binding AddCableButton, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddCableCommand}"
                                 Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,8"/>
-                        <Button Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Command="{Binding EditCableCommand}"
+                        <Button Command="{Binding EditCableCommand}"
                                 IsEnabled="{Binding SelectedCable, Converter={x:Static ObjectConverters.IsNotNull}}"
-                                Padding="15,8"/>
+                                Padding="15,8">
+                            <Button.Content>
+                                <Panel>
+                                    <TextBlock Text="{Binding Edit, Source={x:Static loc:Strings.Instance}}" IsVisible="{Binding CanEditSelectedCable}"/>
+                                    <TextBlock Text="{Binding View, Source={x:Static loc:Strings.Instance}}" IsVisible="{Binding !CanEditSelectedCable}"/>
+                                </Panel>
+                            </Button.Content>
+                        </Button>
                         <Button Content="{Binding Delete, Source={x:Static loc:Strings.Instance}}" Command="{Binding DeleteCableCommand}"
-                                IsEnabled="{Binding SelectedCable, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                IsEnabled="{Binding CanDeleteSelectedCable}"
                                 Foreground="{DynamicResource DangerButtonBrush}" Padding="15,8"/>
                     </StackPanel>
                 </Grid>
@@ -183,7 +210,7 @@
                                 <DataTemplate>
                                     <Border Padding="10,8" BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}" BorderThickness="0,0,0,1">
                                         <Grid ColumnDefinitions="*,Auto">
-                                            <StackPanel>
+                                            <StackPanel Orientation="Horizontal" Spacing="8">
                                                 <TextBlock FontWeight="SemiBold" FontSize="14">
                                                     <TextBlock.Text>
                                                         <MultiBinding StringFormat="{}{0} {1}">
@@ -192,6 +219,10 @@
                                                         </MultiBinding>
                                                     </TextBlock.Text>
                                                 </TextBlock>
+                                                <TextBlock Text="{Binding ProjectSpecific, Source={x:Static loc:Strings.Instance}}"
+                                                           IsVisible="{Binding IsProjectSpecific}"
+                                                           Foreground="{DynamicResource SuccessButtonBrush}"
+                                                           FontSize="12" VerticalAlignment="Center"/>
                                             </StackPanel>
                                             <TextBlock Grid.Column="1" Opacity="0.6" FontSize="12" VerticalAlignment="Center">
                                                 <TextBlock.Text>
@@ -211,11 +242,18 @@
                     <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
                         <Button Content="{Binding AddRadioButton, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddRadioCommand}"
                                 Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,8"/>
-                        <Button Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Command="{Binding EditRadioCommand}"
+                        <Button Command="{Binding EditRadioCommand}"
                                 IsEnabled="{Binding SelectedRadio, Converter={x:Static ObjectConverters.IsNotNull}}"
-                                Padding="15,8"/>
+                                Padding="15,8">
+                            <Button.Content>
+                                <Panel>
+                                    <TextBlock Text="{Binding Edit, Source={x:Static loc:Strings.Instance}}" IsVisible="{Binding CanEditSelectedRadio}"/>
+                                    <TextBlock Text="{Binding View, Source={x:Static loc:Strings.Instance}}" IsVisible="{Binding !CanEditSelectedRadio}"/>
+                                </Panel>
+                            </Button.Content>
+                        </Button>
                         <Button Content="{Binding Delete, Source={x:Static loc:Strings.Instance}}" Command="{Binding DeleteRadioCommand}"
-                                IsEnabled="{Binding SelectedRadio, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                IsEnabled="{Binding CanDeleteSelectedRadio}"
                                 Foreground="{DynamicResource DangerButtonBrush}" Padding="15,8"/>
                     </StackPanel>
                 </Grid>

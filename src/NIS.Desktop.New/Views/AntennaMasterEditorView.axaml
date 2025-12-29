@@ -33,28 +33,28 @@
                         <!-- Line 1: Manufacturer and Model -->
                         <StackPanel Orientation="Horizontal" Spacing="15">
                             <TextBlock Text="{Binding Manufacturer, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                            <TextBox Text="{Binding Manufacturer}" Watermark="{Binding AntennaMfgExample, Source={x:Static loc:Strings.Instance}}" Width="300"/>
+                            <TextBox Text="{Binding Manufacturer}" Watermark="{Binding AntennaMfgExample, Source={x:Static loc:Strings.Instance}}" Width="300" IsEnabled="{Binding CanEdit}"/>
 
                             <TextBlock Text="{Binding Model, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                            <TextBox Text="{Binding Model}" Watermark="{Binding AntennaModelExample, Source={x:Static loc:Strings.Instance}}" Width="300"/>
+                            <TextBox Text="{Binding Model}" Watermark="{Binding AntennaModelExample, Source={x:Static loc:Strings.Instance}}" Width="300" IsEnabled="{Binding CanEdit}"/>
                         </StackPanel>
 
                         <!-- Line 2: Antenna Type and Polarization -->
                         <StackPanel Orientation="Horizontal" Spacing="15">
                             <TextBlock Text="{Binding AntennaTypeLabel, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                            <ComboBox SelectedItem="{Binding AntennaType}" ItemsSource="{Binding AvailableAntennaTypes}" MinWidth="120"/>
+                            <ComboBox SelectedItem="{Binding AntennaType}" ItemsSource="{Binding AvailableAntennaTypes}" MinWidth="120" IsEnabled="{Binding CanEdit}"/>
 
                             <TextBlock Text="{Binding Polarization, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold" Margin="20,0,0,0"/>
-                            <RadioButton Content="{Binding Horizontal, Source={x:Static loc:Strings.Instance}}" IsChecked="{Binding IsHorizontallyPolarized}" GroupName="Polarization"/>
-                            <RadioButton Content="{Binding Vertical, Source={x:Static loc:Strings.Instance}}" IsChecked="{Binding IsVerticallyPolarized}" GroupName="Polarization"/>
+                            <RadioButton Content="{Binding Horizontal, Source={x:Static loc:Strings.Instance}}" IsChecked="{Binding IsHorizontallyPolarized}" GroupName="Polarization" IsEnabled="{Binding CanEdit}"/>
+                            <RadioButton Content="{Binding Vertical, Source={x:Static loc:Strings.Instance}}" IsChecked="{Binding IsVerticallyPolarized}" GroupName="Polarization" IsEnabled="{Binding CanEdit}"/>
                         </StackPanel>
 
                         <!-- Line 3: Rotatable (only for horizontal) -->
                         <StackPanel Orientation="Horizontal" Spacing="15" IsVisible="{Binding IsHorizontallyPolarized}">
-                            <CheckBox IsChecked="{Binding IsRotatable}" Content="{Binding Rotatable, Source={x:Static loc:Strings.Instance}}"/>
+                            <CheckBox IsChecked="{Binding IsRotatable}" Content="{Binding Rotatable, Source={x:Static loc:Strings.Instance}}" IsEnabled="{Binding CanEdit}"/>
                             <NumericUpDown Value="{Binding HorizontalAngleDegrees}" ShowButtonSpinner="False"
                                            Minimum="0" Maximum="360" Increment="10" Width="80"
-                                           IsVisible="{Binding IsRotatable}"/>
+                                           IsVisible="{Binding IsRotatable}" IsEnabled="{Binding CanEdit}"/>
                             <TextBlock Text="{Binding DegreeInfoOnly, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" Opacity="0.6"
                                        IsVisible="{Binding IsRotatable}"/>
                         </StackPanel>
@@ -67,7 +67,8 @@
                         <Grid ColumnDefinitions="*,Auto">
                             <TextBlock Text="{Binding FrequencyBands, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
                             <Button Grid.Column="1" Content="{Binding AddBand, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddBandCommand}"
-                                    Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="12,6"/>
+                                    Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="12,6"
+                                    IsVisible="{Binding CanEdit}"/>
                         </Grid>
 
                         <ItemsControl ItemsSource="{Binding Bands}">
@@ -79,7 +80,8 @@
                                             <Grid ColumnDefinitions="Auto,120,Auto,100,*,Auto,Auto">
                                                 <TextBlock Text="{Binding Frequency, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" Margin="0,0,8,0" FontWeight="SemiBold"/>
                                                 <ComboBox Grid.Column="1" SelectedItem="{Binding FrequencyMHz}"
-                                                          ItemsSource="{Binding $parent[ItemsControl].((vm:AntennaMasterEditorViewModel)DataContext).AvailableFrequencies}">
+                                                          ItemsSource="{Binding $parent[ItemsControl].((vm:AntennaMasterEditorViewModel)DataContext).AvailableFrequencies}"
+                                                          IsEnabled="{Binding $parent[ItemsControl].((vm:AntennaMasterEditorViewModel)DataContext).CanEdit}">
                                                     <ComboBox.ItemTemplate>
                                                         <DataTemplate>
                                                             <TextBlock Text="{Binding StringFormat={}{0} MHz}"/>
@@ -87,16 +89,19 @@
                                                     </ComboBox.ItemTemplate>
                                                 </ComboBox>
                                                 <TextBlock Grid.Column="2" Text="{Binding Gain, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" Margin="15,0,8,0" FontWeight="SemiBold"/>
-                                                <NumericUpDown Grid.Column="3" Value="{Binding GainDbi}" ShowButtonSpinner="False" Minimum="-20" Maximum="50" Increment="0.5" FormatString="F1" Width="80"/>
+                                                <NumericUpDown Grid.Column="3" Value="{Binding GainDbi}" ShowButtonSpinner="False" Minimum="-20" Maximum="50" Increment="0.5" FormatString="F1" Width="80"
+                                                               IsEnabled="{Binding $parent[ItemsControl].((vm:AntennaMasterEditorViewModel)DataContext).CanEdit}"/>
                                                 <TextBlock Grid.Column="4" Text="{Binding GainRange, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" Margin="5,0,0,0" Opacity="0.6"/>
                                                 <Button Grid.Column="5" Content="{Binding GenerateFromGain, Source={x:Static loc:Strings.Instance}}"
                                                         Command="{Binding $parent[ItemsControl].((vm:AntennaMasterEditorViewModel)DataContext).GeneratePatternCommand}"
                                                         CommandParameter="{Binding}"
-                                                        Padding="10,5" Margin="0,0,8,0"/>
+                                                        Padding="10,5" Margin="0,0,8,0"
+                                                        IsVisible="{Binding $parent[ItemsControl].((vm:AntennaMasterEditorViewModel)DataContext).CanEdit}"/>
                                                 <Button Grid.Column="6" Content="{Binding Remove, Source={x:Static loc:Strings.Instance}}"
                                                         Command="{Binding $parent[ItemsControl].((vm:AntennaMasterEditorViewModel)DataContext).RemoveBandCommand}"
                                                         CommandParameter="{Binding}"
-                                                        Padding="10,5" Foreground="{DynamicResource DangerButtonBrush}"/>
+                                                        Padding="10,5" Foreground="{DynamicResource DangerButtonBrush}"
+                                                        IsVisible="{Binding $parent[ItemsControl].((vm:AntennaMasterEditorViewModel)DataContext).CanEdit}"/>
                                             </Grid>
 
                                             <!-- Pattern section -->
@@ -169,7 +174,8 @@
                 <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
                     <Button Content="{Binding Cancel, Source={x:Static loc:Strings.Instance}}" Command="{Binding CancelCommand}" Padding="20,10"/>
                     <Button Content="{Binding Save, Source={x:Static loc:Strings.Instance}}" Command="{Binding SaveCommand}"
-                            Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="20,10"/>
+                            Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="20,10"
+                            IsVisible="{Binding CanEdit}"/>
                 </StackPanel>
             </Grid>
         </Border>
