@@ -8,7 +8,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NIS.Core.Models;
 
-namespace NIS.Desktop.New.ViewModels;
+namespace NIS.Desktop.ViewModels;
 
 /// <summary>
 /// Wrapper for displaying antenna configuration with index and computed properties.

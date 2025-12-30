@@ -7,9 +7,9 @@ using Avalonia.Data.Converters;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NIS.Core.Models;
-using NIS.Desktop.New.Services;
+using NIS.Desktop.Services;
 
-namespace NIS.Desktop.New.ViewModels;
+namespace NIS.Desktop.ViewModels;
 
 /// <summary>
 /// Converter to display pattern array as a formatted string.
@@ -55,10 +55,10 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
 
     public ConfigurationEditorViewModel()
     {
-        // Load all data from MasterDataStore (single source of truth, already sorted)
-        Antennas = new ObservableCollection<Antenna>(MasterDataStore.Instance.Antennas);
-        Cables = new ObservableCollection<Cable>(MasterDataStore.Instance.Cables);
-        Radios = new ObservableCollection<Radio>(MasterDataStore.Instance.Radios);
+        // Load all data from DatabaseService (single source of truth, already sorted)
+        Antennas = new ObservableCollection<Antenna>(DatabaseService.Instance.GetAllAntennas());
+        Cables = new ObservableCollection<Cable>(DatabaseService.Instance.GetAllCables());
+        Radios = new ObservableCollection<Radio>(DatabaseService.Instance.GetAllRadios());
     }
 
     // Collections

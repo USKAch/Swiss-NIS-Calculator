@@ -1,0 +1,121 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NIS.Desktop.ViewModels"
+             xmlns:loc="using:NIS.Desktop.Localization"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
+             x:Class="NIS.Desktop.Views.ProjectListView"
+             x:DataType="vm:ProjectListViewModel">
+
+    <Design.DataContext>
+        <vm:ProjectListViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="*,Auto">
+        <!-- Main Content -->
+        <ScrollViewer Grid.Row="0" Padding="20,20,10,20" VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="20">
+
+                <!-- Projects Section -->
+                <Border BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                        BorderThickness="1" CornerRadius="8" Padding="15">
+                    <StackPanel Spacing="10">
+                        <Grid ColumnDefinitions="*,Auto,Auto">
+                            <TextBlock Text="{Binding Projects, Source={x:Static loc:Strings.Instance}}"
+                                       FontSize="18" FontWeight="Bold"/>
+                            <Button Grid.Column="1"
+                                    Command="{Binding LoadDemoProjectCommand}"
+                                    Content="{Binding LoadDemoProject, Source={x:Static loc:Strings.Instance}}"
+                                    Padding="15,8" Margin="0,0,10,0"/>
+                            <Button Grid.Column="2"
+                                    Command="{Binding AddProjectCommand}"
+                                    Content="{Binding CreateProject, Source={x:Static loc:Strings.Instance}}"
+                                    Background="{DynamicResource SuccessButtonBrush}"
+                                    Foreground="{DynamicResource HeaderForegroundBrush}"
+                                    Padding="15,8"/>
+                        </Grid>
+
+                        <!-- Project DataGrid -->
+                        <DataGrid ItemsSource="{Binding Projects}"
+                                  SelectedItem="{Binding SelectedProject}"
+                                  IsVisible="{Binding HasProjects}"
+                                  AutoGenerateColumns="False"
+                                  CanUserReorderColumns="False"
+                                  CanUserResizeColumns="True"
+                                  CanUserSortColumns="True"
+                                  IsReadOnly="True"
+                                  SelectionMode="Single"
+                                  HeadersVisibility="Column"
+                                  GridLinesVisibility="All"
+                                  HorizontalGridLinesBrush="#CCCCCC"
+                                  VerticalGridLinesBrush="#888888"
+                                  BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                  BorderThickness="1"
+                                  MaxHeight="400"
+                                  DoubleTapped="OnProjectDoubleTapped">
+                            <DataGrid.Styles>
+                                <Style Selector="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="Padding" Value="12,8"/>
+                                    <Setter Property="MinHeight" Value="40"/>
+                                </Style>
+                            </DataGrid.Styles>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="{Binding ProjectName, Source={x:Static loc:Strings.Instance}}"
+                                                    Binding="{Binding Name}" Width="*"/>
+                                <DataGridTextColumn Header="{Binding Operator, Source={x:Static loc:Strings.Instance}}"
+                                                    Binding="{Binding Operator}" Width="Auto"/>
+                                <DataGridTextColumn Header="{Binding Location, Source={x:Static loc:Strings.Instance}}"
+                                                    Binding="{Binding Location}" Width="Auto"/>
+                                <DataGridTextColumn Header="{Binding Configurations, Source={x:Static loc:Strings.Instance}}"
+                                                    Binding="{Binding ConfigCount}" Width="Auto"/>
+                                <DataGridTextColumn Header="{Binding Modified, Source={x:Static loc:Strings.Instance}}"
+                                                    Binding="{Binding ModifiedAt}" Width="Auto"/>
+                                <DataGridTemplateColumn Header="{Binding Actions, Source={x:Static loc:Strings.Instance}}" Width="Auto">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" Margin="5,0">
+                                                <Button Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}"
+                                                        Command="{Binding $parent[DataGrid].((vm:ProjectListViewModel)DataContext).EditProjectCommand}"
+                                                        CommandParameter="{Binding}"
+                                                        Padding="8,3"/>
+                                                <Button Content="{Binding Delete, Source={x:Static loc:Strings.Instance}}"
+                                                        Command="{Binding $parent[DataGrid].((vm:ProjectListViewModel)DataContext).DeleteProjectCommand}"
+                                                        CommandParameter="{Binding}"
+                                                        Padding="8,3" Foreground="{DynamicResource DangerButtonBrush}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <!-- Empty state -->
+                        <TextBlock Text="{Binding NoProjects, Source={x:Static loc:Strings.Instance}}"
+                                   IsVisible="{Binding !HasProjects}"
+                                   Opacity="0.5" FontStyle="Italic" Margin="10,5"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Status Message -->
+                <TextBlock Text="{Binding StatusMessage}"
+                           FontSize="13" Opacity="0.8"
+                           HorizontalAlignment="Center"
+                           IsVisible="{Binding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Footer -->
+        <Border Grid.Row="1"
+                Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                Padding="20,12">
+            <TextBlock Text="{Binding NisvCompliance, Source={x:Static loc:Strings.Instance}}"
+                       FontSize="12" Opacity="0.5" HorizontalAlignment="Center"/>
+        </Border>
+    </Grid>
+</UserControl>

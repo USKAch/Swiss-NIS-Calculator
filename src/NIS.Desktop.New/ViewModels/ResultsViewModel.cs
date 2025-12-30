@@ -12,7 +12,7 @@ using NIS.Core.Data;
 using NIS.Core.Models;
 using NIS.Core.Services;
 
-namespace NIS.Desktop.New.ViewModels;
+namespace NIS.Desktop.ViewModels;
 
 // Navigation callback for ResultsViewModel
 public partial class ResultsViewModel

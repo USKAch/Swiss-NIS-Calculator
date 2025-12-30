@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using NIS.Desktop.New.Localization;
-using NIS.Desktop.New.Services;
+using NIS.Desktop.Localization;
+using NIS.Desktop.Services;
 
-namespace NIS.Desktop.New.ViewModels;
+namespace NIS.Desktop.ViewModels;
 
 /// <summary>
 /// Represents a recent project for display in the UI.

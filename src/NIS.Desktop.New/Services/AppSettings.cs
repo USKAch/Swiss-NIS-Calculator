@@ -4,28 +4,20 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 
-namespace NIS.Desktop.New.Services;
+namespace NIS.Desktop.Services;
 
 /// <summary>
 /// Application settings that persist across sessions.
-/// Stored next to the executable for portability.
 /// </summary>
 public class AppSettings
 {
     private const int MaxRecentProjects = 5;
-
-    private static readonly string SettingsFolder = Path.GetDirectoryName(
-        System.Reflection.Assembly.GetExecutingAssembly().Location) ?? ".";
-
-    private static readonly string SettingsFile = Path.Combine(SettingsFolder, "settings.json");
 
     public string Language { get; set; } = "de";
     /// <summary>
     /// Theme mode: 0 = System, 1 = Light, 2 = Dark
     /// </summary>
     public int ThemeMode { get; set; } = 0;
-    [Obsolete("Use ThemeMode instead")]
-    public bool DarkMode { get => ThemeMode == 2; set => ThemeMode = value ? 2 : 0; }
     public List<string> RecentProjects { get; set; } = new();
     public string? LastProjectPath { get; set; }
 
@@ -65,9 +57,9 @@ public class AppSettings
     {
         try
         {
-            if (File.Exists(SettingsFile))
+            if (File.Exists(AppPaths.SettingsFile))
             {
-                var json = File.ReadAllText(SettingsFile);
+                var json = File.ReadAllText(AppPaths.SettingsFile);
                 return JsonSerializer.Deserialize<AppSettings>(json) ?? new AppSettings();
             }
         }
@@ -78,16 +70,12 @@ public class AppSettings
         return new AppSettings();
     }
 
-    /// <summary>
-    /// Saves settings to disk.
-    /// </summary>
     public void Save()
     {
         try
         {
-            Directory.CreateDirectory(SettingsFolder);
             var json = JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(SettingsFile, json);
+            File.WriteAllText(AppPaths.SettingsFile, json);
         }
         catch
         {

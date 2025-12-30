@@ -2,9 +2,9 @@ using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NIS.Core.Models;
-using NIS.Desktop.New.Localization;
+using NIS.Desktop.Localization;
 
-namespace NIS.Desktop.New.ViewModels;
+namespace NIS.Desktop.ViewModels;
 
 /// <summary>
 /// ViewModel for the project info view (station details).

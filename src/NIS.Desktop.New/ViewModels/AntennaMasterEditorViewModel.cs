@@ -8,7 +8,7 @@ using NIS.Core.Data;
 using NIS.Core.Models;
 using NIS.Core.Services;
 
-namespace NIS.Desktop.New.ViewModels;
+namespace NIS.Desktop.ViewModels;
 
 /// <summary>
 /// Editable band with individual pattern properties for UI binding.

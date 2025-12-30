@@ -2,9 +2,9 @@ using System;
 using Avalonia.Controls;
 using Avalonia.Input;
 using FluentAvalonia.UI.Controls;
-using NIS.Desktop.New.ViewModels;
+using NIS.Desktop.ViewModels;
 
-namespace NIS.Desktop.New;
+namespace NIS.Desktop;
 
 public partial class MainWindow : Window
 {

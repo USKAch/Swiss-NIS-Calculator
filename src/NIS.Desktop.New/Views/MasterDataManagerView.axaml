@@ -1,11 +1,11 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:NIS.Desktop.New.ViewModels"
-             xmlns:loc="using:NIS.Desktop.New.Localization"
+             xmlns:vm="using:NIS.Desktop.ViewModels"
+             xmlns:loc="using:NIS.Desktop.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="700"
-             x:Class="NIS.Desktop.New.Views.MasterDataManagerView"
+             x:Class="NIS.Desktop.Views.MasterDataManagerView"
              x:DataType="vm:MasterDataManagerViewModel">
 
     <Design.DataContext>
@@ -365,11 +365,59 @@
                     </StackPanel>
                 </Grid>
             </TabItem>
+
+            <!-- Database Tab (Admin Mode only) -->
+            <TabItem Header="{Binding Database, Source={x:Static loc:Strings.Instance}}" IsVisible="{Binding IsAdminMode}">
+                <Grid Margin="0,20,0,0">
+                    <StackPanel MaxWidth="500" HorizontalAlignment="Center" Spacing="20">
+                        <!-- Warning banner -->
+                        <Border Background="{DynamicResource DangerButtonBrush}" CornerRadius="4" Padding="15">
+                            <StackPanel Spacing="5">
+                                <TextBlock Text="FACTORY MODE" FontWeight="Bold" FontSize="16" Foreground="White"/>
+                                <TextBlock Text="{Binding DatabaseTabInfo, Source={x:Static loc:Strings.Instance}}"
+                                           Foreground="White" TextWrapping="Wrap" FontSize="13"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Export section -->
+                        <Border Background="{DynamicResource PanelBackgroundBrush}" CornerRadius="4" Padding="20">
+                            <StackPanel Spacing="10">
+                                <TextBlock Text="{Binding ExportDatabase, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" FontSize="14"/>
+                                <TextBlock Text="{Binding ExportDatabaseDesc, Source={x:Static loc:Strings.Instance}}"
+                                           Opacity="0.7" TextWrapping="Wrap" FontSize="12"/>
+                                <Button Content="{Binding ExportDatabase, Source={x:Static loc:Strings.Instance}}"
+                                        Command="{Binding ExportDatabaseCommand}"
+                                        HorizontalAlignment="Left" Padding="20,10" Margin="0,5,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Import section -->
+                        <Border Background="{DynamicResource PanelBackgroundBrush}" CornerRadius="4" Padding="20">
+                            <StackPanel Spacing="10">
+                                <TextBlock Text="{Binding ImportDatabase, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" FontSize="14"/>
+                                <TextBlock Text="{Binding ImportDatabaseDesc, Source={x:Static loc:Strings.Instance}}"
+                                           Opacity="0.7" TextWrapping="Wrap" FontSize="12"/>
+                                <Button Content="{Binding ImportDatabase, Source={x:Static loc:Strings.Instance}}"
+                                        Command="{Binding ImportDatabaseCommand}"
+                                        HorizontalAlignment="Left" Padding="20,10" Margin="0,5,0,0"
+                                        Foreground="{DynamicResource DangerButtonBrush}"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
         </TabControl>
 
         <!-- Footer -->
         <Border Grid.Row="2" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" Padding="20,15">
-            <Button Content="{Binding Back, Source={x:Static loc:Strings.Instance}}" Command="{Binding BackCommand}" Padding="20,10"/>
+            <Grid ColumnDefinitions="Auto,*">
+                <Button Content="{Binding Back, Source={x:Static loc:Strings.Instance}}" Command="{Binding BackCommand}" Padding="20,10"/>
+
+                <!-- Admin mode indicator -->
+                <TextBlock Grid.Column="1" Text="FACTORY MODE" Foreground="{DynamicResource DangerButtonBrush}"
+                           FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"
+                           IsVisible="{Binding IsAdminMode}"/>
+            </Grid>
         </Border>
     </Grid>
 </UserControl>

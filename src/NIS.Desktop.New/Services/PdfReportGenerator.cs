@@ -5,7 +5,7 @@ using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 
-namespace NIS.Desktop.New.Services;
+namespace NIS.Desktop.Services;
 
 public class PdfReportGenerator
 {

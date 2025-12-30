@@ -1,0 +1,58 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NIS.Desktop.ViewModels"
+             xmlns:loc="using:NIS.Desktop.Localization"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="650" d:DesignHeight="550"
+             x:Class="NIS.Desktop.Views.ProjectInfoView"
+             x:DataType="vm:ProjectInfoViewModel">
+
+    <Design.DataContext>
+        <vm:ProjectInfoViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="*,Auto">
+        <!-- Form -->
+        <ScrollViewer Grid.Row="0" Padding="20" VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="15">
+                <!-- Project Name -->
+                <StackPanel Spacing="5">
+                    <TextBlock Text="{Binding ProjectNameLabel}" FontWeight="SemiBold"/>
+                    <TextBox Text="{Binding ProjectName, Mode=TwoWay}" Watermark="z.B. Hauptstation Zürich"/>
+                </StackPanel>
+
+                <!-- Operator -->
+                <StackPanel Spacing="5">
+                    <TextBlock Text="{Binding OperatorLabel}" FontWeight="SemiBold"/>
+                    <TextBox Text="{Binding OperatorName, Mode=TwoWay}"/>
+                </StackPanel>
+
+                <!-- Address -->
+                <StackPanel Spacing="5">
+                    <TextBlock Text="{Binding AddressLabel}" FontWeight="SemiBold"/>
+                    <TextBox Text="{Binding Address, Mode=TwoWay}" Watermark="{Binding AddressExample, Source={x:Static loc:Strings.Instance}}"/>
+                </StackPanel>
+
+                <!-- Location -->
+                <StackPanel Spacing="5">
+                    <TextBlock Text="{Binding LocationLabel}" FontWeight="SemiBold"/>
+                    <TextBox Text="{Binding Location, Mode=TwoWay}" Watermark="{Binding LocationExample, Source={x:Static loc:Strings.Instance}}"/>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Buttons -->
+        <Border Grid.Row="1" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Padding="20,15">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                <Button Content="{Binding CancelButtonLabel}"
+                        Command="{Binding CancelCommand}"
+                        Padding="20,10"/>
+                <Button Content="{Binding CreateButtonLabel}"
+                        Command="{Binding CreateCommand}"
+                        Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}"
+                        Padding="20,10"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

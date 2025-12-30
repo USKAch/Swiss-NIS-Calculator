@@ -4,10 +4,10 @@ using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using NIS.Desktop.New.Localization;
-using NIS.Desktop.New.Services;
+using NIS.Desktop.Localization;
+using NIS.Desktop.Services;
 
-namespace NIS.Desktop.New.ViewModels;
+namespace NIS.Desktop.ViewModels;
 
 /// <summary>
 /// Main shell ViewModel that manages navigation between views.
@@ -233,7 +233,7 @@ public partial class MainShellViewModel : ViewModelBase
         _configurationEditorViewModel.SetProjectOkas(ProjectViewModel.Okas);
         _configurationEditorViewModel.MarkProjectDirty = ProjectViewModel.MarkDirty;
 
-        // All master data comes from MasterDataStore (single source of truth)
+        // All master data comes from DatabaseService (single source of truth)
 
         if (existing != null)
         {
@@ -275,7 +275,7 @@ public partial class MainShellViewModel : ViewModelBase
     public void NavigateToAntennaSelector()
     {
         _antennaEditorViewModel = new AntennaEditorViewModel();
-        // All antennas come from MasterDataStore (single source of truth)
+        // All antennas come from DatabaseService (single source of truth)
         _antennaEditorViewModel.RefreshAntennaList();
         _antennaEditorViewModel.NavigateBack = () =>
         {
@@ -310,8 +310,8 @@ public partial class MainShellViewModel : ViewModelBase
         };
         editorVm.OnSave = (antenna) =>
         {
-            // Save to MasterDataStore (persists to file)
-            Services.MasterDataStore.Instance.SaveAntenna(antenna);
+            // Save to database
+            Services.DatabaseService.Instance.SaveAntenna(antenna);
 
             // Go back to selector and select the new antenna
             _antennaEditorViewModel?.AddAntennaToList(antenna);
@@ -349,6 +349,8 @@ public partial class MainShellViewModel : ViewModelBase
         _masterDataManagerViewModel.NavigateToCableEditor = (c, ro) => NavigateToCableMasterEditor(c, ro);
         _masterDataManagerViewModel.NavigateToRadioEditor = (r, ro) => NavigateToRadioMasterEditor(r, ro);
         _masterDataManagerViewModel.NavigateToOkaEditor = NavigateToOkaMasterEditor;
+        _masterDataManagerViewModel.SelectExportFolder = SelectFolderForExport;
+        _masterDataManagerViewModel.SelectImportFolder = SelectFolderForImport;
         CurrentView = _masterDataManagerViewModel;
         WindowTitle = isAdminMode ? "Swiss NIS Calculator - Master Data (Admin)" : "Swiss NIS Calculator - Master Data";
     }
@@ -563,17 +565,17 @@ public partial class MainShellViewModel : ViewModelBase
         _antennaMasterEditorViewModel.NavigateBack = () => CurrentView = _configurationEditorViewModel;
         _antennaMasterEditorViewModel.OnSave = (antenna) =>
         {
-            // Save to MasterDataStore (persists to file)
-            Services.MasterDataStore.Instance.SaveAntenna(antenna);
+            // Save to database
+            Services.DatabaseService.Instance.SaveAntenna(antenna);
 
             if (_configurationEditorViewModel != null)
             {
-                // Refresh list from store and select the antenna
+                // Refresh list from database and select the antenna
                 _configurationEditorViewModel.Antennas.Clear();
-                foreach (var a in Services.MasterDataStore.Instance.Antennas)
+                foreach (var a in Services.DatabaseService.Instance.GetAllAntennas())
                     _configurationEditorViewModel.Antennas.Add(a);
 
-                _configurationEditorViewModel.SelectedAntenna = Services.MasterDataStore.Instance.Antennas
+                _configurationEditorViewModel.SelectedAntenna = _configurationEditorViewModel.Antennas
                     .FirstOrDefault(a => a.Manufacturer.Equals(antenna.Manufacturer, StringComparison.OrdinalIgnoreCase) &&
                                          a.Model.Equals(antenna.Model, StringComparison.OrdinalIgnoreCase));
             }
@@ -599,17 +601,17 @@ public partial class MainShellViewModel : ViewModelBase
         _cableMasterEditorViewModel.NavigateBack = () => CurrentView = _configurationEditorViewModel;
         _cableMasterEditorViewModel.OnSave = (cable) =>
         {
-            // Save to MasterDataStore (persists to file)
-            Services.MasterDataStore.Instance.SaveCable(cable);
+            // Save to database
+            Services.DatabaseService.Instance.SaveCable(cable);
 
             if (_configurationEditorViewModel != null)
             {
-                // Refresh list from store and select the cable
+                // Refresh list from database and select the cable
                 _configurationEditorViewModel.Cables.Clear();
-                foreach (var c in Services.MasterDataStore.Instance.Cables)
+                foreach (var c in Services.DatabaseService.Instance.GetAllCables())
                     _configurationEditorViewModel.Cables.Add(c);
 
-                _configurationEditorViewModel.SelectedCable = Services.MasterDataStore.Instance.Cables
+                _configurationEditorViewModel.SelectedCable = _configurationEditorViewModel.Cables
                     .FirstOrDefault(c => c.Name.Equals(cable.Name, StringComparison.OrdinalIgnoreCase));
             }
             CurrentView = _configurationEditorViewModel;
@@ -634,17 +636,17 @@ public partial class MainShellViewModel : ViewModelBase
         _radioMasterEditorViewModel.NavigateBack = () => CurrentView = _configurationEditorViewModel;
         _radioMasterEditorViewModel.OnSave = (radio) =>
         {
-            // Save to MasterDataStore (persists to file)
-            Services.MasterDataStore.Instance.SaveRadio(radio);
+            // Save to database
+            Services.DatabaseService.Instance.SaveRadio(radio);
 
             if (_configurationEditorViewModel != null)
             {
-                // Refresh list from store and select the radio
+                // Refresh list from database and select the radio
                 _configurationEditorViewModel.Radios.Clear();
-                foreach (var r in Services.MasterDataStore.Instance.Radios)
+                foreach (var r in Services.DatabaseService.Instance.GetAllRadios())
                     _configurationEditorViewModel.Radios.Add(r);
 
-                _configurationEditorViewModel.SelectedRadio = Services.MasterDataStore.Instance.Radios
+                _configurationEditorViewModel.SelectedRadio = _configurationEditorViewModel.Radios
                     .FirstOrDefault(r => r.Manufacturer.Equals(radio.Manufacturer, StringComparison.OrdinalIgnoreCase) &&
                                          r.Model.Equals(radio.Model, StringComparison.OrdinalIgnoreCase));
             }
@@ -724,5 +726,37 @@ public partial class MainShellViewModel : ViewModelBase
         {
             await ProjectViewModel.SaveProjectAsync(file.Path.LocalPath);
         }
+    }
+
+    /// <summary>
+    /// Select folder for database export.
+    /// </summary>
+    private async Task<string?> SelectFolderForExport()
+    {
+        if (StorageProvider == null) return null;
+
+        var folders = await StorageProvider.OpenFolderPickerAsync(new Avalonia.Platform.Storage.FolderPickerOpenOptions
+        {
+            Title = "Select Export Folder",
+            AllowMultiple = false
+        });
+
+        return folders.FirstOrDefault()?.Path.LocalPath;
+    }
+
+    /// <summary>
+    /// Select folder for database import.
+    /// </summary>
+    private async Task<string?> SelectFolderForImport()
+    {
+        if (StorageProvider == null) return null;
+
+        var folders = await StorageProvider.OpenFolderPickerAsync(new Avalonia.Platform.Storage.FolderPickerOpenOptions
+        {
+            Title = "Select Import Folder (containing antennas.json, cables.json, radios.json)",
+            AllowMultiple = false
+        });
+
+        return folders.FirstOrDefault()?.Path.LocalPath;
     }
 }

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
-namespace NIS.Desktop.New.Localization;
+namespace NIS.Desktop.Localization;
 
 /// <summary>
 /// Provides localized strings for the application.
@@ -358,6 +358,12 @@ public class Strings : INotifyPropertyChanged
     public string ColumnFrench => Get("ColumnFrench");
     public string ColumnItalian => Get("ColumnItalian");
     public string ColumnEnglish => Get("ColumnEnglish");
+    public string Database => Get("Database");
+    public string DatabaseTabInfo => Get("DatabaseTabInfo");
+    public string ExportDatabase => Get("ExportDatabase");
+    public string ExportDatabaseDesc => Get("ExportDatabaseDesc");
+    public string ImportDatabase => Get("ImportDatabase");
+    public string ImportDatabaseDesc => Get("ImportDatabaseDesc");
 
     // ============================================================
     // RESULTS
@@ -577,6 +583,12 @@ public class Strings : INotifyPropertyChanged
         ["AddRadioButton"] = "MasterData",
         ["SaveChanges"] = "MasterData",
         ["TranslationEditorInfo"] = "MasterData",
+        ["Database"] = "MasterData",
+        ["DatabaseTabInfo"] = "MasterData",
+        ["ExportDatabase"] = "MasterData",
+        ["ExportDatabaseDesc"] = "MasterData",
+        ["ImportDatabase"] = "MasterData",
+        ["ImportDatabaseDesc"] = "MasterData",
         // Results
         ["CalculationResults"] = "Results",
         ["Limit"] = "Results",
@@ -777,6 +789,14 @@ public class Strings : INotifyPropertyChanged
         ["ColumnFrench"] = new() { ["de"] = "Französisch (FR)", ["fr"] = "Français (FR)", ["it"] = "Francese (FR)", ["en"] = "French (FR)" },
         ["ColumnItalian"] = new() { ["de"] = "Italienisch (IT)", ["fr"] = "Italien (IT)", ["it"] = "Italiano (IT)", ["en"] = "Italian (IT)" },
         ["ColumnEnglish"] = new() { ["de"] = "Englisch (EN)", ["fr"] = "Anglais (EN)", ["it"] = "Inglese (EN)", ["en"] = "English (EN)" },
+
+        // Database (Factory Mode)
+        ["Database"] = new() { ["de"] = "Datenbank", ["fr"] = "Base de données", ["it"] = "Database", ["en"] = "Database" },
+        ["DatabaseTabInfo"] = new() { ["de"] = "Änderungen an der Datenbank betreffen alle Benutzer. Nur für Wartung und Updates verwenden.", ["fr"] = "Les modifications de la base de données affectent tous les utilisateurs. Utiliser uniquement pour la maintenance.", ["it"] = "Le modifiche al database influenzano tutti gli utenti. Usare solo per manutenzione.", ["en"] = "Database changes affect all users. Use only for maintenance and updates." },
+        ["ExportDatabase"] = new() { ["de"] = "Datenbank exportieren", ["fr"] = "Exporter la base de données", ["it"] = "Esporta database", ["en"] = "Export Database" },
+        ["ExportDatabaseDesc"] = new() { ["de"] = "Exportiert alle Stammdaten (Antennen, Kabel, Radios) in JSON-Dateien für Versionskontrolle.", ["fr"] = "Exporte toutes les données de base en fichiers JSON pour le contrôle de version.", ["it"] = "Esporta tutti i dati master in file JSON per il controllo versione.", ["en"] = "Export all master data (antennas, cables, radios) to JSON files for version control." },
+        ["ImportDatabase"] = new() { ["de"] = "Datenbank importieren", ["fr"] = "Importer la base de données", ["it"] = "Importa database", ["en"] = "Import Database" },
+        ["ImportDatabaseDesc"] = new() { ["de"] = "Ersetzt alle Stammdaten mit Daten aus JSON-Dateien. ACHTUNG: Alle bestehenden Daten werden überschrieben!", ["fr"] = "Remplace toutes les données de base par des fichiers JSON. ATTENTION: Toutes les données existantes seront écrasées!", ["it"] = "Sostituisce tutti i dati master con file JSON. ATTENZIONE: Tutti i dati esistenti verranno sovrascritti!", ["en"] = "Replace all master data from JSON files. WARNING: All existing data will be overwritten!" },
 
         // Results
         ["CalculationResults"] = new() { ["de"] = "Berechnungsergebnisse", ["fr"] = "Résultats du calcul", ["it"] = "Risultati del calcolo", ["en"] = "Calculation Results" },

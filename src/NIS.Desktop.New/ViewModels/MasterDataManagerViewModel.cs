@@ -7,10 +7,10 @@ using CommunityToolkit.Mvvm.Input;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using NIS.Core.Models;
-using NIS.Desktop.New.Localization;
-using NIS.Desktop.New.Services;
+using NIS.Desktop.Localization;
+using NIS.Desktop.Services;
 
-namespace NIS.Desktop.New.ViewModels;
+namespace NIS.Desktop.ViewModels;
 
 /// <summary>
 /// ViewModel for the Master Data Manager view with tabs for Antennas, Cables, Radios, OKAs, Translations.
@@ -19,19 +19,9 @@ public partial class MasterDataManagerViewModel : ViewModelBase
 {
     private readonly ProjectViewModel _projectViewModel;
 
-    // Navigation callbacks
     public Action? NavigateBack { get; set; }
-    /// <summary>
-    /// Navigate to antenna editor. Parameters: antenna (null for new), isReadOnly
-    /// </summary>
     public Action<Antenna?, bool>? NavigateToAntennaEditor { get; set; }
-    /// <summary>
-    /// Navigate to cable editor. Parameters: cable (null for new), isReadOnly
-    /// </summary>
     public Action<Cable?, bool>? NavigateToCableEditor { get; set; }
-    /// <summary>
-    /// Navigate to radio editor. Parameters: radio (null for new), isReadOnly
-    /// </summary>
     public Action<Radio?, bool>? NavigateToRadioEditor { get; set; }
     public Action<Oka?, int>? NavigateToOkaEditor { get; set; }
 
@@ -42,9 +32,6 @@ public partial class MasterDataManagerViewModel : ViewModelBase
     [NotifyPropertyChangedFor(nameof(CanEditMasterData))]
     private bool _isAdminMode;
 
-    /// <summary>
-    /// Whether embedded master data can be edited (admin mode only).
-    /// </summary>
     public bool CanEditMasterData => IsAdminMode;
 
     // Translation editor
@@ -62,11 +49,11 @@ public partial class MasterDataManagerViewModel : ViewModelBase
             return result == ButtonResult.Yes;
         };
 
-        // Load all data from MasterDataStore (single source of truth)
-        // Data is already sorted alphabetically
-        AllAntennas = new ObservableCollection<Antenna>(MasterDataStore.Instance.Antennas);
-        AllCables = new ObservableCollection<Cable>(MasterDataStore.Instance.Cables);
-        AllRadios = new ObservableCollection<Radio>(MasterDataStore.Instance.Radios);
+        // Load all data from DatabaseService (single source of truth)
+        // Data is already sorted alphabetically by SQL ORDER BY
+        AllAntennas = new ObservableCollection<Antenna>(DatabaseService.Instance.GetAllAntennas());
+        AllCables = new ObservableCollection<Cable>(DatabaseService.Instance.GetAllCables());
+        AllRadios = new ObservableCollection<Radio>(DatabaseService.Instance.GetAllRadios());
 
         // OKAs belong to the current project
         AllOkas = _projectViewModel.Okas;
@@ -241,9 +228,6 @@ public partial class MasterDataManagerViewModel : ViewModelBase
         NavigateToAntennaEditor?.Invoke(null, false);
     }
 
-    /// <summary>
-    /// Edit or View antenna based on permissions.
-    /// </summary>
     [RelayCommand]
     private void EditAntenna()
     {
@@ -255,15 +239,9 @@ public partial class MasterDataManagerViewModel : ViewModelBase
         }
     }
 
-    /// <summary>
-    /// Check if selected antenna can be edited (not just viewed).
-    /// </summary>
     public bool CanEditSelectedAntenna => SelectedAntenna != null &&
         (SelectedAntenna.IsProjectSpecific || IsAdminMode);
 
-    /// <summary>
-    /// Check if selected antenna can be deleted.
-    /// </summary>
     public bool CanDeleteSelectedAntenna => SelectedAntenna != null &&
         (SelectedAntenna.IsProjectSpecific || IsAdminMode);
 
@@ -272,8 +250,8 @@ public partial class MasterDataManagerViewModel : ViewModelBase
     {
         if (SelectedAntenna != null && (SelectedAntenna.IsProjectSpecific || IsAdminMode))
         {
-            // Delete from MasterDataStore (persists to file)
-            MasterDataStore.Instance.DeleteAntenna(SelectedAntenna);
+            // Delete from database
+            DatabaseService.Instance.DeleteAntenna(SelectedAntenna.Manufacturer, SelectedAntenna.Model);
             AllAntennas.Remove(SelectedAntenna);
             FilteredAntennas.Remove(SelectedAntenna);
             SelectedAntenna = null;
@@ -308,8 +286,8 @@ public partial class MasterDataManagerViewModel : ViewModelBase
     {
         if (SelectedCable != null && (SelectedCable.IsProjectSpecific || IsAdminMode))
         {
-            // Delete from MasterDataStore (persists to file)
-            MasterDataStore.Instance.DeleteCable(SelectedCable);
+            // Delete from database
+            DatabaseService.Instance.DeleteCable(SelectedCable.Name);
             AllCables.Remove(SelectedCable);
             FilteredCables.Remove(SelectedCable);
             SelectedCable = null;
@@ -344,8 +322,8 @@ public partial class MasterDataManagerViewModel : ViewModelBase
     {
         if (SelectedRadio != null && (SelectedRadio.IsProjectSpecific || IsAdminMode))
         {
-            // Delete from MasterDataStore (persists to file)
-            MasterDataStore.Instance.DeleteRadio(SelectedRadio);
+            // Delete from database
+            DatabaseService.Instance.DeleteRadio(SelectedRadio.Manufacturer, SelectedRadio.Model);
             AllRadios.Remove(SelectedRadio);
             FilteredRadios.Remove(SelectedRadio);
             SelectedRadio = null;
@@ -402,34 +380,109 @@ public partial class MasterDataManagerViewModel : ViewModelBase
         OkaSearchText = string.Empty;
     }
 
-    /// <summary>
-    /// Check if an antenna with the same name already exists.
-    /// </summary>
+    public Func<Task<string?>>? SelectExportFolder { get; set; }
+    public Func<Task<string?>>? SelectImportFolder { get; set; }
+
+    [RelayCommand]
+    private async Task ExportDatabase()
+    {
+        if (!IsAdminMode) return;
+
+        var folderPath = await (SelectExportFolder?.Invoke() ?? Task.FromResult<string?>(null));
+        if (string.IsNullOrEmpty(folderPath)) return;
+
+        try
+        {
+            DatabaseService.Instance.ExportDatabase(folderPath);
+            await MessageBoxManager
+                .GetMessageBoxStandard(
+                    "Export Complete",
+                    $"Database exported to:\n{folderPath}",
+                    ButtonEnum.Ok, Icon.Success)
+                .ShowAsync();
+        }
+        catch (Exception ex)
+        {
+            await MessageBoxManager
+                .GetMessageBoxStandard(
+                    "Export Failed",
+                    $"Export failed: {ex.Message}",
+                    ButtonEnum.Ok, Icon.Error)
+                .ShowAsync();
+        }
+    }
+
+    [RelayCommand]
+    private async Task ImportDatabase()
+    {
+        if (!IsAdminMode) return;
+
+        var folderPath = await (SelectImportFolder?.Invoke() ?? Task.FromResult<string?>(null));
+        if (string.IsNullOrEmpty(folderPath)) return;
+
+        // Confirm replacement
+        var confirm = await MessageBoxManager
+            .GetMessageBoxStandard(
+                "Confirm Import",
+                "This will replace ALL existing master data. Continue?",
+                ButtonEnum.YesNo, Icon.Warning)
+            .ShowAsync();
+
+        if (confirm != ButtonResult.Yes) return;
+
+        try
+        {
+            DatabaseService.Instance.ImportDatabase(folderPath);
+
+            // Refresh all collections
+            AllAntennas.Clear();
+            foreach (var a in DatabaseService.Instance.GetAllAntennas())
+                AllAntennas.Add(a);
+            FilterAntennas();
+
+            AllCables.Clear();
+            foreach (var c in DatabaseService.Instance.GetAllCables())
+                AllCables.Add(c);
+            FilterCables();
+
+            AllRadios.Clear();
+            foreach (var r in DatabaseService.Instance.GetAllRadios())
+                AllRadios.Add(r);
+            FilterRadios();
+
+            await MessageBoxManager
+                .GetMessageBoxStandard(
+                    "Import Complete",
+                    $"Database imported from:\n{folderPath}",
+                    ButtonEnum.Ok, Icon.Success)
+                .ShowAsync();
+        }
+        catch (Exception ex)
+        {
+            await MessageBoxManager
+                .GetMessageBoxStandard(
+                    "Import Failed",
+                    $"Import failed: {ex.Message}",
+                    ButtonEnum.Ok, Icon.Error)
+                .ShowAsync();
+        }
+    }
+
     public bool AntennaExists(string manufacturer, string model, Antenna? exclude = null)
     {
-        return MasterDataStore.Instance.AntennaExists(manufacturer, model, exclude);
+        return DatabaseService.Instance.AntennaExists(manufacturer, model);
     }
 
-    /// <summary>
-    /// Check if a cable with the same name already exists.
-    /// </summary>
     public bool CableExists(string name, Cable? exclude = null)
     {
-        return MasterDataStore.Instance.CableExists(name, exclude);
+        return DatabaseService.Instance.CableExists(name);
     }
 
-    /// <summary>
-    /// Check if a radio with the same name already exists.
-    /// </summary>
     public bool RadioExists(string manufacturer, string model, Radio? exclude = null)
     {
-        return MasterDataStore.Instance.RadioExists(manufacturer, model, exclude);
+        return DatabaseService.Instance.RadioExists(manufacturer, model);
     }
 
-    /// <summary>
-    /// Add a new antenna to MasterDataStore (persists to file).
-    /// Returns false if duplicate exists.
-    /// </summary>
     public bool AddAntennaToDatabase(Antenna antenna)
     {
         // Check for duplicates
@@ -438,21 +491,28 @@ public partial class MasterDataManagerViewModel : ViewModelBase
             return false;
         }
 
-        // Save to MasterDataStore (marks as IsProjectSpecific and persists)
-        MasterDataStore.Instance.SaveAntenna(antenna);
+        // Save to database - admin mode creates factory data
+        DatabaseService.Instance.SaveAntenna(antenna, isAdminMode: IsAdminMode);
 
-        // Refresh local collection from store (already sorted)
+        // Refresh local collection from database (already sorted)
         AllAntennas.Clear();
-        foreach (var a in MasterDataStore.Instance.Antennas)
+        foreach (var a in DatabaseService.Instance.GetAllAntennas())
             AllAntennas.Add(a);
         FilterAntennas();
         return true;
     }
 
-    /// <summary>
-    /// Add a new cable to MasterDataStore (persists to file).
-    /// Returns false if duplicate exists.
-    /// </summary>
+    public void UpdateAntennaInDatabase(Antenna antenna)
+    {
+        DatabaseService.Instance.SaveAntenna(antenna, isAdminMode: IsAdminMode);
+
+        // Refresh local collection from database (already sorted)
+        AllAntennas.Clear();
+        foreach (var a in DatabaseService.Instance.GetAllAntennas())
+            AllAntennas.Add(a);
+        FilterAntennas();
+    }
+
     public bool AddCableToDatabase(Cable cable)
     {
         // Check for duplicates
@@ -461,21 +521,28 @@ public partial class MasterDataManagerViewModel : ViewModelBase
             return false;
         }
 
-        // Save to MasterDataStore (marks as IsProjectSpecific and persists)
-        MasterDataStore.Instance.SaveCable(cable);
+        // Save to database - admin mode creates factory data
+        DatabaseService.Instance.SaveCable(cable, isAdminMode: IsAdminMode);
 
-        // Refresh local collection from store (already sorted)
+        // Refresh local collection from database (already sorted)
         AllCables.Clear();
-        foreach (var c in MasterDataStore.Instance.Cables)
+        foreach (var c in DatabaseService.Instance.GetAllCables())
             AllCables.Add(c);
         FilterCables();
         return true;
     }
 
-    /// <summary>
-    /// Add a new radio to MasterDataStore (persists to file).
-    /// Returns false if duplicate exists.
-    /// </summary>
+    public void UpdateCableInDatabase(Cable cable)
+    {
+        DatabaseService.Instance.SaveCable(cable, isAdminMode: IsAdminMode);
+
+        // Refresh local collection from database (already sorted)
+        AllCables.Clear();
+        foreach (var c in DatabaseService.Instance.GetAllCables())
+            AllCables.Add(c);
+        FilterCables();
+    }
+
     public bool AddRadioToDatabase(Radio radio)
     {
         // Check for duplicates
@@ -484,20 +551,28 @@ public partial class MasterDataManagerViewModel : ViewModelBase
             return false;
         }
 
-        // Save to MasterDataStore (marks as IsProjectSpecific and persists)
-        MasterDataStore.Instance.SaveRadio(radio);
+        // Save to database - admin mode creates factory data
+        DatabaseService.Instance.SaveRadio(radio, isAdminMode: IsAdminMode);
 
-        // Refresh local collection from store (already sorted)
+        // Refresh local collection from database (already sorted)
         AllRadios.Clear();
-        foreach (var r in MasterDataStore.Instance.Radios)
+        foreach (var r in DatabaseService.Instance.GetAllRadios())
             AllRadios.Add(r);
         FilterRadios();
         return true;
     }
 
-    /// <summary>
-    /// Add a new OKA to the shared storage and local collection.
-    /// </summary>
+    public void UpdateRadioInDatabase(Radio radio)
+    {
+        DatabaseService.Instance.SaveRadio(radio, isAdminMode: IsAdminMode);
+
+        // Refresh local collection from database (already sorted)
+        AllRadios.Clear();
+        foreach (var r in DatabaseService.Instance.GetAllRadios())
+            AllRadios.Add(r);
+        FilterRadios();
+    }
+
     public void AddOkaToDatabase(Oka oka)
     {
         _projectViewModel.AddOrUpdateOka(oka);

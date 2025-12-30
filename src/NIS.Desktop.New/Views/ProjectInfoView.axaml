@@ -1,11 +1,11 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:NIS.Desktop.New.ViewModels"
-             xmlns:loc="using:NIS.Desktop.New.Localization"
+             xmlns:vm="using:NIS.Desktop.ViewModels"
+             xmlns:loc="using:NIS.Desktop.Localization"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="650" d:DesignHeight="550"
-             x:Class="NIS.Desktop.New.Views.ProjectInfoView"
+             x:Class="NIS.Desktop.Views.ProjectInfoView"
              x:DataType="vm:ProjectInfoViewModel">
 
     <Design.DataContext>

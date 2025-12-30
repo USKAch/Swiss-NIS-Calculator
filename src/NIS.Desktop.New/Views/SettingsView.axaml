@@ -1,9 +1,9 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:ui="using:FluentAvalonia.UI.Controls"
-             xmlns:loc="using:NIS.Desktop.New.Localization"
-             xmlns:vm="using:NIS.Desktop.New.ViewModels"
-             x:Class="NIS.Desktop.New.Views.SettingsView"
+             xmlns:loc="using:NIS.Desktop.Localization"
+             xmlns:vm="using:NIS.Desktop.ViewModels"
+             x:Class="NIS.Desktop.Views.SettingsView"
              x:DataType="vm:SettingsViewModel">
 
     <ScrollViewer Padding="20">

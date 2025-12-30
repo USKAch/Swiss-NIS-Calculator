@@ -1,0 +1,56 @@
+{
+  "name": "Demo Station",
+  "language": "en",
+  "station": {
+    "callsign": "HB9DEMO",
+    "operator": "Demo Operator",
+    "address": "Bahnhofstrasse 1, 8001 Zürich",
+    "location": "Zürich"
+  },
+  "okas": [
+    {
+      "id": 1,
+      "name": "Neighbor House",
+      "defaultDistanceMeters": 15,
+      "defaultDampingDb": 0
+    },
+    {
+      "id": 2,
+      "name": "Garden Fence",
+      "defaultDistanceMeters": 8,
+      "defaultDampingDb": 0
+    }
+  ],
+  "antennaConfigurations": [
+    {
+      "name": "HF Yagi",
+      "powerWatts": 100,
+      "radio": {
+        "manufacturer": "Yaesu",
+        "model": "FT-991A"
+      },
+      "cable": {
+        "type": "Aircom-plus",
+        "lengthMeters": 25,
+        "additionalLossDb": 0,
+        "additionalLossDescription": ""
+      },
+      "antenna": {
+        "manufacturer": "Cushcraft",
+        "model": "A3S",
+        "heightMeters": 12,
+        "isHorizontallyRotatable": true,
+        "horizontalAngleDegrees": 360,
+        "isVerticallyRotatable": false
+      },
+      "modulationFactor": 0.4,
+      "activityFactor": 0.5,
+      "okaName": "Neighbor House",
+      "okaDistanceMeters": 15,
+      "okaBuildingDampingDb": 0
+    }
+  ],
+  "customAntennas": [],
+  "customCables": [],
+  "customRadios": []
+}

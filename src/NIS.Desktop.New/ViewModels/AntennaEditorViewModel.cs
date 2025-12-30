@@ -4,9 +4,9 @@ using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NIS.Core.Models;
-using NIS.Desktop.New.Services;
+using NIS.Desktop.Services;
 
-namespace NIS.Desktop.New.ViewModels;
+namespace NIS.Desktop.ViewModels;
 
 /// <summary>
 /// ViewModel for the Antenna Selector view - selects from existing antennas or navigates to add new.
@@ -22,20 +22,20 @@ public partial class AntennaEditorViewModel : ViewModelBase
 
     public AntennaEditorViewModel()
     {
-        // All antennas come from MasterDataStore (single source of truth)
-        _allAntennas = new ObservableCollection<Antenna>(MasterDataStore.Instance.Antennas);
+        // All antennas come from DatabaseService (single source of truth)
+        _allAntennas = new ObservableCollection<Antenna>(DatabaseService.Instance.GetAllAntennas());
         FilteredAntennas = new ObservableCollection<Antenna>(_allAntennas);
     }
 
     /// <summary>
-    /// Refreshes the antenna list from MasterDataStore.
+    /// Refreshes the antenna list from database.
     /// </summary>
     public void RefreshAntennaList()
     {
         _allAntennas.Clear();
 
-        // Load all antennas from MasterDataStore (already sorted)
-        foreach (var antenna in MasterDataStore.Instance.Antennas)
+        // Load all antennas from database (already sorted)
+        foreach (var antenna in DatabaseService.Instance.GetAllAntennas())
         {
             _allAntennas.Add(antenna);
         }

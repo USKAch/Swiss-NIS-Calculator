@@ -1,0 +1,154 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:NIS.Desktop.ViewModels"
+             xmlns:loc="using:NIS.Desktop.Localization"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="700"
+             x:Class="NIS.Desktop.Views.ProjectOverviewView"
+             x:DataType="vm:ProjectOverviewViewModel">
+
+    <Design.DataContext>
+        <vm:ProjectOverviewViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="*,Auto">
+        <!-- Main Content -->
+        <ScrollViewer Grid.Row="0" Padding="20,20,10,20" VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="20">
+
+                <!-- Project Info Panel -->
+                <Border BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                        BorderThickness="1" CornerRadius="8" Padding="15">
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="{Binding ProjectInfo, Source={x:Static loc:Strings.Instance}}" FontSize="16" FontWeight="Bold"/>
+                        <Grid ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto,Auto" ColumnSpacing="15" RowSpacing="5">
+                            <TextBlock Text="{Binding ProjectName, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Column="1" Text="{Binding ProjectName}"/>
+
+                            <TextBlock Grid.Column="2" Text="{Binding Operator, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Column="3" Text="{Binding OperatorName}"/>
+
+                            <TextBlock Grid.Row="1" Text="{Binding Address, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Address}"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding Location, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="1" Grid.Column="3" Text="{Binding Location}"/>
+                        </Grid>
+                        <Button Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Command="{Binding EditStationInfoCommand}"
+                                HorizontalAlignment="Left" Padding="15,8"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Configurations Section -->
+                <Border BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                        BorderThickness="1" CornerRadius="8" Padding="15">
+                    <StackPanel Spacing="10">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Text="{Binding Configurations, Source={x:Static loc:Strings.Instance}}" FontSize="18" FontWeight="Bold"/>
+                            <Button Grid.Column="1" Content="{Binding AddConfiguration, Source={x:Static loc:Strings.Instance}}"
+                                    Command="{Binding AddConfigurationCommand}"
+                                    Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,8"/>
+                        </Grid>
+
+                        <DataGrid x:Name="ConfigurationsGrid"
+                                  ItemsSource="{Binding ConfigurationItems}"
+                                  IsVisible="{Binding HasConfigurations}"
+                                  AutoGenerateColumns="False"
+                                  CanUserReorderColumns="False"
+                                  CanUserResizeColumns="True"
+                                  CanUserSortColumns="False"
+                                  IsReadOnly="True"
+                                  SelectionMode="Single"
+                                  HeadersVisibility="Column"
+                                  GridLinesVisibility="All"
+                                  HorizontalGridLinesBrush="#CCCCCC"
+                                  VerticalGridLinesBrush="#888888"
+                                  BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                  BorderThickness="1"
+                                  HorizontalAlignment="Left"
+                                  MaxHeight="400"
+                                  DoubleTapped="OnConfigurationDoubleTapped">
+                            <DataGrid.Styles>
+                                <Style Selector="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="Padding" Value="12,8"/>
+                                    <Setter Property="MinHeight" Value="40"/>
+                                </Style>
+                            </DataGrid.Styles>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="#" Binding="{Binding NumberDisplay}" Width="Auto"/>
+                                <!-- Antenna Group -->
+                                <DataGridTextColumn Header="{Binding Antenna, Source={x:Static loc:Strings.Instance}}" Binding="{Binding AntennaDisplay}" Width="Auto"/>
+                                <DataGridTextColumn Header="{Binding Bands, Source={x:Static loc:Strings.Instance}}" Binding="{Binding FrequencyDisplay}" Width="Auto"/>
+                                <DataGridTextColumn Header="{Binding Height, Source={x:Static loc:Strings.Instance}}" Binding="{Binding HeightDisplay}" Width="Auto"/>
+                                <!-- Separator -->
+                                <DataGridTextColumn Header="" Width="8"/>
+                                <!-- Transmitter/Cable Group -->
+                                <DataGridTextColumn Header="{Binding Cable, Source={x:Static loc:Strings.Instance}}" Binding="{Binding CableDisplay}" Width="Auto"/>
+                                <DataGridTextColumn Header="{Binding Power, Source={x:Static loc:Strings.Instance}}" Binding="{Binding PowerDisplay}" Width="Auto"/>
+                                <!-- Separator -->
+                                <DataGridTextColumn Header="" Width="8"/>
+                                <!-- OKA Group -->
+                                <DataGridTextColumn Header="OKA" Binding="{Binding OkaNameDisplay}" Width="Auto"/>
+                                <DataGridTextColumn Header="{Binding Distance, Source={x:Static loc:Strings.Instance}}" Binding="{Binding OkaDistanceDisplay}" Width="Auto"/>
+                                <DataGridTemplateColumn Header="{Binding Actions, Source={x:Static loc:Strings.Instance}}" Width="Auto">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" Margin="5,0">
+                                                <Button Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}"
+                                                        Command="{Binding $parent[DataGrid].((vm:ProjectOverviewViewModel)DataContext).EditConfigurationCommand}"
+                                                        CommandParameter="{Binding}"
+                                                        Padding="8,3"/>
+                                                <Button Content="{Binding Delete, Source={x:Static loc:Strings.Instance}}"
+                                                        Command="{Binding $parent[DataGrid].((vm:ProjectOverviewViewModel)DataContext).DeleteConfigurationCommand}"
+                                                        CommandParameter="{Binding}"
+                                                        Padding="8,3" Foreground="{DynamicResource DangerButtonBrush}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <TextBlock Text="{Binding NoConfigurations, Source={x:Static loc:Strings.Instance}}"
+                                   IsVisible="{Binding !HasConfigurations}"
+                                   Opacity="0.5" FontStyle="Italic" Margin="10,5"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Action Buttons -->
+                <Border Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                        CornerRadius="8" Padding="20">
+                    <Grid ColumnDefinitions="Auto,*,Auto">
+                        <Button Content="{Binding Back, Source={x:Static loc:Strings.Instance}}"
+                                Command="{Binding GoBackCommand}"
+                                Padding="20,10"/>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="20">
+                            <Button Content="{Binding CalculateAll, Source={x:Static loc:Strings.Instance}}"
+                                    Command="{Binding CalculateAllCommand}"
+                                    IsEnabled="{Binding CanCalculate}"
+                                    Background="{DynamicResource HeaderPrimaryBrush}" Foreground="{DynamicResource HeaderForegroundBrush}"
+                                    Padding="30,15" FontSize="16"/>
+                            <Button Content="{Binding ExportReport, Source={x:Static loc:Strings.Instance}}"
+                                    Command="{Binding ExportReportCommand}"
+                                    IsEnabled="{Binding HasResults}"
+                                    Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}"
+                                    Padding="30,15" FontSize="16"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Footer -->
+        <Border Grid.Row="1" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" Padding="20,12">
+            <TextBlock Text="{Binding NisvCompliance, Source={x:Static loc:Strings.Instance}}"
+                       FontSize="12" Opacity="0.5" HorizontalAlignment="Center"/>
+        </Border>
+    </Grid>
+</UserControl>
+

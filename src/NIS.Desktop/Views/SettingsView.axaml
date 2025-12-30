@@ -1,0 +1,73 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="using:FluentAvalonia.UI.Controls"
+             xmlns:loc="using:NIS.Desktop.Localization"
+             xmlns:vm="using:NIS.Desktop.ViewModels"
+             x:Class="NIS.Desktop.Views.SettingsView"
+             x:DataType="vm:SettingsViewModel">
+
+    <Grid RowDefinitions="*,Auto">
+        <ScrollViewer Grid.Row="0" Padding="20">
+            <StackPanel Spacing="4" MaxWidth="700">
+
+            <!-- Appearance Section -->
+            <TextBlock Text="{Binding SettingsAppearance, Source={x:Static loc:Strings.Instance}}" FontSize="14" FontWeight="SemiBold"
+                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                       Margin="0,0,0,8"/>
+
+            <ui:SettingsExpander Header="{Binding Theme, Source={x:Static loc:Strings.Instance}}"
+                                 Description="{Binding SettingsThemeDescription, Source={x:Static loc:Strings.Instance}}"
+                                 IconSource="DarkTheme">
+                <ui:SettingsExpander.Footer>
+                    <ComboBox SelectedIndex="{Binding ThemeIndex}" Width="150">
+                        <ComboBoxItem Content="{Binding ThemeSystem, Source={x:Static loc:Strings.Instance}}"/>
+                        <ComboBoxItem Content="{Binding ThemeLight, Source={x:Static loc:Strings.Instance}}"/>
+                        <ComboBoxItem Content="{Binding ThemeDark, Source={x:Static loc:Strings.Instance}}"/>
+                    </ComboBox>
+                </ui:SettingsExpander.Footer>
+            </ui:SettingsExpander>
+
+            <!-- Language Section -->
+            <TextBlock Text="{Binding SettingsLanguage, Source={x:Static loc:Strings.Instance}}" FontSize="14" FontWeight="SemiBold"
+                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                       Margin="0,20,0,8"/>
+
+            <ui:SettingsExpander Header="{Binding SettingsDisplayLanguage, Source={x:Static loc:Strings.Instance}}"
+                                 Description="{Binding SettingsLanguageDescription, Source={x:Static loc:Strings.Instance}}"
+                                 IconSource="Globe">
+                <ui:SettingsExpander.Footer>
+                    <ComboBox SelectedIndex="{Binding LanguageIndex}" Width="150">
+                        <ComboBoxItem Content="{Binding LanguageGerman, Source={x:Static loc:Strings.Instance}}"/>
+                        <ComboBoxItem Content="{Binding LanguageEnglish, Source={x:Static loc:Strings.Instance}}"/>
+                        <ComboBoxItem Content="{Binding LanguageFrench, Source={x:Static loc:Strings.Instance}}"/>
+                        <ComboBoxItem Content="{Binding LanguageItalian, Source={x:Static loc:Strings.Instance}}"/>
+                    </ComboBox>
+                </ui:SettingsExpander.Footer>
+            </ui:SettingsExpander>
+
+            <!-- About Section -->
+            <TextBlock Text="{Binding SettingsAbout, Source={x:Static loc:Strings.Instance}}" FontSize="14" FontWeight="SemiBold"
+                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                       Margin="0,20,0,8"/>
+
+            <ui:SettingsExpander Header="{Binding AppTitle, Source={x:Static loc:Strings.Instance}}"
+                                 Description="{Binding SettingsAboutVersion, Source={x:Static loc:Strings.Instance}}"
+                                 IconSource="Info">
+                <ui:SettingsExpander.Items>
+                    <ui:SettingsExpanderItem Content="{Binding SettingsAboutDescription, Source={x:Static loc:Strings.Instance}}"/>
+                    <ui:SettingsExpanderItem Content="{Binding SettingsAboutCredits1, Source={x:Static loc:Strings.Instance}}"/>
+                    <ui:SettingsExpanderItem Content="{Binding SettingsAboutCredits2, Source={x:Static loc:Strings.Instance}}"/>
+                </ui:SettingsExpander.Items>
+            </ui:SettingsExpander>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Footer -->
+        <Border Grid.Row="1" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" Padding="20,12">
+            <TextBlock Text="{Binding NisvCompliance, Source={x:Static loc:Strings.Instance}}"
+                       FontSize="12" Opacity="0.5" HorizontalAlignment="Center"/>
+        </Border>
+    </Grid>
+</UserControl>
+
