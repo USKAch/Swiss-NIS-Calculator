@@ -139,29 +139,52 @@ Note: Each configuration has exactly one OKA. OKA = Ort des kurzfristigen Aufent
 
 ### 3.5 Master Data Manager
 
-Central hub for managing all master data (antennas, cables, radios). Accessed via "Master Data" button on Welcome screen.
+Central hub for managing master data, project OKAs, and language strings. Accessed via **Navigation Pane ? Master Data**.
 
 **Navigation Structure**:
 ```
 Master Data Manager
-├── Antennas Tab
-│   ├── List of all antennas (searchable, filterable)
-│   ├── [+ Add Antenna] → Antenna Master Editor
-│   └── [Edit] → Antenna Master Editor (with existing data)
-│
-├── Cables Tab
-│   ├── List of all cables (searchable)
-│   ├── [+ Add Cable] → Cable Master Editor
-│   └── [Edit] → Cable Master Editor (with existing data)
-│
-└── Radios Tab
-    ├── List of all radios (searchable)
-    ├── [+ Add Radio] → Radio Master Editor
-    └── [Edit] → Radio Master Editor (with existing data)
+?"o?"??"? Antennas Tab
+?",   ?"o?"??"? List of all antennas (searchable, filterable)
+?",   ?"o?"??"? [+ Add Antenna] ?+' Antenna Master Editor
+?",   ?""?"??"? [Edit] ?+' Antenna Master Editor (with existing data)
+?",
+?"o?"??"? Cables Tab
+?",   ?"o?"??"? List of all cables (searchable)
+?",   ?"o?"??"? [+ Add Cable] ?+' Cable Master Editor
+?",   ?""?"??"? [Edit] ?+' Cable Master Editor (with existing data)
+?",
+?""?"??"? Radios Tab
+?",   ?"o?"??"? List of all radios (searchable)
+?",   ?"o?"??"? [+ Add Radio] ?+' Radio Master Editor
+?",   ?""?"??"? [Edit] ?+' Radio Master Editor (with existing data)
+?",
+?""?"??"? OKA Tab (project-specific)
+?",   ?"o?"??"? List of OKAs for the current project (searchable)
+?",   ?"o?"??"? [+ Add OKA] ?+' OKA Editor
+?",   ?""?"??"? [Edit] ?+' OKA Editor (with existing data)
+?",
+?""?"??"? Modulations Tab (read-only)
+?",   ?"o?"??"? SSB=0.2, CW=0.4, FM=1.0
+?",
+?""?"??"? Constants Tab (read-only)
+?",   ?"o?"??"? Ground Reflection Factor kr=1.6
+?",   ?"o?"??"? Default Activity Factor=0.5
+?",
+?""?"??"? Translations Tab
+?",   ?"o?"??"? Edit language strings (de/fr/it/en) with search and category filter
+?",   ?""?"??"? [Save Changes] persists to `Data/translations.json`
+?",
+?""?"??"? Database Tab (admin mode only)
+    ?"o?"??"? Export/Import master data (factory mode)
 ```
 
+**Factory/Admin mode**:
+- Activated by Shift+Click on **Master Data** in the navigation pane.
+- Allows editing factory data and shows the Database tab.
+
 **Actions**:
-- Back → Returns to Welcome screen
+- Back ?+' Returns to Project list or Project Overview (depending on context)
 
 For CRUD permissions and alternative access points, see **Section 6.1**.
 
@@ -294,7 +317,7 @@ One table per antenna configuration:
 | **Delete** | [Delete] button | User data only |
 
 **Access points:**
-- **Welcome Screen → Master Data**: Central management hub with tabs for each type
+- **Navigation Pane → Master Data**: Central management hub with tabs for each type
 - **Configuration Editor**: [Edit] and [+ Add] buttons next to each dropdown
 
 **Common UI behavior:**
@@ -668,7 +691,7 @@ The application uses a centralized localization system:
 
 ### 6.5 In-App Translation Editor
 
-Accessible via: **Welcome Screen → Master Data → Translations Tab**
+Accessible via: **Navigation Pane → Master Data → Translations Tab**
 
 **Features:**
 - DataGrid showing all translatable strings
