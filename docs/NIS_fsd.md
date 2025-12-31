@@ -171,37 +171,43 @@ Central hub for managing master data, OKAs, and language strings. Accessed via *
 **Navigation Structure**:
 ```
 Master Data Manager
-- Antennas Tab
-  - List of all antennas (searchable, filterable)
-  - [Add Antenna] -> Antenna Master Editor
-  - [Edit] -> Antenna Master Editor (with existing data)
-- Cables Tab
-  - List of all cables (searchable)
-  - [Add Cable] -> Cable Master Editor
-  - [Edit] -> Cable Master Editor (with existing data)
-- Radios Tab
-  - List of all radios (searchable)
-  - [Add Radio] -> Radio Master Editor
-  - [Edit] -> Radio Master Editor (with existing data)
-- OKA Tab (master data)
-  - List of OKAs shared across projects (factory table is empty; all entries are user data)
-  - [Add OKA] -> OKA Editor
-  - [Edit] -> OKA Editor (with existing data)
-- Modulations Tab (factory mode editable)
-  - SSB=0.2, CW=0.4, FM=1.0
-  - [Add], [Edit], and [Save] enabled only in factory mode
-- Constants Tab (factory mode editable)
-  - Ground Reflection Factor kr=1.6
-  - Default Activity Factor=0.5
-  - [Edit] and [Save] enabled only in factory mode
-  - Constants list is fixed; no add/remove actions
-- Translations Tab
-  - Data grid with columns (German first, English last): Category, German (master), French, Italian, English
-  - Translation ID/key is hidden (not displayed) and cannot be changed
-  - Search and category filter available
-  - [Save Changes] persists to `translations.json` in the Data folder
-- Database Tab (admin mode only)
-  - Export/Import master data (factory mode)
++-- Antennas Tab
+|   +-- List of all antennas (searchable, filterable)
+|   +-- [Add Antenna] -> Antenna Master Editor
+|   +-- [Edit] -> Antenna Master Editor (with existing data)
++-- Cables Tab
+|   +-- List of all cables (searchable)
+|   +-- [Add Cable] -> Cable Master Editor
+|   +-- [Edit] -> Cable Master Editor (with existing data)
++-- Radios Tab
+|   +-- List of all radios (searchable)
+|   +-- [Add Radio] -> Radio Master Editor
+|   +-- [Edit] -> Radio Master Editor (with existing data)
++-- OKA Tab (master data)
+|   +-- List of OKAs shared across projects (factory table is empty; all entries are user data)
+|   +-- [Add OKA] -> OKA Editor
+|   +-- [Edit] -> OKA Editor (with existing data)
++-- Modulations Tab (factory mode editable)
+|   +-- SSB=0.2, CW=0.4, FM=1.0
+|   +-- [Add], [Edit], and [Save] enabled only in factory mode
++-- Constants Tab (factory mode editable)
+|   +-- Ground Reflection Factor kr=1.6
+|   +-- Default Activity Factor=0.5
+|   +-- [Edit] and [Save] enabled only in factory mode
+|   +-- Constants list is fixed; no add/remove actions
+|   +-- Persisted in `masterdata.json`
++-- Bands Tab (factory mode editable)
+|   +-- List of standard bands (name + center frequency)
+|   +-- [Add], [Edit], and [Save] enabled only in factory mode
+|   +-- Used for antenna band definitions and cable attenuation points
+|   +-- Persisted in `masterdata.json`
++-- Translations Tab
+|   +-- Data grid with columns (German first, English last): Category, German (master), French, Italian, English
+|   +-- Translation ID/key is hidden (not displayed) and cannot be changed
+|   +-- Search and category filter available
+|   +-- [Save Changes] persists to `translations.json` in the Data folder
++-- Database Tab (admin mode only)
+    +-- Export/Import master data (factory mode)
 ```
 
 **Factory/Admin mode**:
@@ -264,7 +270,7 @@ Cable attenuation (dB/100m) is interpolated by frequency using linear interpolat
 
 Calculations are performed only for antenna bands defined in the antenna master data.
 - No interpolation between antenna bands.
-- If a desired frequency is missing, the band must be added in antenna master data.
+- Band/frequency mismatch should not occur; if a desired frequency is missing, the band must be added in antenna master data and calculation is blocked until fixed.
 
 ### 4.2 Vertical Angle and Pattern
 
@@ -436,7 +442,7 @@ PDF export contains:
 
 **Antenna bands**: Each band has Frequency (MHz), Gain (dBi), and 10-value vertical pattern. [Auto-calculate] generates pattern from gain (Section 8.4).
 
-**Constants**: Ground Reflection Factor kr=1.6, Default Activity Factor=0.5 (editable in factory mode only)
+**Constants**: Ground Reflection Factor kr=1.6, Default Activity Factor=0.5 (editable in factory mode only, stored in `masterdata.json`)
 
 ### 6.2 Export/Import
 
@@ -552,7 +558,14 @@ All application data is stored in a single SQLite database file (`nisdata.db`).
 - macOS: `~/Library/Application Support/SwissNISCalculator/Data/nisdata.db`
 - Linux: `~/.local/share/SwissNISCalculator/Data/nisdata.db`
 
-`settings.json` and `translations.json` are stored in the same Data folder.
+`settings.json`, `translations.json`, and `masterdata.json` are stored in the same Data folder.
+
+**JSON storage (non-SQLite):**
+- `settings.json`: application settings (language, theme).
+- `translations.json`: user translation overrides (JSON only, not SQLite).
+- `masterdata.json`: bands and constants (factory-mode editable).
+- `.nisproj`: project import/export files.
+- User/Factory export files: JSON backups (see Appendix B.3).
 
 ```
 Installation (nisdata.db)
@@ -628,9 +641,10 @@ Shared reference data used across all projects. Each record has an `IsUserData` 
 | Radios | ~50 radios | Yes | Manufacturer, Model, MaxPower |
 | OKAs | None (factory empty) | Yes | Name, DefaultDistance, DefaultDamping |
 | Modulations | SSB, CW, FM | No | Name, Factor |
+| Bands (JSON) | Standard band list | No | Name, FrequencyMHz |
 
 Modulations are stored in the Modulations table as factory data (editable in factory mode only).
-Constants (kr and default activity factor) are stored as factory settings and editable in factory mode only.
+Constants (kr and default activity factor) are stored in `masterdata.json` and editable in factory mode only.
 
 ### 7.3 User Data
 
@@ -825,6 +839,7 @@ The application uses a centralized localization system:
 - User modifications saved to: `%APPDATA%/SwissNISCalculator/translations.json`
 - Merged with embedded translations at startup
 - Custom translations override embedded defaults
+- Translations are stored in JSON only and are not persisted in SQLite
 
 #### 9.1.5 In-App Translation Editor
 
@@ -1140,6 +1155,21 @@ Notes:
 Notes:
 - `Key` and `Category` are required.
 - Empty language values are ignored on load to preserve defaults.
+
+### B.7 masterdata.json
+
+```json
+{
+  "bands": [
+    { "name": "160m", "frequencyMHz": 1.8 },
+    { "name": "80m", "frequencyMHz": 3.5 }
+  ],
+  "constants": {
+    "groundReflectionFactor": 1.6,
+    "defaultActivityFactor": 0.5
+  }
+}
+```
 
 ## Appendix C: Example: HB9FS Station
 
