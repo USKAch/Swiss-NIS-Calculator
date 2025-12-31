@@ -166,7 +166,7 @@ Master Data Manager
   - Ground Reflection Factor kr=1.6
   - Default Activity Factor=0.5
 - Translations Tab
-  - Data grid with columns: Category, German, French, Italian, English
+  - Data grid with columns (German first, English last): Category, German (master), French, Italian, English
   - Translation ID/key is hidden (not displayed) and cannot be changed
   - Search and category filter available
   - [Save Changes] persists to `Data/translations.json`
@@ -672,7 +672,7 @@ The application uses a centralized localization system:
 <Button Content="{Binding Cancel, Source={x:Static loc:Strings.Instance}}"/>
 ```
 
-### 6.4 Translation Storage
+#### 9.1.4 Translation Storage
 
 **Embedded Translations:**
 - Default translations are compiled into the application
@@ -684,7 +684,7 @@ The application uses a centralized localization system:
 - Merged with embedded translations at startup
 - Custom translations override embedded defaults
 
-### 6.5 In-App Translation Editor
+#### 9.1.5 In-App Translation Editor
 
 Accessible via: **Navigation Pane → Master Data → Translations Tab**
 
@@ -765,8 +765,24 @@ When adding new UI elements:
 ### 9.2 Theme Support
 
 - **Light Mode**: Default theme
-- **Dark Mode**: Toggle available on Welcome screen
+- **Dark Mode**: Toggle available in Settings
 - Theme applies globally to the entire application
+
+### 9.3 Design Guidelines
+
+UI should follow Windows 11 look and feel:
+- Fluent-style surfaces, rounded corners, and soft shadows
+- Segmented controls and modern toggle styles
+- Consistent spacing and typography typical of Windows 11 apps
+
+## 10. Distribution
+
+CI/CD must produce packaged releases for:
+- Windows
+- macOS
+- Linux
+
+GitHub Actions should build versioned artifacts for all three platforms.
 
 ## Appendix A: Antennas with Generated Vertical Radiation Patterns
 
