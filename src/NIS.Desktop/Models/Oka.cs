@@ -36,6 +36,12 @@ public class Oka
     public double DefaultDistanceMeters { get; set; } = 10;
 
     /// <summary>
+    /// Indicates whether this OKA is user data (editable) or factory data (read-only).
+    /// </summary>
+    [JsonPropertyName("isUserData")]
+    public bool IsUserData { get; set; } = true;
+
+    /// <summary>
     /// Display name combining ID and name.
     /// </summary>
     [JsonIgnore]

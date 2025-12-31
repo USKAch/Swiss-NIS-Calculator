@@ -105,6 +105,7 @@ public partial class ProjectOverviewViewModel : ViewModelBase
             OnPropertyChanged(nameof(ProjectName));
             OnPropertyChanged(nameof(DirtyIndicator));
             OnPropertyChanged(nameof(OperatorName));
+            OnPropertyChanged(nameof(Callsign));
             OnPropertyChanged(nameof(Address));
             OnPropertyChanged(nameof(Location));
             OnPropertyChanged(nameof(StationSummary));
@@ -124,9 +125,12 @@ public partial class ProjectOverviewViewModel : ViewModelBase
     }
     public string DirtyIndicator => _projectViewModel.IsDirty ? "*" : "";
     public string OperatorName => _projectViewModel.Project.Operator;
+    public string Callsign => _projectViewModel.Project.Callsign;
     public string Address => _projectViewModel.Project.Address;
     public string Location => _projectViewModel.Project.Location;
-    public string StationSummary => string.IsNullOrEmpty(OperatorName) ? "No station info" : OperatorName;
+    public string StationSummary => !string.IsNullOrEmpty(Callsign)
+        ? Callsign
+        : string.IsNullOrEmpty(OperatorName) ? "No station info" : OperatorName;
 
     // Language (shows current UI language)
     public string LanguageDisplay => Localization.Strings.Instance.GetLanguageName(Localization.Strings.Instance.Language);

@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using NIS.Desktop.Models;
 
@@ -13,7 +11,6 @@ namespace NIS.Desktop.ViewModels;
 /// </summary>
 public partial class ProjectViewModel : ViewModelBase
 {
-    private bool _suppressOkaSync;
     private int _projectId;
 
     /// <summary>
@@ -48,8 +45,6 @@ public partial class ProjectViewModel : ViewModelBase
     [ObservableProperty]
     private AntennaConfiguration? _selectedConfiguration;
 
-    public ObservableCollection<Oka> Okas { get; } = new();
-
     public ObservableCollection<AntennaConfiguration> Configurations =>
         new(Project.AntennaConfigurations);
 
@@ -59,7 +54,6 @@ public partial class ProjectViewModel : ViewModelBase
         _projectId = 0;
         OnPropertyChanged(nameof(ProjectName));
         IsDirty = false;
-        ReplaceOkas(Project.Okas);
         OnPropertyChanged(nameof(Configurations));
     }
 
@@ -72,7 +66,6 @@ public partial class ProjectViewModel : ViewModelBase
         _projectId = projectId;
         OnPropertyChanged(nameof(ProjectName));
         IsDirty = false;
-        ReplaceOkas(Project.Okas);
         OnPropertyChanged(nameof(Configurations));
     }
 
@@ -94,64 +87,7 @@ public partial class ProjectViewModel : ViewModelBase
     {
         IsDirty = true;
     }
-
-    public int NextOkaId => Okas.Count > 0 ? Okas.Max(o => o.Id) + 1 : 1;
-
-    public void AddOrUpdateOka(Oka oka)
-    {
-        var existing = Okas.FirstOrDefault(o => o.Id == oka.Id);
-        if (existing != null)
-        {
-            var index = Okas.IndexOf(existing);
-            Okas[index] = oka;
-        }
-        else
-        {
-            if (oka.Id <= 0)
-            {
-                oka.Id = NextOkaId;
-            }
-            Okas.Add(oka);
-        }
-        MarkDirty();
-    }
-
-    public void RemoveOka(Oka oka)
-    {
-        if (Okas.Remove(oka))
-        {
-            MarkDirty();
-        }
-    }
-
     public ProjectViewModel()
     {
-        Okas.CollectionChanged += OnOkasChanged;
-    }
-
-    private void ReplaceOkas(IEnumerable<Oka> okas)
-    {
-        _suppressOkaSync = true;
-        Okas.Clear();
-        foreach (var oka in okas)
-        {
-            Okas.Add(oka);
-        }
-        _suppressOkaSync = false;
-    }
-
-    public void SyncOkasToProject()
-    {
-        Project.Okas = Okas.ToList();
-    }
-
-    private void OnOkasChanged(object? sender, NotifyCollectionChangedEventArgs e)
-    {
-        if (_suppressOkaSync)
-        {
-            return;
-        }
-        SyncOkasToProject();
-        IsDirty = true;
     }
 }

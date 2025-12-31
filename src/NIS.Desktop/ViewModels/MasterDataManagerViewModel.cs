@@ -25,14 +25,18 @@ public partial class MasterDataManagerViewModel : ViewModelBase
     public Action<Radio?, bool>? NavigateToRadioEditor { get; set; }
     public Action<Oka?>? NavigateToOkaEditor { get; set; }
 
+    private MasterDataFile _masterData = new();
+
     /// <summary>
     /// Admin mode allows editing embedded master data (activated by Shift+Click).
     /// </summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanEditMasterData))]
+    [NotifyPropertyChangedFor(nameof(IsReadOnlyForFactory))]
     private bool _isAdminMode;
 
     public bool CanEditMasterData => IsAdminMode;
+    public bool IsReadOnlyForFactory => !IsAdminMode;
 
     // Translation editor
     public TranslationEditorViewModel TranslationEditor { get; } = new();
@@ -55,13 +59,20 @@ public partial class MasterDataManagerViewModel : ViewModelBase
         AllCables = new ObservableCollection<Cable>(DatabaseService.Instance.GetAllCables());
         AllRadios = new ObservableCollection<Radio>(DatabaseService.Instance.GetAllRadios());
 
-        // OKAs belong to the current project
-        AllOkas = _projectViewModel.Okas;
+        // OKAs are global master data
+        AllOkas = new ObservableCollection<Oka>(DatabaseService.Instance.GetAllOkas());
 
         FilteredAntennas = new ObservableCollection<Antenna>(AllAntennas);
         FilteredCables = new ObservableCollection<Cable>(AllCables);
         FilteredRadios = new ObservableCollection<Radio>(AllRadios);
         FilteredOkas = new ObservableCollection<Oka>(AllOkas);
+
+        Modulations = new ObservableCollection<Modulation>(DatabaseService.Instance.GetAllModulations());
+
+        _masterData = MasterDataStore.Load();
+        GroundReflectionFactor = _masterData.Constants.GroundReflectionFactor;
+        DefaultActivityFactor = _masterData.Constants.DefaultActivityFactor;
+        Bands = new ObservableCollection<BandDefinition>(_masterData.Bands.OrderBy(b => b.FrequencyMHz));
     }
 
     // Tab selection
@@ -176,6 +187,8 @@ public partial class MasterDataManagerViewModel : ViewModelBase
     private string _okaSearchText = string.Empty;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanEditSelectedOka))]
+    [NotifyPropertyChangedFor(nameof(CanDeleteSelectedOka))]
     private Oka? _selectedOka;
     partial void OnOkaSearchTextChanged(string value)
     {
@@ -231,21 +244,21 @@ public partial class MasterDataManagerViewModel : ViewModelBase
         if (SelectedAntenna != null)
         {
             // Can edit if: project-specific OR admin mode
-            var isReadOnly = !SelectedAntenna.IsProjectSpecific && !IsAdminMode;
+            var isReadOnly = !SelectedAntenna.IsUserData && !IsAdminMode;
             NavigateToAntennaEditor?.Invoke(SelectedAntenna, isReadOnly);
         }
     }
 
     public bool CanEditSelectedAntenna => SelectedAntenna != null &&
-        (SelectedAntenna.IsProjectSpecific || IsAdminMode);
+        (SelectedAntenna.IsUserData || IsAdminMode);
 
     public bool CanDeleteSelectedAntenna => SelectedAntenna != null &&
-        (SelectedAntenna.IsProjectSpecific || IsAdminMode);
+        (SelectedAntenna.IsUserData || IsAdminMode);
 
     [RelayCommand]
     private void DeleteAntenna()
     {
-        if (SelectedAntenna != null && (SelectedAntenna.IsProjectSpecific || IsAdminMode))
+        if (SelectedAntenna != null && (SelectedAntenna.IsUserData || IsAdminMode))
         {
             // Delete from database
             DatabaseService.Instance.DeleteAntenna(SelectedAntenna.Manufacturer, SelectedAntenna.Model);
@@ -267,21 +280,21 @@ public partial class MasterDataManagerViewModel : ViewModelBase
     {
         if (SelectedCable != null)
         {
-            var isReadOnly = !SelectedCable.IsProjectSpecific && !IsAdminMode;
+            var isReadOnly = !SelectedCable.IsUserData && !IsAdminMode;
             NavigateToCableEditor?.Invoke(SelectedCable, isReadOnly);
         }
     }
 
     public bool CanEditSelectedCable => SelectedCable != null &&
-        (SelectedCable.IsProjectSpecific || IsAdminMode);
+        (SelectedCable.IsUserData || IsAdminMode);
 
     public bool CanDeleteSelectedCable => SelectedCable != null &&
-        (SelectedCable.IsProjectSpecific || IsAdminMode);
+        (SelectedCable.IsUserData || IsAdminMode);
 
     [RelayCommand]
     private void DeleteCable()
     {
-        if (SelectedCable != null && (SelectedCable.IsProjectSpecific || IsAdminMode))
+        if (SelectedCable != null && (SelectedCable.IsUserData || IsAdminMode))
         {
             // Delete from database
             DatabaseService.Instance.DeleteCable(SelectedCable.Name);
@@ -303,21 +316,21 @@ public partial class MasterDataManagerViewModel : ViewModelBase
     {
         if (SelectedRadio != null)
         {
-            var isReadOnly = !SelectedRadio.IsProjectSpecific && !IsAdminMode;
+            var isReadOnly = !SelectedRadio.IsUserData && !IsAdminMode;
             NavigateToRadioEditor?.Invoke(SelectedRadio, isReadOnly);
         }
     }
 
     public bool CanEditSelectedRadio => SelectedRadio != null &&
-        (SelectedRadio.IsProjectSpecific || IsAdminMode);
+        (SelectedRadio.IsUserData || IsAdminMode);
 
     public bool CanDeleteSelectedRadio => SelectedRadio != null &&
-        (SelectedRadio.IsProjectSpecific || IsAdminMode);
+        (SelectedRadio.IsUserData || IsAdminMode);
 
     [RelayCommand]
     private void DeleteRadio()
     {
-        if (SelectedRadio != null && (SelectedRadio.IsProjectSpecific || IsAdminMode))
+        if (SelectedRadio != null && (SelectedRadio.IsUserData || IsAdminMode))
         {
             // Delete from database
             DatabaseService.Instance.DeleteRadio(SelectedRadio.Manufacturer, SelectedRadio.Model);
@@ -354,18 +367,44 @@ public partial class MasterDataManagerViewModel : ViewModelBase
     [RelayCommand]
     private void EditOka()
     {
-        if (SelectedOka != null)
+        if (SelectedOka != null && (SelectedOka.IsUserData || IsAdminMode))
         {
             NavigateToOkaEditor?.Invoke(SelectedOka);
         }
     }
 
+    // Modulations (factory mode)
+    public ObservableCollection<Modulation> Modulations { get; }
+
+    [ObservableProperty]
+    private Modulation? _selectedModulation;
+
+    // Constants (factory mode, stored in masterdata.json)
+    [ObservableProperty]
+    private double _groundReflectionFactor;
+
+    [ObservableProperty]
+    private double _defaultActivityFactor;
+
+    // Bands (factory mode, stored in masterdata.json)
+    public ObservableCollection<BandDefinition> Bands { get; }
+
+    [ObservableProperty]
+    private BandDefinition? _selectedBand;
+
+    public bool CanEditSelectedOka => SelectedOka != null &&
+        (SelectedOka.IsUserData || IsAdminMode);
+
+    public bool CanDeleteSelectedOka => SelectedOka != null &&
+        (SelectedOka.IsUserData || IsAdminMode);
+
     [RelayCommand]
     private void DeleteOka()
     {
-        if (SelectedOka != null)
+        if (SelectedOka != null && (SelectedOka.IsUserData || IsAdminMode))
         {
-            _projectViewModel.RemoveOka(SelectedOka);
+            DatabaseService.Instance.DeleteOka(SelectedOka.Name);
+            AllOkas.Remove(SelectedOka);
             FilteredOkas.Remove(SelectedOka);
             SelectedOka = null;
         }
@@ -377,24 +416,100 @@ public partial class MasterDataManagerViewModel : ViewModelBase
         OkaSearchText = string.Empty;
     }
 
-    public Func<Task<string?>>? SelectExportFolder { get; set; }
-    public Func<Task<string?>>? SelectImportFolder { get; set; }
+    [RelayCommand]
+    private void AddModulation()
+    {
+        if (!IsAdminMode) return;
+        Modulations.Add(new Modulation { Name = "New", Factor = 1.0, IsUserData = false });
+    }
+
+    [RelayCommand]
+    private void DeleteModulation()
+    {
+        if (!IsAdminMode || SelectedModulation == null) return;
+        DatabaseService.Instance.DeleteModulation(SelectedModulation.Name);
+        Modulations.Remove(SelectedModulation);
+        SelectedModulation = null;
+    }
+
+    [RelayCommand]
+    private void SaveModulations()
+    {
+        if (!IsAdminMode) return;
+        foreach (var modulation in Modulations)
+        {
+            if (string.IsNullOrWhiteSpace(modulation.Name)) continue;
+            DatabaseService.Instance.SaveModulation(modulation, isAdminMode: true);
+        }
+        RefreshModulations();
+    }
+
+    private void RefreshModulations()
+    {
+        Modulations.Clear();
+        foreach (var modulation in DatabaseService.Instance.GetAllModulations())
+        {
+            Modulations.Add(modulation);
+        }
+    }
+
+    [RelayCommand]
+    private void AddBand()
+    {
+        if (!IsAdminMode) return;
+        var band = new BandDefinition { Name = "New", FrequencyMHz = 0 };
+        Bands.Add(band);
+        SelectedBand = band;
+    }
+
+    [RelayCommand]
+    private void DeleteBand()
+    {
+        if (!IsAdminMode || SelectedBand == null) return;
+        Bands.Remove(SelectedBand);
+        SelectedBand = null;
+    }
+
+    [RelayCommand]
+    private void SaveBands()
+    {
+        if (!IsAdminMode) return;
+        _masterData.Bands = Bands.OrderBy(b => b.FrequencyMHz).ToList();
+        MasterDataStore.Save(_masterData);
+        Bands.Clear();
+        foreach (var band in _masterData.Bands)
+        {
+            Bands.Add(band);
+        }
+    }
+
+    [RelayCommand]
+    private void SaveConstants()
+    {
+        if (!IsAdminMode) return;
+        _masterData.Constants.GroundReflectionFactor = GroundReflectionFactor;
+        _masterData.Constants.DefaultActivityFactor = DefaultActivityFactor;
+        MasterDataStore.Save(_masterData);
+    }
+
+    public Func<Task<string?>>? SelectExportFile { get; set; }
+    public Func<Task<string?>>? SelectImportFile { get; set; }
 
     [RelayCommand]
     private async Task ExportDatabase()
     {
         if (!IsAdminMode) return;
 
-        var folderPath = await (SelectExportFolder?.Invoke() ?? Task.FromResult<string?>(null));
-        if (string.IsNullOrEmpty(folderPath)) return;
+        var filePath = await (SelectExportFile?.Invoke() ?? Task.FromResult<string?>(null));
+        if (string.IsNullOrEmpty(filePath)) return;
 
         try
         {
-            DatabaseService.Instance.ExportDatabase(folderPath);
+            DatabaseService.Instance.ExportFactoryData(filePath);
             await MessageBoxManager
                 .GetMessageBoxStandard(
                     "Export Complete",
-                    $"Database exported to:\n{folderPath}",
+                    $"Factory data exported to:\n{filePath}",
                     ButtonEnum.Ok, Icon.Success)
                 .ShowAsync();
         }
@@ -414,8 +529,8 @@ public partial class MasterDataManagerViewModel : ViewModelBase
     {
         if (!IsAdminMode) return;
 
-        var folderPath = await (SelectImportFolder?.Invoke() ?? Task.FromResult<string?>(null));
-        if (string.IsNullOrEmpty(folderPath)) return;
+        var filePath = await (SelectImportFile?.Invoke() ?? Task.FromResult<string?>(null));
+        if (string.IsNullOrEmpty(filePath)) return;
 
         // Confirm replacement
         var confirm = await MessageBoxManager
@@ -429,7 +544,7 @@ public partial class MasterDataManagerViewModel : ViewModelBase
 
         try
         {
-            DatabaseService.Instance.ImportDatabase(folderPath);
+            DatabaseService.Instance.ImportFactoryData(filePath);
 
             // Refresh all collections
             AllAntennas.Clear();
@@ -447,10 +562,12 @@ public partial class MasterDataManagerViewModel : ViewModelBase
                 AllRadios.Add(r);
             FilterRadios();
 
+            RefreshModulations();
+
             await MessageBoxManager
                 .GetMessageBoxStandard(
                     "Import Complete",
-                    $"Database imported from:\n{folderPath}",
+                    $"Factory data imported from:\n{filePath}",
                     ButtonEnum.Ok, Icon.Success)
                 .ShowAsync();
         }
@@ -572,15 +689,14 @@ public partial class MasterDataManagerViewModel : ViewModelBase
 
     public void AddOkaToDatabase(Oka oka)
     {
-        Services.DatabaseService.Instance.SaveOka(oka);
-        _projectViewModel.AddOrUpdateOka(oka);
+        Services.DatabaseService.Instance.SaveOka(oka, isAdminMode: IsAdminMode);
         ResortOkas();
         FilterOkas();
     }
 
     private void ResortOkas()
     {
-        var sorted = AllOkas.OrderBy(o => o.Id).ToList();
+        var sorted = AllOkas.OrderBy(o => o.Name).ToList();
         AllOkas.Clear();
         foreach (var oka in sorted)
         {

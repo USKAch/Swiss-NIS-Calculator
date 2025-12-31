@@ -28,6 +28,12 @@
                     <TextBox Text="{Binding OperatorName, Mode=TwoWay}"/>
                 </StackPanel>
 
+                <!-- Callsign -->
+                <StackPanel Spacing="5">
+                    <TextBlock Text="{Binding CallsignLabel}" FontWeight="SemiBold"/>
+                    <TextBox Text="{Binding Callsign, Mode=TwoWay}"/>
+                </StackPanel>
+
                 <!-- Address -->
                 <StackPanel Spacing="5">
                     <TextBlock Text="{Binding AddressLabel}" FontWeight="SemiBold"/>

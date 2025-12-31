@@ -109,6 +109,7 @@ public class Strings : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(EditStationInfo)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AddressExample)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LocationExample)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Callsign)));
 
         // Project Overview
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Configurations)));
@@ -128,6 +129,7 @@ public class Strings : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Height)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FrequencyBands)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectRadio)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectLinear)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UseLinearAmplifier)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Power)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Cable)));
@@ -144,6 +146,13 @@ public class Strings : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Antennas)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Cables)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Radios)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Modulations)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Constants)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(GroundReflectionFactor)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DefaultActivityFactor)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Factor)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AddModulation)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MasterDataManager)));
 
         // Results
@@ -220,6 +229,7 @@ public class Strings : INotifyPropertyChanged
     public string ProjectName => Get("ProjectName");
     public string StationInfo => Get("StationInfo");
     public string Operator => Get("Operator");
+    public string Callsign => Get("Callsign");
     public string Address => Get("Address");
     public string Location => Get("Location");
     public string CreateProject => Get("CreateProject");
@@ -255,6 +265,7 @@ public class Strings : INotifyPropertyChanged
 
     // Transmitter section
     public string SelectRadio => Get("SelectRadio");
+    public string SelectLinear => Get("SelectLinear");
     public string UseLinearAmplifier => Get("UseLinearAmplifier");
     public string Power => Get("Power");
 
@@ -347,6 +358,13 @@ public class Strings : INotifyPropertyChanged
     public string Antennas => Get("Antennas");
     public string Cables => Get("Cables");
     public string Radios => Get("Radios");
+    public string Modulations => Get("Modulations");
+    public string Constants => Get("Constants");
+    public string GroundReflectionFactor => Get("GroundReflectionFactor");
+    public string DefaultActivityFactor => Get("DefaultActivityFactor");
+    public string Factor => Get("Factor");
+    public string Name => Get("Name");
+    public string AddModulation => Get("AddModulation");
     public string Translations => Get("Translations");
     public string MasterDataManager => Get("MasterDataManager");
     public string Clear => Get("Clear");
@@ -401,6 +419,7 @@ public class Strings : INotifyPropertyChanged
     // ============================================================
     // PROJECT MANAGEMENT
     // ============================================================
+    public string Callsign => Get("Callsign");
     public string LoadDemoProject => Get("LoadDemoProject");
     public string LoadDemoProjectDesc => Get("LoadDemoProjectDesc");
     public string NoProjects => Get("NoProjects");
@@ -418,15 +437,21 @@ public class Strings : INotifyPropertyChanged
     public string ExportUserDataDesc => Get("ExportUserDataDesc");
     public string ImportUserDataDesc => Get("ImportUserDataDesc");
     public string ImportConfirmMessage => Get("ImportConfirmMessage");
+    public string ExportFactoryData => Get("ExportFactoryData");
+    public string ImportFactoryData => Get("ImportFactoryData");
+    public string ExportFactoryDataDesc => Get("ExportFactoryDataDesc");
+    public string ImportFactoryConfirmMessage => Get("ImportFactoryConfirmMessage");
     public string ExportSuccess => Get("ExportSuccess");
     public string ExportFailed => Get("ExportFailed");
     public string ImportSuccess => Get("ImportSuccess");
     public string ImportFailed => Get("ImportFailed");
     public string ImportProject => Get("ImportProject");
     public string ExportProject => Get("ExportProject");
+    public string ImportProjectConfirmMessage => Get("ImportProjectConfirmMessage");
     public string SelectProjectToExport => Get("SelectProjectToExport");
     public string ProjectImportExportDesc => Get("ProjectImportExportDesc");
     public string UserData => Get("UserData");
+    public string FactoryData => Get("FactoryData");
 
     // ============================================================
     // UNITS (not translated, but centralized)
@@ -528,6 +553,7 @@ public class Strings : INotifyPropertyChanged
         ["ProjectName"] = "ProjectInfo",
         ["StationInfo"] = "ProjectInfo",
         ["Operator"] = "ProjectInfo",
+        ["Callsign"] = "ProjectInfo",
         ["Address"] = "ProjectInfo",
         ["Location"] = "ProjectInfo",
         ["CreateProject"] = "ProjectInfo",
@@ -550,6 +576,7 @@ public class Strings : INotifyPropertyChanged
         ["Height"] = "ConfigEditor",
         ["FrequencyBands"] = "ConfigEditor",
         ["SelectRadio"] = "ConfigEditor",
+        ["SelectLinear"] = "ConfigEditor",
         ["UseLinearAmplifier"] = "ConfigEditor",
         ["Power"] = "ConfigEditor",
         ["Cable"] = "ConfigEditor",
@@ -611,12 +638,20 @@ public class Strings : INotifyPropertyChanged
         ["Antennas"] = "MasterData",
         ["Cables"] = "MasterData",
         ["Radios"] = "MasterData",
+        ["Modulations"] = "MasterData",
+        ["Constants"] = "MasterData",
+        ["GroundReflectionFactor"] = "MasterData",
+        ["DefaultActivityFactor"] = "MasterData",
+        ["Factor"] = "MasterData",
+        ["Name"] = "MasterData",
+        ["AddModulation"] = "MasterData",
         ["Translations"] = "MasterData",
         ["MasterDataManager"] = "MasterData",
         ["Clear"] = "MasterData",
         ["SearchAntennas"] = "MasterData",
         ["SearchCables"] = "MasterData",
         ["SearchRadios"] = "MasterData",
+        ["SearchOkas"] = "MasterData",
         ["SearchTranslations"] = "MasterData",
         ["AddAntennaButton"] = "MasterData",
         ["AddCableButton"] = "MasterData",
@@ -734,6 +769,7 @@ public class Strings : INotifyPropertyChanged
         ["Bands"] = new() { ["de"] = "Bänder", ["fr"] = "Bandes", ["it"] = "Bande", ["en"] = "Bands" },
 
         ["SelectRadio"] = new() { ["de"] = "-- Transceiver wählen --", ["fr"] = "-- Sélectionner émetteur --", ["it"] = "-- Seleziona ricetrasmettitore --", ["en"] = "-- Select Radio --" },
+        ["SelectLinear"] = new() { ["de"] = "-- Linear w?hlen --", ["fr"] = "-- S?lectionner amplificateur --", ["it"] = "-- Seleziona lineare --", ["en"] = "-- Select Linear --" },
         ["UseLinearAmplifier"] = new() { ["de"] = "Linearendstufe verwenden", ["fr"] = "Utiliser amplificateur linéaire", ["it"] = "Usa amplificatore lineare", ["en"] = "Use Linear Amplifier" },
         ["Power"] = new() { ["de"] = "Leistung", ["fr"] = "Puissance", ["it"] = "Potenza", ["en"] = "Power" },
 
@@ -815,6 +851,13 @@ public class Strings : INotifyPropertyChanged
         ["Antennas"] = new() { ["de"] = "Antennen", ["fr"] = "Antennes", ["it"] = "Antenne", ["en"] = "Antennas" },
         ["Cables"] = new() { ["de"] = "Kabel", ["fr"] = "Câbles", ["it"] = "Cavi", ["en"] = "Cables" },
         ["Radios"] = new() { ["de"] = "Transceiver", ["fr"] = "Émetteurs-récepteurs", ["it"] = "Ricetrasmettitori", ["en"] = "Radios" },
+        ["Modulations"] = new() { ["de"] = "Modulationen", ["fr"] = "Modulations", ["it"] = "Modulazioni", ["en"] = "Modulations" },
+        ["Constants"] = new() { ["de"] = "Konstanten", ["fr"] = "Constantes", ["it"] = "Costanti", ["en"] = "Constants" },
+        ["GroundReflectionFactor"] = new() { ["de"] = "Bodenreflexionsfaktor", ["fr"] = "Facteur de r?flexion au sol", ["it"] = "Fattore di riflessione a terra", ["en"] = "Ground Reflection Factor" },
+        ["DefaultActivityFactor"] = new() { ["de"] = "Standard-Aktivit?tsfaktor", ["fr"] = "Facteur d'activit? par d?faut", ["it"] = "Fattore di attivit? predefinito", ["en"] = "Default Activity Factor" },
+        ["Factor"] = new() { ["de"] = "Faktor", ["fr"] = "Facteur", ["it"] = "Fattore", ["en"] = "Factor" },
+        ["Name"] = new() { ["de"] = "Name", ["fr"] = "Nom", ["it"] = "Nome", ["en"] = "Name" },
+        ["AddModulation"] = new() { ["de"] = "+ Modulation hinzuf?gen", ["fr"] = "+ Ajouter modulation", ["it"] = "+ Aggiungi modulazione", ["en"] = "+ Add Modulation" },
         ["Translations"] = new() { ["de"] = "Übersetzungen", ["fr"] = "Traductions", ["it"] = "Traduzioni", ["en"] = "Translations" },
         ["MasterDataManager"] = new() { ["de"] = "Stammdaten-Verwaltung", ["fr"] = "Gestion des données de base", ["it"] = "Gestione dati master", ["en"] = "Master Data Manager" },
         ["Clear"] = new() { ["de"] = "Löschen", ["fr"] = "Effacer", ["it"] = "Cancella", ["en"] = "Clear" },
@@ -839,9 +882,9 @@ public class Strings : INotifyPropertyChanged
         ["Database"] = new() { ["de"] = "Datenbank", ["fr"] = "Base de données", ["it"] = "Database", ["en"] = "Database" },
         ["DatabaseTabInfo"] = new() { ["de"] = "Änderungen an der Datenbank betreffen alle Benutzer. Nur für Wartung und Updates verwenden.", ["fr"] = "Les modifications de la base de données affectent tous les utilisateurs. Utiliser uniquement pour la maintenance.", ["it"] = "Le modifiche al database influenzano tutti gli utenti. Usare solo per manutenzione.", ["en"] = "Database changes affect all users. Use only for maintenance and updates." },
         ["ExportDatabase"] = new() { ["de"] = "Datenbank exportieren", ["fr"] = "Exporter la base de données", ["it"] = "Esporta database", ["en"] = "Export Database" },
-        ["ExportDatabaseDesc"] = new() { ["de"] = "Exportiert alle Stammdaten (Antennen, Kabel, Radios) in JSON-Dateien für Versionskontrolle.", ["fr"] = "Exporte toutes les données de base en fichiers JSON pour le contrôle de version.", ["it"] = "Esporta tutti i dati master in file JSON per il controllo versione.", ["en"] = "Export all master data (antennas, cables, radios) to JSON files for version control." },
+        ["ExportDatabaseDesc"] = new() { ["de"] = "Exportiert die Werksdaten in eine JSON-Datei", ["fr"] = "Exporte les donn?es usine dans un fichier JSON", ["it"] = "Esporta i dati di fabbrica in un file JSON", ["en"] = "Export factory data to a JSON file" },
         ["ImportDatabase"] = new() { ["de"] = "Datenbank importieren", ["fr"] = "Importer la base de données", ["it"] = "Importa database", ["en"] = "Import Database" },
-        ["ImportDatabaseDesc"] = new() { ["de"] = "Ersetzt alle Stammdaten mit Daten aus JSON-Dateien. ACHTUNG: Alle bestehenden Daten werden überschrieben!", ["fr"] = "Remplace toutes les données de base par des fichiers JSON. ATTENTION: Toutes les données existantes seront écrasées!", ["it"] = "Sostituisce tutti i dati master con file JSON. ATTENZIONE: Tutti i dati esistenti verranno sovrascritti!", ["en"] = "Replace all master data from JSON files. WARNING: All existing data will be overwritten!" },
+        ["ImportDatabaseDesc"] = new() { ["de"] = "Importiert Werksdaten aus einer JSON-Datei. ACHTUNG: Alle Daten werden gel?scht!", ["fr"] = "Importe les donn?es usine depuis un fichier JSON. ATTENTION: Toutes les donn?es seront supprim?es!", ["it"] = "Importa i dati di fabbrica da un file JSON. ATTENZIONE: Tutti i dati saranno eliminati!", ["en"] = "Import factory data from a JSON file. WARNING: All data will be deleted!" },
 
         // Results
         ["CalculationResults"] = new() { ["de"] = "Berechnungsergebnisse", ["fr"] = "Résultats du calcul", ["it"] = "Risultati del calcolo", ["en"] = "Calculation Results" },
@@ -871,13 +914,14 @@ public class Strings : INotifyPropertyChanged
         ["DeleteProjectMessage"] = new() { ["de"] = "Das Projekt '{0}' wird unwiderruflich gelöscht.", ["fr"] = "Le projet '{0}' sera supprimé définitivement.", ["it"] = "Il progetto '{0}' verrà eliminato definitivamente.", ["en"] = "The project '{0}' will be permanently deleted." },
         ["ProjectDeleted"] = new() { ["de"] = "Projekt gelöscht", ["fr"] = "Projet supprimé", ["it"] = "Progetto eliminato", ["en"] = "Project deleted" },
         ["DemoProjectLoaded"] = new() { ["de"] = "Demo-Projekt geladen", ["fr"] = "Projet démo chargé", ["it"] = "Progetto demo caricato", ["en"] = "Demo project loaded" },
+        ["Callsign"] = new() { ["de"] = "Rufzeichen", ["fr"] = "Indicatif", ["it"] = "Nominativo", ["en"] = "Callsign" },
 
         // User Data Export/Import
         ["ExportUserData"] = new() { ["de"] = "Benutzerdaten exportieren", ["fr"] = "Exporter données utilisateur", ["it"] = "Esporta dati utente", ["en"] = "Export User Data" },
         ["ImportUserData"] = new() { ["de"] = "Benutzerdaten importieren", ["fr"] = "Importer données utilisateur", ["it"] = "Importa dati utente", ["en"] = "Import User Data" },
         ["ExportUserDataDesc"] = new() { ["de"] = "Exportiert alle Projekte, OKAs und benutzerdefinierte Stammdaten", ["fr"] = "Exporte tous les projets, OKAs et données de base personnalisées", ["it"] = "Esporta tutti i progetti, OKA e dati master personalizzati", ["en"] = "Export all projects, OKAs, and custom master data" },
         ["ImportUserDataDesc"] = new() { ["de"] = "Importiert Benutzerdaten aus einer Sicherungsdatei", ["fr"] = "Importe les données utilisateur depuis un fichier de sauvegarde", ["it"] = "Importa i dati utente da un file di backup", ["en"] = "Import user data from a backup file" },
-        ["ImportConfirmMessage"] = new() { ["de"] = "Dies wird alle vorhandenen Benutzerdaten ergänzen. Fortfahren?", ["fr"] = "Cela complétera les données utilisateur existantes. Continuer?", ["it"] = "Questo integrerà i dati utente esistenti. Continuare?", ["en"] = "This will add to existing user data. Continue?" },
+        ["ImportConfirmMessage"] = new() { ["de"] = "Dies l?scht alle bestehenden Daten und ersetzt sie durch das Backup. Fortfahren?", ["fr"] = "Cela supprime toutes les donn?es existantes et les remplace par la sauvegarde. Continuer?", ["it"] = "Questo elimina tutti i dati esistenti e li sostituisce con il backup. Continuare?", ["en"] = "This deletes all existing data and replaces it with the backup. Continue?" },
         ["ExportSuccess"] = new() { ["de"] = "Export erfolgreich", ["fr"] = "Export réussi", ["it"] = "Esportazione riuscita", ["en"] = "Export successful" },
         ["ExportFailed"] = new() { ["de"] = "Export fehlgeschlagen", ["fr"] = "Échec de l'export", ["it"] = "Esportazione fallita", ["en"] = "Export failed" },
         ["ImportSuccess"] = new() { ["de"] = "Import erfolgreich", ["fr"] = "Import réussi", ["it"] = "Importazione riuscita", ["en"] = "Import successful" },
@@ -887,5 +931,11 @@ public class Strings : INotifyPropertyChanged
         ["SelectProjectToExport"] = new() { ["de"] = "Bitte wählen Sie ein Projekt zum Exportieren", ["fr"] = "Veuillez sélectionner un projet à exporter", ["it"] = "Seleziona un progetto da esportare", ["en"] = "Please select a project to export" },
         ["ProjectImportExportDesc"] = new() { ["de"] = "Projekte als .nisproj-Dateien importieren oder exportieren", ["fr"] = "Importer ou exporter des projets sous forme de fichiers .nisproj", ["it"] = "Importa o esporta progetti come file .nisproj", ["en"] = "Import or export individual projects as .nisproj files" },
         ["UserData"] = new() { ["de"] = "Benutzerdaten", ["fr"] = "Données utilisateur", ["it"] = "Dati utente", ["en"] = "User Data" },
+        ["FactoryData"] = new() { ["de"] = "Werksdaten", ["fr"] = "Données usine", ["it"] = "Dati di fabbrica", ["en"] = "Factory Data" },
+        ["ExportFactoryData"] = new() { ["de"] = "Werksdaten exportieren", ["fr"] = "Exporter données usine", ["it"] = "Esporta dati di fabbrica", ["en"] = "Export Factory Data" },
+        ["ImportFactoryData"] = new() { ["de"] = "Werksdaten importieren", ["fr"] = "Importer données usine", ["it"] = "Importa dati di fabbrica", ["en"] = "Import Factory Data" },
+        ["ExportFactoryDataDesc"] = new() { ["de"] = "Exportiert alle Projekte, OKAs und Stammdaten (Factory)", ["fr"] = "Exporte tous les projets, OKAs et données de base (usine)", ["it"] = "Esporta tutti i progetti, OKA e dati master (fabbrica)", ["en"] = "Export all projects, OKAs, and master data (factory)" },
+        ["ImportFactoryConfirmMessage"] = new() { ["de"] = "Dies löscht alle bestehenden Daten und ersetzt sie durch die Werksdaten. Fortfahren?", ["fr"] = "Cela supprime toutes les données existantes et les remplace par les données usine. Continuer?", ["it"] = "Questo elimina tutti i dati esistenti e li sostituisce con i dati di fabbrica. Continuare?", ["en"] = "This deletes all existing data and replaces it with factory data. Continue?" },
+        ["ImportProjectConfirmMessage"] = new() { ["de"] = "Ein neues Projekt wird importiert. Fortfahren?", ["fr"] = "Un nouveau projet sera importé. Continuer?", ["it"] = "Verrà importato un nuovo progetto. Continuare?", ["en"] = "A new project will be imported. Continue?" },
     };
 }

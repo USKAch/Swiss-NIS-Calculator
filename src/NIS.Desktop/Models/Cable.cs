@@ -26,10 +26,10 @@ public class Cable
     public Dictionary<string, double> AttenuationPer100m { get; set; } = new();
 
     /// <summary>
-    /// Indicates whether this cable is project-specific (editable) or from master data (read-only).
+    /// Indicates whether this cable is user data (editable) or factory data (read-only).
     /// </summary>
-    [JsonPropertyName("isProjectSpecific")]
-    public bool IsProjectSpecific { get; set; }
+    [JsonPropertyName("isUserData")]
+    public bool IsUserData { get; set; }
 
     /// <summary>
     /// Gets the interpolated attenuation at a specific frequency.

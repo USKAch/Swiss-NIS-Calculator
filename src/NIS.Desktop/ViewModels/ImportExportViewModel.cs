@@ -41,6 +41,57 @@ public partial class ImportExportViewModel : ViewModelBase
 
     public new Strings Strings => Strings.Instance;
 
+    private class NisProjectFile
+    {
+        public ProjectHeader Project { get; set; } = new();
+        public List<ProjectConfiguration> Configurations { get; set; } = new();
+    }
+
+    private class ProjectHeader
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Operator { get; set; } = string.Empty;
+        public string Callsign { get; set; } = string.Empty;
+        public string Address { get; set; } = string.Empty;
+        public string Location { get; set; } = string.Empty;
+    }
+
+    private class ProjectConfiguration
+    {
+        public Reference Antenna { get; set; } = new();
+        public double HeightMeters { get; set; }
+        public string Polarization { get; set; } = "horizontal";
+        public double RotationAngleDegrees { get; set; } = 360;
+        public Reference Radio { get; set; } = new();
+        public Reference? Linear { get; set; }
+        public double PowerWatts { get; set; }
+        public CableReference Cable { get; set; } = new();
+        public double CableLengthMeters { get; set; }
+        public double AdditionalLossDb { get; set; }
+        public string AdditionalLossDescription { get; set; } = string.Empty;
+        public string Modulation { get; set; } = "CW";
+        public double ActivityFactor { get; set; } = 0.5;
+        public OkaReference Oka { get; set; } = new();
+        public double OkaDistanceMeters { get; set; }
+        public double OkaBuildingDampingDb { get; set; }
+    }
+
+    private class Reference
+    {
+        public string Manufacturer { get; set; } = string.Empty;
+        public string Model { get; set; } = string.Empty;
+    }
+
+    private class CableReference
+    {
+        public string Name { get; set; } = string.Empty;
+    }
+
+    private class OkaReference
+    {
+        public string Name { get; set; } = string.Empty;
+    }
+
     [RelayCommand]
     private async Task ImportProject()
     {
@@ -48,6 +99,14 @@ public partial class ImportExportViewModel : ViewModelBase
         {
             StatusMessage = "Import not available";
             return;
+        }
+
+        if (ShowConfirmDialog != null)
+        {
+            var confirmed = await ShowConfirmDialog(
+                Strings.ImportProject,
+                Strings.ImportProjectConfirmMessage);
+            if (!confirmed) return;
         }
 
         var files = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
@@ -71,20 +130,54 @@ public partial class ImportExportViewModel : ViewModelBase
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                     PropertyNameCaseInsensitive = true
                 };
-                var project = JsonSerializer.Deserialize<Project>(json, options);
+                var projectFile = JsonSerializer.Deserialize<NisProjectFile>(json, options);
 
-                if (project != null)
+                if (projectFile != null)
                 {
-                    // Import OKAs from the project
-                    foreach (var oka in project.Okas)
+                    var project = new Project
                     {
-                        if (!DatabaseService.Instance.OkaExists(oka.Name))
+                        Name = projectFile.Project.Name,
+                        Operator = projectFile.Project.Operator,
+                        Callsign = projectFile.Project.Callsign,
+                        Address = projectFile.Project.Address,
+                        Location = projectFile.Project.Location
+                    };
+
+                    foreach (var config in projectFile.Configurations)
+                    {
+                        EnsureMasterData(config);
+
+                        project.AntennaConfigurations.Add(new AntennaConfiguration
                         {
-                            DatabaseService.Instance.SaveOka(oka);
-                        }
+                            Name = $"{config.Antenna.Manufacturer} {config.Antenna.Model}".Trim(),
+                            PowerWatts = config.PowerWatts,
+                            Radio = new RadioConfig { Manufacturer = config.Radio.Manufacturer, Model = config.Radio.Model },
+                            Linear = config.Linear == null ? null : new LinearConfig
+                            {
+                                Manufacturer = config.Linear.Manufacturer,
+                                Model = config.Linear.Model
+                            },
+                            Cable = new CableConfig
+                            {
+                                Type = config.Cable.Name,
+                                LengthMeters = config.CableLengthMeters,
+                                AdditionalLossDb = config.AdditionalLossDb,
+                                AdditionalLossDescription = config.AdditionalLossDescription
+                            },
+                            Antenna = new AntennaPlacement
+                            {
+                                Manufacturer = config.Antenna.Manufacturer,
+                                Model = config.Antenna.Model,
+                                HeightMeters = config.HeightMeters
+                            },
+                            Modulation = config.Modulation,
+                            ActivityFactor = config.ActivityFactor,
+                            OkaName = config.Oka.Name,
+                            OkaDistanceMeters = config.OkaDistanceMeters,
+                            OkaBuildingDampingDb = config.OkaBuildingDampingDb
+                        });
                     }
 
-                    // Create the project in the database
                     DatabaseService.Instance.CreateProject(project);
                     StatusMessage = $"{Strings.ImportSuccess}: {project.Name}";
 
@@ -97,6 +190,73 @@ public partial class ImportExportViewModel : ViewModelBase
             {
                 StatusMessage = $"{Strings.ImportFailed}: {ex.Message}";
             }
+        }
+    }
+
+    private void EnsureMasterData(ProjectConfiguration config)
+    {
+        var db = DatabaseService.Instance;
+
+        var modulation = db.GetModulationByName(config.Modulation);
+        if (modulation == null)
+        {
+            throw new InvalidOperationException($"Unknown modulation '{config.Modulation}'.");
+        }
+
+        if (!db.AntennaExists(config.Antenna.Manufacturer, config.Antenna.Model))
+        {
+            db.SaveAntenna(new Antenna
+            {
+                Manufacturer = config.Antenna.Manufacturer,
+                Model = config.Antenna.Model,
+                AntennaType = AntennaTypes.Other,
+                IsHorizontallyPolarized = config.Polarization.Equals("horizontal", StringComparison.OrdinalIgnoreCase),
+                IsRotatable = config.RotationAngleDegrees != 360,
+                HorizontalAngleDegrees = config.RotationAngleDegrees,
+                IsUserData = true
+            });
+        }
+
+        if (!db.CableExists(config.Cable.Name))
+        {
+            db.SaveCable(new Cable
+            {
+                Name = config.Cable.Name,
+                IsUserData = true
+            });
+        }
+
+        if (!db.RadioExists(config.Radio.Manufacturer, config.Radio.Model))
+        {
+            db.SaveRadio(new Radio
+            {
+                Manufacturer = config.Radio.Manufacturer,
+                Model = config.Radio.Model,
+                MaxPowerWatts = config.PowerWatts,
+                IsUserData = true
+            });
+        }
+
+        if (config.Linear != null && !db.RadioExists(config.Linear.Manufacturer, config.Linear.Model))
+        {
+            db.SaveRadio(new Radio
+            {
+                Manufacturer = config.Linear.Manufacturer,
+                Model = config.Linear.Model,
+                MaxPowerWatts = config.PowerWatts,
+                IsUserData = true
+            });
+        }
+
+        if (!db.OkaExists(config.Oka.Name))
+        {
+            db.SaveOka(new Oka
+            {
+                Name = config.Oka.Name,
+                DefaultDistanceMeters = config.OkaDistanceMeters,
+                DefaultDampingDb = config.OkaBuildingDampingDb,
+                IsUserData = true
+            });
         }
     }
 
@@ -143,12 +303,59 @@ public partial class ImportExportViewModel : ViewModelBase
         {
             try
             {
+                var projectFile = new NisProjectFile
+                {
+                    Project = new ProjectHeader
+                    {
+                        Name = project.Name,
+                        Operator = project.Operator,
+                        Callsign = project.Callsign,
+                        Address = project.Address,
+                        Location = project.Location
+                    },
+                    Configurations = project.AntennaConfigurations.Select(c =>
+                    {
+                        var antenna = DatabaseService.Instance.GetAntenna(c.Antenna.Manufacturer, c.Antenna.Model);
+                        return new ProjectConfiguration
+                        {
+                            Antenna = new Reference
+                            {
+                                Manufacturer = c.Antenna.Manufacturer,
+                                Model = c.Antenna.Model
+                            },
+                            HeightMeters = c.Antenna.HeightMeters,
+                            Polarization = antenna?.IsHorizontallyPolarized == false ? "vertical" : "horizontal",
+                            RotationAngleDegrees = antenna?.HorizontalAngleDegrees ?? 360,
+                            Radio = new Reference
+                            {
+                                Manufacturer = c.Radio.Manufacturer,
+                                Model = c.Radio.Model
+                            },
+                            Linear = c.Linear == null ? null : new Reference
+                            {
+                                Manufacturer = c.Linear.Manufacturer,
+                                Model = c.Linear.Model
+                            },
+                            PowerWatts = c.PowerWatts,
+                            Cable = new CableReference { Name = c.Cable.Type },
+                            CableLengthMeters = c.Cable.LengthMeters,
+                            AdditionalLossDb = c.Cable.AdditionalLossDb,
+                            AdditionalLossDescription = c.Cable.AdditionalLossDescription,
+                            Modulation = c.Modulation,
+                            ActivityFactor = c.ActivityFactor,
+                            Oka = new OkaReference { Name = c.OkaName },
+                            OkaDistanceMeters = c.OkaDistanceMeters,
+                            OkaBuildingDampingDb = c.OkaBuildingDampingDb
+                        };
+                    }).ToList()
+                };
+
                 var options = new JsonSerializerOptions
                 {
                     WriteIndented = true,
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                 };
-                var json = JsonSerializer.Serialize(project, options);
+                var json = JsonSerializer.Serialize(projectFile, options);
                 await File.WriteAllTextAsync(file.Path.LocalPath, json);
                 StatusMessage = $"{Strings.ExportSuccess}: {file.Name}";
             }
@@ -194,6 +401,40 @@ public partial class ImportExportViewModel : ViewModelBase
     }
 
     [RelayCommand]
+    private async Task ExportFactoryData()
+    {
+        if (StorageProvider == null)
+        {
+            StatusMessage = "Export not available";
+            return;
+        }
+
+        var file = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        {
+            Title = Strings.ExportFactoryData,
+            SuggestedFileName = $"NIS_FactoryData_{DateTime.Now:yyyyMMdd}.json",
+            DefaultExtension = ".json",
+            FileTypeChoices = new[]
+            {
+                new FilePickerFileType("JSON") { Patterns = new[] { "*.json" } }
+            }
+        });
+
+        if (file != null)
+        {
+            try
+            {
+                DatabaseService.Instance.ExportFactoryData(file.Path.LocalPath);
+                StatusMessage = $"{Strings.ExportSuccess}: {file.Name}";
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"{Strings.ExportFailed}: {ex.Message}";
+            }
+        }
+    }
+
+    [RelayCommand]
     private async Task ImportUserData()
     {
         if (StorageProvider == null)
@@ -226,6 +467,47 @@ public partial class ImportExportViewModel : ViewModelBase
             try
             {
                 DatabaseService.Instance.ImportUserData(files[0].Path.LocalPath);
+                StatusMessage = Strings.ImportSuccess;
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"{Strings.ImportFailed}: {ex.Message}";
+            }
+        }
+    }
+
+    [RelayCommand]
+    private async Task ImportFactoryData()
+    {
+        if (StorageProvider == null)
+        {
+            StatusMessage = "Import not available";
+            return;
+        }
+
+        if (ShowConfirmDialog != null)
+        {
+            var confirmed = await ShowConfirmDialog(
+                Strings.ImportFactoryData,
+                Strings.ImportFactoryConfirmMessage);
+            if (!confirmed) return;
+        }
+
+        var files = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        {
+            Title = Strings.ImportFactoryData,
+            AllowMultiple = false,
+            FileTypeFilter = new[]
+            {
+                new FilePickerFileType("JSON") { Patterns = new[] { "*.json" } }
+            }
+        });
+
+        if (files.Count > 0)
+        {
+            try
+            {
+                DatabaseService.Instance.ImportFactoryData(files[0].Path.LocalPath);
                 StatusMessage = Strings.ImportSuccess;
             }
             catch (Exception ex)

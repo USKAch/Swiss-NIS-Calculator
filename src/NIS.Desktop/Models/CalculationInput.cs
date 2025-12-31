@@ -69,4 +69,9 @@ public class CalculationInput
     /// Building damping factor in dB.
     /// </summary>
     public double BuildingDampingDb { get; set; }
+
+    /// <summary>
+    /// Ground reflection factor (kr). Default is 1.6.
+    /// </summary>
+    public double GroundReflectionFactor { get; set; } = 1.6;
 }

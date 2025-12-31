@@ -165,10 +165,10 @@ public class Antenna
     }
 
     /// <summary>
-    /// Indicates whether this antenna is project-specific (editable) or from master data (read-only).
+    /// Indicates whether this antenna is user data (editable) or factory data (read-only).
     /// </summary>
-    [JsonPropertyName("isProjectSpecific")]
-    public bool IsProjectSpecific { get; set; }
+    [JsonPropertyName("isUserData")]
+    public bool IsUserData { get; set; }
 
     /// <summary>
     /// Display name combining manufacturer and model.

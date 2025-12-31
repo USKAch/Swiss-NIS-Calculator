@@ -122,15 +122,15 @@ Safety Distance:   ds = 1.6 x sqrt(30 x Pm x A x G x AG) / EIGW
 ```
 Swiss-NIS-Calculator/
 +-- src/
-|   +-- NIS.Core/              # Calculation library
-|   |   +-- Models/            # Data models
-|   |   +-- Services/          # Calculation services
-|   |   +-- Data/              # Database loaders
 |   +-- NIS.Desktop/           # Avalonia UI application
+|       +-- Calculations/      # Field strength calculator, pattern generator
+|       +-- Controls/          # Custom controls (PolarDiagram)
+|       +-- Localization/      # Multi-language support
+|       +-- Models/            # Data models
+|       +-- Services/          # Database, settings, PDF export
 |       +-- ViewModels/        # MVVM ViewModels
 |       +-- Views/             # XAML Views
-|       +-- Controls/          # Custom controls
-+-- data/                      # Master data (JSON)
+|       +-- Data/              # SQLite database, JSON backups
 +-- docs/                      # Documentation
 +-- tests/                     # Unit tests
 +-- legacy/                    # Original VB6 source (reference)
@@ -143,8 +143,8 @@ Swiss-NIS-Calculator/
 | Framework | .NET 8.0 |
 | UI | Avalonia UI 11.x |
 | Architecture | MVVM (CommunityToolkit.Mvvm) |
+| Database | SQLite (Dapper) |
 | PDF Export | QuestPDF |
-| Data Format | JSON |
 
 ## Documentation
 

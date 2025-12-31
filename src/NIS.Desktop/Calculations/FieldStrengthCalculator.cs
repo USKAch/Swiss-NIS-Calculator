@@ -12,10 +12,9 @@ namespace NIS.Desktop.Calculations;
 public class FieldStrengthCalculator
 {
     /// <summary>
-    /// Ground reflection factor (Bodenreflexionsfaktor kr).
-    /// Standard value used in Swiss NIS calculations.
+    /// Default ground reflection factor (kr).
     /// </summary>
-    private const double GroundReflectionFactor = 1.6;
+    private const double DefaultGroundReflectionFactor = 1.6;
 
     /// <summary>
     /// Free space constant for field strength calculation.
@@ -47,11 +46,15 @@ public class FieldStrengthCalculator
     {
         ArgumentNullException.ThrowIfNull(input);
 
-        if (input.DistanceMeters <= 0)
-            throw new ArgumentException("Distance must be greater than zero", nameof(input));
+        var distance = input.DistanceMeters <= 0 ? 0.001 : input.DistanceMeters;
+        var groundReflectionFactor = input.GroundReflectionFactor > 0
+            ? input.GroundReflectionFactor
+            : DefaultGroundReflectionFactor;
 
         // Step 1: Mean power (Pm = P × AF × MF)
-        double meanPower = input.TxPowerWatts * input.ActivityFactor * input.ModulationFactor;
+        double meanPower = input.TxPowerWatts <= 0 || input.ActivityFactor <= 0 || input.ModulationFactor <= 0
+            ? 0
+            : input.TxPowerWatts * input.ActivityFactor * input.ModulationFactor;
 
         // Step 2: Cable/line attenuation
         double totalAttenuationDb = input.TotalCableLossDb + input.AdditionalLossDb;
@@ -70,9 +73,9 @@ public class FieldStrengthCalculator
 
         // Step 6: Field strength (V/m)
         // E' = kr × sqrt(30 × Pm × A × G × AG) / d
-        double fieldStrength = GroundReflectionFactor *
+        double fieldStrength = groundReflectionFactor *
             Math.Sqrt(FreeSpaceConstant * meanPower * attenuationFactor * antennaGainFactor * buildingDampingFactor)
-            / input.DistanceMeters;
+            / distance;
 
         // Step 7: Power density (W/m²) - optional reference
         // S = E² / 377
@@ -83,7 +86,7 @@ public class FieldStrengthCalculator
 
         // Safety distance: solve E' = EIGW for d
         // d = kr × sqrt(30 × Pm × A × G × AG) / EIGW
-        double safetyDistance = GroundReflectionFactor *
+        double safetyDistance = groundReflectionFactor *
             Math.Sqrt(FreeSpaceConstant * meanPower * attenuationFactor * antennaGainFactor * buildingDampingFactor)
             / nisLimit;
 
@@ -93,7 +96,7 @@ public class FieldStrengthCalculator
 
             // Input echo
             FrequencyMHz = input.FrequencyMHz,
-            DistanceMeters = input.DistanceMeters,
+            DistanceMeters = distance,
             TxPowerWatts = input.TxPowerWatts,
             ActivityFactor = input.ActivityFactor,
             ModulationFactor = input.ModulationFactor,
@@ -112,7 +115,7 @@ public class FieldStrengthCalculator
             ErpWatts = erp,
             BuildingDampingDb = input.BuildingDampingDb,
             BuildingDampingFactor = buildingDampingFactor,
-            GroundReflectionFactor = GroundReflectionFactor,
+            GroundReflectionFactor = groundReflectionFactor,
 
             // Final results
             FieldStrengthVm = fieldStrength,

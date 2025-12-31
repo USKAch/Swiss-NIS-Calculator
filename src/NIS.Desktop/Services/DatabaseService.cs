@@ -30,12 +30,6 @@ public class ProjectListItem
 /// </summary>
 public class DatabaseService : IDisposable
 {
-    /// <summary>
-    /// IDs below this threshold are reserved for factory (shipped) master data.
-    /// Project-specific items use IDs >= this value to prevent overwrites during factory imports.
-    /// </summary>
-    public const int ProjectSpecificIdStart = 1_000_000;
-
     private readonly SqliteConnection _connection;
     private static DatabaseService? _instance;
     private static readonly object _lock = new();
@@ -62,7 +56,50 @@ public class DatabaseService : IDisposable
         _connection = new SqliteConnection(connectionString);
         _connection.Open();
 
+        if (!IsSchemaCompatible())
+        {
+            ResetDatabaseSchema();
+        }
+
         InitializeDatabase();
+    }
+
+    private bool IsSchemaCompatible()
+    {
+        if (TableExists("Antennas") && !HasColumn("Antennas", "IsUserData")) return false;
+        if (TableExists("Cables") && !HasColumn("Cables", "IsUserData")) return false;
+        if (TableExists("Radios") && !HasColumn("Radios", "IsUserData")) return false;
+        if (TableExists("Okas") && !HasColumn("Okas", "IsUserData")) return false;
+        if (TableExists("Projects") && !HasColumn("Projects", "Callsign")) return false;
+        if (TableExists("Configurations") && !HasColumn("Configurations", "ModulationId")) return false;
+        return true;
+    }
+
+    private bool TableExists(string tableName)
+    {
+        var result = _connection.ExecuteScalar<string>(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name=@Name",
+            new { Name = tableName });
+        return !string.IsNullOrEmpty(result);
+    }
+
+    private bool HasColumn(string tableName, string columnName)
+    {
+        var columns = _connection.Query("PRAGMA table_info(" + tableName + ")")
+            .Select(row => (string)row.name)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        return columns.Contains(columnName);
+    }
+
+    private void ResetDatabaseSchema()
+    {
+        _connection.Execute("DROP TABLE IF EXISTS Configurations");
+        _connection.Execute("DROP TABLE IF EXISTS Projects");
+        _connection.Execute("DROP TABLE IF EXISTS Antennas");
+        _connection.Execute("DROP TABLE IF EXISTS Cables");
+        _connection.Execute("DROP TABLE IF EXISTS Radios");
+        _connection.Execute("DROP TABLE IF EXISTS Okas");
+        _connection.Execute("DROP TABLE IF EXISTS Modulations");
     }
 
     private void InitializeDatabase()
@@ -76,7 +113,7 @@ public class DatabaseService : IDisposable
                 IsHorizontallyPolarized INTEGER NOT NULL DEFAULT 1,
                 IsRotatable INTEGER NOT NULL DEFAULT 0,
                 HorizontalAngleDegrees REAL NOT NULL DEFAULT 360,
-                IsProjectSpecific INTEGER NOT NULL DEFAULT 0,
+                IsUserData INTEGER NOT NULL DEFAULT 0,
                 BandsJson TEXT NOT NULL DEFAULT '[]',
                 UNIQUE(Manufacturer, Model)
             );
@@ -84,7 +121,7 @@ public class DatabaseService : IDisposable
             CREATE TABLE IF NOT EXISTS Cables (
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
                 Name TEXT NOT NULL UNIQUE,
-                IsProjectSpecific INTEGER NOT NULL DEFAULT 0,
+                IsUserData INTEGER NOT NULL DEFAULT 0,
                 AttenuationsJson TEXT NOT NULL DEFAULT '{}'
             );
 
@@ -93,7 +130,7 @@ public class DatabaseService : IDisposable
                 Manufacturer TEXT NOT NULL,
                 Model TEXT NOT NULL,
                 MaxPowerWatts REAL NOT NULL DEFAULT 100,
-                IsProjectSpecific INTEGER NOT NULL DEFAULT 0,
+                IsUserData INTEGER NOT NULL DEFAULT 0,
                 UNIQUE(Manufacturer, Model)
             );
 
@@ -101,13 +138,22 @@ public class DatabaseService : IDisposable
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
                 Name TEXT NOT NULL UNIQUE,
                 DefaultDistanceMeters REAL NOT NULL DEFAULT 10,
-                DefaultDampingDb REAL NOT NULL DEFAULT 0
+                DefaultDampingDb REAL NOT NULL DEFAULT 0,
+                IsUserData INTEGER NOT NULL DEFAULT 1
+            );
+
+            CREATE TABLE IF NOT EXISTS Modulations (
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                Name TEXT NOT NULL UNIQUE,
+                Factor REAL NOT NULL,
+                IsUserData INTEGER NOT NULL DEFAULT 0
             );
 
             CREATE TABLE IF NOT EXISTS Projects (
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
                 Name TEXT NOT NULL,
                 OperatorName TEXT,
+                Callsign TEXT,
                 Address TEXT,
                 Location TEXT,
                 CreatedAt TEXT NOT NULL,
@@ -129,10 +175,7 @@ public class DatabaseService : IDisposable
                 AdditionalLossDescription TEXT,
                 AntennaId INTEGER,
                 HeightMeters REAL NOT NULL DEFAULT 10,
-                IsHorizontallyRotatable INTEGER NOT NULL DEFAULT 1,
-                HorizontalAngleDegrees REAL NOT NULL DEFAULT 360,
-                IsVerticallyRotatable INTEGER NOT NULL DEFAULT 0,
-                ModulationFactor REAL NOT NULL DEFAULT 0.4,
+                ModulationId INTEGER,
                 ActivityFactor REAL NOT NULL DEFAULT 0.5,
                 OkaId INTEGER,
                 OkaDistanceMeters REAL NOT NULL DEFAULT 10,
@@ -142,38 +185,42 @@ public class DatabaseService : IDisposable
                 FOREIGN KEY (LinearId) REFERENCES Radios(Id) ON DELETE SET NULL,
                 FOREIGN KEY (CableId) REFERENCES Cables(Id) ON DELETE SET NULL,
                 FOREIGN KEY (AntennaId) REFERENCES Antennas(Id) ON DELETE SET NULL,
+                FOREIGN KEY (ModulationId) REFERENCES Modulations(Id) ON DELETE SET NULL,
                 FOREIGN KEY (OkaId) REFERENCES Okas(Id) ON DELETE SET NULL
-            );
-
-            CREATE TABLE IF NOT EXISTS SchemaVersion (
-                Version INTEGER PRIMARY KEY
             );
         ");
 
-        // Migrate old databases that don't have OkaId column
-        EnsureConfigurationsSchema();
+        EnsureDefaultModulations();
 
-        // Auto-import factory data if database is empty
+        // Auto-import bundled factory data if database is empty
         if (GetAllAntennas().Count == 0)
         {
-            ImportDatabase(AppPaths.DataFolder);
+            ImportFactoryDataFromBundled();
         }
     }
 
-    private void EnsureConfigurationsSchema()
+    private void EnsureDefaultModulations()
     {
-        var columns = _connection.Query("PRAGMA table_info(Configurations)")
-            .Select(row => (string)row.name)
-            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var existing = GetAllModulations();
+        if (existing.Count > 0)
+        {
+            return;
+        }
 
-        if (columns.Count == 0) return; // Table doesn't exist yet
+        InsertModulation(new Modulation { Name = "SSB", Factor = 0.2, IsUserData = false });
+        InsertModulation(new Modulation { Name = "CW", Factor = 0.4, IsUserData = false });
+        InsertModulation(new Modulation { Name = "FM", Factor = 1.0, IsUserData = false });
+    }
 
-        if (!columns.Contains("OkaId"))
-            _connection.Execute("ALTER TABLE Configurations ADD COLUMN OkaId INTEGER");
-        if (!columns.Contains("OkaDistanceMeters"))
-            _connection.Execute("ALTER TABLE Configurations ADD COLUMN OkaDistanceMeters REAL NOT NULL DEFAULT 10");
-        if (!columns.Contains("OkaBuildingDampingDb"))
-            _connection.Execute("ALTER TABLE Configurations ADD COLUMN OkaBuildingDampingDb REAL NOT NULL DEFAULT 0");
+    private void ImportFactoryDataFromBundled()
+    {
+        var folderPath = AppPaths.BundledDataFolder;
+        if (!Directory.Exists(folderPath))
+        {
+            return;
+        }
+
+        ImportFactoryDataFromFolder(folderPath);
     }
 
     #region Antenna Operations
@@ -196,19 +243,19 @@ public class DatabaseService : IDisposable
     public void SaveAntenna(Antenna antenna, bool isAdminMode = false)
     {
         var existing = GetAntenna(antenna.Manufacturer, antenna.Model);
-        var isProjectSpecific = isAdminMode ? false : (existing?.IsProjectSpecific ?? true);
+        var isUserData = existing?.IsUserData ?? !isAdminMode;
 
         if (existing != null)
         {
-            UpdateAntenna(antenna, isProjectSpecific);
+            UpdateAntenna(antenna, isUserData);
         }
         else
         {
-            InsertAntenna(antenna, isProjectSpecific);
+            InsertAntenna(antenna, isUserData);
         }
     }
 
-    private void InsertAntenna(Antenna antenna, bool isProjectSpecific)
+    private void InsertAntenna(Antenna antenna, bool isUserData)
     {
         var bandsJson = JsonSerializer.Serialize(antenna.Bands.Select(b => new BandData
         {
@@ -217,31 +264,23 @@ public class DatabaseService : IDisposable
             Pattern = b.Pattern
         }), JsonOptions);
 
-        // Project-specific items get IDs >= ProjectSpecificIdStart to avoid factory import conflicts
-        int? explicitId = isProjectSpecific ? GetNextProjectAntennaId() : null;
-
-        var sql = isProjectSpecific
-            ? @"INSERT INTO Antennas (Id, Manufacturer, Model, AntennaType, IsHorizontallyPolarized, IsRotatable, HorizontalAngleDegrees, IsProjectSpecific, BandsJson)
-               VALUES (@Id, @Manufacturer, @Model, @AntennaType, @IsHorizontallyPolarized, @IsRotatable, @HorizontalAngleDegrees, @IsProjectSpecific, @BandsJson)"
-            : @"INSERT INTO Antennas (Manufacturer, Model, AntennaType, IsHorizontallyPolarized, IsRotatable, HorizontalAngleDegrees, IsProjectSpecific, BandsJson)
-               VALUES (@Manufacturer, @Model, @AntennaType, @IsHorizontallyPolarized, @IsRotatable, @HorizontalAngleDegrees, @IsProjectSpecific, @BandsJson)";
-
-        _connection.Execute(sql,
+        _connection.Execute(
+            @"INSERT INTO Antennas (Manufacturer, Model, AntennaType, IsHorizontallyPolarized, IsRotatable, HorizontalAngleDegrees, IsUserData, BandsJson)
+              VALUES (@Manufacturer, @Model, @AntennaType, @IsHorizontallyPolarized, @IsRotatable, @HorizontalAngleDegrees, @IsUserData, @BandsJson)",
             new
             {
-                Id = explicitId,
                 antenna.Manufacturer,
                 antenna.Model,
                 antenna.AntennaType,
                 IsHorizontallyPolarized = antenna.IsHorizontallyPolarized ? 1 : 0,
                 IsRotatable = antenna.IsRotatable ? 1 : 0,
                 antenna.HorizontalAngleDegrees,
-                IsProjectSpecific = isProjectSpecific ? 1 : 0,
+                IsUserData = isUserData ? 1 : 0,
                 BandsJson = bandsJson
             });
     }
 
-    private void UpdateAntenna(Antenna antenna, bool isProjectSpecific)
+    private void UpdateAntenna(Antenna antenna, bool isUserData)
     {
         var bandsJson = JsonSerializer.Serialize(antenna.Bands.Select(b => new BandData
         {
@@ -256,7 +295,7 @@ public class DatabaseService : IDisposable
                 IsHorizontallyPolarized = @IsHorizontallyPolarized,
                 IsRotatable = @IsRotatable,
                 HorizontalAngleDegrees = @HorizontalAngleDegrees,
-                IsProjectSpecific = @IsProjectSpecific,
+                IsUserData = @IsUserData,
                 BandsJson = @BandsJson
             WHERE Manufacturer = @Manufacturer AND Model = @Model",
             new
@@ -267,7 +306,7 @@ public class DatabaseService : IDisposable
                 IsHorizontallyPolarized = antenna.IsHorizontallyPolarized ? 1 : 0,
                 IsRotatable = antenna.IsRotatable ? 1 : 0,
                 antenna.HorizontalAngleDegrees,
-                IsProjectSpecific = isProjectSpecific ? 1 : 0,
+                IsUserData = isUserData ? 1 : 0,
                 BandsJson = bandsJson
             });
     }
@@ -300,17 +339,6 @@ public class DatabaseService : IDisposable
         return row != null ? ToAntenna(row) : null;
     }
 
-    /// <summary>
-    /// Gets the next available ID for project-specific antennas (>= ProjectSpecificIdStart).
-    /// </summary>
-    private int GetNextProjectAntennaId()
-    {
-        var maxId = _connection.ExecuteScalar<int?>(
-            "SELECT MAX(Id) FROM Antennas WHERE Id >= @Threshold",
-            new { Threshold = ProjectSpecificIdStart });
-        return maxId.HasValue ? maxId.Value + 1 : ProjectSpecificIdStart;
-    }
-
     private Antenna ToAntenna(AntennaRow row)
     {
         var bands = JsonSerializer.Deserialize<List<BandData>>(row.BandsJson, JsonOptions) ?? new List<BandData>();
@@ -322,7 +350,7 @@ public class DatabaseService : IDisposable
             IsHorizontallyPolarized = row.IsHorizontallyPolarized == 1,
             IsRotatable = row.IsRotatable == 1,
             HorizontalAngleDegrees = row.HorizontalAngleDegrees,
-            IsProjectSpecific = row.IsProjectSpecific == 1,
+            IsUserData = row.IsUserData == 1,
             Bands = bands.Select(b => new AntennaBand
             {
                 FrequencyMHz = b.FrequencyMHz,
@@ -353,54 +381,46 @@ public class DatabaseService : IDisposable
     public void SaveCable(Cable cable, bool isAdminMode = false)
     {
         var existing = GetCable(cable.Name);
-        var isProjectSpecific = isAdminMode ? false : (existing?.IsProjectSpecific ?? true);
+        var isUserData = existing?.IsUserData ?? !isAdminMode;
 
         if (existing != null)
         {
-            UpdateCable(cable, isProjectSpecific);
+            UpdateCable(cable, isUserData);
         }
         else
         {
-            InsertCable(cable, isProjectSpecific);
+            InsertCable(cable, isUserData);
         }
     }
 
-    private void InsertCable(Cable cable, bool isProjectSpecific)
+    private void InsertCable(Cable cable, bool isUserData)
     {
         var attenuationsJson = JsonSerializer.Serialize(cable.AttenuationPer100m, JsonOptions);
 
-        // Project-specific items get IDs >= ProjectSpecificIdStart to avoid factory import conflicts
-        int? explicitId = isProjectSpecific ? GetNextProjectCableId() : null;
-
-        var sql = isProjectSpecific
-            ? @"INSERT INTO Cables (Id, Name, IsProjectSpecific, AttenuationsJson)
-               VALUES (@Id, @Name, @IsProjectSpecific, @AttenuationsJson)"
-            : @"INSERT INTO Cables (Name, IsProjectSpecific, AttenuationsJson)
-               VALUES (@Name, @IsProjectSpecific, @AttenuationsJson)";
-
-        _connection.Execute(sql,
+        _connection.Execute(
+            @"INSERT INTO Cables (Name, IsUserData, AttenuationsJson)
+              VALUES (@Name, @IsUserData, @AttenuationsJson)",
             new
             {
-                Id = explicitId,
                 cable.Name,
-                IsProjectSpecific = isProjectSpecific ? 1 : 0,
+                IsUserData = isUserData ? 1 : 0,
                 AttenuationsJson = attenuationsJson
             });
     }
 
-    private void UpdateCable(Cable cable, bool isProjectSpecific)
+    private void UpdateCable(Cable cable, bool isUserData)
     {
         var attenuationsJson = JsonSerializer.Serialize(cable.AttenuationPer100m, JsonOptions);
 
         _connection.Execute(@"
             UPDATE Cables SET
-                IsProjectSpecific = @IsProjectSpecific,
+                IsUserData = @IsUserData,
                 AttenuationsJson = @AttenuationsJson
             WHERE Name = @Name",
             new
             {
                 cable.Name,
-                IsProjectSpecific = isProjectSpecific ? 1 : 0,
+                IsUserData = isUserData ? 1 : 0,
                 AttenuationsJson = attenuationsJson
             });
     }
@@ -429,17 +449,6 @@ public class DatabaseService : IDisposable
         return row != null ? ToCable(row) : null;
     }
 
-    /// <summary>
-    /// Gets the next available ID for project-specific cables (>= ProjectSpecificIdStart).
-    /// </summary>
-    private int GetNextProjectCableId()
-    {
-        var maxId = _connection.ExecuteScalar<int?>(
-            "SELECT MAX(Id) FROM Cables WHERE Id >= @Threshold",
-            new { Threshold = ProjectSpecificIdStart });
-        return maxId.HasValue ? maxId.Value + 1 : ProjectSpecificIdStart;
-    }
-
     private Cable ToCable(CableRow row)
     {
         var attenuations = JsonSerializer.Deserialize<Dictionary<string, double>>(row.AttenuationsJson, JsonOptions)
@@ -447,7 +456,7 @@ public class DatabaseService : IDisposable
         return new Cable
         {
             Name = row.Name,
-            IsProjectSpecific = row.IsProjectSpecific == 1,
+            IsUserData = row.IsUserData == 1,
             AttenuationPer100m = attenuations
         };
     }
@@ -474,53 +483,45 @@ public class DatabaseService : IDisposable
     public void SaveRadio(Radio radio, bool isAdminMode = false)
     {
         var existing = GetRadio(radio.Manufacturer, radio.Model);
-        var isProjectSpecific = isAdminMode ? false : (existing?.IsProjectSpecific ?? true);
+        var isUserData = existing?.IsUserData ?? !isAdminMode;
 
         if (existing != null)
         {
-            UpdateRadio(radio, isProjectSpecific);
+            UpdateRadio(radio, isUserData);
         }
         else
         {
-            InsertRadio(radio, isProjectSpecific);
+            InsertRadio(radio, isUserData);
         }
     }
 
-    private void InsertRadio(Radio radio, bool isProjectSpecific)
+    private void InsertRadio(Radio radio, bool isUserData)
     {
-        // Project-specific items get IDs >= ProjectSpecificIdStart to avoid factory import conflicts
-        int? explicitId = isProjectSpecific ? GetNextProjectRadioId() : null;
-
-        var sql = isProjectSpecific
-            ? @"INSERT INTO Radios (Id, Manufacturer, Model, MaxPowerWatts, IsProjectSpecific)
-               VALUES (@Id, @Manufacturer, @Model, @MaxPowerWatts, @IsProjectSpecific)"
-            : @"INSERT INTO Radios (Manufacturer, Model, MaxPowerWatts, IsProjectSpecific)
-               VALUES (@Manufacturer, @Model, @MaxPowerWatts, @IsProjectSpecific)";
-
-        _connection.Execute(sql,
+        _connection.Execute(
+            @"INSERT INTO Radios (Manufacturer, Model, MaxPowerWatts, IsUserData)
+              VALUES (@Manufacturer, @Model, @MaxPowerWatts, @IsUserData)",
             new
             {
-                Id = explicitId,
                 radio.Manufacturer,
                 radio.Model,
                 radio.MaxPowerWatts,
-                IsProjectSpecific = isProjectSpecific ? 1 : 0
+                IsUserData = isUserData ? 1 : 0
             });
     }
 
-    private void UpdateRadio(Radio radio, bool isProjectSpecific)
+    private void UpdateRadio(Radio radio, bool isUserData)
     {
         _connection.Execute(@"
             UPDATE Radios SET
                 MaxPowerWatts = @MaxPowerWatts,
-                IsProjectSpecific = @IsProjectSpecific
+                IsUserData = @IsUserData
             WHERE Manufacturer = @Manufacturer AND Model = @Model",
             new
             {
                 radio.Manufacturer,
                 radio.Model,
                 radio.MaxPowerWatts,
-                IsProjectSpecific = isProjectSpecific ? 1 : 0
+                IsUserData = isUserData ? 1 : 0
             });
     }
 
@@ -552,17 +553,6 @@ public class DatabaseService : IDisposable
         return row != null ? ToRadio(row) : null;
     }
 
-    /// <summary>
-    /// Gets the next available ID for project-specific radios (>= ProjectSpecificIdStart).
-    /// </summary>
-    private int GetNextProjectRadioId()
-    {
-        var maxId = _connection.ExecuteScalar<int?>(
-            "SELECT MAX(Id) FROM Radios WHERE Id >= @Threshold",
-            new { Threshold = ProjectSpecificIdStart });
-        return maxId.HasValue ? maxId.Value + 1 : ProjectSpecificIdStart;
-    }
-
     private Radio ToRadio(RadioRow row)
     {
         return new Radio
@@ -570,7 +560,7 @@ public class DatabaseService : IDisposable
             Manufacturer = row.Manufacturer,
             Model = row.Model,
             MaxPowerWatts = row.MaxPowerWatts,
-            IsProjectSpecific = row.IsProjectSpecific == 1
+            IsUserData = row.IsUserData == 1
         };
     }
 
@@ -581,20 +571,20 @@ public class DatabaseService : IDisposable
     public List<Oka> GetAllOkas()
     {
         return _connection.Query<Oka>(
-            "SELECT Id, Name, DefaultDistanceMeters, DefaultDampingDb FROM Okas ORDER BY Name").ToList();
+            "SELECT Id, Name, DefaultDistanceMeters, DefaultDampingDb, IsUserData FROM Okas ORDER BY Name").ToList();
     }
 
     public Oka? GetOka(string name)
     {
         return _connection.QueryFirstOrDefault<Oka>(
-            "SELECT Id, Name, DefaultDistanceMeters, DefaultDampingDb FROM Okas WHERE Name = @Name",
+            "SELECT Id, Name, DefaultDistanceMeters, DefaultDampingDb, IsUserData FROM Okas WHERE Name = @Name",
             new { Name = name });
     }
 
     public Oka? GetOkaById(int id)
     {
         return _connection.QueryFirstOrDefault<Oka>(
-            "SELECT Id, Name, DefaultDistanceMeters, DefaultDampingDb FROM Okas WHERE Id = @Id",
+            "SELECT Id, Name, DefaultDistanceMeters, DefaultDampingDb, IsUserData FROM Okas WHERE Id = @Id",
             new { Id = id });
     }
 
@@ -604,24 +594,26 @@ public class DatabaseService : IDisposable
             "SELECT Id FROM Okas WHERE Name = @Name", new { Name = name });
     }
 
-    public void SaveOka(Oka oka)
+    public void SaveOka(Oka oka, bool isAdminMode = false)
     {
         var existing = GetOka(oka.Name);
+        var isUserData = existing?.IsUserData ?? !isAdminMode;
         if (existing != null)
         {
             _connection.Execute(@"
                 UPDATE Okas SET
                     DefaultDistanceMeters = @DefaultDistanceMeters,
-                    DefaultDampingDb = @DefaultDampingDb
+                    DefaultDampingDb = @DefaultDampingDb,
+                    IsUserData = @IsUserData
                 WHERE Name = @Name",
-                new { oka.Name, oka.DefaultDistanceMeters, oka.DefaultDampingDb });
+                new { oka.Name, oka.DefaultDistanceMeters, oka.DefaultDampingDb, IsUserData = isUserData ? 1 : 0 });
         }
         else
         {
             _connection.Execute(@"
-                INSERT INTO Okas (Name, DefaultDistanceMeters, DefaultDampingDb)
-                VALUES (@Name, @DefaultDistanceMeters, @DefaultDampingDb)",
-                new { oka.Name, oka.DefaultDistanceMeters, oka.DefaultDampingDb });
+                INSERT INTO Okas (Name, DefaultDistanceMeters, DefaultDampingDb, IsUserData)
+                VALUES (@Name, @DefaultDistanceMeters, @DefaultDampingDb, @IsUserData)",
+                new { oka.Name, oka.DefaultDistanceMeters, oka.DefaultDampingDb, IsUserData = isUserData ? 1 : 0 });
         }
     }
 
@@ -638,33 +630,103 @@ public class DatabaseService : IDisposable
 
     #endregion
 
+    #region Modulation Operations
+
+    public List<Modulation> GetAllModulations()
+    {
+        return _connection.Query<Modulation>(
+            "SELECT Id, Name, Factor, IsUserData FROM Modulations ORDER BY Name").ToList();
+    }
+
+    public Modulation? GetModulationById(int id)
+    {
+        return _connection.QueryFirstOrDefault<Modulation>(
+            "SELECT Id, Name, Factor, IsUserData FROM Modulations WHERE Id = @Id",
+            new { Id = id });
+    }
+
+    public Modulation? GetModulationByName(string name)
+    {
+        return _connection.QueryFirstOrDefault<Modulation>(
+            "SELECT Id, Name, Factor, IsUserData FROM Modulations WHERE Name = @Name",
+            new { Name = name });
+    }
+
+    public int? GetModulationId(string name)
+    {
+        return _connection.QueryFirstOrDefault<int?>(
+            "SELECT Id FROM Modulations WHERE Name = @Name", new { Name = name });
+    }
+
+    public void SaveModulation(Modulation modulation, bool isAdminMode = false)
+    {
+        var existing = GetModulationByName(modulation.Name);
+        var isUserData = existing?.IsUserData ?? !isAdminMode;
+
+        if (existing != null)
+        {
+            _connection.Execute(@"
+                UPDATE Modulations SET
+                    Factor = @Factor,
+                    IsUserData = @IsUserData
+                WHERE Name = @Name",
+                new
+                {
+                    modulation.Name,
+                    modulation.Factor,
+                    IsUserData = isUserData ? 1 : 0
+                });
+        }
+        else
+        {
+            InsertModulation(new Modulation
+            {
+                Name = modulation.Name,
+                Factor = modulation.Factor,
+                IsUserData = isUserData
+            });
+        }
+    }
+
+    private void InsertModulation(Modulation modulation)
+    {
+        _connection.Execute(@"
+            INSERT INTO Modulations (Name, Factor, IsUserData)
+            VALUES (@Name, @Factor, @IsUserData)",
+            new
+            {
+                modulation.Name,
+                modulation.Factor,
+                IsUserData = modulation.IsUserData ? 1 : 0
+            });
+    }
+
+    public void DeleteModulation(string name)
+    {
+        _connection.Execute("DELETE FROM Modulations WHERE Name = @Name", new { Name = name });
+    }
+
+    #endregion
+
     #region Project Operations
 
     public int CreateProject(Project project)
     {
         var now = DateTime.UtcNow.ToString("o");
         var id = _connection.ExecuteScalar<int>(@"
-            INSERT INTO Projects (Name, OperatorName, Address, Location, CreatedAt, ModifiedAt)
-            VALUES (@Name, @OperatorName, @Address, @Location, @CreatedAt, @ModifiedAt);
+            INSERT INTO Projects (Name, OperatorName, Callsign, Address, Location, CreatedAt, ModifiedAt)
+            VALUES (@Name, @OperatorName, @Callsign, @Address, @Location, @CreatedAt, @ModifiedAt);
             SELECT last_insert_rowid();",
             new
             {
                 Name = string.IsNullOrWhiteSpace(project.Name) ? "New Project" : project.Name,
                 OperatorName = project.Operator,
+                project.Callsign,
                 project.Address,
                 project.Location,
                 CreatedAt = now,
                 ModifiedAt = now
             });
-
-        // Save/update OKAs from the project
-        foreach (var oka in project.Okas)
-        {
-            if (!OkaExists(oka.Name))
-            {
-                SaveOka(oka);
-            }
-        }
 
         // Save configurations
         int configNum = 1;
@@ -686,6 +748,7 @@ public class DatabaseService : IDisposable
                 UPDATE Projects SET
                     Name = @Name,
                     OperatorName = @OperatorName,
+                    Callsign = @Callsign,
                     Address = @Address,
                     Location = @Location,
                     ModifiedAt = @ModifiedAt
@@ -695,20 +758,12 @@ public class DatabaseService : IDisposable
                     Id = projectId,
                     Name = string.IsNullOrWhiteSpace(project.Name) ? "Project" : project.Name,
                     OperatorName = project.Operator,
+                    project.Callsign,
                     project.Address,
                     project.Location,
                     ModifiedAt = now
                 },
                 transaction);
-
-            // Save/update OKAs from the project
-            foreach (var oka in project.Okas)
-            {
-                if (!OkaExists(oka.Name))
-                {
-                    SaveOka(oka);
-                }
-            }
 
             // Delete and recreate configurations
             _connection.Execute("DELETE FROM Configurations WHERE ProjectId = @ProjectId",
@@ -738,6 +793,7 @@ public class DatabaseService : IDisposable
         {
             Name = row.Name,
             Operator = row.OperatorName ?? "",
+            Callsign = row.Callsign ?? "",
             Address = row.Address ?? "",
             Location = row.Location ?? ""
         };
@@ -746,20 +802,6 @@ public class DatabaseService : IDisposable
         var configRows = _connection.Query<ConfigurationRow>(
             "SELECT * FROM Configurations WHERE ProjectId = @ProjectId ORDER BY ConfigNumber", new { ProjectId = projectId });
         project.AntennaConfigurations = configRows.Select(ToConfiguration).ToList();
-
-        // Load OKAs referenced by this project configurations
-        var okaIds = configRows
-            .Where(c => c.OkaId.HasValue)
-            .Select(c => c.OkaId!.Value)
-            .Distinct()
-            .ToList();
-
-        if (okaIds.Count > 0)
-        {
-            project.Okas = _connection.Query<Oka>(
-                "SELECT Id, Name, DefaultDistanceMeters, DefaultDampingDb FROM Okas WHERE Id IN @Ids",
-                new { Ids = okaIds }).ToList();
-        }
 
         return project;
     }
@@ -778,13 +820,24 @@ public class DatabaseService : IDisposable
         _connection.Execute("DELETE FROM Projects");
     }
 
+    public void ClearAllData()
+    {
+        _connection.Execute("DELETE FROM Configurations");
+        _connection.Execute("DELETE FROM Projects");
+        _connection.Execute("DELETE FROM Antennas");
+        _connection.Execute("DELETE FROM Cables");
+        _connection.Execute("DELETE FROM Radios");
+        _connection.Execute("DELETE FROM Okas");
+        _connection.Execute("DELETE FROM Modulations");
+    }
+
     /// <summary>
     /// Imports the demo project from the bundled sample file.
     /// Returns the project ID if successful, 0 if demo not found.
     /// </summary>
     public int ImportDemoProject()
     {
-        var demoPath = System.IO.Path.Combine(AppPaths.DataFolder, "samples", "demo.nisproj");
+        var demoPath = System.IO.Path.Combine(AppPaths.BundledDataFolder, "samples", "demo.nisproj");
         if (!System.IO.File.Exists(demoPath)) return 0;
 
         try
@@ -839,6 +892,7 @@ public class DatabaseService : IDisposable
         var linearId = config.Linear != null ? GetRadioId(config.Linear.Manufacturer, config.Linear.Model) : null;
         var cableId = GetCableId(config.Cable.Type);
         var antennaId = GetAntennaId(config.Antenna.Manufacturer, config.Antenna.Model);
+        var modulationId = GetModulationId(config.Modulation);
         var okaId = EnsureOkaForConfig(config);
 
         _connection.Execute(@"
@@ -847,16 +901,14 @@ public class DatabaseService : IDisposable
                 RadioId, HasLinear, LinearId,
                 CableId, CableLengthMeters, AdditionalLossDb, AdditionalLossDescription,
                 AntennaId, HeightMeters,
-                IsHorizontallyRotatable, HorizontalAngleDegrees, IsVerticallyRotatable,
-                ModulationFactor, ActivityFactor,
+                ModulationId, ActivityFactor,
                 OkaId, OkaDistanceMeters, OkaBuildingDampingDb
             ) VALUES (
                 @ProjectId, @ConfigNumber, @Name, @PowerWatts,
                 @RadioId, @HasLinear, @LinearId,
                 @CableId, @CableLengthMeters, @AdditionalLossDb, @AdditionalLossDescription,
                 @AntennaId, @HeightMeters,
-                @IsHorizontallyRotatable, @HorizontalAngleDegrees, @IsVerticallyRotatable,
-                @ModulationFactor, @ActivityFactor,
+                @ModulationId, @ActivityFactor,
                 @OkaId, @OkaDistanceMeters, @OkaBuildingDampingDb
             )",
             new
@@ -874,10 +926,7 @@ public class DatabaseService : IDisposable
                 AdditionalLossDescription = config.Cable.AdditionalLossDescription,
                 AntennaId = antennaId,
                 HeightMeters = config.Antenna.HeightMeters,
-                IsHorizontallyRotatable = config.Antenna.IsHorizontallyRotatable ? 1 : 0,
-                HorizontalAngleDegrees = config.Antenna.HorizontalAngleDegrees,
-                IsVerticallyRotatable = config.Antenna.IsVerticallyRotatable ? 1 : 0,
-                config.ModulationFactor,
+                ModulationId = modulationId,
                 config.ActivityFactor,
                 OkaId = okaId,
                 config.OkaDistanceMeters,
@@ -916,6 +965,7 @@ public class DatabaseService : IDisposable
         var linear = row.HasLinear == 1 && row.LinearId.HasValue ? GetRadioById(row.LinearId.Value) : null;
         var cable = row.CableId.HasValue ? GetCableById(row.CableId.Value) : null;
         var antenna = row.AntennaId.HasValue ? GetAntennaById(row.AntennaId.Value) : null;
+        var modulation = row.ModulationId.HasValue ? GetModulationById(row.ModulationId.Value) : null;
         var oka = row.OkaId.HasValue ? GetOkaById(row.OkaId.Value) : null;
 
         return new AntennaConfiguration
@@ -943,12 +993,9 @@ public class DatabaseService : IDisposable
             {
                 Manufacturer = antenna?.Manufacturer ?? "",
                 Model = antenna?.Model ?? "",
-                HeightMeters = row.HeightMeters,
-                IsHorizontallyRotatable = row.IsHorizontallyRotatable == 1,
-                HorizontalAngleDegrees = row.HorizontalAngleDegrees,
-                IsVerticallyRotatable = row.IsVerticallyRotatable == 1
+                HeightMeters = row.HeightMeters
             },
-            ModulationFactor = row.ModulationFactor,
+            Modulation = modulation?.Name ?? "CW",
             ActivityFactor = row.ActivityFactor,
             OkaName = oka?.Name ?? "",
             OkaDistanceMeters = row.OkaDistanceMeters,
@@ -960,7 +1007,7 @@ public class DatabaseService : IDisposable
 
     #region Export/Import Database (Factory Mode)
 
-    public void ExportDatabase(string folderPath)
+    public void ExportFactoryData(string filePath)
     {
         var options = new JsonSerializerOptions
         {
@@ -968,23 +1015,21 @@ public class DatabaseService : IDisposable
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
 
-        // Export antennas
-        var antennas = GetAllAntennas();
-        var antennasJson = JsonSerializer.Serialize(antennas, options);
-        File.WriteAllText(Path.Combine(folderPath, "antennas.json"), antennasJson);
+        var export = new UserDataExport
+        {
+            ExportDate = DateTime.UtcNow.ToString("o"),
+            Projects = GetAllProjects(),
+            Okas = GetAllOkas(),
+            UserAntennas = GetAllAntennas(),
+            UserCables = GetAllCables(),
+            UserRadios = GetAllRadios()
+        };
 
-        // Export cables
-        var cables = GetAllCables();
-        var cablesJson = JsonSerializer.Serialize(cables, options);
-        File.WriteAllText(Path.Combine(folderPath, "cables.json"), cablesJson);
-
-        // Export radios
-        var radios = GetAllRadios();
-        var radiosJson = JsonSerializer.Serialize(radios, options);
-        File.WriteAllText(Path.Combine(folderPath, "radios.json"), radiosJson);
+        var json = JsonSerializer.Serialize(export, options);
+        File.WriteAllText(filePath, json);
     }
 
-    public void ImportDatabase(string folderPath)
+    public void ImportFactoryData(string filePath)
     {
         var options = new JsonSerializerOptions
         {
@@ -992,10 +1037,23 @@ public class DatabaseService : IDisposable
             PropertyNameCaseInsensitive = true
         };
 
-        // Only delete factory data (ID < ProjectSpecificIdStart), preserve project-specific items
-        _connection.Execute("DELETE FROM Antennas WHERE Id < @Threshold", new { Threshold = ProjectSpecificIdStart });
-        _connection.Execute("DELETE FROM Cables WHERE Id < @Threshold", new { Threshold = ProjectSpecificIdStart });
-        _connection.Execute("DELETE FROM Radios WHERE Id < @Threshold", new { Threshold = ProjectSpecificIdStart });
+        var json = File.ReadAllText(filePath);
+        var import = JsonSerializer.Deserialize<UserDataExport>(json, options);
+        if (import == null) return;
+
+        ClearAllData();
+        EnsureDefaultModulations();
+
+        ImportUserDataInternal(import, forceIsUserData: false);
+    }
+
+    private void ImportFactoryDataFromFolder(string folderPath)
+    {
+        var options = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            PropertyNameCaseInsensitive = true
+        };
 
         // Import antennas (consolidate multiband entries with same manufacturer/model)
         var antennasFile = Path.Combine(folderPath, "antennas.json");
@@ -1005,7 +1063,6 @@ public class DatabaseService : IDisposable
             var wrapper = JsonSerializer.Deserialize<AntennaFileWrapper>(json, options);
             var rawAntennas = wrapper?.Antennas ?? new();
 
-            // Group by manufacturer/model and merge bands
             var consolidated = rawAntennas
                 .GroupBy(a => (a.Manufacturer, a.Model))
                 .Select(g =>
@@ -1019,9 +1076,8 @@ public class DatabaseService : IDisposable
                         IsRotatable = first.IsRotatable,
                         IsHorizontallyPolarized = first.IsHorizontallyPolarized,
                         HorizontalAngleDegrees = first.HorizontalAngleDegrees,
-                        IsProjectSpecific = first.IsProjectSpecific
+                        IsUserData = false
                     };
-                    // Merge all bands from all entries
                     foreach (var ant in g)
                     {
                         merged.Bands.AddRange(ant.Bands);
@@ -1031,7 +1087,7 @@ public class DatabaseService : IDisposable
 
             foreach (var antenna in consolidated)
             {
-                InsertAntenna(antenna, antenna.IsProjectSpecific);
+                InsertAntenna(antenna, isUserData: false);
             }
         }
 
@@ -1044,7 +1100,8 @@ public class DatabaseService : IDisposable
             var cables = wrapper?.Cables ?? new();
             foreach (var cable in cables)
             {
-                InsertCable(cable, cable.IsProjectSpecific);
+                cable.IsUserData = false;
+                InsertCable(cable, isUserData: false);
             }
         }
 
@@ -1057,7 +1114,8 @@ public class DatabaseService : IDisposable
             var radios = wrapper?.Radios ?? new();
             foreach (var radio in radios)
             {
-                InsertRadio(radio, radio.IsProjectSpecific);
+                radio.IsUserData = false;
+                InsertRadio(radio, isUserData: false);
             }
         }
     }
@@ -1086,9 +1144,9 @@ public class DatabaseService : IDisposable
             ExportDate = DateTime.UtcNow.ToString("o"),
             Projects = GetAllProjects(),
             Okas = GetAllOkas(),
-            UserAntennas = GetAllAntennas().Where(a => a.IsProjectSpecific).ToList(),
-            UserCables = GetAllCables().Where(c => c.IsProjectSpecific).ToList(),
-            UserRadios = GetAllRadios().Where(r => r.IsProjectSpecific).ToList()
+            UserAntennas = GetAllAntennas().Where(a => a.IsUserData).ToList(),
+            UserCables = GetAllCables().Where(c => c.IsUserData).ToList(),
+            UserRadios = GetAllRadios().Where(r => r.IsUserData).ToList()
         };
 
         var json = JsonSerializer.Serialize(export, options);
@@ -1110,37 +1168,48 @@ public class DatabaseService : IDisposable
         var import = JsonSerializer.Deserialize<UserDataExport>(json, options);
         if (import == null) return;
 
+        ClearAllData();
+        EnsureDefaultModulations();
+        ImportUserDataInternal(import, forceIsUserData: true);
+    }
+
+    private void ImportUserDataInternal(UserDataExport import, bool forceIsUserData)
+    {
         // Import OKAs first (projects may reference them)
         foreach (var oka in import.Okas ?? new List<Oka>())
         {
+            oka.IsUserData = forceIsUserData;
             if (!OkaExists(oka.Name))
             {
-                SaveOka(oka);
+                SaveOka(oka, isAdminMode: !forceIsUserData);
             }
         }
 
-        // Import user master data
+        // Import master data
         foreach (var antenna in import.UserAntennas ?? new List<Antenna>())
         {
+            antenna.IsUserData = forceIsUserData;
             if (!AntennaExists(antenna.Manufacturer, antenna.Model))
             {
-                InsertAntenna(antenna, isProjectSpecific: true);
+                InsertAntenna(antenna, isUserData: forceIsUserData);
             }
         }
 
         foreach (var cable in import.UserCables ?? new List<Cable>())
         {
+            cable.IsUserData = forceIsUserData;
             if (!CableExists(cable.Name))
             {
-                InsertCable(cable, isProjectSpecific: true);
+                InsertCable(cable, isUserData: forceIsUserData);
             }
         }
 
         foreach (var radio in import.UserRadios ?? new List<Radio>())
         {
+            radio.IsUserData = forceIsUserData;
             if (!RadioExists(radio.Manufacturer, radio.Model))
             {
-                InsertRadio(radio, isProjectSpecific: true);
+                InsertRadio(radio, isUserData: forceIsUserData);
             }
         }
 
@@ -1165,6 +1234,7 @@ public class DatabaseService : IDisposable
             {
                 Name = row.Name,
                 Operator = row.OperatorName ?? "",
+                Callsign = row.Callsign ?? "",
                 Address = row.Address ?? "",
                 Location = row.Location ?? ""
             };
@@ -1207,7 +1277,7 @@ public class DatabaseService : IDisposable
         public int IsHorizontallyPolarized { get; set; }
         public int IsRotatable { get; set; }
         public double HorizontalAngleDegrees { get; set; }
-        public int IsProjectSpecific { get; set; }
+        public int IsUserData { get; set; }
         public string BandsJson { get; set; } = "[]";
     }
 
@@ -1222,7 +1292,7 @@ public class DatabaseService : IDisposable
     {
         public int Id { get; set; }
         public string Name { get; set; } = "";
-        public int IsProjectSpecific { get; set; }
+        public int IsUserData { get; set; }
         public string AttenuationsJson { get; set; } = "{}";
     }
 
@@ -1232,7 +1302,7 @@ public class DatabaseService : IDisposable
         public string Manufacturer { get; set; } = "";
         public string Model { get; set; } = "";
         public double MaxPowerWatts { get; set; }
-        public int IsProjectSpecific { get; set; }
+        public int IsUserData { get; set; }
     }
 
     private class ProjectRow
@@ -1240,6 +1310,7 @@ public class DatabaseService : IDisposable
         public int Id { get; set; }
         public string Name { get; set; } = "";
         public string? OperatorName { get; set; }
+        public string? Callsign { get; set; }
         public string? Address { get; set; }
         public string? Location { get; set; }
         public string CreatedAt { get; set; } = "";
@@ -1262,10 +1333,7 @@ public class DatabaseService : IDisposable
         public string? AdditionalLossDescription { get; set; }
         public int? AntennaId { get; set; }
         public double HeightMeters { get; set; }
-        public int IsHorizontallyRotatable { get; set; }
-        public double HorizontalAngleDegrees { get; set; }
-        public int IsVerticallyRotatable { get; set; }
-        public double ModulationFactor { get; set; }
+        public int? ModulationId { get; set; }
         public double ActivityFactor { get; set; }
         public int? OkaId { get; set; }
         public double OkaDistanceMeters { get; set; }

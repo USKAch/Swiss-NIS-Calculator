@@ -17,6 +17,9 @@ public partial class ProjectInfoViewModel : ViewModelBase
     private string _operatorName = string.Empty;
 
     [ObservableProperty]
+    private string _callsign = string.Empty;
+
+    [ObservableProperty]
     private string _address = string.Empty;
 
     [ObservableProperty]
@@ -31,6 +34,7 @@ public partial class ProjectInfoViewModel : ViewModelBase
     public string TitleLabel => Strings.Instance.ProjectInfo;
     public string ProjectNameLabel => Strings.Instance.ProjectName + ":";
     public string OperatorLabel => Strings.Instance.Operator + ":";
+    public string CallsignLabel => Strings.Instance.Callsign + ":";
     public string AddressLabel => Strings.Instance.Address + ":";
     public string LocationLabel => Strings.Instance.Location + ":";
 

@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:NIS.Desktop.ViewModels"
              xmlns:loc="using:NIS.Desktop.Localization"
@@ -40,13 +40,13 @@
                                     <!-- Edit button (green) for user-created items -->
                                     <Button Command="{Binding EditAntennaCommand}"
                                             IsEnabled="{Binding SelectedAntenna, Converter={x:Static ObjectConverters.IsNotNull}}"
-                                            IsVisible="{Binding SelectedAntenna.IsProjectSpecific}"
+                                            IsVisible="{Binding SelectedAntenna.IsUserData}"
                                             Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}"
                                             Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
                                     <!-- View button (default) for supplied items -->
                                     <Button Command="{Binding EditAntennaCommand}"
                                             IsEnabled="{Binding SelectedAntenna, Converter={x:Static ObjectConverters.IsNotNull}}"
-                                            IsVisible="{Binding !SelectedAntenna.IsProjectSpecific}"
+                                            IsVisible="{Binding !SelectedAntenna.IsUserData}"
                                             Content="{Binding View, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
                                     <Button Content="{Binding New, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddAntennaCommand}"
                                             Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="8,4"/>
@@ -105,13 +105,13 @@
                                     <!-- Edit button (green) for user-created items -->
                                     <Button Command="{Binding EditCableCommand}"
                                             IsEnabled="{Binding SelectedCable, Converter={x:Static ObjectConverters.IsNotNull}}"
-                                            IsVisible="{Binding SelectedCable.IsProjectSpecific}"
+                                            IsVisible="{Binding SelectedCable.IsUserData}"
                                             Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}"
                                             Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
                                     <!-- View button (default) for supplied items -->
                                     <Button Command="{Binding EditCableCommand}"
                                             IsEnabled="{Binding SelectedCable, Converter={x:Static ObjectConverters.IsNotNull}}"
-                                            IsVisible="{Binding !SelectedCable.IsProjectSpecific}"
+                                            IsVisible="{Binding !SelectedCable.IsUserData}"
                                             Content="{Binding View, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
                                     <Button Content="{Binding New, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddCableCommand}"
                                             Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="8,4"/>
@@ -203,13 +203,13 @@
                                 <!-- Edit button (green) for user-created items -->
                                 <Button Command="{Binding EditRadioCommand}"
                                         IsEnabled="{Binding SelectedRadio, Converter={x:Static ObjectConverters.IsNotNull}}"
-                                        IsVisible="{Binding SelectedRadio.IsProjectSpecific}"
+                                        IsVisible="{Binding SelectedRadio.IsUserData}"
                                         Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}"
                                         Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
                                 <!-- View button (default) for supplied items -->
                                 <Button Command="{Binding EditRadioCommand}"
                                         IsEnabled="{Binding SelectedRadio, Converter={x:Static ObjectConverters.IsNotNull}}"
-                                        IsVisible="{Binding !SelectedRadio.IsProjectSpecific}"
+                                        IsVisible="{Binding !SelectedRadio.IsUserData}"
                                         Content="{Binding View, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
                                 <Button Content="{Binding New, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddRadioCommand}"
                                         Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="8,4"/>
@@ -217,9 +217,24 @@
 
                             <!-- Linear (optional) -->
                             <CheckBox Content="{Binding UseLinearAmplifier, Source={x:Static loc:Strings.Instance}}" IsChecked="{Binding HasLinear}"/>
-                            <StackPanel Orientation="Horizontal" Spacing="5" IsVisible="{Binding HasLinear}">
-                                <TextBox Text="{Binding LinearManufacturer}" Watermark="{Binding Manufacturer, Source={x:Static loc:Strings.Instance}}" Width="120"/>
-                                <TextBox Text="{Binding LinearModel}" Watermark="{Binding Model, Source={x:Static loc:Strings.Instance}}" Width="120"/>
+                            <StackPanel Spacing="8" IsVisible="{Binding HasLinear}">
+                                <ComboBox ItemsSource="{Binding Radios}"
+                                          SelectedItem="{Binding SelectedLinear}" HorizontalAlignment="Stretch"
+                                          IsTextSearchEnabled="True"
+                                          PlaceholderText="{Binding SelectLinear, Source={x:Static loc:Strings.Instance}}"/>
+                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                    <Button Command="{Binding EditLinearCommand}"
+                                            IsEnabled="{Binding SelectedLinear, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                            IsVisible="{Binding SelectedLinear.IsUserData}"
+                                            Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}"
+                                            Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
+                                    <Button Command="{Binding EditLinearCommand}"
+                                            IsEnabled="{Binding SelectedLinear, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                            IsVisible="{Binding !SelectedLinear.IsUserData}"
+                                            Content="{Binding View, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
+                                    <Button Content="{Binding New, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddLinearCommand}"
+                                            Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="8,4"/>
+                                </StackPanel>
                             </StackPanel>
 
                             <!-- Power -->
@@ -241,9 +256,9 @@
                             <!-- Modulation -->
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <TextBlock Text="{Binding Modulation, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                                <ComboBox ItemsSource="{Binding ModulationOptions}"
-                                          SelectedIndex="{Binding SelectedModulationIndex}"
-                                          Width="120"/>
+                                <ComboBox ItemsSource="{Binding Modulations}"
+                                          SelectedItem="{Binding SelectedModulation}"
+                                          Width="160"/>
                             </StackPanel>
 
                             <!-- Activity Factor -->

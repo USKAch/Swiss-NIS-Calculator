@@ -50,6 +50,7 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
     public Action<Antenna?>? NavigateToAntennaEditor { get; set; }
     public Action<Cable?>? NavigateToCableEditor { get; set; }
     public Action<Radio?>? NavigateToRadioEditor { get; set; }
+    public Action<Radio?>? NavigateToLinearEditor { get; set; }
     public Action<Oka?>? NavigateToOkaEditor { get; set; }
     public Action? MarkProjectDirty { get; set; }
 
@@ -59,18 +60,18 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
         Antennas = new ObservableCollection<Antenna>(DatabaseService.Instance.GetAllAntennas());
         Cables = new ObservableCollection<Cable>(DatabaseService.Instance.GetAllCables());
         Radios = new ObservableCollection<Radio>(DatabaseService.Instance.GetAllRadios());
+        Okas = new ObservableCollection<Oka>(DatabaseService.Instance.GetAllOkas());
+        Modulations = new ObservableCollection<Modulation>(DatabaseService.Instance.GetAllModulations());
+        ActivityFactor = Services.MasterDataStore.Load().Constants.DefaultActivityFactor;
+        SelectedModulation = Modulations.FirstOrDefault(m => m.Name.Equals("CW", StringComparison.OrdinalIgnoreCase))
+            ?? Modulations.FirstOrDefault();
     }
 
     // Collections
     public ObservableCollection<Antenna> Antennas { get; }
     public ObservableCollection<Cable> Cables { get; }
     public ObservableCollection<Radio> Radios { get; }
-    public ObservableCollection<Oka> Okas { get; private set; } = new();
-    public void SetProjectOkas(ObservableCollection<Oka> okas)
-    {
-        Okas = okas;
-        OnPropertyChanged(nameof(Okas));
-    }
+    public ObservableCollection<Oka> Okas { get; }
 
     // Configuration Number (1-based)
     [ObservableProperty]
@@ -92,10 +93,7 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
     private Radio? _selectedRadio;
 
     [ObservableProperty]
-    private string _linearManufacturer = string.Empty;
-
-    [ObservableProperty]
-    private string _linearModel = string.Empty;
+    private Radio? _selectedLinear;
 
     [ObservableProperty]
     private bool _hasLinear;
@@ -123,37 +121,14 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
     [ObservableProperty]
     private double _heightMeters = 10;
 
-    [ObservableProperty]
-    private bool _isHorizontallyRotatable = true;
-
-    [ObservableProperty]
-    private double _horizontalAngleDegrees = 360;
-
-    [ObservableProperty]
-    private bool _isVerticallyRotatable;
-
     // Operating Parameters (apply to all bands)
-    [ObservableProperty]
-    private double _modulationFactor = 0.4;
-
     [ObservableProperty]
     private double _activityFactor = 0.5;
 
-    public string[] ModulationOptions => new[] { "SSB (0.2)", "CW (0.4)", "FM/Digital (1.0)" };
+    public ObservableCollection<Modulation> Modulations { get; }
 
     [ObservableProperty]
-    private int _selectedModulationIndex = 1; // Default CW
-
-    partial void OnSelectedModulationIndexChanged(int value)
-    {
-        ModulationFactor = value switch
-        {
-            0 => 0.2,
-            1 => 0.4,
-            2 => 1.0,
-            _ => 0.4
-        };
-    }
+    private Modulation? _selectedModulation;
 
     // OKA (single evaluation point per configuration)
     [ObservableProperty]
@@ -201,8 +176,9 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
         HasLinear = config.Linear != null;
         if (config.Linear != null)
         {
-            LinearManufacturer = config.Linear.Manufacturer;
-            LinearModel = config.Linear.Model;
+            SelectedLinear = Radios.FirstOrDefault(r =>
+                r.Manufacturer.Equals(config.Linear.Manufacturer, StringComparison.OrdinalIgnoreCase) &&
+                r.Model.Equals(config.Linear.Model, StringComparison.OrdinalIgnoreCase));
         }
 
         // Cable
@@ -216,20 +192,10 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
             a.Manufacturer.Equals(config.Antenna.Manufacturer, StringComparison.OrdinalIgnoreCase) &&
             a.Model.Equals(config.Antenna.Model, StringComparison.OrdinalIgnoreCase));
         HeightMeters = config.Antenna.HeightMeters;
-        IsHorizontallyRotatable = config.Antenna.IsHorizontallyRotatable;
-        HorizontalAngleDegrees = config.Antenna.HorizontalAngleDegrees;
-        IsVerticallyRotatable = config.Antenna.IsVerticallyRotatable;
-
         // Operating parameters
-        ModulationFactor = config.ModulationFactor;
         ActivityFactor = config.ActivityFactor;
-        SelectedModulationIndex = config.ModulationFactor switch
-        {
-            0.2 => 0,
-            0.4 => 1,
-            1.0 => 2,
-            _ => 1
-        };
+        SelectedModulation = Modulations.FirstOrDefault(m =>
+            m.Name.Equals(config.Modulation, StringComparison.OrdinalIgnoreCase));
 
         // OKA - try to find matching OKA, but don't auto-create if deleted
         if (!string.IsNullOrWhiteSpace(config.OkaName))
@@ -258,8 +224,8 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
             },
             Linear = HasLinear ? new LinearConfig
             {
-                Manufacturer = LinearManufacturer,
-                Model = LinearModel
+                Manufacturer = SelectedLinear?.Manufacturer ?? "",
+                Model = SelectedLinear?.Model ?? ""
             } : null,
             Cable = new CableConfig
             {
@@ -272,12 +238,9 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
             {
                 Manufacturer = SelectedAntenna?.Manufacturer ?? "",
                 Model = SelectedAntenna?.Model ?? "",
-                HeightMeters = HeightMeters,
-                IsHorizontallyRotatable = IsHorizontallyRotatable,
-                HorizontalAngleDegrees = HorizontalAngleDegrees,
-                IsVerticallyRotatable = IsVerticallyRotatable
+                HeightMeters = HeightMeters
             },
-            ModulationFactor = ModulationFactor,
+            Modulation = SelectedModulation?.Name ?? "CW",
             ActivityFactor = ActivityFactor,
             OkaName = OkaName,
             OkaDistanceMeters = OkaDistanceMeters,
@@ -338,5 +301,23 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
     {
         NavigateToRadioEditor?.Invoke(null);
     }
-}
 
+    [RelayCommand]
+    private void EditLinear()
+    {
+        NavigateToLinearEditor?.Invoke(SelectedLinear);
+    }
+
+    [RelayCommand]
+    private void AddLinear()
+    {
+        NavigateToLinearEditor?.Invoke(null);
+    }
+}
+    partial void OnHasLinearChanged(bool value)
+    {
+        if (!value)
+        {
+            SelectedLinear = null;
+        }
+    }

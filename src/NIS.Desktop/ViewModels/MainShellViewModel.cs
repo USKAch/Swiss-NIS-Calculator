@@ -210,6 +210,7 @@ public partial class MainShellViewModel : ViewModelBase
         ProjectViewModel.NewProject();
         ProjectViewModel.Project.Name = vm.ProjectName;
         ProjectViewModel.Project.Operator = vm.OperatorName;
+        ProjectViewModel.Project.Callsign = vm.Callsign;
         ProjectViewModel.Project.Address = vm.Address;
         ProjectViewModel.Project.Location = vm.Location;
 
@@ -252,6 +253,7 @@ public partial class MainShellViewModel : ViewModelBase
         };
         _projectInfoViewModel.ProjectName = ProjectViewModel.Project.Name;
         _projectInfoViewModel.OperatorName = ProjectViewModel.Project.Operator;
+        _projectInfoViewModel.Callsign = ProjectViewModel.Project.Callsign;
         _projectInfoViewModel.Address = ProjectViewModel.Project.Address;
         _projectInfoViewModel.Location = ProjectViewModel.Project.Location;
         _projectInfoViewModel.NavigateBack = NavigateToProjectOverview;
@@ -259,6 +261,7 @@ public partial class MainShellViewModel : ViewModelBase
         {
             ProjectViewModel.Project.Name = vm.ProjectName;
             ProjectViewModel.Project.Operator = vm.OperatorName;
+            ProjectViewModel.Project.Callsign = vm.Callsign;
             ProjectViewModel.Project.Address = vm.Address;
             ProjectViewModel.Project.Location = vm.Location;
             ProjectViewModel.MarkDirty();
@@ -273,10 +276,6 @@ public partial class MainShellViewModel : ViewModelBase
     public void NavigateToConfigurationEditor(NIS.Desktop.Models.AntennaConfiguration? existing = null)
     {
         _configurationEditorViewModel = new ConfigurationEditorViewModel();
-        // Load OKAs from database (single source of truth)
-        var dbOkas = new System.Collections.ObjectModel.ObservableCollection<NIS.Desktop.Models.Oka>(
-            Services.DatabaseService.Instance.GetAllOkas());
-        _configurationEditorViewModel.SetProjectOkas(dbOkas);
         _configurationEditorViewModel.MarkProjectDirty = ProjectViewModel.MarkDirty;
 
         // All master data comes from DatabaseService (single source of truth)
@@ -296,6 +295,7 @@ public partial class MainShellViewModel : ViewModelBase
         _configurationEditorViewModel.NavigateToAntennaEditor = NavigateToAntennaEditorFromConfig;
         _configurationEditorViewModel.NavigateToCableEditor = NavigateToCableEditorFromConfig;
         _configurationEditorViewModel.NavigateToRadioEditor = NavigateToRadioEditorFromConfig;
+        _configurationEditorViewModel.NavigateToLinearEditor = NavigateToLinearEditorFromConfig;
         _configurationEditorViewModel.NavigateToOkaEditor = NavigateToOkaEditorFromConfig;
         _configurationEditorViewModel.OnSave = (config) =>
         {
@@ -404,8 +404,8 @@ public partial class MainShellViewModel : ViewModelBase
         _masterDataManagerViewModel.NavigateToCableEditor = (c, ro) => NavigateToCableMasterEditor(c, ro);
         _masterDataManagerViewModel.NavigateToRadioEditor = (r, ro) => NavigateToRadioMasterEditor(r, ro);
         _masterDataManagerViewModel.NavigateToOkaEditor = NavigateToOkaMasterEditor;
-        _masterDataManagerViewModel.SelectExportFolder = SelectFolderForExport;
-        _masterDataManagerViewModel.SelectImportFolder = SelectFolderForImport;
+        _masterDataManagerViewModel.SelectExportFile = SelectFileForFactoryExport;
+        _masterDataManagerViewModel.SelectImportFile = SelectFileForFactoryImport;
         CurrentView = _masterDataManagerViewModel;
         Breadcrumb = Strings.Instance.MasterData;
         WindowTitle = "Swiss NIS Calculator";
@@ -631,7 +631,7 @@ public partial class MainShellViewModel : ViewModelBase
         {
             _antennaMasterEditorViewModel.InitializeEdit(existing);
             // Shipped master data items are read-only in configuration editor
-            _antennaMasterEditorViewModel.IsReadOnly = !existing.IsProjectSpecific;
+            _antennaMasterEditorViewModel.IsReadOnly = !existing.IsUserData;
         }
         else
         {
@@ -669,7 +669,7 @@ public partial class MainShellViewModel : ViewModelBase
         {
             _cableMasterEditorViewModel.InitializeEdit(existing);
             // Shipped master data items are read-only in configuration editor
-            _cableMasterEditorViewModel.IsReadOnly = !existing.IsProjectSpecific;
+            _cableMasterEditorViewModel.IsReadOnly = !existing.IsUserData;
         }
         else
         {
@@ -706,7 +706,7 @@ public partial class MainShellViewModel : ViewModelBase
         {
             _radioMasterEditorViewModel.InitializeEdit(existing);
             // Shipped master data items are read-only in configuration editor
-            _radioMasterEditorViewModel.IsReadOnly = !existing.IsProjectSpecific;
+            _radioMasterEditorViewModel.IsReadOnly = !existing.IsUserData;
         }
         else
         {
@@ -737,6 +737,41 @@ public partial class MainShellViewModel : ViewModelBase
         WindowTitle = existing != null ? "Swiss NIS Calculator - Edit Radio" : "Swiss NIS Calculator - Add Radio";
     }
 
+    private void NavigateToLinearEditorFromConfig(NIS.Desktop.Models.Radio? existing)
+    {
+        _radioMasterEditorViewModel = new RadioMasterEditorViewModel();
+        if (existing != null)
+        {
+            _radioMasterEditorViewModel.InitializeEdit(existing);
+            _radioMasterEditorViewModel.IsReadOnly = !existing.IsUserData;
+        }
+        else
+        {
+            _radioMasterEditorViewModel.InitializeNew();
+        }
+        _radioMasterEditorViewModel.NavigateBack = () => CurrentView = _configurationEditorViewModel;
+        _radioMasterEditorViewModel.OnSave = (radio) =>
+        {
+            Services.DatabaseService.Instance.SaveRadio(radio);
+
+            if (_configurationEditorViewModel != null)
+            {
+                _configurationEditorViewModel.Radios.Clear();
+                foreach (var r in Services.DatabaseService.Instance.GetAllRadios())
+                    _configurationEditorViewModel.Radios.Add(r);
+
+                _configurationEditorViewModel.SelectedLinear = _configurationEditorViewModel.Radios
+                    .FirstOrDefault(r => r.Manufacturer.Equals(radio.Manufacturer, StringComparison.OrdinalIgnoreCase) &&
+                                         r.Model.Equals(radio.Model, StringComparison.OrdinalIgnoreCase));
+            }
+            CurrentView = _configurationEditorViewModel;
+        };
+        CurrentView = _radioMasterEditorViewModel;
+        var projectName = GetProjectDisplayName();
+        Breadcrumb = $"{Strings.Instance.Project} > {projectName} > {Strings.Instance.RadioDetails}";
+        WindowTitle = existing != null ? "Swiss NIS Calculator - Edit Linear" : "Swiss NIS Calculator - Add Linear";
+    }
+
     private void NavigateToOkaEditorFromConfig(NIS.Desktop.Models.Oka? existing)
     {
         _okaMasterEditorViewModel = new OkaMasterEditorViewModel();
@@ -752,18 +787,16 @@ public partial class MainShellViewModel : ViewModelBase
         _okaMasterEditorViewModel.OnSave = (oka) =>
         {
             Services.DatabaseService.Instance.SaveOka(oka);
-            ProjectViewModel.AddOrUpdateOka(oka);
-
-            // Add to config editor's OKA list if not already there
+            // Refresh OKA list from database and select the new/updated entry
             if (_configurationEditorViewModel != null)
             {
-                var existingOka = _configurationEditorViewModel.Okas.FirstOrDefault(o =>
-                    o.Id == oka.Id);
-                if (existingOka == null)
+                _configurationEditorViewModel.Okas.Clear();
+                foreach (var dbOka in Services.DatabaseService.Instance.GetAllOkas())
                 {
-                    _configurationEditorViewModel.Okas.Add(oka);
+                    _configurationEditorViewModel.Okas.Add(dbOka);
                 }
-                _configurationEditorViewModel.SelectedOka = oka;
+                _configurationEditorViewModel.SelectedOka = _configurationEditorViewModel.Okas
+                    .FirstOrDefault(o => o.Name.Equals(oka.Name, StringComparison.OrdinalIgnoreCase));
             }
             CurrentView = _configurationEditorViewModel;
         };
@@ -863,36 +896,45 @@ public partial class MainShellViewModel : ViewModelBase
     /// <summary>
     /// Select folder for database export.
     /// </summary>
-    private async Task<string?> SelectFolderForExport()
+    private async Task<string?> SelectFileForFactoryExport()
     {
         if (StorageProvider == null) return null;
 
         var startFolder = await StorageProvider.TryGetFolderFromPathAsync(Services.AppPaths.ExportFolder);
-        var folders = await StorageProvider.OpenFolderPickerAsync(new Avalonia.Platform.Storage.FolderPickerOpenOptions
+        var file = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Title = "Select Export Folder",
+            Title = "Export Factory Data",
             SuggestedStartLocation = startFolder,
-            AllowMultiple = false
+            SuggestedFileName = $"NIS_FactoryData_{DateTime.Now:yyyyMMdd}.json",
+            DefaultExtension = ".json",
+            FileTypeChoices = new[]
+            {
+                new FilePickerFileType("JSON") { Patterns = new[] { "*.json" } }
+            }
         });
 
-        return folders.FirstOrDefault()?.Path.LocalPath;
+        return file?.Path.LocalPath;
     }
 
     /// <summary>
-    /// Select folder for database import.
+    /// Select file for factory data import.
     /// </summary>
-    private async Task<string?> SelectFolderForImport()
+    private async Task<string?> SelectFileForFactoryImport()
     {
         if (StorageProvider == null) return null;
 
         var startFolder = await StorageProvider.TryGetFolderFromPathAsync(Services.AppPaths.DataFolder);
-        var folders = await StorageProvider.OpenFolderPickerAsync(new Avalonia.Platform.Storage.FolderPickerOpenOptions
+        var files = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            Title = "Select Import Folder (containing antennas.json, cables.json, radios.json)",
+            Title = "Import Factory Data",
             SuggestedStartLocation = startFolder,
-            AllowMultiple = false
+            AllowMultiple = false,
+            FileTypeFilter = new[]
+            {
+                new FilePickerFileType("JSON") { Patterns = new[] { "*.json" } }
+            }
         });
 
-        return folders.FirstOrDefault()?.Path.LocalPath;
+        return files.FirstOrDefault()?.Path.LocalPath;
     }
 }

@@ -1,56 +1,39 @@
 {
-  "name": "Demo Station",
-  "language": "en",
-  "station": {
-    "callsign": "HB9DEMO",
+  "project": {
+    "name": "Demo Station",
     "operator": "Demo Operator",
-    "address": "Bahnhofstrasse 1, 8001 Zürich",
-    "location": "Zürich"
+    "callsign": "HB9DEMO",
+    "address": "Bahnhofstrasse 1, 8001 Zuerich",
+    "location": "Zuerich"
   },
-  "okas": [
+  "configurations": [
     {
-      "id": 1,
-      "name": "Neighbor House",
-      "defaultDistanceMeters": 15,
-      "defaultDampingDb": 0
-    },
-    {
-      "id": 2,
-      "name": "Garden Fence",
-      "defaultDistanceMeters": 8,
-      "defaultDampingDb": 0
-    }
-  ],
-  "antennaConfigurations": [
-    {
-      "name": "HF Yagi",
-      "powerWatts": 100,
+      "antenna": {
+        "manufacturer": "Cushcraft",
+        "model": "A3S"
+      },
+      "heightMeters": 12,
+      "polarization": "horizontal",
+      "rotationAngleDegrees": 360,
       "radio": {
         "manufacturer": "Yaesu",
         "model": "FT-991A"
       },
+      "linear": null,
+      "powerWatts": 100,
       "cable": {
-        "type": "Aircom-plus",
-        "lengthMeters": 25,
-        "additionalLossDb": 0,
-        "additionalLossDescription": ""
+        "name": "Aircom-plus"
       },
-      "antenna": {
-        "manufacturer": "Cushcraft",
-        "model": "A3S",
-        "heightMeters": 12,
-        "isHorizontallyRotatable": true,
-        "horizontalAngleDegrees": 360,
-        "isVerticallyRotatable": false
-      },
-      "modulationFactor": 0.4,
+      "cableLengthMeters": 25,
+      "additionalLossDb": 0,
+      "additionalLossDescription": "",
+      "modulation": "CW",
       "activityFactor": 0.5,
-      "okaName": "Neighbor House",
+      "oka": {
+        "name": "Neighbor House"
+      },
       "okaDistanceMeters": 15,
       "okaBuildingDampingDb": 0
     }
-  ],
-  "customAntennas": [],
-  "customCables": [],
-  "customRadios": []
+  ]
 }

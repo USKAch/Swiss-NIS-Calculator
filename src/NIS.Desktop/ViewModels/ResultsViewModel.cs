@@ -33,9 +33,10 @@ public class ConfigurationResult
     public required string OkaName { get; init; }
     public required double BuildingDampingDb { get; init; }
     public required string CableDescription { get; init; }
-    public required bool IsHorizontallyRotatable { get; init; }
+    public required string LinearName { get; init; }
+    public required bool IsRotatable { get; init; }
     public required int HorizontalAngleDegrees { get; init; }
-    public required bool IsVerticallyRotatable { get; init; }
+    public required bool IsHorizontallyPolarized { get; init; }
 
     public ObservableCollection<BandResult> BandResults { get; } = new();
 
@@ -114,6 +115,17 @@ public partial class ResultsViewModel : ViewModelBase
         {
             foreach (var config in project.AntennaConfigurations)
             {
+                var validationError = ValidateConfiguration(config);
+                if (!string.IsNullOrEmpty(validationError))
+                {
+                    Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                    {
+                        Results.Clear();
+                        StatusMessage = validationError;
+                    });
+                    return;
+                }
+
                 var result = CalculateConfiguration(config);
                 Avalonia.Threading.Dispatcher.UIThread.Post(() => Results.Add(result));
             }
@@ -128,14 +140,10 @@ public partial class ResultsViewModel : ViewModelBase
 
     private ConfigurationResult CalculateConfiguration(AntennaConfiguration config)
     {
-        // Use ONLY project data for antennas
-        var antenna = _project?.CustomAntennas.FirstOrDefault(a =>
-            a.Manufacturer.Equals(config.Antenna.Manufacturer, StringComparison.OrdinalIgnoreCase) &&
-            a.Model.Equals(config.Antenna.Model, StringComparison.OrdinalIgnoreCase));
-
-        // Use ONLY project data for cables
-        var cable = _project?.CustomCables.FirstOrDefault(c =>
-            c.Name.Equals(config.Cable.Type, StringComparison.OrdinalIgnoreCase));
+        var antenna = DatabaseService.Instance.GetAntenna(config.Antenna.Manufacturer, config.Antenna.Model);
+        var cable = DatabaseService.Instance.GetCable(config.Cable.Type);
+        var modulation = DatabaseService.Instance.GetModulationByName(config.Modulation);
+        var constants = MasterDataStore.Load().Constants;
 
         var result = new ConfigurationResult
         {
@@ -147,34 +155,53 @@ public partial class ResultsViewModel : ViewModelBase
             OkaName = config.OkaName,
             BuildingDampingDb = config.OkaBuildingDampingDb,
             CableDescription = $"{config.Cable.LengthMeters:F1}m {config.Cable.Type}",
-            IsHorizontallyRotatable = config.Antenna.IsHorizontallyRotatable,
-            HorizontalAngleDegrees = (int)config.Antenna.HorizontalAngleDegrees,
-            IsVerticallyRotatable = config.Antenna.IsVerticallyRotatable
+            LinearName = config.Linear?.DisplayName ?? "None",
+            IsRotatable = antenna?.IsRotatable ?? false,
+            HorizontalAngleDegrees = (int)(antenna?.HorizontalAngleDegrees ?? 360),
+            IsHorizontallyPolarized = antenna?.IsHorizontallyPolarized ?? true
         };
 
         // Get bands from antenna or use default frequencies
         var bands = antenna?.Bands ?? new List<AntennaBand>();
-        if (bands.Count == 0)
-        {
-            // Fallback to common HF frequencies with default gain
-            bands = new List<AntennaBand>
-            {
-                new() { FrequencyMHz = 14, GainDbi = 6, Pattern = new double[10] },
-                new() { FrequencyMHz = 21, GainDbi = 6, Pattern = new double[10] },
-                new() { FrequencyMHz = 28, GainDbi = 6, Pattern = new double[10] }
-            };
-        }
 
         foreach (var band in bands)
         {
-            var bandResult = CalculateBand(config, band, cable);
+            var bandResult = CalculateBand(config, band, cable, modulation, constants.GroundReflectionFactor);
             result.BandResults.Add(bandResult);
         }
 
         return result;
     }
 
-    private BandResult CalculateBand(AntennaConfiguration config, AntennaBand band, Cable? cable)
+    private string? ValidateConfiguration(AntennaConfiguration config)
+    {
+        if (config.OkaDistanceMeters <= 0)
+        {
+            return $"OKA distance must be greater than 0 for {config.Antenna.DisplayName}.";
+        }
+
+        var antenna = DatabaseService.Instance.GetAntenna(config.Antenna.Manufacturer, config.Antenna.Model);
+        if (antenna == null || antenna.Bands.Count == 0)
+        {
+            return $"Antenna bands missing for {config.Antenna.DisplayName}.";
+        }
+
+        var modulation = DatabaseService.Instance.GetModulationByName(config.Modulation);
+        if (modulation == null)
+        {
+            return $"Unknown modulation '{config.Modulation}' for {config.Antenna.DisplayName}.";
+        }
+
+        var cable = DatabaseService.Instance.GetCable(config.Cable.Type);
+        if (cable == null)
+        {
+            return $"Cable '{config.Cable.Type}' not found for {config.Antenna.DisplayName}.";
+        }
+
+        return null;
+    }
+
+    private BandResult CalculateBand(AntennaConfiguration config, AntennaBand band, Cable? cable, Modulation? modulation, double groundReflectionFactor)
     {
         double distance = Math.Max(config.OkaDistanceMeters, 0.001); // Guard against division by zero
         double frequencyMHz = band.FrequencyMHz;
@@ -194,12 +221,13 @@ public partial class ResultsViewModel : ViewModelBase
             DistanceMeters = distance,
             TxPowerWatts = config.PowerWatts,
             ActivityFactor = config.ActivityFactor,
-            ModulationFactor = config.ModulationFactor,
+            ModulationFactor = modulation?.Factor ?? 0.4,
             AntennaGainDbi = band.GainDbi,
             AngleAttenuationDb = verticalAttenuation,
             TotalCableLossDb = cableLossDb,
             AdditionalLossDb = config.Cable.AdditionalLossDb,
-            BuildingDampingDb = config.OkaBuildingDampingDb
+            BuildingDampingDb = config.OkaBuildingDampingDb,
+            GroundReflectionFactor = groundReflectionFactor
         };
 
         var result = _calculator.Calculate(input);
@@ -280,8 +308,9 @@ public partial class ResultsViewModel : ViewModelBase
             sb.AppendLine($"| **Sender:**             | {result.PowerWatts}W                                   |");
             sb.AppendLine($"| **Kabel:**              | {result.CableDescription}                              |");
             sb.AppendLine($"| **Antenne:**            | {result.AntennaName}                                   |");
-            sb.AppendLine($"| **Horizontal drehbar:** | {(result.IsHorizontallyRotatable ? $"Ja, Winkel: {result.HorizontalAngleDegrees} Grad" : "Nein")} |");
-            sb.AppendLine($"| **Vertikal drehbar:**   | {(result.IsVerticallyRotatable ? "Ja" : "Nein")}       |");
+            sb.AppendLine($"| **Polarisation:**       | {(result.IsHorizontallyPolarized ? "Horizontal" : "Vertical")} |");
+            sb.AppendLine($"| **Rotation:**           | {(result.IsRotatable ? $"{result.HorizontalAngleDegrees} Grad" : "Fix")} |");
+            sb.AppendLine($"| **Linear:**             | {result.LinearName}                                    |");
             sb.AppendLine($"| **OKA:**                | {result.OkaName} @ {result.OkaDistance:F1}m            |");
             sb.AppendLine($"| **Modulation:**         | {result.Modulation}                                    |");
             sb.AppendLine($"| **Gebäudedämpfung:**    | {result.BuildingDampingDb:F1} dB                       |");

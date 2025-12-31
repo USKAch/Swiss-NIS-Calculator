@@ -13,6 +13,9 @@ public class StationInfo
     [JsonPropertyName("operator")]
     public string Operator { get; set; } = string.Empty;
 
+    [JsonPropertyName("callsign")]
+    public string Callsign { get; set; } = string.Empty;
+
     [JsonPropertyName("address")]
     public string Address { get; set; } = string.Empty;
 
@@ -83,15 +86,6 @@ public class AntennaPlacement
     [JsonPropertyName("heightMeters")]
     public double HeightMeters { get; set; }
 
-    [JsonPropertyName("isHorizontallyRotatable")]
-    public bool IsHorizontallyRotatable { get; set; }
-
-    [JsonPropertyName("horizontalAngleDegrees")]
-    public double HorizontalAngleDegrees { get; set; } = 360;
-
-    [JsonPropertyName("isVerticallyRotatable")]
-    public bool IsVerticallyRotatable { get; set; }
-
     [JsonIgnore]
     public string DisplayName => $"{Manufacturer} {Model}".Trim();
 }
@@ -123,11 +117,10 @@ public class AntennaConfiguration
     public AntennaPlacement Antenna { get; set; } = new();
 
     /// <summary>
-    /// Modulation factor for this configuration.
-    /// SSB=0.2, CW=0.4, FM/Digital=1.0
+    /// Modulation name for this configuration (e.g., SSB, CW, FM).
     /// </summary>
-    [JsonPropertyName("modulationFactor")]
-    public double ModulationFactor { get; set; } = 0.4;
+    [JsonPropertyName("modulation")]
+    public string Modulation { get; set; } = "CW";
 
     /// <summary>
     /// Activity factor for this configuration (default 0.5).
@@ -154,13 +147,7 @@ public class AntennaConfiguration
     public double OkaBuildingDampingDb { get; set; }
 
     [JsonIgnore]
-    public string ModulationDisplay => ModulationFactor switch
-    {
-        0.2 => "SSB",
-        0.4 => "CW",
-        1.0 => "FM",
-        _ => $"{ModulationFactor}"
-    };
+    public string ModulationDisplay => Modulation;
 
     [JsonIgnore]
     public string OkaSummary => OkaDistanceMeters > 0
@@ -203,6 +190,9 @@ public class Project
     [JsonPropertyName("operator")]
     public string Operator { get; set; } = string.Empty;
 
+    [JsonPropertyName("callsign")]
+    public string Callsign { get; set; } = string.Empty;
+
     [JsonPropertyName("address")]
     public string Address { get; set; } = string.Empty;
 
@@ -223,24 +213,32 @@ public class Project
                 {
                     Operator = value.Operator;
                 }
+                if (!string.IsNullOrWhiteSpace(value.Callsign))
+                {
+                    Callsign = value.Callsign;
+                }
                 Address = value.Address;
                 Location = value.Location;
             }
         }
     }
 
-    [JsonPropertyName("antennaConfigurations")]
+    [JsonPropertyName("configurations")]
     public List<AntennaConfiguration> AntennaConfigurations { get; set; } = new();
 
-    [JsonPropertyName("customAntennas")]
-    public List<Antenna> CustomAntennas { get; set; } = new();
+    // Legacy: for backward compatibility with old JSON files
+    [JsonPropertyName("antennaConfigurations")]
+    public List<AntennaConfiguration>? LegacyAntennaConfigurations
+    {
+        get => null;
+        set
+        {
+            if (value != null && value.Count > 0)
+            {
+                AntennaConfigurations = value;
+            }
+        }
+    }
 
-    [JsonPropertyName("customCables")]
-    public List<Cable> CustomCables { get; set; } = new();
-
-    [JsonPropertyName("customRadios")]
-    public List<Radio> CustomRadios { get; set; } = new();
-
-    [JsonPropertyName("okas")]
-    public List<Oka> Okas { get; set; } = new();
+    // Master data is stored globally in the database; projects reference it by name/model.
 }

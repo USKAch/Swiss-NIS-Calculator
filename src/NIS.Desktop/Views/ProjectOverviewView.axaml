@@ -22,18 +22,21 @@
                         BorderThickness="1" CornerRadius="8" Padding="15">
                     <StackPanel Spacing="10">
                         <TextBlock Text="{Binding ProjectInfo, Source={x:Static loc:Strings.Instance}}" FontSize="16" FontWeight="Bold"/>
-                        <Grid ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto,Auto" ColumnSpacing="15" RowSpacing="5">
+                        <Grid ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="15" RowSpacing="5">
                             <TextBlock Text="{Binding ProjectName, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold"/>
                             <TextBlock Grid.Column="1" Text="{Binding ProjectName}"/>
 
                             <TextBlock Grid.Column="2" Text="{Binding Operator, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold"/>
                             <TextBlock Grid.Column="3" Text="{Binding OperatorName}"/>
 
-                            <TextBlock Grid.Row="1" Text="{Binding Address, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold"/>
-                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Address}"/>
+                            <TextBlock Grid.Row="1" Text="{Binding Callsign, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Callsign}"/>
 
-                            <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding Location, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold"/>
-                            <TextBlock Grid.Row="1" Grid.Column="3" Text="{Binding Location}"/>
+                            <TextBlock Grid.Row="2" Text="{Binding Address, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Address}"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding Location, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding Location}"/>
                         </Grid>
                         <Button Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Command="{Binding EditStationInfoCommand}"
                                 HorizontalAlignment="Left" Padding="15,8"/>
@@ -151,4 +154,3 @@
         </Border>
     </Grid>
 </UserControl>
-
