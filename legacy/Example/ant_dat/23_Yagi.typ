@@ -1,0 +1,10 @@
+::07:Typen:
+::23:Yagi:
+::1:Yagi-2El:
+::2:Yagi-3El:
+::3:Yagi-4El:
+::4:Yagi-5El:
+::5:Yagi-6El:
+::6:Yagi-7El:
+::7:Yagi-8El:
+:

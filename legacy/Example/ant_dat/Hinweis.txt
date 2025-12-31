@@ -1,0 +1,15 @@
+Allgemeine Hinweise
+
+Antennendaten werden in das Verzeichnis \Ant_Dat extrahiert. 
+Bitte Verzeichnis nicht ändern, sonst findet das Programm die Daten nicht.
+
+File "Ant_zip.exe"   muss sich im Directory "Feldstaerke" befinden.
+
+File "Hersteller.sup" muss im Directory "Ant_Dat" sein. Sonst kann das Programm
+		      nur bis zur Startseite gestartet werden. Antennendaten
+		      extrahieren muss dann von der Startseite aus ausgeführt
+		      werden.
+
+File "Kabeldaten.dat" darf nicht verändert werden, sonst blokiert das Programm.
+
+15. 03. 2003 hb9zs	
