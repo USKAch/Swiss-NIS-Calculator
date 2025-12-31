@@ -33,9 +33,10 @@ Project Overview
 
 First screen shown when app launches:
 
-- **New Project** -> Navigates to Project Info screen (station details), then Project Overview
 - **All Projects List**: shows all available projects with search and sort (by name, last modified)
   - Selecting a project opens the Project Overview
+  - Each project row includes **Edit** and **Delete** actions on the right side (same layout as configuration cards)
+  - A **+ New Project** button is placed in the same right-side action area (corporate identity consistency)
 
 ### 3.2 Navigation Pane
 
@@ -44,9 +45,9 @@ Global navigation available from most screens:
 - **Settings** -> Language and Theme (Section 9)
 - **Projects** -> Project list (same as Welcome screen)
 - **Open Project** -> File picker for .nisproj files
-- **Master Data** -> Master Data Manager (Section 3.6)
-- **Calculate All** -> Runs calculation for current project (Section 3.7)
-- **Export Report** -> Results view with export options (Section 3.7)
+- **Master Data** -> Master Data Manager (Section 3.5)
+- **Calculate All** -> Runs calculation for current project (Section 3.6)
+- **Export Report** -> Results view with export options (Section 3.6)
 - **Export PDF** -> Generates PDF report from Results
 
 ### 3.3 Project Overview (Main Screen)
@@ -76,23 +77,22 @@ Example:
 | Wimo ZX6-2 | Yaesu FT-991 100W \| Aircom-plus | 7.4m | Edit / Delete |
 
 - Configurations are identified by their antenna (no user-defined name)
-- "+ Add Configuration" button → Navigates to Configuration Editor (Section 3.5)
+- "+ Add Configuration" button → Navigates to Configuration Editor (Section 3.4)
 - Edit button → Navigates to Configuration Editor with existing data
 - Each configuration has its own OKA (evaluation point) with distance and damping
 
 **Action Buttons**:
-- "Calculate All" → Runs calculation for all configs → Navigates to Results (Section 3.7)
-- "Export Report" → Navigates to Results view with export options (Section 3.7)
+- "Calculate All" → Runs calculation for all configs → Navigates to Results (Section 3.6)
+- "Export Report" → Navigates to Results view with export options (Section 3.6)
 
-### 3.4 Component Selection
+### 3.4 Configuration Editor
 
+**Component Selection (shared dropdown behavior):**
 All component dropdowns (Antenna, Radio, Cable) share the same behavior:
 - **Sorted alphabetically** by name/manufacturer
 - **Text search enabled**: Type characters to jump to matching item (e.g., type "Y" to jump to "Yaesu")
 - [Edit] button opens the respective Master Editor
 - [+ Add] button opens the Master Editor for a new item
-
-### 3.5 Configuration Editor
 
 Screen for creating or editing one antenna configuration. Header shows "Configuration {number}" (e.g., "Configuration 1").
 
@@ -137,7 +137,7 @@ Note: Each configuration has exactly one OKA. OKA = Ort des kurzfristigen Aufent
 - Save → Returns to Project Overview
 - Cancel → Discards changes, returns to Project Overview
 
-### 3.6 Master Data Manager
+### 3.5 Master Data Manager
 
 Central hub for managing all master data (antennas, cables, radios). Accessed via "Master Data" button on Welcome screen.
 
@@ -165,7 +165,7 @@ Master Data Manager
 
 For CRUD permissions and alternative access points, see **Section 6.1**.
 
-### 3.7 Calculation & Results
+### 3.6 Calculation & Results
 
 Results displayed after "Calculate All":
 
