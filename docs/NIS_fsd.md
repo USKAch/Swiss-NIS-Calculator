@@ -8,24 +8,29 @@ Calculate RF field strength for Swiss amateur radio antenna approval (NISV compl
 
 ```
 Welcome Screen
-    ├── [New Project] → Project Info → Project Overview
-    ├── [Open Project] → Project Overview
-    └── [Master Data] → Master Data Manager
-            ├── [Add/Edit Antenna] → Antenna Editor → Master Data Manager
-            ├── [Add/Edit Cable] → Cable Editor → Master Data Manager
-            ├── [Add/Edit Radio] → Radio Editor → Master Data Manager
-            └── [Back] → Welcome Screen
+    -> Project List -> Project Overview
+    -> [New Project] -> Project Info -> Project Overview
+
+Navigation Pane
+    -> [Projects] -> Project List
+    -> [Open Project] -> Project Overview
+    -> [Master Data] -> Master Data Manager
+       -> [Add/Edit Antenna] -> Antenna Editor -> Master Data Manager
+       -> [Add/Edit Cable] -> Cable Editor -> Master Data Manager
+       -> [Add/Edit Radio] -> Radio Editor -> Master Data Manager
+       -> [Add/Edit OKA] -> OKA Editor -> Master Data Manager
+       -> [Translations] -> Translation Editor
+    -> [Settings] -> Settings
 
 Project Overview
-    ├── [Edit Station Info] → Project Info → Project Overview
-    ├── [Add/Edit Configuration] → Configuration Editor
-    │       ├── [Select Antenna] → Antenna Selector → Configuration Editor
-    │       ├── [Edit/Add Antenna] → Antenna Editor → Configuration Editor
-    │       ├── [Edit/Add Cable] → Cable Editor → Configuration Editor
-    │       ├── [Edit/Add Radio] → Radio Editor → Configuration Editor
-    │       └── [Save/Cancel] → Project Overview
-    └── [Calculate All] → Results → Project Overview
+    -> [Edit Station Info] -> Project Info -> Project Overview
+    -> [Add/Edit Configuration] -> Configuration Editor
+       -> [Edit/Add Antenna] -> Antenna Editor -> Configuration Editor
+       -> [Edit/Add Cable] -> Cable Editor -> Configuration Editor
+       -> [Edit/Add Radio] -> Radio Editor -> Configuration Editor
+    -> [Calculate All] -> Results -> Project Overview
 ```
+
 
 ## 3. Key Screens and Tasks
 
@@ -34,8 +39,12 @@ Project Overview
 First screen shown when app launches:
 
 - **All Projects List**: shows all available projects with search and sort (by name, last modified)
+  - Columns: Project Name, Last Modified, Config Count
+  - Default sort: Last Modified (descending)
+  - Search filters by project name (case-insensitive)
   - Selecting a project opens the Project Overview
   - Each project row includes **Edit** and **Delete** actions on the right side (same layout as configuration cards)
+  - Delete requires confirmation; projects with configurations can be deleted
   - A **+ New Project** button is placed in the same right-side action area (corporate identity consistency)
 
 ### 3.2 Navigation Pane
@@ -45,9 +54,9 @@ Global navigation available from most screens:
 - **Settings** -> Language and Theme (Section 9)
 - **Projects** -> Project list (same as Welcome screen)
 - **Open Project** -> File picker for .nisproj files
-- **Master Data** -> Master Data Manager (Section 3.5)
-- **Calculate All** -> Runs calculation for current project (Section 3.6)
-- **Export Report** -> Results view with export options (Section 3.6)
+- **Master Data** -> Master Data Manager (Section 3.6)
+- **Calculate All** -> Runs calculation for current project (Section 3.7)
+- **Export Report** -> Results view with export options (Section 3.7)
 - **Export PDF** -> Generates PDF report from Results
 
 ### 3.3 Project Overview (Main Screen)
@@ -59,6 +68,8 @@ Primary workspace after project is loaded/created. Users can edit and add config
 - Project name (editable text field with white background)
 - Station info summary (callsign)
 - Save / Export buttons
+  - Save: validates and persists the project
+  - Export: opens Results and export options
 
 **Station Info Panel** (non-collapsible):
 - Callsign: HB9FS/HB9BL
@@ -77,15 +88,30 @@ Example:
 | Wimo ZX6-2 | Yaesu FT-991 100W \| Aircom-plus | 7.4m | Edit / Delete |
 
 - Configurations are identified by their antenna (no user-defined name)
-- "+ Add Configuration" button → Navigates to Configuration Editor (Section 3.4)
+- "+ Add Configuration" button → Navigates to Configuration Editor (Section 3.5)
 - Edit button → Navigates to Configuration Editor with existing data
 - Each configuration has its own OKA (evaluation point) with distance and damping
 
 **Action Buttons**:
-- "Calculate All" → Runs calculation for all configs → Navigates to Results (Section 3.6)
-- "Export Report" → Navigates to Results view with export options (Section 3.6)
+- "Calculate All" → Runs calculation for all configs → Navigates to Results (Section 3.7)
+- "Export Report" → Navigates to Results view with export options (Section 3.7)
 
-### 3.4 Configuration Editor
+### 3.4 Project Info
+
+Screen for creating or editing station information for a project.
+
+**Fields**:
+- Project Name
+- Operator Name
+- Callsign
+- Address
+- Location (free text)
+
+**Actions**:
+- Save -> Returns to Project Overview
+- Cancel -> Discards changes, returns to previous view
+
+### 3.5 Configuration Editor
 
 **Component Selection (shared dropdown behavior):**
 All component dropdowns (Antenna, Radio, Cable) share the same behavior:
@@ -137,7 +163,7 @@ Note: Each configuration has exactly one OKA. OKA = Ort des kurzfristigen Aufent
 - Save → Returns to Project Overview
 - Cancel → Discards changes, returns to Project Overview
 
-### 3.5 Master Data Manager
+### 3.6 Master Data Manager
 
 Central hub for managing master data, project OKAs, and language strings. Accessed via **Navigation Pane -> Master Data**.
 
@@ -183,7 +209,7 @@ Master Data Manager
 
 For CRUD permissions and alternative access points, see **Section 6.1**.
 
-### 3.6 Calculation & Results
+### 3.7 Calculation & Results
 
 Results displayed after "Calculate All":
 
@@ -294,7 +320,54 @@ Safety distance:      ds = 1.6 × sqrt(30 × Pm × A × G × AG) / EIGW
 
 ## 5. Output and Reports
 
-One table per antenna configuration:
+### 5.1 Markdown Report Format
+
+One table per antenna configuration. Each report contains a configuration summary and a per-band calculation table.
+
+**Configuration Summary (example fields):**
+- Sender power
+- Linear amplifier (or None)
+- Antenna model
+- Polarization and rotation angle
+- OKA name and distance
+
+**Per-band Table Columns:**
+- Frequency (MHz)
+- OKA number (if applicable)
+- Distance to antenna (m)
+- TX power (W)
+- Activity factor
+- Modulation factor
+- Mean power (W)
+- Cable attenuation (dB)
+- Additional losses (dB)
+- Total attenuation (dB)
+- Attenuation factor
+- Antenna gain (dBi)
+- Vertical angle attenuation (dB)
+- Total antenna gain (dB)
+- Gain factor
+- EIRP (W)
+- ERP (W)
+- Building damping (dB)
+- Building damping factor
+- Ground reflection factor
+- Field strength at OKA (V/m)
+- Limit (V/m)
+- Safety distance (m)
+
+### 5.2 Column Explanations
+
+A short explanation section follows the table and describes each column label in plain language.
+
+### 5.3 PDF Report
+
+PDF export contains:
+- Project header (project name, operator, address, location)
+- Per-configuration summary and per-band calculation table
+- Date and signature lines
+
+**File naming**: `{ProjectName}_YYYYMMDD.pdf`
 
 ---
 
@@ -351,6 +424,16 @@ Two export/import types are supported: **User Data** (backup) and **Factory Data
 - Require explicit confirmation (OK/Cancel).
 
 For JSON file formats, see **Appendix B.3**.
+
+### 6.2.1 Project Import/Export (.nisproj)
+
+**Export Project**:
+- Writes a .nisproj file containing the project header and configurations.
+- Each configuration includes references to antenna, cable, radio, and OKA by name/model (not DB IDs).
+
+**Import Project**:
+- Reads a .nisproj file and creates a new project.
+- If referenced master data does not exist, the import should create user master data entries.
 
 ### 6.3 Validation Rules (UI and Import)
 
@@ -490,6 +573,9 @@ Shared reference data used across all projects. Each record has an `IsUserData` 
 | Radios | ~50 radios | Yes | Manufacturer, Model, MaxPower |
 | OKAs | None | Yes | Name, DefaultDistance, DefaultDamping |
 | Modulations | SSB, CW, FM | No | Name, Factor |
+
+Modulations are stored in the Modulations table as factory data.
+Constants (kr and default activity factor) are fixed values and read-only.
 
 ### 7.3 User Data
 
@@ -651,6 +737,7 @@ Default language: **de** (Deutsch)
 - Four toggle buttons displayed horizontally: de | fr | it | en
 - Language change takes effect immediately across the entire UI
 - Selected language persists for the session
+- Stored in settings.json and applied at startup
 
 **Per Project:**
 - Language selected when creating a new project is stored in project file
@@ -767,6 +854,7 @@ When adding new UI elements:
 - **Light Mode**: Default theme
 - **Dark Mode**: Toggle available in Settings
 - Theme applies globally to the entire application
+- Stored in settings.json and applied at startup
 
 ### 9.3 Design Guidelines
 
