@@ -33,8 +33,6 @@ Project Overview
 
 First screen shown when app launches:
 
-- **Language Selection**: de | fr | it | en (4 toggle buttons, see Section 9.1 for details)
-- **Theme Toggle**: Light / Dark mode switch
 - **New Project** -> Navigates to Project Info screen (station details), then Project Overview
 - **All Projects List**: shows all available projects with search and sort (by name, last modified)
   - Selecting a project opens the Project Overview
@@ -43,6 +41,7 @@ First screen shown when app launches:
 
 Global navigation available from most screens:
 
+- **Settings** -> Language and Theme (Section 9)
 - **Projects** -> Project list (same as Welcome screen)
 - **Open Project** -> File picker for .nisproj files
 - **Master Data** -> Master Data Manager (Section 3.6)
@@ -613,9 +612,11 @@ For omnidirectional antennas (like a collinear array), the logic holds up well:
 
 ## 9. Localization and Theme
 
+Accessible via: **Navigation Pane -> Settings**
+
 ### 9.1 Language Handling
 
-### 6.1 Supported Languages
+#### 9.1.1 Supported Languages
 
 | Code | Language | Display Name |
 |------|----------|--------------|
@@ -626,9 +627,9 @@ For omnidirectional antennas (like a collinear array), the logic holds up well:
 
 Default language: **de** (Deutsch)
 
-### 6.2 Language Selection
+#### 9.1.2 Language Selection
 
-**On Welcome Screen:**
+**In Settings:**
 - Four toggle buttons displayed horizontally: de | fr | it | en
 - Language change takes effect immediately across the entire UI
 - Selected language persists for the session
@@ -637,7 +638,7 @@ Default language: **de** (Deutsch)
 - Language selected when creating a new project is stored in project file
 - Export/report output uses the project's language setting
 
-### 6.3 Localization Architecture
+#### 9.1.3 Localization Architecture
 
 The application uses a centralized localization system:
 
