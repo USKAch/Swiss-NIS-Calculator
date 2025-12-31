@@ -128,6 +128,7 @@ Screen for creating or editing one antenna configuration. Header shows "Configur
   - Add → Navigates to Antenna Editor for new antenna
 - Height: [number] m
 - Polarization: [radio buttons] Horizontal | Vertical (mutually exclusive)
+  - Default is taken from antenna master data; user can override per configuration
   - If Horizontal: Rotation Angle: [number] degrees (default 360) - *information only, not used in calculation*
 
 **Section 2: Transmitter**
@@ -152,12 +153,12 @@ Screen for creating or editing one antenna configuration. Header shows "Configur
 
 These apply to all bands of the selected antenna. Bands (frequency, gain, pattern) are defined by the antenna master data.
 
-**Section 6: Evaluation Point (OKA)**
+**Section 5: Evaluation Point (OKA)**
 - Name: [text] (e.g., "Neighbor's balcony")
-- Distance: [number] m
+- Distance: [number] m (horizontal ground distance)
 - Building Damping: [number] dB
 
-Note: Each configuration has exactly one OKA. OKA = Ort des kurzfristigen Aufenthalts (place of short-term stay).
+Note: Each configuration has exactly one OKA, selected from master data shared across projects. OKA = Ort des kurzfristigen Aufenthalts (place of short-term stay).
 
 **Actions**:
 - Save → Returns to Project Overview
@@ -165,7 +166,7 @@ Note: Each configuration has exactly one OKA. OKA = Ort des kurzfristigen Aufent
 
 ### 3.6 Master Data Manager
 
-Central hub for managing master data, project OKAs, and language strings. Accessed via **Navigation Pane -> Master Data**.
+Central hub for managing master data, OKAs, and language strings. Accessed via **Navigation Pane -> Master Data**.
 
 **Navigation Structure**:
 ```
@@ -182,20 +183,23 @@ Master Data Manager
   - List of all radios (searchable)
   - [Add Radio] -> Radio Master Editor
   - [Edit] -> Radio Master Editor (with existing data)
-- OKA Tab (project-specific)
-  - List of OKAs for the current project (searchable)
+- OKA Tab (master data)
+  - List of OKAs shared across projects (factory table is empty; all entries are user data)
   - [Add OKA] -> OKA Editor
   - [Edit] -> OKA Editor (with existing data)
-- Modulations Tab (read-only)
+- Modulations Tab (factory mode editable)
   - SSB=0.2, CW=0.4, FM=1.0
-- Constants Tab (read-only)
+  - [Add], [Edit], and [Save] enabled only in factory mode
+- Constants Tab (factory mode editable)
   - Ground Reflection Factor kr=1.6
   - Default Activity Factor=0.5
+  - [Edit] and [Save] enabled only in factory mode
+  - Constants list is fixed; no add/remove actions
 - Translations Tab
   - Data grid with columns (German first, English last): Category, German (master), French, Italian, English
   - Translation ID/key is hidden (not displayed) and cannot be changed
   - Search and category filter available
-  - [Save Changes] persists to `Data/translations.json`
+  - [Save Changes] persists to `translations.json` in the Data folder
 - Database Tab (admin mode only)
   - Export/Import master data (factory mode)
 ```
@@ -234,7 +238,7 @@ Results displayed after "Calculate All":
 | Parameter | Symbol | Unit | Source |
 |-----------|--------|------|--------|
 | Frequency | f | MHz | User selection |
-| Distance to antenna | d | m | User input per OKA |
+| Distance to antenna | d | m | Horizontal ground distance to OKA |
 | TX Power | P | W | User input |
 | Activity factor | AF | - | Default 0.5 |
 | Modulation factor | MF | - | SSB=0.2, CW=0.4, FM=1.0 |
@@ -247,6 +251,21 @@ Results displayed after "Calculate All":
 
 **Data Source Policy**: Configurations reference master data via foreign keys in the database. For data protection and export/import, see **Section 6 (Data Operations)**.
 
+### 4.1.1 Cable Attenuation Interpolation
+
+Cable attenuation (dB/100m) is interpolated by frequency using linear interpolation between the nearest known points.
+- If the exact frequency exists, use it.
+- If the frequency is between two points, linearly interpolate.
+- If outside the defined range, use the nearest endpoint (no extrapolation).
+
+`a1 = AttenuationPer100m(f) * (CableLengthMeters / 100)`
+
+### 4.1.2 Band Selection
+
+Calculations are performed only for antenna bands defined in the antenna master data.
+- No interpolation between antenna bands.
+- If a desired frequency is missing, the band must be added in antenna master data.
+
 ### 4.2 Vertical Angle and Pattern
 
 The vertical angle attenuation (g2) is automatically calculated based on the geometry of the antenna installation:
@@ -254,6 +273,8 @@ The vertical angle attenuation (g2) is automatically calculated based on the geo
 **Angle Calculation:**
 ```
 Vertical Angle = atan(Antenna Height / Horizontal Distance to OKA)
+
+Distance to OKA is treated as horizontal ground distance in calculations.
 ```
 
 Where:
@@ -317,6 +338,17 @@ Safety distance:      ds = 1.6 × sqrt(30 × Pm × A × G × AG) / EIGW
 | 432 MHz | 28.6 |
 | 1240 MHz | 48.5 |
 | 2300+ MHz | 61 |
+
+### 4.6 Calculation Precision and Rounding
+
+- Internal calculations use double precision.
+- Output values are rounded for display: distances to 1 decimal, power/gain/attenuation to 2 decimals, factors to 2 decimals, field strength and safety distance to 2 decimals.
+
+### 4.7 Edge Cases
+
+- If distance <= 0, clamp to 0.001 m for calculation.
+- If power <= 0, all derived power and field strength values are 0.
+- If activity or modulation factor is 0, mean power is 0.
 
 ## 5. Output and Reports
 
@@ -404,7 +436,7 @@ PDF export contains:
 
 **Antenna bands**: Each band has Frequency (MHz), Gain (dBi), and 10-value vertical pattern. [Auto-calculate] generates pattern from gain (Section 8.4).
 
-**Constants (read-only)**: Ground Reflection Factor kr=1.6, Default Activity Factor=0.5
+**Constants**: Ground Reflection Factor kr=1.6, Default Activity Factor=0.5 (editable in factory mode only)
 
 ### 6.2 Export/Import
 
@@ -418,6 +450,7 @@ Two export/import types are supported: **User Data** (backup) and **Factory Data
 - **Export**: Same JSON structure and content as User Data export (see Appendix B.3).
 - **Import**: **Destructive**. Deletes the entire database, then imports from the JSON file.
   - After import, **all master data records** (Antennas, Cables, Radios, Modulations, OKAs) must have `IsUserData = false`.
+  - User data is not preserved in factory import (full replacement).
 
 **Confirmation Requirement (all imports):**
 - Show a warning that import will delete all existing data and cannot be undone.
@@ -430,6 +463,7 @@ For JSON file formats, see **Appendix B.3**.
 **Export Project**:
 - Writes a .nisproj file containing the project header and configurations.
 - Each configuration includes references to antenna, cable, radio, and OKA by name/model (not DB IDs).
+ - Linear amplifier is optional; when absent, the `linear` field is null.
 
 **Import Project**:
 - Reads a .nisproj file and creates a new project.
@@ -467,6 +501,12 @@ Validation should be enforced both during manual editing and when importing JSON
 - PowerWatts, HeightMeters, CableLengthMeters, OkaDistanceMeters must be > 0.
 - AdditionalLossDb and BuildingDampingDb must be >= 0.
 
+### 6.3.1 Validation and Error Messages
+
+- Errors are shown inline in the editor footer and prevent Save.
+- Import/calculation errors are shown as modal dialogs with a short reason.
+- Messages should be concise and action-oriented (e.g., "Power must be greater than 0 W.").
+
 ### 6.4 Unsaved Changes and Navigation Warnings
 
 Edits are **not** persisted immediately when fields change. Each editor view maintains a local, unsaved draft until the user explicitly saves.
@@ -493,11 +533,26 @@ Edits are **not** persisted immediately when fields change. Each editor view mai
 
 This ensures users don't accidentally lose their work.
 
+### 6.5 First-Run Initialization
+
+On first launch:
+- Create the application Data folder if it does not exist.
+- Seed the writable database from the factory database if `nisdata.db` is missing.
+- Create default `settings.json` if missing (language=de, theme=system).
+- Load embedded translations, then merge `translations.json` if present.
+
 ## 7. Data Model
 
 ### 7.1 Overview
 
-All application data is stored in a single SQLite database file (`Data/nisdata.db`):
+All application data is stored in a single SQLite database file (`nisdata.db`).
+
+**Data locations**:
+- Windows: `%APPDATA%/SwissNISCalculator/Data/nisdata.db`
+- macOS: `~/Library/Application Support/SwissNISCalculator/Data/nisdata.db`
+- Linux: `~/.local/share/SwissNISCalculator/Data/nisdata.db`
+
+`settings.json` and `translations.json` are stored in the same Data folder.
 
 ```
 Installation (nisdata.db)
@@ -525,7 +580,7 @@ Installation (nisdata.db)
 │   ├── Radios
 │   │   └── Manufacturer, Model, MaxPower
 │   │
-│   ├── OKAs (evaluation points, user data only)
+│   ├── OKAs (evaluation points; master data shared across projects, factory table empty)
 │   │   └── Name, DefaultDistance, DefaultDamping
 │   │
 │   └── Operating Conditions
@@ -571,11 +626,11 @@ Shared reference data used across all projects. Each record has an `IsUserData` 
 | Antennas | 319 antennas | Yes | Manufacturer, Model, Bands[] |
 | Cables | ~20 cables | Yes | Name, Attenuations |
 | Radios | ~50 radios | Yes | Manufacturer, Model, MaxPower |
-| OKAs | None | Yes | Name, DefaultDistance, DefaultDamping |
+| OKAs | None (factory empty) | Yes | Name, DefaultDistance, DefaultDamping |
 | Modulations | SSB, CW, FM | No | Name, Factor |
 
-Modulations are stored in the Modulations table as factory data.
-Constants (kr and default activity factor) are fixed values and read-only.
+Modulations are stored in the Modulations table as factory data (editable in factory mode only).
+Constants (kr and default activity factor) are stored as factory settings and editable in factory mode only.
 
 ### 7.3 User Data
 
@@ -588,10 +643,10 @@ User-created data, always editable:
 
 ### 7.4 Data Protection
 
-| IsUserData | Owner | UI Behavior | On Factory Import |
-|------------|-------|-------------|-------------------|
+| IsUserData | Owner | UI Behavior | On Factory Import (admin) |
+|------------|-------|-------------|---------------------------|
 | false | Factory | Read-only | Deleted and reimported |
-| true | User | Editable | **Protected** |
+| true | User | Editable | **Deleted** (factory import replaces entire database) |
 
 ## 8. Antenna Master Data Management
 
@@ -777,9 +832,9 @@ Accessible via: **Navigation Pane → Master Data → Translations Tab**
 
 **Features:**
 - DataGrid showing all translatable strings
-- Columns: Key | Category | German | French | Italian | English
+- Columns: Category | German | French | Italian | English (key hidden and immutable)
 - Inline editing for all language values
-- Search/filter by key or text content
+- Search/filter by text content
 - Category filter dropdown
 
 **Categories:**
@@ -798,7 +853,7 @@ Accessible via: **Navigation Pane → Master Data → Translations Tab**
 - Warning dialog when leaving with unsaved changes
 - Options: Save / Discard / Cancel
 
-### 6.6 String Categories
+#### 9.1.6 String Categories
 
 | Category | Description | Examples |
 |----------|-------------|----------|
@@ -814,7 +869,7 @@ Accessible via: **Navigation Pane → Master Data → Translations Tab**
 | Results | Calculation results | Pass, Fail, FieldStrength |
 | Validation | Error messages | ValidationRequired, ValidationModel |
 
-### 6.7 Adding New Translations
+#### 9.1.7 Adding New Translations
 
 When adding new UI elements:
 
@@ -843,7 +898,7 @@ When adding new UI elements:
    <TextBlock Text="{Binding NewLabel, Source={x:Static loc:Strings.Instance}}"/>
    ```
 
-### 6.8 Output Document Language
+#### 9.1.8 Output Document Language
 
 - Markdown export uses the project's stored language
 - All parameter names, descriptions, and explanations are translated
@@ -874,299 +929,9 @@ GitHub Actions should build versioned artifacts for all three platforms.
 
 ## Appendix A: Antennas with Generated Vertical Radiation Patterns
 
-The following antennas have vertical radiation patterns generated using the gain-based formulas from Section 8.4. Directional antennas (Yagi, Quad, Log-Periodic) use the formula from Section 8.4.1, while omnidirectional vertical antennas use Section 8.4.2. Patterns are calculated for each frequency band based on antenna gain.
-
-### A.1 Log-Periodic Antennas
-
-| Manufacturer | Model | Gain (dBi) | Bands |
-|--------------|-------|------------|-------|
-| Cushcraft | ASL201 | 6.4 | 5 |
-| Titan | DLP-19 | 1.0-7.2 | 7 |
-| Titan | LP-8 | 5.2-6.0 | 5 |
-| Titanex | DLP-10_6 | 8.2 | 2 |
-| Titanex | LP-10 | 9.2 | 5 |
-| Titanex | LP-1030 | 9.2 | 6 |
-| Titanex | LP-11 | 5.6-6.2 | 5 |
-| Titanex | LP-12 | 10.2 | 5 |
-| Titanex | LP-15 | 4.0-7.2 | 5 |
-| Titanex | LP-1830 | 3.8-5.0 | 4 |
-| Titanex | LP-5 | 4.2-5.6 | 5 |
-| Titanex | LP-6 | 7.7 | 5 |
-| Titanex | LP-7 | 7.8 | 6 |
-| Titanex | LPDA-5 | 4.2-5.6 | 5 |
-
-### A.2 Quad Antennas
-
-| Manufacturer | Model | Gain (dBi) | Bands |
-|--------------|-------|------------|-------|
-| Allgemein | Quad-2El | 7.2 | 5 |
-| Allgemein | Quad-3El | 8.9 | 5 |
-| Cubex | 2-El_Cubex | 0.0-7.7 | 6 |
-| Cubex | 2-El_SpitzCu | 6.6-7.9 | 5 |
-| Hy-Gain | 2-El_Quad | 7.7-7.8 | 3 |
-| Wimo | X-Quad-2 | 12.7 | 1 |
-| Wimo | X-Quad-70 | 14.9 | 1 |
-
-### A.3 Yagi Antennas
-
-| Manufacturer | Model | Gain (dBi) | Bands |
-|--------------|-------|------------|-------|
-| Allgemei | Yagi-3El | 6.2-6.7 | 11 |
-| Allgemein | HB9CV | 2.2-6.7 | 9 |
-| Allgemein | Helix | 9.7 | 3 |
-| Allgemein | Helix-2 | 10.9-17.1 | 3 |
-| Allgemein | Yagi-2El | 5.9-6.2 | 11 |
-| Allgemein | Yagi-4El | 6.2-8.4 | 11 |
-| Allgemein | Yagi-5El | 6.2-10.2 | 11 |
-| Allgemein | Yagi-6El | 6.2-11.3 | 11 |
-| Allgemein | Yagi-7El | 6.2-12.6 | 11 |
-| Allgemein | Yagi-8El | 13.4 | 10 |
-| Barker & Williamson | BWD-90 | 0.6-3.0 | 6 |
-| Butterfly | HF-5 | 2.0-6.3 | 5 |
-| Comet | CA-52HB4 | 10.4 | 1 |
-| Cush-Craft | R8 | 0.2-1.8 | 7 |
-| Cush-Craft | XM510 | 9.1 | 1 |
-| Cush-Craft | XM515 | 8.9 | 1 |
-| Cush-Craft | XM520 | 8.6 | 1 |
-| Cush_Craft | X7 | 7.1-8.4 | 3 |
-| Cushcraft | 10-3CD | 8.0 | 1 |
-| Cushcraft | 124WB | 10.2 | 1 |
-| Cushcraft | 13B2N | 15.8 | 1 |
-| Cushcraft | 15-4CD | 10.0 | 1 |
-| Cushcraft | 20-4CD | 10.0 | 1 |
-| Cushcraft | 40-2CD | 5.5 | 1 |
-| Cushcraft | 719B | 15.3 | 1 |
-| Cushcraft | 729B | 17.6 | 1 |
-| Cushcraft | A-3-S | 8.0 | 3 |
-| Cushcraft | A-3-WS | 7.0-8.1 | 2 |
-| Cushcraft | A-4-S | 7.4-7.5 | 3 |
-| Cushcraft | A14410SN | 13.2 | 1 |
-| Cushcraft | A27-10S | 12.2 | 2 |
-| Cushcraft | A270-6S | 9.9 | 2 |
-| Cushcraft | A43011N | 17.8 | 1 |
-| Cushcraft | A50-3S | 10.2 | 1 |
-| Cushcraft | A50-5S | 12.6 | 1 |
-| Cushcraft | A503S | 8.0 | 1 |
-| Cushcraft | A505S | 10.5 | 1 |
-| Cushcraft | A506S | 11.6 | 1 |
-| DJ2UT | P5C | 9.5-11.2 | 3 |
-| Diamon | V-2000 | 2.1-8.4 | 3 |
-| Diamon | V2000 | 2.1-8.4 | 3 |
-| Diamond | G-200 | 11.0 | 1 |
-| Eigenbau | Bi-Square | 5.2 | 1 |
-| Flexa | 2xFX213hor | 14.8 | 1 |
-| Flexa | 2xFX217hor | 16.0 | 1 |
-| Flexa | 2xFx224hor | 16.6 | 1 |
-| Flexa | 2xFx2304horiz | 16.9 | 1 |
-| Flexa | 2xFx2317hor | 24.2 | 1 |
-| Flexa | 4xFX213hor | 18.0 | 1 |
-| Flexa | 4xFx2317hor | 27.2 | 1 |
-| Flexa | FX1308-V | 15.3 | 1 |
-| Flexa | FX210 | 11.2 | 1 |
-| Flexa | FX213 | 12.3 | 1 |
-| Flexa | Fx205v | 9.7 | 1 |
-| Flexa | Fx217 | 12.9 | 1 |
-| Flexa | Fx224 | 13.5 | 1 |
-| Flexa | Fx2304horiz | 14.6 | 1 |
-| Flexa | Fx2304v | 16.4 | 1 |
-| Flexa | Fx2309 | 18.1 | 1 |
-| Flexa | Fx2317 | 20.1 | 1 |
-| Flexa | Fx2317hor | 20.1 | 1 |
-| Flexa | Fx2317vert | 20.1 | 1 |
-| Flexa | Fx7015v | 12.3 | 1 |
-| Flexa | Fx7033 | 15.3 | 1 |
-| Flexa | Fx7033hor | 15.3 | 1 |
-| Flexa | Fx7033vert | 15.3 | 1 |
-| Flexa | Fx7044 | 16.6 | 1 |
-| Flexa | Fx7044-4 | 21.7 | 1 |
-| Flexa | Fx7056 | 17.4 | 1 |
-| Flexa | Fx7073 | 17.8 | 1 |
-| Flexa | Fx7073hor | 17.8 | 1 |
-| Flexa | Fx7073vert | 17.8 | 1 |
-| Fritzel | FB-DX460 | 2.1-9.2 | 6 |
-| Fritzel | FB-DX660 | 8.2-9.0 | 3 |
-| Fritzel | FB-Do450 | 2.1-8.9 | 5 |
-| Fritzel | FB-Do505 | 6.3-8.9 | 5 |
-| Fritzel | FB-Dx506 | 5.6-8.9 | 6 |
-| Fritzel | FB13 | 2.1 | 3 |
-| Fritzel | FB23 | 5.9-6.5 | 3 |
-| Fritzel | FB33 | 7.4-9.1 | 3 |
-| Fritzel | FB34 | 2.1-9.2 | 4 |
-| Fritzel | FB53 | 7.6-8.8 | 3 |
-| Fritzel | MFB23 | 4.5-6.2 | 3 |
-| Fritzel | UFB12 | 2.1 | 2 |
-| Fritzel | UFB13 | 2.1 | 3 |
-| Fritzel | UFB33 | 6.9-7.5 | 3 |
-| Hy-Gain | 103BAS | 7.2 | 1 |
-| Hy-Gain | 105BAS | 10.8 | 1 |
-| Hy-Gain | 155BAS | 9.8 | 1 |
-| Hy-Gain | 204BAS | 8.2 | 1 |
-| Hy-Gain | 205BAS | 9.8 | 1 |
-| Hy-Gain | AV-640 | 1.0-1.8 | 7 |
-| Hy-Gain | CA-2x4max | 8.5-11.9 | 2 |
-| Hy-Gain | TH11DX | 7.5-9.2 | 5 |
-| Hy-Gain | TH2Mk3 | 6.1-6.2 | 3 |
-| Hy-Gain | TH3JRS | 7.0-8.9 | 3 |
-| Hy-Gain | TH3Mk3 | 7.1-8.4 | 3 |
-| Hy-Gain | TH5Mk2 | 7.8-9.0 | 3 |
-| Hy-Gain | TH6DXX | 8.2-9.8 | 3 |
-| Hy-Gain | TH7DX | 8.2-9.4 | 3 |
-| KLM | KT-34A | 7.5-8.9 | 3 |
-| KLM | KT-34XA | 9.0-10.9 | 3 |
-| Maspr | WHS-32N | 12.8-14.8 | 2 |
-| Maspro | WH-59hor | 9.2 | 2 |
-| Maspro | WH-59vert | 9.2 | 2 |
-| Mosle | TA-33M | 8.7-10.4 | 3 |
-| Mosle | TA-33M warc | 2.1-10.4 | 5 |
-| Mosle | TA-33jrn warc | 2.1-8.1 | 5 |
-| Mosle | TA-34xl | 11.2-11.7 | 3 |
-| Mosle | TA-34xl warc | 2.1-11.7 | 5 |
-| Mosle | TW-23M | 8.9-9.3 | 2 |
-| Mosle | TW-24xl | 10.6-11.2 | 2 |
-| Mosle | TW-31xl | 2.1 | 3 |
-| Mosle | TW-32xl | 5.7-7.3 | 3 |
-| Mosle | TW-33xl | 8.2-9.3 | 3 |
-| Mosley | CL-33-M | 8.1-9.4 | 3 |
-| Mosley | CL-33warc | 2.1-10.7 | 5 |
-| Mosley | CL-36-M | 7.1-9.4 | 3 |
-| Mosley | MP-33N | 8.0-10.2 | 3 |
-| Mosley | MP-33N warc | 2.1-10.2 | 5 |
-| Mosley | Mini-33 | 5.3-6.7 | 3 |
-| Mosley | Pro-57B | 7.6-8.2 | 5 |
-| Mosley | Pro-57B-40 | 2.1-11.6 | 6 |
-| Mosley | Pro-67A | 7.3-8.6 | 5 |
-| Mosley | Pro-67B | 7.6-8.2 | 5 |
-| Mosley | Pro-67c-3 | 2.1-11.4 | 7 |
-| Mosley | Pro-77A | 2.1-11.6 | 7 |
-| Mosley | Pro-95 | 11.1-12.7 | 5 |
-| Mosley | Pro-96 | 9.9-12.7 | 6 |
-| Mosley | TA-31M | 2.1 | 3 |
-| Mosley | TA-31jrn | 2.1 | 3 |
-| Mosley | TA-32M | 6.0-7.7 | 3 |
-| Mosley | TA-32jrn | 5.2-7.7 | 3 |
-| Mosley | TA-33jrn | 6.7-8.1 | 3 |
-| Mosley | TA-53M | 5.9-8.1 | 5 |
-| Muehla | DX2000 | -4.7--1.1 | 8 |
-| Opti-Beam | OB10-3W | 7.4-8.7 | 3 |
-| Opti-Beam | OB11-3 | 7.2-8.8 | 3 |
-| Opti-Beam | OB11-5 | 7.3-7.6 | 5 |
-| Opti-Beam | OB12-4 | 5.8-8.9 | 4 |
-| Opti-Beam | OB12-4WARC | 5.8-8.9 | 4 |
-| Opti-Beam | OB13-6 | 5.8-8.9 | 6 |
-| Opti-Beam | OB15-7 | 5.6-8.0 | 7 |
-| Opti-Beam | OB16-3 | 9.2-10.7 | 3 |
-| Opti-Beam | OB16-5 | 8.0-9.8 | 5 |
-| Opti-Beam | OB17-4 | 7.0-10.2 | 4 |
-| Opti-Beam | OB18-6 | 6.9-9.7 | 6 |
-| Opti-Beam | OB2-30 | 6.0 | 1 |
-| Opti-Beam | OB2-40 | 5.8 | 1 |
-| Opti-Beam | OB2-40M | 5.7 | 1 |
-| Opti-Beam | OB2-80 | 6.0 | 1 |
-| Opti-Beam | OB3-30 | 7.9 | 1 |
-| Opti-Beam | OB3-80 | 7.0 | 1 |
-| Opti-Beam | OB4-2W | 6.4-6.8 | 2 |
-| Opti-Beam | OB4-2WARC | 6.4-6.8 | 2 |
-| Opti-Beam | OB4-40 | 7.2 | 1 |
-| Opti-Beam | OB4020 | 7.4-10.4 | 2 |
-| Opti-Beam | OB4030 | 5.8-6.0 | 2 |
-| Opti-Beam | OB5-10 | 10.5 | 1 |
-| Opti-Beam | OB5-12 | 10.8 | 1 |
-| Opti-Beam | OB5-15 | 10.5 | 1 |
-| Opti-Beam | OB5-17 | 10.7 | 1 |
-| Opti-Beam | OB5-20 | 10.6 | 1 |
-| Opti-Beam | OB5-6 | 10.9 | 1 |
-| Opti-Beam | OB6-10 | 11.7 | 1 |
-| Opti-Beam | OB6-2WARC | 7.3-8.6 | 2 |
-| Opti-Beam | OB6-3M | 6.2-6.8 | 3 |
-| Opti-Beam | OB6-6 | 11.7 | 1 |
-| Opti-Beam | OB7-2W | 7.2-8.0 | 2 |
-| Opti-Beam | OB7-2WARC | 7.2-8.0 | 2 |
-| Opti-Beam | OB7-3 | 6.2-7.6 | 3 |
-| Opti-Beam | OB7-3M | 6.2-7.6 | 3 |
-| Opti-Beam | OB804020 | 6.0-10.5 | 3 |
-| Opti-Beam | OB9-2W | 9.2-10.0 | 2 |
-| Opti-Beam | OB9-2WARC | 9.2-10.0 | 2 |
-| Opti-Beam | OB9-5 | 6.3-6.8 | 5 |
-| Opti-Beam | OBW10-5 | 6.7-7.0 | 5 |
-| Optibeam | OB12-6 | 5.8-7.0 | 6 |
-| Optibeam | OB8-4M | 5.7-7.0 | 4 |
-| Optibeam | OB8_4M | 5.7-7.0 | 4 |
-| SHF | SHF1340 | 18.8 | 1 |
-| SHF | SHF1367 | 22.1 | 1 |
-| SHF | SHF2328 | 17.6 | 1 |
-| SHF | SHF2344 | 20.2 | 1 |
-| SHF | SHF2367 | 22.1 | 1 |
-| Somme | XP406 | 2.1-8.2 | 6 |
-| Somme | XP507 | 2.1-9.2 | 7 |
-| Somme | XP707 | 2.1-11.7 | 7 |
-| Somme | XP807 | 2.1-13.2 | 7 |
-| SteppIR | SteppIR_2El | 6.4-6.8 | 6 |
-| SteppIR | SteppIR_3El | 3.9-7.9 | 6 |
-| SteppIR | SteppIR_4El | 9.4-12.0 | 6 |
-| SteppIR | Stepp_3El | 3.0-6.3 | 6 |
-| Tonna | 20089 | 12.4 | 1 |
-| Tonna | 20505 | 10.0 | 1 |
-| Tonna | 20623 | 17.2 | 1 |
-| Tonna | 20624 | 17.2 | 1 |
-| Tonna | 20635 | 19.6 | 1 |
-| Tonna | 20636 | 19.6 | 1 |
-| Tonna | 20650 | 20.1 | 1 |
-| Tonna | 20655 | 20.1 | 1 |
-| Tonna | 20725 | 17.6 | 1 |
-| Tonna | 20804 | 8.9 | 1 |
-| Tonna | 20808 | 8.1 | 1 |
-| Tonna | 20809 | 12.4 | 1 |
-| Tonna | 20813 | 15.3 | 1 |
-| Tonna | 20818 | 12.2 | 1 |
-| Tonna | 20919 | 15.3 | 1 |
-| Tonna | 20922 | 17.4 | 1 |
-| Tonna | F9FT-horiz | 8.9 | 1 |
-| Tonna | F9FT-vert | 8.9 | 1 |
-| Tonna | T-17El-horiz | 15.0 | 1 |
-| Tonna | T-17El-vert | 15.0 | 1 |
-| Tonna | T-4x17El-horiz | 21.0 | 1 |
-| Tonna | T-4x17El-vert | 21.0 | 1 |
-| Wimo | D2T | -9.6-4.8 | 7 |
-| Wimo | Wx208 | 9.2 | 1 |
-| Wimo | Wx214 | 12.2 | 1 |
-| Wimo | Wx220 | 14.9 | 1 |
-| Wimo | Wx7020 | 13.7 | 1 |
-| Wimo | Wx7036 | 16.1 | 1 |
-| Wimo | Wy204 | 9.2 | 1 |
-| Wimo | Wy207 | 12.2 | 1 |
-| Wimo | Wy210 | 14.4 | 1 |
-| Wimo | Wy7010 | 13.7 | 1 |
-| Wimo | Wy7018 | 16.1 | 1 |
-| Wimo | Wy7023 | 17.1 | 1 |
-| Wimo | Wy706 | 10.2 | 1 |
-| Wimo | ZX6-2 | 6.2 | 1 |
-
-### A.4 Vertical Antennas
-
-Vertical antennas have patterns generated using the omnidirectional formula from Section 8.4.2.
-
-| Manufacturer | Model | Gain (dBi) | Bands |
-|--------------|-------|------------|-------|
-| Allgemein | GP Triple | 2.2 | 4 |
-| Allgemein | Ringo Range | 8.2 | 2 |
-| Comet | CX-725 | 2.2-8.4 | 3 |
-| Comet | CX-901 | 3.0-8.4 | 3 |
-| Comet | CX-902 | 4.4-6.9 | 3 |
-| Comet | GP-15 | 3.0-8.6 | 3 |
-| Comet | GP-21 | 14.8 | 1 |
-| Comet | GP-3N | 4.5-7.2 | 2 |
-| Comet | GP-91 | 5.3-10.6 | 3 |
-| Comet | GP-95 | 6.0-12.8 | 3 |
-| Comet | GP-9N | 8.5-11.9 | 2 |
-| Cushcraft | R6000 | 1.5 | 1 |
-| Cushcraft | R6xyz | 1.5 | 1 |
-| Diamond | DP-CP6 | 1.0-3.0 | 5 |
-| Diamond | F-23 | 7.8 | 1 |
-| Fritzel | GPA30 | 1.6 | 3 |
-| Fritzel | GPA404 | 1.6 | 4 |
-| Fritzel | GPA50 | 1.6 | 5 |
-
-*Summary: 14 Log-Periodic, 7 Quad, 229 Yagi, 18 Vertical antennas with generated patterns (total: 268 antennas).*
+This appendix is summarized to avoid listing all antenna records in the FSD.
+Full antenna inventories and generated patterns are stored in the seed database (`factory.db`) and the application SQLite database.
+Generated patterns follow the formulas in Section 8.4.
 
 ## Appendix B: Database Schema and JSON Formats
 
@@ -1307,6 +1072,74 @@ User and Factory exports share the same JSON structure. Factory import uses the 
   "userRadios": [ /* Radio master data */ ]
 }
 ```
+
+### B.4 Project File Format (.nisproj)
+
+```json
+{
+  "project": {
+    "name": "Example Station",
+    "operator": "HB9XX",
+    "callsign": "HB9XX",
+    "address": "Street 1, 8000 City",
+    "location": "City, CH"
+  },
+  "configurations": [
+    {
+      "antenna": { "manufacturer": "Opti-Beam", "model": "OB9-5" },
+      "heightMeters": 12,
+      "polarization": "horizontal",
+      "rotationAngleDegrees": 360,
+      "radio": { "manufacturer": "Yaesu", "model": "FT-1000" },
+      "linear": null,
+      "powerWatts": 100,
+      "cable": { "name": "EcoFlex10" },
+      "cableLengthMeters": 15,
+      "additionalLossDb": 1.0,
+      "additionalLossDescription": "Connectors",
+      "modulation": "SSB",
+      "activityFactor": 0.5,
+      "oka": { "name": "Neighbor balcony" },
+      "okaDistanceMeters": 5.4,
+      "okaBuildingDampingDb": 0
+    }
+  ]
+}
+```
+
+Notes:
+- `linear` is optional; use `null` when no amplifier is present.
+
+### B.5 settings.json
+
+```json
+{
+  "language": "de",
+  "themeMode": 0
+}
+```
+
+Notes:
+- `themeMode`: 0 = System, 1 = Light, 2 = Dark.
+
+### B.6 translations.json
+
+```json
+[
+  {
+    "Key": "Save",
+    "Category": "Common",
+    "de": "Speichern",
+    "fr": "Enregistrer",
+    "it": "Salva",
+    "en": "Save"
+  }
+]
+```
+
+Notes:
+- `Key` and `Category` are required.
+- Empty language values are ignored on load to preserve defaults.
 
 ## Appendix C: Example: HB9FS Station
 
