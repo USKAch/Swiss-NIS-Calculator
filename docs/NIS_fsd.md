@@ -128,7 +128,7 @@ Screen for creating or editing one antenna configuration. Header shows "Configur
   - Add → Navigates to Antenna Editor for new antenna
 - Height: [number] m
 - Polarization: [radio buttons] Horizontal | Vertical (mutually exclusive)
-  - Default is taken from antenna master data; user can override per configuration
+  - Fixed by antenna master data (not overrideable per configuration)
   - If Horizontal: Rotation Angle: [number] degrees (default 360) - *information only, not used in calculation*
 
 **Section 2: Transmitter**
@@ -136,7 +136,8 @@ Screen for creating or editing one antenna configuration. Header shows "Configur
   - Edit → Navigates to Radio Editor with selected radio
   - Add → Navigates to Radio Editor for new radio
   - Includes common HAM transceivers (Icom, Yaesu, Kenwood, Elecraft, FlexRadio) for HF/VHF/UHF
-- Linear Amplifier: [manufacturer/model text fields] or "None" (checkbox to enable)
+- Linear Amplifier: [dropdown from master data] [Edit] [+ Add] or "None" (checkbox to disable)
+  - Stored as an optional reference to a Radio entry (no free-text storage)
 - Output Power: [number] W (at radio or linear output)
 
 **Section 3: Feed Line**
