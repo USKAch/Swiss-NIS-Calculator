@@ -25,23 +25,22 @@
                        SelectionChanged="OnNavigationSelectionChanged">
 
         <ui:NavigationView.MenuItems>
-            <ui:NavigationViewItem Content="{Binding Home, Source={x:Static loc:Strings.Instance}}" Tag="Home">
+            <ui:NavigationViewItem Content="{Binding Projects, Source={x:Static loc:Strings.Instance}}" Tag="Home">
                 <ui:NavigationViewItem.IconSource>
                     <ui:SymbolIconSource Symbol="Home"/>
                 </ui:NavigationViewItem.IconSource>
             </ui:NavigationViewItem>
 
-            <ui:NavigationViewItem Content="{Binding Project, Source={x:Static loc:Strings.Instance}}" Tag="Project" IsEnabled="{Binding HasProject}">
+            <ui:NavigationViewItem Content="{Binding NewProject, Source={x:Static loc:Strings.Instance}}" Tag="NewProject">
                 <ui:NavigationViewItem.IconSource>
-                    <ui:SymbolIconSource Symbol="Document"/>
+                    <ui:SymbolIconSource Symbol="Add"/>
                 </ui:NavigationViewItem.IconSource>
-                <ui:NavigationViewItem.MenuItems>
-                    <ui:NavigationViewItem Content="{Binding CurrentProject, Source={x:Static loc:Strings.Instance}}" Tag="ProjectOverview"/>
-                    <ui:NavigationViewItem Content="{Binding ProjectInfo, Source={x:Static loc:Strings.Instance}}" Tag="StationInfo"/>
-                    <ui:NavigationViewItem Content="{Binding Configurations, Source={x:Static loc:Strings.Instance}}" Tag="Configurations"/>
-                    <ui:NavigationViewItem Content="{Binding CalculationResults, Source={x:Static loc:Strings.Instance}}" Tag="Calculate"/>
-                    <ui:NavigationViewItem Content="{Binding ExportReport, Source={x:Static loc:Strings.Instance}}" Tag="CreateReport"/>
-                </ui:NavigationViewItem.MenuItems>
+            </ui:NavigationViewItem>
+
+            <ui:NavigationViewItem Content="{Binding OpenProject, Source={x:Static loc:Strings.Instance}}" Tag="OpenProject">
+                <ui:NavigationViewItem.IconSource>
+                    <ui:SymbolIconSource Symbol="FolderOpen"/>
+                </ui:NavigationViewItem.IconSource>
             </ui:NavigationViewItem>
 
             <ui:NavigationViewItem Content="{Binding MasterData, Source={x:Static loc:Strings.Instance}}" Tag="MasterData">
@@ -50,9 +49,21 @@
                 </ui:NavigationViewItem.IconSource>
             </ui:NavigationViewItem>
 
-            <ui:NavigationViewItem Content="{Binding ImportExport, Source={x:Static loc:Strings.Instance}}" Tag="ImportExport">
+            <ui:NavigationViewItem Content="{Binding CalculateAll, Source={x:Static loc:Strings.Instance}}" Tag="Calculate" IsEnabled="{Binding HasProject}">
                 <ui:NavigationViewItem.IconSource>
-                    <ui:SymbolIconSource Symbol="Sync"/>
+                    <ui:SymbolIconSource Symbol="Calculator"/>
+                </ui:NavigationViewItem.IconSource>
+            </ui:NavigationViewItem>
+
+            <ui:NavigationViewItem Content="{Binding ExportReport, Source={x:Static loc:Strings.Instance}}" Tag="CreateReport" IsEnabled="{Binding HasProject}">
+                <ui:NavigationViewItem.IconSource>
+                    <ui:SymbolIconSource Symbol="Share"/>
+                </ui:NavigationViewItem.IconSource>
+            </ui:NavigationViewItem>
+
+            <ui:NavigationViewItem Content="{Binding ExportPdf, Source={x:Static loc:Strings.Instance}}" Tag="ExportPdf" IsEnabled="{Binding HasProject}">
+                <ui:NavigationViewItem.IconSource>
+                    <ui:SymbolIconSource Symbol="Document"/>
                 </ui:NavigationViewItem.IconSource>
             </ui:NavigationViewItem>
         </ui:NavigationView.MenuItems>

@@ -48,27 +48,6 @@ public partial class App : Application
                 return result == ButtonResult.Yes;
             };
 
-            // Subscribe to dark mode changes from WelcomeViewModel
-            WelcomeViewModel? subscribedWelcomeVm = null;
-            _mainShellViewModel.PropertyChanged += (s, e) =>
-            {
-                if (e.PropertyName == nameof(MainShellViewModel.CurrentView) &&
-                    _mainShellViewModel.CurrentView is WelcomeViewModel welcomeVm &&
-                    welcomeVm != subscribedWelcomeVm)
-                {
-                    subscribedWelcomeVm = welcomeVm;
-                    welcomeVm.DarkModeChanged += isDark =>
-                    {
-                        RequestedThemeVariant = isDark ? ThemeVariant.Dark : ThemeVariant.Light;
-                    };
-                    // Apply initial dark mode setting
-                    if (welcomeVm.IsDarkMode)
-                    {
-                        RequestedThemeVariant = ThemeVariant.Dark;
-                    }
-                }
-            };
-
             // Apply initial theme from settings
             var settings = Services.AppSettings.Load();
             SettingsViewModel.ApplyTheme(settings.ThemeMode);

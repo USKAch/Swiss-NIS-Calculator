@@ -38,9 +38,9 @@
                 <ui:SettingsExpander.Footer>
                     <ComboBox SelectedIndex="{Binding LanguageIndex}" Width="150">
                         <ComboBoxItem Content="{Binding LanguageGerman, Source={x:Static loc:Strings.Instance}}"/>
-                        <ComboBoxItem Content="{Binding LanguageEnglish, Source={x:Static loc:Strings.Instance}}"/>
                         <ComboBoxItem Content="{Binding LanguageFrench, Source={x:Static loc:Strings.Instance}}"/>
                         <ComboBoxItem Content="{Binding LanguageItalian, Source={x:Static loc:Strings.Instance}}"/>
+                        <ComboBoxItem Content="{Binding LanguageEnglish, Source={x:Static loc:Strings.Instance}}"/>
                     </ComboBox>
                 </ui:SettingsExpander.Footer>
             </ui:SettingsExpander>
@@ -70,4 +70,3 @@
         </Border>
     </Grid>
 </UserControl>
-

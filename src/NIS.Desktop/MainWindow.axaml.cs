@@ -62,8 +62,8 @@ public partial class MainWindow : Window
                     vm.NavigateByTag(tag);
                 }
 
-                // Clear selection for Home so it can be clicked repeatedly
-                if (tag is "Home")
+                // Clear selection for actions so they can be clicked repeatedly
+                if (tag is "Home" or "OpenProject")
                 {
                     if (sender is NavigationView navView)
                     {

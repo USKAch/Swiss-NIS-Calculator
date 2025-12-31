@@ -29,9 +29,9 @@ public partial class SettingsViewModel : ViewModelBase
         LanguageIndex = _settings.Language switch
         {
             "de" => 0,
-            "en" => 1,
-            "fr" => 2,
-            "it" => 3,
+            "fr" => 1,
+            "it" => 2,
+            "en" => 3,
             _ => 0
         };
 
@@ -72,9 +72,9 @@ public partial class SettingsViewModel : ViewModelBase
         var language = value switch
         {
             0 => "de",
-            1 => "en",
-            2 => "fr",
-            3 => "it",
+            1 => "fr",
+            2 => "it",
+            3 => "en",
             _ => "de"
         };
 

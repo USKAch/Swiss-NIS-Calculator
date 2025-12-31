@@ -30,7 +30,7 @@ public partial class MainShellViewModel : ViewModelBase
     /// <summary>
     /// Show sidebar on all views except Welcome screen.
     /// </summary>
-    public bool ShowSidebar => CurrentView is not WelcomeViewModel and not ProjectListViewModel;
+    public bool ShowSidebar => CurrentView is not WelcomeViewModel;
 
     // Shared state
     public ProjectViewModel ProjectViewModel { get; } = new();
@@ -117,6 +117,9 @@ public partial class MainShellViewModel : ViewModelBase
             case "NewProject":
                 NavigateToProjectInfo(Strings.Instance.Language);
                 break;
+            case "OpenProject":
+                _ = OpenProjectFileAsync();
+                break;
             case "SelectProject":
                 NavigateToProjectList();
                 break;
@@ -124,6 +127,9 @@ public partial class MainShellViewModel : ViewModelBase
                 _ = DeleteCurrentProjectAsync();
                 break;
             case "CreateReport":
+                if (HasProject) NavigateToResults();
+                break;
+            case "ExportPdf":
                 if (HasProject) NavigateToResults();
                 break;
             case "StationInfo":
@@ -441,6 +447,24 @@ public partial class MainShellViewModel : ViewModelBase
         CurrentView = _importExportViewModel;
         Breadcrumb = Strings.Instance.ImportExport;
         WindowTitle = "Swiss NIS Calculator";
+    }
+
+    private async Task OpenProjectFileAsync()
+    {
+        if (StorageProvider == null) return;
+
+        _importExportViewModel ??= new ImportExportViewModel();
+        _importExportViewModel.StorageProvider = StorageProvider;
+        _importExportViewModel.ShowConfirmDialog = ShowConfirmDialog;
+        _importExportViewModel.OnProjectImported = () =>
+        {
+            _projectListViewModel?.RefreshProjects();
+        };
+
+        if (_importExportViewModel.ImportProjectCommand is IAsyncRelayCommand importCommand)
+        {
+            await importCommand.ExecuteAsync(null);
+        }
     }
 
     public void NavigateToAntennaMasterEditor(NIS.Desktop.Models.Antenna? existing, bool isReadOnly = false)

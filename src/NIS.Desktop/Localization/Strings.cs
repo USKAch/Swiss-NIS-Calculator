@@ -117,6 +117,7 @@ public class Strings : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AddConfiguration)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalculateAll)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ExportReport)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ExportPdf)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NoConfigurations)));
 
         // Configuration Editor
@@ -245,6 +246,7 @@ public class Strings : INotifyPropertyChanged
     public string AddConfiguration => Get("AddConfiguration");
     public string CalculateAll => Get("CalculateAll");
     public string ExportReport => Get("ExportReport");
+    public string ExportPdf => Get("ExportPdf");
     public string NoConfigurations => Get("NoConfigurations");
 
     // ============================================================
@@ -565,6 +567,7 @@ public class Strings : INotifyPropertyChanged
         ["AddConfiguration"] = "ProjectOverview",
         ["CalculateAll"] = "ProjectOverview",
         ["ExportReport"] = "ProjectOverview",
+        ["ExportPdf"] = "ProjectOverview",
         ["NoConfigurations"] = "ProjectOverview",
         // ConfigEditor
         ["Antenna"] = "ConfigEditor",
@@ -754,6 +757,7 @@ public class Strings : INotifyPropertyChanged
         ["AddConfiguration"] = new() { ["de"] = "+ Konfiguration hinzufügen", ["fr"] = "+ Ajouter configuration", ["it"] = "+ Aggiungi configurazione", ["en"] = "+ Add Configuration" },
         ["CalculateAll"] = new() { ["de"] = "Alle berechnen", ["fr"] = "Tout calculer", ["it"] = "Calcola tutto", ["en"] = "Calculate All" },
         ["ExportReport"] = new() { ["de"] = "Bericht exportieren", ["fr"] = "Exporter rapport", ["it"] = "Esporta rapporto", ["en"] = "Export Report" },
+        ["ExportPdf"] = new() { ["de"] = "PDF exportieren", ["fr"] = "Exporter PDF", ["it"] = "Esporta PDF", ["en"] = "Export PDF" },
         ["NoConfigurations"] = new() { ["de"] = "Keine Konfigurationen. Klicken Sie auf '+ Konfiguration hinzufügen'.", ["fr"] = "Aucune configuration. Cliquez sur '+ Ajouter configuration'.", ["it"] = "Nessuna configurazione. Clicca su '+ Aggiungi configurazione'.", ["en"] = "No configurations. Click '+ Add Configuration' to get started." },
 
         // Configuration Editor

@@ -12,112 +12,85 @@
         <vm:WelcomeViewModel/>
     </Design.DataContext>
 
-    <UserControl.Resources>
-        <vm:EqualsConverter x:Key="EqualsConverter"/>
-    </UserControl.Resources>
-
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-        <StackPanel Margin="40,30" Spacing="24" MaxWidth="500" HorizontalAlignment="Center">
-
-            <!-- Title Section -->
-            <StackPanel Spacing="4">
-                <TextBlock Text="{Binding Strings.AppTitle}"
-                           FontSize="28" FontWeight="SemiBold"/>
-                <TextBlock Text="{Binding Strings.AppSubtitle}"
-                           FontSize="14" Opacity="0.6"/>
-            </StackPanel>
-
-            <!-- Current Project Card -->
-            <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
-                    CornerRadius="4" Padding="16"
-                    IsVisible="{Binding HasCurrentProject}">
-                <StackPanel Spacing="8">
-                    <TextBlock Text="{Binding Strings.Project}" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,4"/>
-                    <Button Command="{Binding ContinueProjectCommand}"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Left"
-                            Classes="accent"
-                            Padding="12,8">
-                        <StackPanel>
-                            <TextBlock Text="{Binding CurrentProjectName}" FontWeight="SemiBold" FontSize="14"/>
-                            <TextBlock Text="{Binding Strings.Continue}" FontSize="12" Opacity="0.7"/>
-                        </StackPanel>
-                    </Button>
-                </StackPanel>
-            </Border>
-
-            <!-- Get Started hint when no project -->
-            <TextBlock Text="{Binding Strings.GetStarted}"
-                       FontSize="13" Opacity="0.6"
-                       HorizontalAlignment="Center"
-                       IsVisible="{Binding !HasCurrentProject}"/>
-
-            <!-- Language and Theme -->
-            <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
-                    CornerRadius="4" Padding="16">
-                <Grid ColumnDefinitions="Auto,8,Auto,24,Auto,8,Auto" VerticalAlignment="Center">
-                    <!-- Language Selection -->
-                    <TextBlock Grid.Column="0" Text="{Binding Strings.SelectLanguage}" VerticalAlignment="Center"/>
-                    <ComboBox Grid.Column="2" SelectedIndex="{Binding SelectedLanguageIndex, Mode=TwoWay}" Width="120" VerticalAlignment="Center">
-                        <ComboBoxItem Content="{Binding LanguageGerman, Source={x:Static loc:Strings.Instance}}"/>
-                        <ComboBoxItem Content="{Binding LanguageFrench, Source={x:Static loc:Strings.Instance}}"/>
-                        <ComboBoxItem Content="{Binding LanguageItalian, Source={x:Static loc:Strings.Instance}}"/>
-                        <ComboBoxItem Content="{Binding LanguageEnglish, Source={x:Static loc:Strings.Instance}}"/>
-                    </ComboBox>
-
-                    <!-- Theme Toggle -->
-                    <TextBlock Grid.Column="4" Text="{Binding Strings.Theme}" VerticalAlignment="Center"/>
-                    <ToggleSwitch Grid.Column="6" IsChecked="{Binding IsDarkMode}"
-                                  OnContent="{Binding Strings.ThemeDark}"
-                                  OffContent="{Binding Strings.ThemeLight}"
-                                  VerticalAlignment="Center"/>
-                </Grid>
-            </Border>
+    <Grid RowDefinitions="*,Auto">
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Margin="40,30" Spacing="24" MaxWidth="900" HorizontalAlignment="Center">
 
             <!-- Projects in Database -->
-            <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
-                    CornerRadius="4" Padding="16">
-                <StackPanel Spacing="8">
+            <Border BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                    BorderThickness="1" CornerRadius="8" Padding="15">
+                <StackPanel Spacing="10">
                     <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="{Binding Project, Source={x:Static loc:Strings.Instance}}"
-                                   FontSize="14" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding Projects, Source={x:Static loc:Strings.Instance}}"
+                                   FontSize="18" FontWeight="Bold"/>
                         <Button Grid.Column="1"
-                                Command="{Binding LoadDemoProjectCommand}"
-                                Content="{Binding LoadDemoProject, Source={x:Static loc:Strings.Instance}}"
-                                Padding="8,4" FontSize="12"/>
+                                Command="{Binding NewProjectCommand}"
+                                Content="{Binding NewProject, Source={x:Static loc:Strings.Instance}}"
+                                Background="{DynamicResource SuccessButtonBrush}"
+                                Foreground="{DynamicResource HeaderForegroundBrush}"
+                                Padding="15,8"/>
                     </Grid>
 
-                    <!-- Project List -->
-                    <ItemsControl ItemsSource="{Binding ProjectList}" IsVisible="{Binding HasProjectsInDatabase}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border Margin="0,2" Padding="8,6" CornerRadius="4"
-                                        Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
-                                    <Grid ColumnDefinitions="*,Auto,Auto">
-                                        <StackPanel>
-                                            <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold"/>
-                                            <TextBlock Text="{Binding ModifiedAt}" FontSize="11" Opacity="0.6"/>
+                    <!-- Project DataGrid -->
+                    <DataGrid ItemsSource="{Binding ProjectList}"
+                              IsVisible="{Binding HasProjectsInDatabase}"
+                              AutoGenerateColumns="False"
+                              CanUserReorderColumns="False"
+                              CanUserResizeColumns="True"
+                              CanUserSortColumns="True"
+                              IsReadOnly="True"
+                              SelectionMode="Single"
+                              HeadersVisibility="Column"
+                              GridLinesVisibility="All"
+                              HorizontalGridLinesBrush="#CCCCCC"
+                              VerticalGridLinesBrush="#888888"
+                              BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                              BorderThickness="1"
+                              MaxHeight="400">
+                        <DataGrid.Styles>
+                            <Style Selector="DataGridColumnHeader">
+                                <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                <Setter Property="FontSize" Value="14"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                <Setter Property="Padding" Value="12,8"/>
+                                <Setter Property="MinHeight" Value="40"/>
+                            </Style>
+                        </DataGrid.Styles>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="{Binding ProjectName, Source={x:Static loc:Strings.Instance}}"
+                                                Binding="{Binding Name}" Width="*"/>
+                            <DataGridTextColumn Header="{Binding Operator, Source={x:Static loc:Strings.Instance}}"
+                                                Binding="{Binding Operator}" Width="Auto"/>
+                            <DataGridTextColumn Header="{Binding Location, Source={x:Static loc:Strings.Instance}}"
+                                                Binding="{Binding Location}" Width="Auto"/>
+                            <DataGridTextColumn Header="{Binding Configurations, Source={x:Static loc:Strings.Instance}}"
+                                                Binding="{Binding ConfigCount}" Width="Auto"/>
+                            <DataGridTextColumn Header="{Binding Modified, Source={x:Static loc:Strings.Instance}}"
+                                                Binding="{Binding ModifiedAt}" Width="Auto"/>
+                            <DataGridTemplateColumn Header="{Binding Actions, Source={x:Static loc:Strings.Instance}}" Width="Auto">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" Margin="5,0">
+                                            <Button Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}"
+                                                    Command="{Binding $parent[DataGrid].((vm:WelcomeViewModel)DataContext).EditProjectFromListCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    Padding="8,3"/>
+                                            <Button Content="{Binding Delete, Source={x:Static loc:Strings.Instance}}"
+                                                    Command="{Binding $parent[DataGrid].((vm:WelcomeViewModel)DataContext).DeleteProjectFromListCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    Padding="8,3" Foreground="{DynamicResource DangerButtonBrush}"/>
                                         </StackPanel>
-                                        <Button Grid.Column="1"
-                                                Command="{Binding $parent[ItemsControl].((vm:WelcomeViewModel)DataContext).OpenProjectFromListCommand}"
-                                                CommandParameter="{Binding}"
-                                                Content="{Binding OpenProject, Source={x:Static loc:Strings.Instance}}"
-                                                Classes="accent"
-                                                Padding="8,4" FontSize="11" Margin="0,0,8,0"/>
-                                        <Button Grid.Column="2"
-                                                Command="{Binding $parent[ItemsControl].((vm:WelcomeViewModel)DataContext).DeleteProjectFromListCommand}"
-                                                CommandParameter="{Binding}"
-                                                Content="{Binding Delete, Source={x:Static loc:Strings.Instance}}"
-                                                Padding="8,4" FontSize="11"/>
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
 
-                    <TextBlock Text="{Binding LoadDemoProjectDesc, Source={x:Static loc:Strings.Instance}}"
-                               FontSize="12" Opacity="0.6"
-                               IsVisible="{Binding !HasProjectsInDatabase}"/>
+                    <!-- Empty state -->
+                    <TextBlock Text="{Binding NoProjects, Source={x:Static loc:Strings.Instance}}"
+                               IsVisible="{Binding !HasProjectsInDatabase}"
+                               Opacity="0.5" FontStyle="Italic" Margin="10,5"/>
                 </StackPanel>
             </Border>
 
@@ -127,12 +100,14 @@
                        HorizontalAlignment="Center"
                        IsVisible="{Binding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
 
-            <!-- Footer -->
-            <TextBlock Text="{Binding Strings.NisvCompliance}"
-                       FontSize="11" Opacity="0.5"
-                       HorizontalAlignment="Center"
-                       Margin="0,10,0,0"/>
-        </StackPanel>
-    </ScrollViewer>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Footer -->
+        <Border Grid.Row="1" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" Padding="20,12">
+            <TextBlock Text="{Binding NisvCompliance, Source={x:Static loc:Strings.Instance}}"
+                       FontSize="12" Opacity="0.5" HorizontalAlignment="Center"/>
+        </Border>
+    </Grid>
 </UserControl>
 
