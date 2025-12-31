@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,8 +22,22 @@ public partial class ProjectListViewModel : ViewModelBase
     private ProjectListItem? _selectedProject;
 
     public ObservableCollection<ProjectListItem> Projects { get; } = new();
+    public ObservableCollection<ProjectListItem> FilteredProjects { get; } = new();
 
     public bool HasProjects => Projects.Count > 0;
+    public bool HasFilteredProjects => FilteredProjects.Count > 0;
+
+    public List<string> SortOptions => new()
+    {
+        Strings.Instance.SortByModified,
+        Strings.Instance.SortByName
+    };
+
+    [ObservableProperty]
+    private string _searchText = string.Empty;
+
+    [ObservableProperty]
+    private string _sortOption = Strings.Instance.SortByModified;
 
     // Navigation callbacks
     public Action<string>? NavigateToNewProject { get; set; }
@@ -41,7 +56,31 @@ public partial class ProjectListViewModel : ViewModelBase
         {
             Projects.Add(project);
         }
+        ApplyFilter();
         OnPropertyChanged(nameof(HasProjects));
+    }
+
+    partial void OnSearchTextChanged(string value) => ApplyFilter();
+    partial void OnSortOptionChanged(string value) => ApplyFilter();
+
+    private void ApplyFilter()
+    {
+        FilteredProjects.Clear();
+        var search = SearchText.Trim();
+        var filtered = string.IsNullOrEmpty(search)
+            ? Projects
+            : Projects.Where(p => p.Name.Contains(search, StringComparison.OrdinalIgnoreCase));
+
+        var sorted = SortOption == Strings.Instance.SortByName
+            ? filtered.OrderBy(p => p.Name, StringComparer.OrdinalIgnoreCase)
+            : filtered.OrderByDescending(p => p.ModifiedAt, StringComparer.OrdinalIgnoreCase);
+
+        foreach (var project in sorted)
+        {
+            FilteredProjects.Add(project);
+        }
+
+        OnPropertyChanged(nameof(HasFilteredProjects));
     }
 
     [RelayCommand]
@@ -75,6 +114,7 @@ public partial class ProjectListViewModel : ViewModelBase
             DatabaseService.Instance.DeleteProject(project.Id);
             Projects.Remove(project);
             OnPropertyChanged(nameof(HasProjects));
+            ApplyFilter();
             StatusMessage = Strings.Instance.ProjectDeleted;
         }
         catch (Exception ex)

@@ -186,6 +186,7 @@ public partial class MainShellViewModel : ViewModelBase
         _welcomeViewModel.LoadProjectFromDatabase = async (id) => await LoadProjectFromDatabaseAsync(id);
         _welcomeViewModel.ProjectViewModel = ProjectViewModel;
         _welcomeViewModel.ShowConfirmDialog = ShowConfirmDialog;
+        _welcomeViewModel.RefreshProjects();
         CurrentView = _welcomeViewModel;
         Breadcrumb = Strings.Instance.Home;
         WindowTitle = "Swiss NIS Calculator";

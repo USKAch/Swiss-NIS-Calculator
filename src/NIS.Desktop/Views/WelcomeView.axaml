@@ -31,8 +31,20 @@
                                 Padding="15,8"/>
                     </Grid>
 
+                    <!-- Search and sort -->
+                    <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,10">
+                        <TextBox Text="{Binding SearchText}"
+                                 Watermark="{Binding SearchProjects, Source={x:Static loc:Strings.Instance}}"
+                                 Padding="10,8"/>
+                        <ComboBox Grid.Column="1"
+                                  ItemsSource="{Binding SortOptions}"
+                                  SelectedItem="{Binding SortOption}"
+                                  Margin="10,0,0,0"
+                                  MinWidth="180"/>
+                    </Grid>
+
                     <!-- Project DataGrid -->
-                    <DataGrid ItemsSource="{Binding ProjectList}"
+                    <DataGrid ItemsSource="{Binding FilteredProjects}"
                               IsVisible="{Binding HasProjectsInDatabase}"
                               AutoGenerateColumns="False"
                               CanUserReorderColumns="False"

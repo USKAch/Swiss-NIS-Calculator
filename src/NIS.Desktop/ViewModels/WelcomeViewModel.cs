@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -39,16 +40,62 @@ public partial class WelcomeViewModel : ViewModelBase
     /// List of projects in the database for selection.
     /// </summary>
     public List<ProjectListItem> ProjectList => DatabaseService.Instance.GetProjectList();
+    public ObservableCollection<ProjectListItem> FilteredProjects { get; } = new();
 
     /// <summary>
     /// Whether there are any projects in the database.
     /// </summary>
     public bool HasProjectsInDatabase => ProjectList.Count > 0;
 
+    public List<string> SortOptions => new()
+    {
+        Strings.Instance.SortByModified,
+        Strings.Instance.SortByName
+    };
+
+    [ObservableProperty]
+    private string _searchText = string.Empty;
+
+    [ObservableProperty]
+    private string _sortOption = Strings.Instance.SortByModified;
+
+    public WelcomeViewModel()
+    {
+        ApplyFilter();
+    }
+
+    public void RefreshProjects()
+    {
+        OnPropertyChanged(nameof(ProjectList));
+        OnPropertyChanged(nameof(HasProjectsInDatabase));
+        ApplyFilter();
+    }
+
     [RelayCommand]
     private void NewProject()
     {
         NavigateToProjectInfo?.Invoke(Strings.Instance.Language);
+    }
+
+    partial void OnSearchTextChanged(string value) => ApplyFilter();
+    partial void OnSortOptionChanged(string value) => ApplyFilter();
+
+    private void ApplyFilter()
+    {
+        FilteredProjects.Clear();
+        var search = SearchText.Trim();
+        var filtered = string.IsNullOrEmpty(search)
+            ? ProjectList
+            : ProjectList.FindAll(p => p.Name.Contains(search, StringComparison.OrdinalIgnoreCase));
+
+        var sorted = SortOption == Strings.Instance.SortByName
+            ? filtered.OrderBy(p => p.Name, StringComparer.OrdinalIgnoreCase)
+            : filtered.OrderByDescending(p => p.ModifiedAt, StringComparer.OrdinalIgnoreCase);
+
+        foreach (var project in sorted)
+        {
+            FilteredProjects.Add(project);
+        }
     }
 
     [RelayCommand]
@@ -79,6 +126,7 @@ public partial class WelcomeViewModel : ViewModelBase
             // Refresh project list
             OnPropertyChanged(nameof(ProjectList));
             OnPropertyChanged(nameof(HasProjectsInDatabase));
+            ApplyFilter();
         }
         catch (Exception ex)
         {

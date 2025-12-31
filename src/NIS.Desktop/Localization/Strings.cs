@@ -119,6 +119,10 @@ public class Strings : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ExportReport)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ExportPdf)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NoConfigurations)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SearchProjects)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SortBy)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SortByName)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SortByModified)));
 
         // Configuration Editor
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Antenna)));
@@ -248,6 +252,10 @@ public class Strings : INotifyPropertyChanged
     public string ExportReport => Get("ExportReport");
     public string ExportPdf => Get("ExportPdf");
     public string NoConfigurations => Get("NoConfigurations");
+    public string SearchProjects => Get("SearchProjects");
+    public string SortBy => Get("SortBy");
+    public string SortByName => Get("SortByName");
+    public string SortByModified => Get("SortByModified");
 
     // ============================================================
     // CONFIGURATION EDITOR
@@ -569,6 +577,10 @@ public class Strings : INotifyPropertyChanged
         ["ExportReport"] = "ProjectOverview",
         ["ExportPdf"] = "ProjectOverview",
         ["NoConfigurations"] = "ProjectOverview",
+        ["SearchProjects"] = "ProjectOverview",
+        ["SortBy"] = "ProjectOverview",
+        ["SortByName"] = "ProjectOverview",
+        ["SortByModified"] = "ProjectOverview",
         // ConfigEditor
         ["Antenna"] = "ConfigEditor",
         ["Transmitter"] = "ConfigEditor",
@@ -759,6 +771,10 @@ public class Strings : INotifyPropertyChanged
         ["ExportReport"] = new() { ["de"] = "Bericht exportieren", ["fr"] = "Exporter rapport", ["it"] = "Esporta rapporto", ["en"] = "Export Report" },
         ["ExportPdf"] = new() { ["de"] = "PDF exportieren", ["fr"] = "Exporter PDF", ["it"] = "Esporta PDF", ["en"] = "Export PDF" },
         ["NoConfigurations"] = new() { ["de"] = "Keine Konfigurationen. Klicken Sie auf '+ Konfiguration hinzufügen'.", ["fr"] = "Aucune configuration. Cliquez sur '+ Ajouter configuration'.", ["it"] = "Nessuna configurazione. Clicca su '+ Aggiungi configurazione'.", ["en"] = "No configurations. Click '+ Add Configuration' to get started." },
+        ["SearchProjects"] = new() { ["de"] = "Projekte suchen...", ["fr"] = "Rechercher projets...", ["it"] = "Cerca progetti...", ["en"] = "Search projects..." },
+        ["SortBy"] = new() { ["de"] = "Sortieren nach", ["fr"] = "Trier par", ["it"] = "Ordina per", ["en"] = "Sort by" },
+        ["SortByName"] = new() { ["de"] = "Name", ["fr"] = "Nom", ["it"] = "Nome", ["en"] = "Name" },
+        ["SortByModified"] = new() { ["de"] = "Zuletzt geändert", ["fr"] = "Dernière modification", ["it"] = "Ultima modifica", ["en"] = "Last modified" },
 
         // Configuration Editor
         ["Antenna"] = new() { ["de"] = "Antenne", ["fr"] = "Antenne", ["it"] = "Antenna", ["en"] = "Antenna" },
