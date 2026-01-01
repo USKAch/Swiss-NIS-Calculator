@@ -51,7 +51,6 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
     public Action<Antenna?>? NavigateToAntennaEditor { get; set; }
     public Action<Cable?>? NavigateToCableEditor { get; set; }
     public Action<Radio?>? NavigateToRadioEditor { get; set; }
-    public Action<Radio?>? NavigateToLinearEditor { get; set; }
     public Action<Oka?>? NavigateToOkaEditor { get; set; }
     public Action? MarkProjectDirty { get; set; }
 
@@ -94,10 +93,10 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
     private Radio? _selectedRadio;
 
     [ObservableProperty]
-    private Radio? _selectedLinear;
+    private string _linearName = string.Empty;
 
     [ObservableProperty]
-    private bool _hasLinear;
+    private double _linearPowerWatts;
 
     [ObservableProperty]
     private double _powerWatts = 100;
@@ -157,7 +156,8 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
 
     partial void OnSelectedAntennaChanged(Antenna? value) => MarkDirty();
     partial void OnSelectedRadioChanged(Radio? value) => MarkDirty();
-    partial void OnSelectedLinearChanged(Radio? value) => MarkDirty();
+    partial void OnLinearNameChanged(string value) => MarkDirty();
+    partial void OnLinearPowerWattsChanged(double value) => MarkDirty();
     partial void OnSelectedCableChanged(Cable? value) => MarkDirty();
     partial void OnSelectedModulationChanged(Modulation? value) => MarkDirty();
     partial void OnPowerWattsChanged(double value) => MarkDirty();
@@ -194,14 +194,9 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
             r.Manufacturer == config.Radio.Manufacturer &&
             r.Model == config.Radio.Model);
 
-        // Linear
-        HasLinear = config.Linear != null;
-        if (config.Linear != null)
-        {
-            SelectedLinear = Radios.FirstOrDefault(r =>
-                r.Manufacturer.Equals(config.Linear.Manufacturer, StringComparison.OrdinalIgnoreCase) &&
-                r.Model.Equals(config.Linear.Model, StringComparison.OrdinalIgnoreCase));
-        }
+        // Linear amplifier
+        LinearName = config.Linear?.Name ?? string.Empty;
+        LinearPowerWatts = config.Linear?.PowerWatts ?? 0;
 
         // Cable
         SelectedCable = Cables.FirstOrDefault(c => c.Name == config.Cable.Type);
@@ -244,11 +239,11 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
                 Manufacturer = SelectedRadio?.Manufacturer ?? "",
                 Model = SelectedRadio?.Model ?? ""
             },
-            Linear = HasLinear ? new LinearConfig
+            Linear = string.IsNullOrWhiteSpace(LinearName) ? null : new LinearConfig
             {
-                Manufacturer = SelectedLinear?.Manufacturer ?? "",
-                Model = SelectedLinear?.Model ?? ""
-            } : null,
+                Name = LinearName.Trim(),
+                PowerWatts = LinearPowerWatts
+            },
             Cable = new CableConfig
             {
                 Type = SelectedCable?.Name ?? "",
@@ -327,23 +322,4 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
         NavigateToRadioEditor?.Invoke(null);
     }
 
-    [RelayCommand]
-    private void EditLinear()
-    {
-        NavigateToLinearEditor?.Invoke(SelectedLinear);
-    }
-
-    [RelayCommand]
-    private void AddLinear()
-    {
-        NavigateToLinearEditor?.Invoke(null);
-    }
-
-    partial void OnHasLinearChanged(bool value)
-    {
-        if (!value)
-        {
-            SelectedLinear = null;
-        }
-    }
 }

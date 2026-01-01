@@ -28,6 +28,7 @@ public class ConfigurationResult
 {
     public required string ConfigurationName { get; init; }
     public required string AntennaName { get; init; }
+    public required string RadioName { get; init; }
     public required double PowerWatts { get; init; }
     public required string Modulation { get; init; }
     public required double OkaDistance { get; init; }
@@ -46,14 +47,24 @@ public class ConfigurationResult
     public double RealDistance => Math.Sqrt(OkaDistance * OkaDistance + AntennaHeight * AntennaHeight);
 
     /// <summary>
-    /// Formatted configuration description with localized labels.
-    /// Format: "Antenna: Name, Xm above OKA, Cable: Xm Type, Full OKA name: OkaName, Xm horizontal distance to mast, Distance Antenna-OKA: Xm"
+    /// Formatted configuration description with localized labels on 3 lines.
+    /// Line 1: Antenna info (name, height)
+    /// Line 2: Radio/power, linear amplifier, cable
+    /// Line 3: OKA info (name, horizontal distance, real distance)
     /// </summary>
-    public string ConfigDescription =>
-        $"{Strings.Instance.Antenna}: {AntennaName}, {AntennaHeight:F0}m {Strings.Instance.AboveOka}, " +
-        $"{Strings.Instance.Cable}: {CableDescription}, " +
-        $"{Strings.Instance.OkaFullName}: {OkaName}, {OkaDistance:F0}m {Strings.Instance.HorizDistToMast}, " +
-        $"{Strings.Instance.DistanceAntennaOka}: {RealDistance:F1}m";
+    public string ConfigDescription
+    {
+        get
+        {
+            var linearInfo = string.IsNullOrEmpty(LinearName)
+                ? Strings.Instance.None
+                : LinearName;
+
+            return $"{Strings.Instance.Antenna}: {AntennaName}, {AntennaHeight:F0}m {Strings.Instance.AboveOka}\n" +
+                   $"{Strings.Instance.Transmitter}: {RadioName}, {Strings.Instance.Amplifier}: {linearInfo}, {Strings.Instance.Cable}: {CableDescription}\n" +
+                   $"{Strings.Instance.OkaFullName}: {OkaName}, {OkaDistance:F0}m {Strings.Instance.HorizDistToMast}, {Strings.Instance.DistanceAntennaOka}: {RealDistance:F1}m";
+        }
+    }
 
     public ObservableCollection<BandResult> BandResults { get; } = new();
 
@@ -170,18 +181,24 @@ public partial class ResultsViewModel : ViewModelBase
         var modulation = DatabaseService.Instance.GetModulationByName(config.Modulation);
         var constants = MasterDataStore.Load().Constants;
 
+        // Use amplifier power if set, otherwise use radio power
+        double effectivePower = (config.Linear != null && config.Linear.PowerWatts > 0)
+            ? config.Linear.PowerWatts
+            : config.PowerWatts;
+
         var result = new ConfigurationResult
         {
             ConfigurationName = config.Name,
             AntennaName = config.Antenna.DisplayName,
-            PowerWatts = config.PowerWatts,
+            RadioName = config.Radio.DisplayName,
+            PowerWatts = effectivePower,
             Modulation = config.ModulationDisplay,
             OkaDistance = config.OkaDistanceMeters,
             AntennaHeight = config.Antenna.HeightMeters,
             OkaName = config.OkaName,
             BuildingDampingDb = config.OkaBuildingDampingDb,
             CableDescription = $"{config.Cable.LengthMeters:F1}m {config.Cable.Type}",
-            LinearName = config.Linear?.DisplayName ?? "None",
+            LinearName = config.Linear?.Name ?? "",
             IsRotatable = antenna?.IsRotatable ?? false,
             HorizontalAngleDegrees = (int)(antenna?.HorizontalAngleDegrees ?? 360),
             IsHorizontallyPolarized = antenna?.IsHorizontallyPolarized ?? true
@@ -245,13 +262,18 @@ public partial class ResultsViewModel : ViewModelBase
 
         double modulationFactor = modulation?.Factor ?? 0.4;
 
+        // Use amplifier power if set, otherwise use radio power
+        double effectivePower = (config.Linear != null && config.Linear.PowerWatts > 0)
+            ? config.Linear.PowerWatts
+            : config.PowerWatts;
+
         // Use Core calculator for field strength computation
         // Use real 3D distance for field strength calculation
         var input = new CalculationInput
         {
             FrequencyMHz = frequencyMHz,
             DistanceMeters = realDistance,
-            TxPowerWatts = config.PowerWatts,
+            TxPowerWatts = effectivePower,
             ActivityFactor = config.ActivityFactor,
             ModulationFactor = modulationFactor,
             AntennaGainDbi = band.GainDbi,
@@ -267,7 +289,7 @@ public partial class ResultsViewModel : ViewModelBase
         return new BandResult
         {
             FrequencyMHz = frequencyMHz,
-            TxPowerW = config.PowerWatts,
+            TxPowerW = effectivePower,
             ActivityFactor = config.ActivityFactor,
             ModulationFactor = modulationFactor,
             MeanPowerW = result.MeanPowerWatts,

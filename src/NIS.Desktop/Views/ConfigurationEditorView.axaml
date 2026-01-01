@@ -41,7 +41,7 @@
                                     <Button Command="{Binding EditAntennaCommand}"
                                             IsEnabled="{Binding SelectedAntenna, Converter={x:Static ObjectConverters.IsNotNull}}"
                                             IsVisible="{Binding SelectedAntenna.IsUserData}"
-                                            Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}"
+                                            Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}"
                                             Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
                                     <!-- View button (default) for supplied items -->
                                     <Button Command="{Binding EditAntennaCommand}"
@@ -49,7 +49,7 @@
                                             IsVisible="{Binding !SelectedAntenna.IsUserData}"
                                             Content="{Binding View, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
                                     <Button Content="{Binding New, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddAntennaCommand}"
-                                            Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="8,4"/>
+                                            Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="8,4"/>
                                 </StackPanel>
                             </StackPanel>
 
@@ -108,7 +108,7 @@
                                     <Button Command="{Binding EditCableCommand}"
                                             IsEnabled="{Binding SelectedCable, Converter={x:Static ObjectConverters.IsNotNull}}"
                                             IsVisible="{Binding SelectedCable.IsUserData}"
-                                            Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}"
+                                            Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}"
                                             Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
                                     <!-- View button (default) for supplied items -->
                                     <Button Command="{Binding EditCableCommand}"
@@ -116,7 +116,7 @@
                                             IsVisible="{Binding !SelectedCable.IsUserData}"
                                             Content="{Binding View, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
                                     <Button Content="{Binding New, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddCableCommand}"
-                                            Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="8,4"/>
+                                            Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="8,4"/>
                                 </StackPanel>
                             </StackPanel>
 
@@ -165,7 +165,7 @@
                                     <Button Command="{Binding EditOkaCommand}"
                                             IsEnabled="{Binding SelectedOka, Converter={x:Static ObjectConverters.IsNotNull}}"
                                             IsVisible="{Binding SelectedOka.IsUserData}"
-                                            Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}"
+                                            Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}"
                                             Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
                                     <!-- View button (default) for supplied items -->
                                     <Button Command="{Binding EditOkaCommand}"
@@ -173,7 +173,7 @@
                                             IsVisible="{Binding !SelectedOka.IsUserData}"
                                             Content="{Binding View, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
                                     <Button Content="{Binding New, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddOkaCommand}"
-                                            Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="8,4"/>
+                                            Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="8,4"/>
                                 </StackPanel>
                             </StackPanel>
 
@@ -220,7 +220,7 @@
                                 <Button Command="{Binding EditRadioCommand}"
                                         IsEnabled="{Binding SelectedRadio, Converter={x:Static ObjectConverters.IsNotNull}}"
                                         IsVisible="{Binding SelectedRadio.IsUserData}"
-                                        Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}"
+                                        Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}"
                                         Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
                                 <!-- View button (default) for supplied items -->
                                 <Button Command="{Binding EditRadioCommand}"
@@ -228,29 +228,19 @@
                                         IsVisible="{Binding !SelectedRadio.IsUserData}"
                                         Content="{Binding View, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
                                 <Button Content="{Binding New, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddRadioCommand}"
-                                        Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="8,4"/>
+                                        Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="8,4"/>
                             </StackPanel>
 
-                            <!-- Linear (optional) -->
-                            <CheckBox Content="{Binding UseLinearAmplifier, Source={x:Static loc:Strings.Instance}}" IsChecked="{Binding HasLinear}"/>
-                            <StackPanel Spacing="8" IsVisible="{Binding HasLinear}">
-                                <ComboBox ItemsSource="{Binding Radios}"
-                                          SelectedItem="{Binding SelectedLinear}" HorizontalAlignment="Stretch"
-                                          IsTextSearchEnabled="True"
-                                          PlaceholderText="{Binding SelectLinear, Source={x:Static loc:Strings.Instance}}"/>
-                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                    <Button Command="{Binding EditLinearCommand}"
-                                            IsEnabled="{Binding SelectedLinear, Converter={x:Static ObjectConverters.IsNotNull}}"
-                                            IsVisible="{Binding SelectedLinear.IsUserData}"
-                                            Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}"
-                                            Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
-                                    <Button Command="{Binding EditLinearCommand}"
-                                            IsEnabled="{Binding SelectedLinear, Converter={x:Static ObjectConverters.IsNotNull}}"
-                                            IsVisible="{Binding !SelectedLinear.IsUserData}"
-                                            Content="{Binding View, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
-                                    <Button Content="{Binding New, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddLinearCommand}"
-                                            Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="8,4"/>
-                                </StackPanel>
+                            <!-- Amplifier (optional, free text with power) -->
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="{Binding UseLinearAmplifier, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                                <TextBox Text="{Binding LinearName}" Width="200"
+                                         Watermark="{Binding AmplifierName, Source={x:Static loc:Strings.Instance}}"/>
+                                <NumericUpDown Value="{Binding LinearPowerWatts}" ShowButtonSpinner="False"
+                                               Minimum="0" Maximum="10000" Increment="100" Width="80"
+                                               IsEnabled="{Binding LinearName, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                                <TextBlock Text="W" VerticalAlignment="Center"
+                                           IsVisible="{Binding LinearName, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
                             </StackPanel>
 
                             <!-- Power -->
@@ -301,7 +291,7 @@
                 <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="6">
                     <Button Content="{Binding Cancel, Source={x:Static loc:Strings.Instance}}" Command="{Binding CancelCommand}" Padding="20,10"/>
                     <Button Content="{Binding Save, Source={x:Static loc:Strings.Instance}}" Command="{Binding SaveCommand}"
-                            Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="20,10"/>
+                            Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="20,10"/>
                 </StackPanel>
             </Grid>
         </Border>

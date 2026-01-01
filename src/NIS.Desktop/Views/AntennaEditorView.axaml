@@ -45,7 +45,7 @@
                 <!-- Add New button -->
                 <Button Content="{Binding AddNewAntenna, Source={x:Static loc:Strings.Instance}}"
                         Command="{Binding StartAddNewCommand}"
-                        Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,10"/>
+                        Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,10"/>
 
                 <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10">
                     <Button Content="{Binding Cancel, Source={x:Static loc:Strings.Instance}}" Command="{Binding CancelCommand}" Padding="20,10"/>

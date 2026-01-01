@@ -40,18 +40,18 @@ public class RadioConfig
 
 /// <summary>
 /// Linear amplifier configuration (optional).
-/// Same structure as RadioConfig.
+/// Contains name and output power.
 /// </summary>
 public class LinearConfig
 {
-    [JsonPropertyName("manufacturer")]
-    public string Manufacturer { get; set; } = string.Empty;
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = string.Empty;
 
-    [JsonPropertyName("model")]
-    public string Model { get; set; } = string.Empty;
+    [JsonPropertyName("powerWatts")]
+    public double PowerWatts { get; set; }
 
     [JsonIgnore]
-    public string DisplayName => $"{Manufacturer} {Model}".Trim();
+    public string DisplayName => string.IsNullOrEmpty(Name) ? "" : $"{Name} ({PowerWatts}W)";
 }
 
 /// <summary>

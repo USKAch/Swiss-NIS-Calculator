@@ -124,7 +124,7 @@ public class Strings : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Height)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FrequencyBands)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectRadio)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectLinear)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AmplifierName)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UseLinearAmplifier)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Power)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Cable)));
@@ -255,7 +255,7 @@ public class Strings : INotifyPropertyChanged
 
     // Transmitter section
     public string SelectRadio => Get("SelectRadio");
-    public string SelectLinear => Get("SelectLinear");
+    public string AmplifierName => Get("AmplifierName");
     public string UseLinearAmplifier => Get("UseLinearAmplifier");
     public string Power => Get("Power");
 
@@ -377,6 +377,8 @@ public class Strings : INotifyPropertyChanged
     // ============================================================
     // RESULTS
     // ============================================================
+    public string Amplifier => Get("Amplifier");
+    public string None => Get("None");
     public string HorizontalDistance => Get("HorizontalDistance");
     public string DistanceAntennaOka => Get("DistanceAntennaOka");
     public string OkaFullName => Get("OkaFullName");
@@ -762,7 +764,7 @@ public class Strings : INotifyPropertyChanged
         ["Transmitter"] = new() { ["de"] = "Sender", ["fr"] = "Émetteur", ["it"] = "Trasmettitore", ["en"] = "Transmitter" },
         ["FeedLine"] = new() { ["de"] = "Speiseleitung", ["fr"] = "Ligne d'alimentation", ["it"] = "Linea di alimentazione", ["en"] = "Feed Line" },
         ["OperatingParameters"] = new() { ["de"] = "Betriebsparameter", ["fr"] = "Paramètres d'exploitation", ["it"] = "Parametri operativi", ["en"] = "Operating Parameters" },
-        ["EvaluationPoint"] = new() { ["de"] = "Beurteilungspunkt (OKA)", ["fr"] = "Point d'évaluation (LSM)", ["it"] = "Punto di valutazione (LSBD)", ["en"] = "Evaluation Point (OKA)" },
+        ["EvaluationPoint"] = new() { ["de"] = "Beurteilungspunkt (OKA)", ["fr"] = "Point d'évaluation (LSM)", ["it"] = "Punto di valutazione (LST)", ["en"] = "Evaluation Point (PSS)" },
 
         ["SelectAntenna"] = new() { ["de"] = "-- Antenne wählen --", ["fr"] = "-- Sélectionner antenne --", ["it"] = "-- Seleziona antenna --", ["en"] = "-- Select Antenna --" },
         ["Height"] = new() { ["de"] = "Höhe", ["fr"] = "Hauteur", ["it"] = "Altezza", ["en"] = "Height" },
@@ -770,8 +772,8 @@ public class Strings : INotifyPropertyChanged
         ["Bands"] = new() { ["de"] = "Bänder", ["fr"] = "Bandes", ["it"] = "Bande", ["en"] = "Bands" },
 
         ["SelectRadio"] = new() { ["de"] = "-- Transceiver wählen --", ["fr"] = "-- Sélectionner émetteur --", ["it"] = "-- Seleziona ricetrasmettitore --", ["en"] = "-- Select Radio --" },
-        ["SelectLinear"] = new() { ["de"] = "-- Linear w?hlen --", ["fr"] = "-- S?lectionner amplificateur --", ["it"] = "-- Seleziona lineare --", ["en"] = "-- Select Linear --" },
-        ["UseLinearAmplifier"] = new() { ["de"] = "Linearendstufe verwenden", ["fr"] = "Utiliser amplificateur linéaire", ["it"] = "Usa amplificatore lineare", ["en"] = "Use Linear Amplifier" },
+        ["AmplifierName"] = new() { ["de"] = "Name der Endstufe (optional)", ["fr"] = "Nom de l'amplificateur (optionnel)", ["it"] = "Nome amplificatore (opzionale)", ["en"] = "Amplifier name (optional)" },
+        ["UseLinearAmplifier"] = new() { ["de"] = "Endstufe", ["fr"] = "Amplificateur", ["it"] = "Amplificatore", ["en"] = "Amplifier" },
         ["Power"] = new() { ["de"] = "Leistung", ["fr"] = "Puissance", ["it"] = "Potenza", ["en"] = "Power" },
 
         ["Cable"] = new() { ["de"] = "Kabel", ["fr"] = "Câble", ["it"] = "Cavo", ["en"] = "Cable" },
@@ -785,12 +787,12 @@ public class Strings : INotifyPropertyChanged
 
         ["OkaDistance"] = new() { ["de"] = "Distanz", ["fr"] = "Distance", ["it"] = "Distanza", ["en"] = "Distance" },
         ["OkaDamping"] = new() { ["de"] = "Gebäudedämpfung", ["fr"] = "Atténuation bâtiment", ["it"] = "Attenuazione edificio", ["en"] = "Building Damping" },
-        ["OkaExplanation"] = new() { ["de"] = "OKA = Ort für den kurzfristigen Aufenthalt", ["fr"] = "LSM = Lieu de séjour momentané", ["it"] = "LSBD = Luogo di soggiorno di breve durata", ["en"] = "OKA = Place of short-term stay" },
+        ["OkaExplanation"] = new() { ["de"] = "OKA = Ort für kurzfristigen Aufenthalt", ["fr"] = "LSM = Lieu de séjour momentané", ["it"] = "LST = Luogo di soggiorno temporaneo", ["en"] = "PSS = Place of Short-Term Stay" },
         ["AdditionalLossExample"] = new() { ["de"] = "z.B. Stecker, Schalter", ["fr"] = "ex. Connecteurs, commutateur", ["it"] = "es. Connettori, interruttore", ["en"] = "e.g. Connectors, switch" },
         ["OkaNameExample"] = new() { ["de"] = "z.B. Balkon des Nachbarn", ["fr"] = "ex. Balcon du voisin", ["it"] = "es. Balcone del vicino", ["en"] = "e.g. Neighbor's balcony" },
 
-        // OKA Master Editor (OKA=DE, LSM=FR, LSBD=IT)
-        ["OkaDetails"] = new() { ["de"] = "OKA Details", ["fr"] = "Détails LSM", ["it"] = "Dettagli LSBD", ["en"] = "OKA Details" },
+        // OKA Master Editor (OKA=DE, LSM=FR, LST=IT, PSS=EN)
+        ["OkaDetails"] = new() { ["de"] = "OKA Details", ["fr"] = "Détails LSM", ["it"] = "Dettagli LST", ["en"] = "PSS Details" },
         ["OkaNumber"] = new() { ["de"] = "Nummer", ["fr"] = "Numéro", ["it"] = "Numero", ["en"] = "Number" },
         ["OkaNameLabel"] = new() { ["de"] = "Bezeichnung", ["fr"] = "Désignation", ["it"] = "Designazione", ["en"] = "Name" },
         ["OkaNameRequired"] = new() { ["de"] = "Bitte eine Bezeichnung eingeben.", ["fr"] = "Veuillez entrer une désignation.", ["it"] = "Inserire una designazione.", ["en"] = "Please enter a name." },
@@ -801,11 +803,11 @@ public class Strings : INotifyPropertyChanged
         ["DefaultDampingHint"] = new() { ["de"] = "0 dB für Aussenbereich, typisch 6-12 dB für Innenräume", ["fr"] = "0 dB pour l'extérieur, typiquement 6-12 dB pour l'intérieur", ["it"] = "0 dB per l'esterno, tipicamente 6-12 dB per interni", ["en"] = "0 dB for outdoor, typically 6-12 dB for indoor" },
         ["DefaultDistance"] = new() { ["de"] = "Horizontale Distanz", ["fr"] = "Distance horizontale", ["it"] = "Distanza orizzontale", ["en"] = "Horizontal Distance" },
         ["DefaultDistanceHint"] = new() { ["de"] = "Distanz von der Antenne", ["fr"] = "Distance de l'antenne", ["it"] = "Distanza dall'antenna", ["en"] = "Distance from antenna" },
-        ["HeightHint"] = new() { ["de"] = "Antennenhöhe über OKA", ["fr"] = "Hauteur de l'antenne au-dessus du LSM", ["it"] = "Altezza dell'antenna sopra LSBD", ["en"] = "Antenna height above OKA" },
-        ["OkaDistanceHint"] = new() { ["de"] = "Horizontale Distanz vom OKA zum Antennenmast", ["fr"] = "Distance horizontale du LSM au mât d'antenne", ["it"] = "Distanza orizzontale dal LSBD al palo dell'antenna", ["en"] = "Horizontal distance from OKA to antenna mast" },
-        ["AddOka"] = new() { ["de"] = "OKA hinzufügen", ["fr"] = "Ajouter LSM", ["it"] = "Aggiungi LSBD", ["en"] = "Add OKA" },
-        ["EditOka"] = new() { ["de"] = "OKA bearbeiten", ["fr"] = "Modifier LSM", ["it"] = "Modifica LSBD", ["en"] = "Edit OKA" },
-        ["SelectOka"] = new() { ["de"] = "-- OKA wählen --", ["fr"] = "-- Sélectionner LSM --", ["it"] = "-- Seleziona LSBD --", ["en"] = "-- Select OKA --" },
+        ["HeightHint"] = new() { ["de"] = "Antennenhöhe über OKA", ["fr"] = "Hauteur de l'antenne au-dessus du LSM", ["it"] = "Altezza dell'antenna sopra LST", ["en"] = "Antenna height above PSS" },
+        ["OkaDistanceHint"] = new() { ["de"] = "Horizontale Distanz vom OKA zum Antennenmast", ["fr"] = "Distance horizontale du LSM au mât d'antenne", ["it"] = "Distanza orizzontale dal LST al palo dell'antenna", ["en"] = "Horizontal distance from PSS to antenna mast" },
+        ["AddOka"] = new() { ["de"] = "OKA hinzufügen", ["fr"] = "Ajouter LSM", ["it"] = "Aggiungi LST", ["en"] = "Add PSS" },
+        ["EditOka"] = new() { ["de"] = "OKA bearbeiten", ["fr"] = "Modifier LSM", ["it"] = "Modifica LST", ["en"] = "Edit PSS" },
+        ["SelectOka"] = new() { ["de"] = "-- OKA wählen --", ["fr"] = "-- Sélectionner LSM --", ["it"] = "-- Seleziona LST --", ["en"] = "-- Select PSS --" },
 
         // Antenna Editor
         ["AntennaDetails"] = new() { ["de"] = "Antennendetails", ["fr"] = "Détails antenne", ["it"] = "Dettagli antenna", ["en"] = "Antenna Details" },
@@ -870,7 +872,7 @@ public class Strings : INotifyPropertyChanged
         ["SearchAntennas"] = new() { ["de"] = "Hersteller oder Modell suchen...", ["fr"] = "Rechercher fabricant ou modèle...", ["it"] = "Cerca produttore o modello...", ["en"] = "Search by manufacturer or model..." },
         ["SearchCables"] = new() { ["de"] = "Kabelname suchen...", ["fr"] = "Rechercher nom du câble...", ["it"] = "Cerca nome cavo...", ["en"] = "Search by cable name..." },
         ["SearchRadios"] = new() { ["de"] = "Hersteller oder Modell suchen...", ["fr"] = "Rechercher fabricant ou modèle...", ["it"] = "Cerca produttore o modello...", ["en"] = "Search by manufacturer or model..." },
-        ["SearchOkas"] = new() { ["de"] = "OKA suchen...", ["fr"] = "Rechercher LSM...", ["it"] = "Cerca LSBD...", ["en"] = "Search OKA..." },
+        ["SearchOkas"] = new() { ["de"] = "OKA suchen...", ["fr"] = "Rechercher LSM...", ["it"] = "Cerca LST...", ["en"] = "Search PSS..." },
         ["SearchTranslations"] = new() { ["de"] = "Übersetzungen suchen...", ["fr"] = "Rechercher traductions...", ["it"] = "Cerca traduzioni...", ["en"] = "Search translations..." },
         ["AddAntennaButton"] = new() { ["de"] = "+ Antenne hinzufügen", ["fr"] = "+ Ajouter antenne", ["it"] = "+ Aggiungi antenna", ["en"] = "+ Add Antenna" },
         ["AddCableButton"] = new() { ["de"] = "+ Kabel hinzufügen", ["fr"] = "+ Ajouter câble", ["it"] = "+ Aggiungi cavo", ["en"] = "+ Add Cable" },
@@ -893,10 +895,12 @@ public class Strings : INotifyPropertyChanged
         ["ImportDatabaseDesc"] = new() { ["de"] = "Importiert Werksdaten aus einer JSON-Datei. ACHTUNG: Alle Daten werden gel?scht!", ["fr"] = "Importe les donn?es usine depuis un fichier JSON. ATTENTION: Toutes les donn?es seront supprim?es!", ["it"] = "Importa i dati di fabbrica da un file JSON. ATTENZIONE: Tutti i dati saranno eliminati!", ["en"] = "Import factory data from a JSON file. WARNING: All data will be deleted!" },
 
         // Results
+        ["Amplifier"] = new() { ["de"] = "Endstufe", ["fr"] = "Amplificateur", ["it"] = "Amplificatore", ["en"] = "Amplifier" },
+        ["None"] = new() { ["de"] = "Keine", ["fr"] = "Aucun", ["it"] = "Nessuno", ["en"] = "None" },
         ["HorizontalDistance"] = new() { ["de"] = "Horiz. Distanz", ["fr"] = "Dist. horiz.", ["it"] = "Dist. orizz.", ["en"] = "Horiz. dist." },
-        ["DistanceAntennaOka"] = new() { ["de"] = "Distanz Antenne-OKA", ["fr"] = "Distance Antenne-LSM", ["it"] = "Distanza Antenna-LSBD", ["en"] = "Distance Antenna-OKA" },
-        ["OkaFullName"] = new() { ["de"] = "Ort für kurzfristigen Aufenthalt", ["fr"] = "Lieu de séjour momentané", ["it"] = "Luogo di soggiorno di breve durata", ["en"] = "Place of short-term stay" },
-        ["AboveOka"] = new() { ["de"] = "über OKA", ["fr"] = "au-dessus du LSM", ["it"] = "sopra LSBD", ["en"] = "above OKA" },
+        ["DistanceAntennaOka"] = new() { ["de"] = "Distanz Antenne-OKA", ["fr"] = "Distance Antenne-LSM", ["it"] = "Distanza Antenna-LST", ["en"] = "Distance Antenna-PSS" },
+        ["OkaFullName"] = new() { ["de"] = "Ort für kurzfristigen Aufenthalt", ["fr"] = "Lieu de séjour momentané", ["it"] = "Luogo di soggiorno temporaneo", ["en"] = "Place of Short-Term Stay" },
+        ["AboveOka"] = new() { ["de"] = "über OKA", ["fr"] = "au-dessus du LSM", ["it"] = "sopra LST", ["en"] = "above PSS" },
         ["HorizDistToMast"] = new() { ["de"] = "horizontale Distanz zum Antennenmast", ["fr"] = "distance horizontale au mât", ["it"] = "distanza orizzontale al palo", ["en"] = "horizontal distance to antenna mast" },
         ["CalculationResults"] = new() { ["de"] = "Berechnungsergebnisse", ["fr"] = "Résultats du calcul", ["it"] = "Risultati del calcolo", ["en"] = "Calculation Results" },
         ["Limit"] = new() { ["de"] = "Grenzwert", ["fr"] = "Limite", ["it"] = "Limite", ["en"] = "Limit" },
@@ -930,7 +934,7 @@ public class Strings : INotifyPropertyChanged
         // User Data Export/Import
         ["ExportUserData"] = new() { ["de"] = "Benutzerdaten exportieren", ["fr"] = "Exporter données utilisateur", ["it"] = "Esporta dati utente", ["en"] = "Export User Data" },
         ["ImportUserData"] = new() { ["de"] = "Benutzerdaten importieren", ["fr"] = "Importer données utilisateur", ["it"] = "Importa dati utente", ["en"] = "Import User Data" },
-        ["ExportUserDataDesc"] = new() { ["de"] = "Exportiert alle Projekte, OKAs und benutzerdefinierte Stammdaten", ["fr"] = "Exporte tous les projets, OKAs et données de base personnalisées", ["it"] = "Esporta tutti i progetti, OKA e dati master personalizzati", ["en"] = "Export all projects, OKAs, and custom master data" },
+        ["ExportUserDataDesc"] = new() { ["de"] = "Exportiert alle Projekte, OKAs und benutzerdefinierte Stammdaten", ["fr"] = "Exporte tous les projets, LSMs et données de base personnalisées", ["it"] = "Esporta tutti i progetti, LST e dati master personalizzati", ["en"] = "Export all projects, PSSs, and custom master data" },
         ["ImportUserDataDesc"] = new() { ["de"] = "Importiert Benutzerdaten aus einer Sicherungsdatei", ["fr"] = "Importe les données utilisateur depuis un fichier de sauvegarde", ["it"] = "Importa i dati utente da un file di backup", ["en"] = "Import user data from a backup file" },
         ["ImportConfirmMessage"] = new() { ["de"] = "Dies l?scht alle bestehenden Daten und ersetzt sie durch das Backup. Fortfahren?", ["fr"] = "Cela supprime toutes les donn?es existantes et les remplace par la sauvegarde. Continuer?", ["it"] = "Questo elimina tutti i dati esistenti e li sostituisce con il backup. Continuare?", ["en"] = "This deletes all existing data and replaces it with the backup. Continue?" },
         ["ExportSuccess"] = new() { ["de"] = "Export erfolgreich", ["fr"] = "Export réussi", ["it"] = "Esportazione riuscita", ["en"] = "Export successful" },
@@ -945,7 +949,7 @@ public class Strings : INotifyPropertyChanged
         ["FactoryData"] = new() { ["de"] = "Werksdaten", ["fr"] = "Données usine", ["it"] = "Dati di fabbrica", ["en"] = "Factory Data" },
         ["ExportFactoryData"] = new() { ["de"] = "Werksdaten exportieren", ["fr"] = "Exporter données usine", ["it"] = "Esporta dati di fabbrica", ["en"] = "Export Factory Data" },
         ["ImportFactoryData"] = new() { ["de"] = "Werksdaten importieren", ["fr"] = "Importer données usine", ["it"] = "Importa dati di fabbrica", ["en"] = "Import Factory Data" },
-        ["ExportFactoryDataDesc"] = new() { ["de"] = "Exportiert alle Projekte, OKAs und Stammdaten (Factory)", ["fr"] = "Exporte tous les projets, OKAs et données de base (usine)", ["it"] = "Esporta tutti i progetti, OKA e dati master (fabbrica)", ["en"] = "Export all projects, OKAs, and master data (factory)" },
+        ["ExportFactoryDataDesc"] = new() { ["de"] = "Exportiert alle Projekte, OKAs und Stammdaten (Factory)", ["fr"] = "Exporte tous les projets, LSMs et données de base (usine)", ["it"] = "Esporta tutti i progetti, LST e dati master (fabbrica)", ["en"] = "Export all projects, PSSs, and master data (factory)" },
         ["ImportFactoryConfirmMessage"] = new() { ["de"] = "Dies löscht alle bestehenden Daten und ersetzt sie durch die Werksdaten. Fortfahren?", ["fr"] = "Cela supprime toutes les données existantes et les remplace par les données usine. Continuer?", ["it"] = "Questo elimina tutti i dati esistenti e li sostituisce con i dati di fabbrica. Continuare?", ["en"] = "This deletes all existing data and replaces it with factory data. Continue?" },
         ["ImportProjectConfirmMessage"] = new() { ["de"] = "Ein neues Projekt wird importiert. Fortfahren?", ["fr"] = "Un nouveau projet sera importé. Continuer?", ["it"] = "Verrà importato un nuovo progetto. Continuare?", ["en"] = "A new project will be imported. Continue?" },
         ["FactoryDevelopment"] = new() { ["de"] = "Werksentwicklung", ["fr"] = "Développement usine", ["it"] = "Sviluppo fabbrica", ["en"] = "Factory Development" },

@@ -27,7 +27,7 @@
                         <Button Grid.Column="1"
                                 Command="{Binding AddProjectCommand}"
                                 Content="{Binding CreateProject, Source={x:Static loc:Strings.Instance}}"
-                                Background="{DynamicResource SuccessButtonBrush}"
+                                Background="{DynamicResource PrimaryButtonBrush}"
                                 Foreground="{DynamicResource HeaderForegroundBrush}"
                                 Padding="15,8"/>
                     </Grid>

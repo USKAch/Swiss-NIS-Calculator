@@ -70,7 +70,7 @@ public partial class ImportExportViewModel : ViewModelBase
         public string Polarization { get; set; } = "horizontal";
         public double RotationAngleDegrees { get; set; } = 360;
         public Reference Radio { get; set; } = new();
-        public Reference? Linear { get; set; }
+        public LinearReference? Linear { get; set; }
         public double PowerWatts { get; set; }
         public CableReference Cable { get; set; } = new();
         public double CableLengthMeters { get; set; }
@@ -87,6 +87,12 @@ public partial class ImportExportViewModel : ViewModelBase
     {
         public string Manufacturer { get; set; } = string.Empty;
         public string Model { get; set; } = string.Empty;
+    }
+
+    private class LinearReference
+    {
+        public string Name { get; set; } = string.Empty;
+        public double PowerWatts { get; set; }
     }
 
     private class CableReference
@@ -161,8 +167,8 @@ public partial class ImportExportViewModel : ViewModelBase
                             Radio = new RadioConfig { Manufacturer = config.Radio.Manufacturer, Model = config.Radio.Model },
                             Linear = config.Linear == null ? null : new LinearConfig
                             {
-                                Manufacturer = config.Linear.Manufacturer,
-                                Model = config.Linear.Model
+                                Name = config.Linear.Name,
+                                PowerWatts = config.Linear.PowerWatts
                             },
                             Cable = new CableConfig
                             {
@@ -239,17 +245,6 @@ public partial class ImportExportViewModel : ViewModelBase
             {
                 Manufacturer = config.Radio.Manufacturer,
                 Model = config.Radio.Model,
-                MaxPowerWatts = config.PowerWatts,
-                IsUserData = true
-            });
-        }
-
-        if (config.Linear != null && !db.RadioExists(config.Linear.Manufacturer, config.Linear.Model))
-        {
-            db.SaveRadio(new Radio
-            {
-                Manufacturer = config.Linear.Manufacturer,
-                Model = config.Linear.Model,
                 MaxPowerWatts = config.PowerWatts,
                 IsUserData = true
             });
@@ -338,10 +333,10 @@ public partial class ImportExportViewModel : ViewModelBase
                                 Manufacturer = c.Radio.Manufacturer,
                                 Model = c.Radio.Model
                             },
-                            Linear = c.Linear == null ? null : new Reference
+                            Linear = c.Linear == null ? null : new LinearReference
                             {
-                                Manufacturer = c.Linear.Manufacturer,
-                                Model = c.Linear.Model
+                                Name = c.Linear.Name,
+                                PowerWatts = c.Linear.PowerWatts
                             },
                             PowerWatts = c.PowerWatts,
                             Cable = new CableReference { Name = c.Cable.Type },

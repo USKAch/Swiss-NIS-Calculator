@@ -307,7 +307,6 @@ public partial class MainShellViewModel : ViewModelBase
         _configurationEditorViewModel.NavigateToAntennaEditor = NavigateToAntennaEditorFromConfig;
         _configurationEditorViewModel.NavigateToCableEditor = NavigateToCableEditorFromConfig;
         _configurationEditorViewModel.NavigateToRadioEditor = NavigateToRadioEditorFromConfig;
-        _configurationEditorViewModel.NavigateToLinearEditor = NavigateToLinearEditorFromConfig;
         _configurationEditorViewModel.NavigateToOkaEditor = NavigateToOkaEditorFromConfig;
         _configurationEditorViewModel.OnSave = (config) =>
         {
@@ -821,41 +820,6 @@ public partial class MainShellViewModel : ViewModelBase
         var projectName = GetProjectDisplayName();
         Breadcrumb = $"{Strings.Instance.Project} > {projectName} > {Strings.Instance.RadioDetails}";
         WindowTitle = existing != null ? "Swiss NIS Calculator - Edit Radio" : "Swiss NIS Calculator - Add Radio";
-    }
-
-    private void NavigateToLinearEditorFromConfig(NIS.Desktop.Models.Radio? existing)
-    {
-        _radioMasterEditorViewModel = new RadioMasterEditorViewModel();
-        if (existing != null)
-        {
-            _radioMasterEditorViewModel.InitializeEdit(existing);
-            _radioMasterEditorViewModel.IsReadOnly = !existing.IsUserData;
-        }
-        else
-        {
-            _radioMasterEditorViewModel.InitializeNew();
-        }
-        _radioMasterEditorViewModel.NavigateBack = () => CurrentView = _configurationEditorViewModel;
-        _radioMasterEditorViewModel.OnSave = (radio) =>
-        {
-            Services.DatabaseService.Instance.SaveRadio(radio);
-
-            if (_configurationEditorViewModel != null)
-            {
-                _configurationEditorViewModel.Radios.Clear();
-                foreach (var r in Services.DatabaseService.Instance.GetAllRadios())
-                    _configurationEditorViewModel.Radios.Add(r);
-
-                _configurationEditorViewModel.SelectedLinear = _configurationEditorViewModel.Radios
-                    .FirstOrDefault(r => r.Manufacturer.Equals(radio.Manufacturer, StringComparison.OrdinalIgnoreCase) &&
-                                         r.Model.Equals(radio.Model, StringComparison.OrdinalIgnoreCase));
-            }
-            CurrentView = _configurationEditorViewModel;
-        };
-        CurrentView = _radioMasterEditorViewModel;
-        var projectName = GetProjectDisplayName();
-        Breadcrumb = $"{Strings.Instance.Project} > {projectName} > {Strings.Instance.RadioDetails}";
-        WindowTitle = existing != null ? "Swiss NIS Calculator - Edit Linear" : "Swiss NIS Calculator - Add Linear";
     }
 
     private void NavigateToOkaEditorFromConfig(NIS.Desktop.Models.Oka? existing)

@@ -56,7 +56,7 @@
                         Padding="20,10"/>
                 <Button Content="{Binding CreateButtonLabel}"
                         Command="{Binding CreateCommand}"
-                        Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}"
+                        Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}"
                         Padding="20,10"/>
             </StackPanel>
         </Border>

@@ -92,7 +92,7 @@
                     <!-- Action buttons -->
                     <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
                         <Button Content="{Binding AddAntennaButton, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddAntennaCommand}"
-                                Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,8"/>
+                                Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,8"/>
                         <!-- Show Edit if can edit, View otherwise -->
                         <Button Command="{Binding EditAntennaCommand}"
                                 IsEnabled="{Binding SelectedAntenna, Converter={x:Static ObjectConverters.IsNotNull}}"
@@ -159,7 +159,7 @@
                     <!-- Action buttons -->
                     <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
                         <Button Content="{Binding AddCableButton, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddCableCommand}"
-                                Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,8"/>
+                                Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,8"/>
                         <Button Command="{Binding EditCableCommand}"
                                 IsEnabled="{Binding SelectedCable, Converter={x:Static ObjectConverters.IsNotNull}}"
                                 Padding="15,8">
@@ -232,7 +232,7 @@
                     <!-- Action buttons -->
                     <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
                         <Button Content="{Binding AddRadioButton, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddRadioCommand}"
-                                Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,8"/>
+                                Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,8"/>
                         <Button Command="{Binding EditRadioCommand}"
                                 IsEnabled="{Binding SelectedRadio, Converter={x:Static ObjectConverters.IsNotNull}}"
                                 Padding="15,8">
@@ -288,7 +288,7 @@
                     <!-- Action buttons -->
                     <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
                         <Button Content="{Binding AddOka, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddOkaCommand}"
-                                Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,8"/>
+                                Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,8"/>
                         <Button Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Command="{Binding EditOkaCommand}"
                                 IsEnabled="{Binding CanEditSelectedOka}"
                                 Padding="15,8"/>
@@ -321,7 +321,7 @@
                     <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
                         <Button Content="{Binding AddModulation, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddModulationCommand}"
                                 IsEnabled="{Binding IsAdminMode}"
-                                Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,8"/>
+                                Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,8"/>
                         <Button Content="{Binding Delete, Source={x:Static loc:Strings.Instance}}" Command="{Binding DeleteModulationCommand}"
                                 IsEnabled="{Binding IsAdminMode}" Padding="15,8"/>
                         <Button Content="{Binding Save, Source={x:Static loc:Strings.Instance}}" Command="{Binding SaveModulationsCommand}"
@@ -375,7 +375,7 @@
                     <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
                         <Button Content="{Binding AddBand, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddBandCommand}"
                                 IsEnabled="{Binding IsAdminMode}"
-                                Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,8"/>
+                                Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,8"/>
                         <Button Content="{Binding Delete, Source={x:Static loc:Strings.Instance}}" Command="{Binding DeleteBandCommand}"
                                 IsEnabled="{Binding IsAdminMode}" Padding="15,8"/>
                         <Button Content="{Binding Save, Source={x:Static loc:Strings.Instance}}" Command="{Binding SaveBandsCommand}"
@@ -434,7 +434,7 @@
                     <!-- Action buttons -->
                     <StackPanel Grid.Row="4" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
                         <Button Content="{Binding SaveChanges, Source={x:Static loc:Strings.Instance}}" Command="{Binding SaveTranslationsCommand}"
-                                Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,8"/>
+                                Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,8"/>
                         <Button Content="{Binding Cancel, Source={x:Static loc:Strings.Instance}}" Command="{Binding CancelChangesCommand}"
                                 Padding="15,8"/>
                     </StackPanel>

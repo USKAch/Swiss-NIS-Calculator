@@ -61,7 +61,7 @@
                             <TextBlock Text="{Binding Configurations, Source={x:Static loc:Strings.Instance}}" FontSize="16" FontWeight="Bold"/>
                             <Button Grid.Column="1" Content="{Binding AddConfiguration, Source={x:Static loc:Strings.Instance}}"
                                     Command="{Binding AddConfigurationCommand}"
-                                    Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,8"/>
+                                    Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,8"/>
                         </Grid>
 
                         <DataGrid x:Name="ConfigurationsGrid"

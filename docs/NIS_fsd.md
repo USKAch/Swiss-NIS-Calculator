@@ -4,6 +4,19 @@
 
 Calculate RF field strength for Swiss amateur radio antenna approval (NISV compliance).
 
+### 1.1 Terminology
+
+The application uses official Swiss NISV/ORNI terminology for evaluation points:
+
+| Language | Full Term | Abbreviation |
+|----------|-----------|--------------|
+| German | Ort für kurzfristigen Aufenthalt | **OKA** |
+| French | Lieu de séjour momentané | **LSM** |
+| Italian | Luogo di soggiorno temporaneo | **LST** |
+| English | Place of Short-Term Stay | **PSS** |
+
+In this document, "OKA" is used as the default term. The UI displays the appropriate abbreviation based on the selected language.
+
 ## 2. User Workflow (End-to-End)
 
 ```
@@ -18,7 +31,7 @@ Navigation Pane
        -> [Add/Edit Antenna] -> Antenna Editor -> Master Data Manager
        -> [Add/Edit Cable] -> Cable Editor -> Master Data Manager
        -> [Add/Edit Radio] -> Radio Editor -> Master Data Manager
-       -> [Add/Edit OKA] -> OKA Editor -> Master Data Manager
+       -> [Add/Edit Evaluation Point] -> PSS Editor -> Master Data Manager
        -> [Translations] -> Translation Editor
     -> [Calculate All] -> Results
     -> [Export Report] -> Results with export options
@@ -83,7 +96,7 @@ Each configuration card shows:
 - **Secondary line**: Radio Power | Cable type
 
 Example:
-| Antenna (bold) | Details | OKA | Actions |
+| Antenna (bold) | Details | Evaluation Point | Actions |
 |----------------|---------|-----|---------|
 | Opti-Beam OB9-5 | Yaesu FT-1000 100W \| EcoFlex10 | 5.4m | Edit / Delete |
 | Wimo ZX6-2 | Yaesu FT-991 100W \| Aircom-plus | 7.4m | Edit / Delete |
@@ -91,7 +104,7 @@ Example:
 - Configurations are identified by their antenna (no user-defined name)
 - "+ Add Configuration" button → Navigates to Configuration Editor (Section 3.5)
 - Edit button → Navigates to Configuration Editor with existing data
-- Each configuration has its own OKA (evaluation point) with distance and damping
+- Each configuration has its own evaluation point (OKA/LSM/LST/PSS) with distance and damping
 
 **Action Buttons**:
 - "Back" → Returns to project list
@@ -138,9 +151,11 @@ Screen for creating or editing one antenna configuration. Header shows "Configur
   - Edit → Navigates to Radio Editor with selected radio
   - Add → Navigates to Radio Editor for new radio
   - Includes common HAM transceivers (Icom, Yaesu, Kenwood, Elecraft, FlexRadio) for HF/VHF/UHF
-- Linear Amplifier: [dropdown from master data] [Edit] [+ Add] or "None" (checkbox to disable)
-  - Stored as an optional reference to a Radio entry (no free-text storage)
-- Output Power: [number] W (at radio or linear output)
+- Linear Amplifier (optional): [text field] + [power in W]
+  - Free text entry for amplifier name
+  - Power field becomes enabled when name is entered
+  - When set, amplifier power is used in calculations instead of radio power
+- Output Power: [number] W (at radio output, used when no amplifier is configured)
 
 **Section 3: Feed Line**
 - Cable Type: [dropdown from master data] [Edit] [+ Add]
@@ -162,7 +177,7 @@ These apply to all bands of the selected antenna. Bands (frequency, gain, patter
   - Hint: "Horizontal distance from OKA to antenna mast" (translated)
 - Building Damping: [number] dB
 
-Note: Each configuration has exactly one OKA, selected from master data shared across projects. OKA = Ort des kurzfristigen Aufenthalts (place of short-term stay). The real 3D distance used in calculations is computed as √(horizontal² + height²).
+Note: Each configuration has exactly one evaluation point (OKA/LSM/LST/PSS), selected from master data shared across projects. See Section 1.1 for terminology. The real 3D distance used in calculations is computed as √(horizontal² + height²).
 
 **Actions**:
 - Save → Returns to Project Overview
@@ -170,7 +185,7 @@ Note: Each configuration has exactly one OKA, selected from master data shared a
 
 ### 3.6 Master Data Manager
 
-Central hub for managing master data, OKAs, and language strings. Accessed via **Navigation Pane -> Master Data**.
+Central hub for managing master data, evaluation points (OKA/LSM/LST/PSS), and language strings. Accessed via **Navigation Pane -> Master Data**.
 
 **Navigation Structure**:
 ```
@@ -187,10 +202,10 @@ Master Data Manager
 |   |-- List of all radios (searchable)
 |   |-- [Add Radio] -> Radio Master Editor
 |   |-- [Edit] -> Radio Master Editor (with existing data)
-|-- OKA (master data)
-|   |-- List of OKAs shared across projects (factory table is empty; all entries are user data)
-|   |-- [Add OKA] -> OKA Editor
-|   |-- [Edit] -> OKA Editor (with existing data)
+|-- Evaluation Points (OKA/LSM/LST/PSS)
+|   |-- List of evaluation points shared across projects (factory table is empty; all entries are user data)
+|   |-- [Add Evaluation Point] -> PSS Editor
+|   |-- [Edit] -> PSS Editor (with existing data)
 |-- Modulations (factory mode editable)
 |   |-- SSB=0.2, CW=0.4, FM=1.0
 |   |-- [Add], [Edit], and [Save] enabled only in factory mode
@@ -465,7 +480,7 @@ PDF export contains:
 | **Antenna** | Manufacturer, Model, Type, Polarization, Rotatable, Bands (Freq/Gain/Pattern) |
 | **Cable** | Name, Attenuations at standard frequencies (dB/100m) |
 | **Radio** | Manufacturer, Model, MaxPower |
-| **OKA** | Name, DefaultDistance, DefaultDamping |
+| **Evaluation Point (PSS)** | Name, DefaultDistance, DefaultDamping |
 
 **Antenna bands**: Each band has Frequency (MHz), Gain (dBi), and 10-value vertical pattern. [Auto-calculate] generates pattern from gain (Section 8.4).
 
@@ -476,13 +491,13 @@ PDF export contains:
 Two export/import types are supported: **User Data** (backup) and **Factory Data**.
 
 **User Data Export/Import (backup):**
-- **Export**: Writes a JSON file containing all projects, OKAs, and user master data (Antennas/Cables/Radios with `IsUserData = true`).
+- **Export**: Writes a JSON file containing all projects, evaluation points, and user master data (Antennas/Cables/Radios with `IsUserData = true`).
 - **Import**: **Destructive**. Deletes the entire database, then imports from the JSON file.
 
 **Factory Data Export/Import:**
 - **Export**: Same JSON structure and content as User Data export (see Appendix B.3).
 - **Import**: **Destructive**. Deletes the entire database, then imports from the JSON file.
-  - After import, **all master data records** (Antennas, Cables, Radios, Modulations, OKAs) must have `IsUserData = false`.
+  - After import, **all master data records** (Antennas, Cables, Radios, Modulations, Evaluation Points) must have `IsUserData = false`.
   - User data is not preserved in factory import (full replacement).
 
 **Confirmation Requirement (all imports):**
@@ -495,8 +510,8 @@ For JSON file formats, see **Appendix B.3**.
 
 **Export Project**:
 - Writes a .nisproj file containing the project header and configurations.
-- Each configuration includes references to antenna, cable, radio, and OKA by name/model (not DB IDs).
- - Linear amplifier is optional; when absent, the `linear` field is null.
+- Each configuration includes references to antenna, cable, radio, and evaluation point by name/model (not DB IDs).
+ - Linear amplifier is optional; when absent, the `linear` field is null. When present, it contains `name` (string) and `powerWatts` (number).
 
 **Import Project**:
 - Reads a .nisproj file and creates a new project.
@@ -523,7 +538,7 @@ Validation should be enforced both during manual editing and when importing JSON
 - Manufacturer and Model are required (non-empty, trimmed).
 - MaxPowerWatts must be > 0.
 
-**OKA (master data):**
+**Evaluation Point (master data):**
 - Name is required (non-empty, trimmed).
 - DefaultDistanceMeters must be > 0.
 - DefaultDampingDb must be >= 0.
@@ -620,7 +635,7 @@ Installation (nisdata.db)
 │   ├── Radios
 │   │   └── Manufacturer, Model, MaxPower
 │   │
-│   ├── OKAs (evaluation points; master data shared across projects, factory table empty)
+│   ├── Evaluation Points (OKA/LSM/LST/PSS; master data shared across projects, factory table empty)
 │   │   └── Name, DefaultDistance, DefaultDamping
 │   │
 │   └── Operating Conditions
@@ -646,9 +661,11 @@ Installation (nisdata.db)
         ├── Radio → (reference to Master Data)
         │   └── Power (W)
         │
-        ├── Linear Amplifier → (optional, reference to Radios)
+        ├── Linear Amplifier → (optional)
+        │   ├── Name (text)
+        │   └── Power (W)
         │
-        ├── OKA → (reference to Master Data)
+        ├── Evaluation Point → (reference to Master Data)
         │   ├── Distance (m)
         │   └── BuildingDamping (dB)
         │
@@ -666,7 +683,7 @@ Shared reference data used across all projects. Each record has an `IsUserData` 
 | Antennas | 319 antennas | Yes | Manufacturer, Model, Bands[] |
 | Cables | ~20 cables | Yes | Name, Attenuations |
 | Radios | ~50 radios | Yes | Manufacturer, Model, MaxPower |
-| OKAs | None (factory empty) | Yes | Name, DefaultDistance, DefaultDamping |
+| Evaluation Points | None (factory empty) | Yes | Name, DefaultDistance, DefaultDamping |
 | Modulations | SSB, CW, FM | No | Name, Factor |
 | Bands (JSON) | Standard band list | No | Name, FrequencyMHz |
 
@@ -1177,8 +1194,8 @@ CREATE TABLE Configurations (
     Name TEXT,
     PowerWatts REAL DEFAULT 100,
     RadioId INTEGER,
-    HasLinear INTEGER DEFAULT 0,
-    LinearId INTEGER,
+    LinearName TEXT,
+    LinearPowerWatts REAL,
     CableId INTEGER,
     CableLengthMeters REAL DEFAULT 10,
     AdditionalLossDb REAL DEFAULT 0,
@@ -1192,7 +1209,6 @@ CREATE TABLE Configurations (
     OkaBuildingDampingDb REAL DEFAULT 0,
     FOREIGN KEY (ProjectId) REFERENCES Projects(Id) ON DELETE CASCADE,
     FOREIGN KEY (RadioId) REFERENCES Radios(Id) ON DELETE SET NULL,
-    FOREIGN KEY (LinearId) REFERENCES Radios(Id) ON DELETE SET NULL,
     FOREIGN KEY (CableId) REFERENCES Cables(Id) ON DELETE SET NULL,
     FOREIGN KEY (AntennaId) REFERENCES Antennas(Id) ON DELETE SET NULL,
     FOREIGN KEY (ModulationId) REFERENCES Modulations(Id) ON DELETE SET NULL,
@@ -1239,7 +1255,7 @@ User and Factory exports share the same JSON structure. Factory import uses the 
 {
   "exportDate": "2024-01-31T12:34:56.789Z",
   "projects": [ /* Project objects, including configurations */ ],
-  "okas": [ /* OKA master data */ ],
+  "okas": [ /* Evaluation point master data (OKA/LSM/LST/PSS) */ ],
   "userAntennas": [ /* Antenna master data */ ],
   "userCables": [ /* Cable master data */ ],
   "userRadios": [ /* Radio master data */ ]
@@ -1281,7 +1297,7 @@ User and Factory exports share the same JSON structure. Factory import uses the 
 ```
 
 Notes:
-- `linear` is optional; use `null` when no amplifier is present.
+- `linear` is optional; use `null` when no amplifier is present. When present, it contains `name` (string) and `powerWatts` (number), e.g., `{ "name": "SPE Expert 1.5K", "powerWatts": 1500 }`.
 
 ### B.5 settings.json
 
@@ -1331,10 +1347,10 @@ Notes:
 
 ## Appendix C: Example: HB9FS Station
 
-| Config | Radio | Cable | Antenna | Height | Bands | OKA |
-|--------|-------|-------|---------|--------|-------|-----|
+| Config | Radio | Cable | Antenna | Height | Bands | Evaluation Point |
+|--------|-------|-------|---------|--------|-------|------------------|
 | HF Station | 100W | EcoFlex10 15m | Opti-Beam OB9-5 | 12m | 14,18,21,24,28 MHz | Neighbor balcony @ 5.4m |
 | 6m Station | 100W | Aircom-plus 20m | Wimo ZX6-2 | 10m | 50 MHz | Garden fence @ 7.4m |
 | VHF/UHF | 100W | Aircom-plus 17m | Diamond X-50 | 14m | 144, 432 MHz | Terrace @ 10.4m |
 
-Each configuration includes antenna height and its own evaluation point (OKA) with distance and optional building damping.
+Each configuration includes antenna height and its own evaluation point (OKA/LSM/LST/PSS) with distance and optional building damping.

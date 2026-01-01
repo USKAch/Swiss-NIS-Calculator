@@ -865,7 +865,8 @@ public class DatabaseService : IDisposable
     {
         // Look up IDs from names
         var radioId = GetRadioId(config.Radio.Manufacturer, config.Radio.Model);
-        var linearId = config.Linear != null ? GetRadioId(config.Linear.Manufacturer, config.Linear.Model) : null;
+        // Linear is now stored as name + power, not as a Radio reference
+        int? linearId = null;
         var cableId = GetCableId(config.Cable.Type);
         var antennaId = GetAntennaId(config.Antenna.Manufacturer, config.Antenna.Model);
         var modulationId = GetModulationId(config.Modulation);
@@ -953,10 +954,11 @@ public class DatabaseService : IDisposable
                 Manufacturer = radio?.Manufacturer ?? "",
                 Model = radio?.Model ?? ""
             },
-            Linear = row.HasLinear == 1 ? new LinearConfig
+            // Convert old LinearId (Radio reference) to new format (name + power)
+            Linear = row.HasLinear == 1 && linear != null ? new LinearConfig
             {
-                Manufacturer = linear?.Manufacturer ?? "",
-                Model = linear?.Model ?? ""
+                Name = linear.DisplayName,
+                PowerWatts = linear.MaxPowerWatts
             } : null,
             Cable = new CableConfig
             {

@@ -66,7 +66,7 @@
                         <Grid ColumnDefinitions="*,Auto">
                             <TextBlock Text="{Binding FrequencyBands, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
                             <Button Grid.Column="1" Content="{Binding AddBand, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddBandCommand}"
-                                    Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="12,6"
+                                    Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="12,6"
                                     IsVisible="{Binding CanEdit}"/>
                         </Grid>
 
@@ -173,7 +173,7 @@
                 <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
                     <Button Content="{Binding Cancel, Source={x:Static loc:Strings.Instance}}" Command="{Binding CancelCommand}" Padding="20,10"/>
                     <Button Content="{Binding Save, Source={x:Static loc:Strings.Instance}}" Command="{Binding SaveCommand}"
-                            Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="20,10"
+                            Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="20,10"
                             IsVisible="{Binding CanEdit}"/>
                 </StackPanel>
             </Grid>
