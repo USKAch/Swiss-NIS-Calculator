@@ -359,19 +359,21 @@ This factor ensures worst-case field strength estimation at locations where a pe
 ### 4.4 Formulas
 
 ```
-Mean power:           Pm = P × AF × MF
+Mean power:           Pmean = P × AF × MF
 Total attenuation:    a = a1 + a2
 Attenuation factor:   A = 10^(-a/10)
 Total antenna gain:   g = g1 - g2
 Gain factor:          G = 10^(g/10)
-EIRP:                 Ps = Pm × A × G
-ERP:                  P's = Ps / 1.64
+EIRP toward OKA:      Ps = Pmean × A × G
+ERP toward OKA:       P's = Ps / 1.64
 Building factor:      AG = 10^(-ag/10)
-Field strength:       E' = 1.6 × sqrt(30 × Pm × A × G × AG) / d
-Safety distance:      ds = 1.6 × sqrt(30 × Pm × A × G × AG) / EIGW
+Field strength:       E' = 1.6 × sqrt(30 × Pmean × A × G × AG) / d
+Safety distance:      ds = 1.6 × sqrt(30 × Pmean × A × G × AG) / EIGW
 
 where d = √(d_h² + h²) is the real 3D distance from antenna to OKA
 ```
+
+Note: EIRP (Equivalent Isotropic Radiated Power) and ERP (Effective Radiated Power) are calculated in the direction of the OKA, accounting for the vertical angle attenuation from the antenna's radiation pattern. These are not the maximum values of the antenna, but the effective power radiated toward the evaluation point.
 
 ### 4.5 NIS Limits (Swiss NISV)
 
@@ -427,8 +429,8 @@ One table per antenna configuration. Each report contains a configuration summar
 - Vertical angle attenuation (dB)
 - Total antenna gain (dB)
 - Gain factor
-- EIRP (W)
-- ERP (W)
+- EIRP toward OKA (W)
+- ERP toward OKA (W)
 - Building damping (dB)
 - Building damping factor
 - Ground reflection factor

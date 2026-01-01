@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using NIS.Desktop.Localization;
 using NIS.Desktop.Models;
 using NIS.Desktop.ViewModels;
 using QuestPDF.Fluent;
@@ -208,7 +209,7 @@ public class PdfReportGenerator
                         var headerStyle = TextStyle.Default.FontSize(8).Bold();
                         header.Cell().Background(Colors.Grey.Lighten3).Padding(3).Text("Freq MHz").Style(headerStyle);
                         header.Cell().Background(Colors.Grey.Lighten3).Padding(3).Text("Gain dBi").Style(headerStyle);
-                        header.Cell().Background(Colors.Grey.Lighten3).Padding(3).Text("Pm W").Style(headerStyle);
+                        header.Cell().Background(Colors.Grey.Lighten3).Padding(3).Text($"{Strings.Instance.PmittelLbl} W").Style(headerStyle);
                         header.Cell().Background(Colors.Grey.Lighten3).Padding(3).Text("EIRP W").Style(headerStyle);
                         header.Cell().Background(Colors.Grey.Lighten3).Padding(3).Text("E' V/m").Style(headerStyle);
                         header.Cell().Background(Colors.Grey.Lighten3).Padding(3).Text("Limit V/m").Style(headerStyle);

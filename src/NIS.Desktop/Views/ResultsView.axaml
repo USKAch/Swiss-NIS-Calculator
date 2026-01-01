@@ -75,7 +75,7 @@
                                                 <TextBlock Text="MHz" FontSize="11" Foreground="{DynamicResource TextFillColorTertiaryBrush}" HorizontalAlignment="Center"/>
                                             </StackPanel>
                                             <StackPanel Grid.Column="1" HorizontalAlignment="Center" Margin="0,6,0,4">
-                                                <TextBlock Text="Pm" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="{Binding PmittelLbl, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
                                                 <TextBlock Text="W" FontSize="11" Foreground="{DynamicResource TextFillColorTertiaryBrush}" HorizontalAlignment="Center"/>
                                             </StackPanel>
                                             <StackPanel Grid.Column="2" HorizontalAlignment="Center" Margin="0,6,0,4">

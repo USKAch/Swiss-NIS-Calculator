@@ -446,6 +446,7 @@ public class Strings : INotifyPropertyChanged
 
     // Short labels for two-line headers
     public string CableLbl => Get("CableLbl");
+    public string PmittelLbl => Get("PmittelLbl");
     public string GainLbl => Get("GainLbl");
     public string VertLbl => Get("VertLbl");
     public string TotGainLbl => Get("TotGainLbl");
@@ -997,6 +998,7 @@ public class Strings : INotifyPropertyChanged
 
         // Short labels for two-line headers
         ["CableLbl"] = new() { ["de"] = "Kabel", ["fr"] = "Câble", ["it"] = "Cavo", ["en"] = "Cable" },
+        ["PmittelLbl"] = new() { ["de"] = "Pmittel", ["fr"] = "Pmoy", ["it"] = "Pmedia", ["en"] = "Pmean" },
         ["GainLbl"] = new() { ["de"] = "Gew.", ["fr"] = "Gain", ["it"] = "Guad.", ["en"] = "Gain" },
         ["VertLbl"] = new() { ["de"] = "Vert.", ["fr"] = "Vert.", ["it"] = "Vert.", ["en"] = "Vert." },
         ["TotGainLbl"] = new() { ["de"] = "Tot.Gew.", ["fr"] = "Gain tot.", ["it"] = "Guad.tot.", ["en"] = "Tot.Gain" },
@@ -1097,8 +1099,8 @@ public class Strings : INotifyPropertyChanged
         ["CalcVerticalAttenuation"] = new() { ["de"] = "Vertikale Winkeldämpfung", ["fr"] = "Atténuation angle vertical", ["it"] = "Attenuazione angolo verticale", ["en"] = "Vertical angle attenuation" },
         ["CalcTotalAntennaGain"] = new() { ["de"] = "Totaler Antennengewinn", ["fr"] = "Gain d'antenne total", ["it"] = "Guadagno antenna totale", ["en"] = "Total antenna gain" },
         ["CalcGainFactor"] = new() { ["de"] = "Gewinnfaktor", ["fr"] = "Facteur de gain", ["it"] = "Fattore di guadagno", ["en"] = "Gain factor" },
-        ["CalcEirp"] = new() { ["de"] = "EIRP", ["fr"] = "PIRE", ["it"] = "EIRP", ["en"] = "EIRP" },
-        ["CalcErp"] = new() { ["de"] = "ERP", ["fr"] = "PAR", ["it"] = "ERP", ["en"] = "ERP" },
+        ["CalcEirp"] = new() { ["de"] = "EIRP in Richtung OKA", ["fr"] = "PIRE en direction du LSM", ["it"] = "EIRP in direzione del LST", ["en"] = "EIRP in direction of OKA" },
+        ["CalcErp"] = new() { ["de"] = "ERP in Richtung OKA", ["fr"] = "PAR en direction du LSM", ["it"] = "ERP in direzione del LST", ["en"] = "ERP in direction of OKA" },
         ["CalcBuildingDampingRow"] = new() { ["de"] = "Gebäudedämpfung", ["fr"] = "Atténuation bâtiment", ["it"] = "Attenuazione edificio", ["en"] = "Building damping" },
         ["CalcBuildingDampingFactor"] = new() { ["de"] = "Gebäudedämpfungsfaktor", ["fr"] = "Facteur atténuation bât.", ["it"] = "Fattore attenuazione ed.", ["en"] = "Building damping factor" },
         ["CalcGroundReflection"] = new() { ["de"] = "Bodenreflexionsfaktor", ["fr"] = "Facteur réflexion sol", ["it"] = "Fattore riflessione suolo", ["en"] = "Ground reflection factor" },
@@ -1114,7 +1116,7 @@ public class Strings : INotifyPropertyChanged
         ["CalcExplainP"] = new() { ["de"] = "Senderausgangsleistung in Watt", ["fr"] = "Puissance de sortie de l'émetteur en Watts", ["it"] = "Potenza di uscita del trasmettitore in Watt", ["en"] = "Transmitter output power in Watts" },
         ["CalcExplainAF"] = new() { ["de"] = "Aktivitätsfaktor (typisch 0.5 = 50% Sendezeit)", ["fr"] = "Facteur d'activité (typique 0.5 = 50% du temps d'émission)", ["it"] = "Fattore di attività (tipico 0.5 = 50% del tempo di trasmissione)", ["en"] = "Activity factor (typical 0.5 = 50% transmit time)" },
         ["CalcExplainMF"] = new() { ["de"] = "Modulationsfaktor (SSB=0.2, CW=0.4, FM/Digital=1.0)", ["fr"] = "Facteur de modulation (SSB=0.2, CW=0.4, FM/Digital=1.0)", ["it"] = "Fattore di modulazione (SSB=0.2, CW=0.4, FM/Digital=1.0)", ["en"] = "Modulation factor (SSB=0.2, CW=0.4, FM/Digital=1.0)" },
-        ["CalcExplainPm"] = new() { ["de"] = "Mittlere Leistung = P × AF × MF", ["fr"] = "Puissance moyenne = P × AF × MF", ["it"] = "Potenza media = P × AF × MF", ["en"] = "Mean power = P × AF × MF" },
+        ["CalcExplainPm"] = new() { ["de"] = "Pmittel = Mittlere Leistung = P × AF × MF", ["fr"] = "Pmoy = Puissance moyenne = P × AF × MF", ["it"] = "Pmedia = Potenza media = P × AF × MF", ["en"] = "Pmean = Mean power = P × AF × MF" },
         ["CalcExplainA1"] = new() { ["de"] = "Kabeldämpfung in dB", ["fr"] = "Atténuation du câble en dB", ["it"] = "Attenuazione del cavo in dB", ["en"] = "Cable attenuation in dB" },
         ["CalcExplainA2"] = new() { ["de"] = "Zusätzliche Dämpfung (Stecker, Schalter) in dB", ["fr"] = "Pertes supplémentaires (connecteurs, commutateurs) en dB", ["it"] = "Perdite aggiuntive (connettori, interruttori) in dB", ["en"] = "Additional losses (connectors, switches) in dB" },
         ["CalcExplainA"] = new() { ["de"] = "Gesamtdämpfung = a1 + a2", ["fr"] = "Atténuation totale = a1 + a2", ["it"] = "Attenuazione totale = a1 + a2", ["en"] = "Total attenuation = a1 + a2" },
@@ -1123,8 +1125,8 @@ public class Strings : INotifyPropertyChanged
         ["CalcExplainG2"] = new() { ["de"] = "Vertikale Winkeldämpfung basierend auf Antennendiagramm in dB", ["fr"] = "Atténuation angle vertical basée sur le diagramme d'antenne en dB", ["it"] = "Attenuazione angolo verticale basata sul diagramma dell'antenna in dB", ["en"] = "Vertical angle attenuation based on antenna pattern in dB" },
         ["CalcExplainG"] = new() { ["de"] = "Totaler Antennengewinn = g1 - g2", ["fr"] = "Gain d'antenne total = g1 - g2", ["it"] = "Guadagno totale dell'antenna = g1 - g2", ["en"] = "Total antenna gain = g1 - g2" },
         ["CalcExplainGFactor"] = new() { ["de"] = "Gewinnfaktor = 10^(g/10)", ["fr"] = "Facteur de gain = 10^(g/10)", ["it"] = "Fattore di guadagno = 10^(g/10)", ["en"] = "Gain factor = 10^(g/10)" },
-        ["CalcExplainPs"] = new() { ["de"] = "EIRP (Equivalent Isotropic Radiated Power) = Pm × A × G", ["fr"] = "PIRE (Puissance Isotrope Rayonnée Équivalente) = Pm × A × G", ["it"] = "EIRP (Potenza Isotropa Irradiata Equivalente) = Pm × A × G", ["en"] = "EIRP (Equivalent Isotropic Radiated Power) = Pm × A × G" },
-        ["CalcExplainPsPrime"] = new() { ["de"] = "ERP (Effective Radiated Power) = Ps / 1.64", ["fr"] = "PAR (Puissance Apparente Rayonnée) = Ps / 1.64", ["it"] = "ERP (Potenza Effettiva Irradiata) = Ps / 1.64", ["en"] = "ERP (Effective Radiated Power) = Ps / 1.64" },
+        ["CalcExplainPs"] = new() { ["de"] = "EIRP in Richtung OKA (Equivalent Isotropic Radiated Power) = Pmittel × A × G", ["fr"] = "PIRE en direction du LSM (Puissance Isotrope Rayonnée Équivalente) = Pmoy × A × G", ["it"] = "EIRP in direzione del LST (Potenza Isotropa Irradiata Equivalente) = Pmedia × A × G", ["en"] = "EIRP in direction of OKA (Equivalent Isotropic Radiated Power) = Pmean × A × G" },
+        ["CalcExplainPsPrime"] = new() { ["de"] = "ERP in Richtung OKA (Effective Radiated Power) = Ps / 1.64", ["fr"] = "PAR en direction du LSM (Puissance Apparente Rayonnée) = Ps / 1.64", ["it"] = "ERP in direzione del LST (Potenza Effettiva Irradiata) = Ps / 1.64", ["en"] = "ERP in direction of OKA (Effective Radiated Power) = Ps / 1.64" },
         ["CalcExplainAg"] = new() { ["de"] = "Gebäudedämpfung in dB (0 für Aussenbereich)", ["fr"] = "Atténuation du bâtiment en dB (0 pour l'extérieur)", ["it"] = "Attenuazione dell'edificio in dB (0 per esterni)", ["en"] = "Building damping in dB (0 for outdoor)" },
         ["CalcExplainAG"] = new() { ["de"] = "Gebäudedämpfungsfaktor = 10^(-ag/10)", ["fr"] = "Facteur d'atténuation du bâtiment = 10^(-ag/10)", ["it"] = "Fattore di attenuazione dell'edificio = 10^(-ag/10)", ["en"] = "Building damping factor = 10^(-ag/10)" },
         ["CalcExplainKr"] = new() { ["de"] = "Bodenreflexionsfaktor (1.6 gemäss NISV Anhang 2)", ["fr"] = "Facteur de réflexion au sol (1.6 selon ORNI Annexe 2)", ["it"] = "Fattore di riflessione al suolo (1.6 secondo ORNI Allegato 2)", ["en"] = "Ground reflection factor (1.6 per NISV Annex 2)" },

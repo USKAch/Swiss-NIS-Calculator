@@ -443,7 +443,7 @@ public partial class ResultsViewModel : ViewModelBase
             AppendRow(sb, s.CalcTxPower, "P", "W", result.BandResults, b => b.TxPowerW, "F2");
             AppendRow(sb, s.CalcActivityFactor, "AF", "-", result.BandResults, b => b.ActivityFactor, "F2");
             AppendRow(sb, s.CalcModulationFactor, "MF", "-", result.BandResults, b => b.ModulationFactor, "F2");
-            AppendRow(sb, s.CalcMeanPower, "Pm", "W", result.BandResults, b => b.MeanPowerW, "F2");
+            AppendRow(sb, s.CalcMeanPower, s.PmittelLbl, "W", result.BandResults, b => b.MeanPowerW, "F2");
             AppendRow(sb, s.CalcCableAttenuation, "a1", "dB", result.BandResults, b => b.CableLossDb, "F2");
             AppendRow(sb, s.CalcAdditionalLosses, "a2", "dB", result.BandResults, b => b.AdditionalLossDb, "F2");
             AppendRow(sb, s.CalcTotalAttenuation, "a", "dB", result.BandResults, b => b.TotalLossDb, "F2");
@@ -491,7 +491,7 @@ public partial class ResultsViewModel : ViewModelBase
             ("P", s.CalcExplainP),
             ("AF", s.CalcExplainAF),
             ("MF", s.CalcExplainMF),
-            ("Pm", s.CalcExplainPm),
+            (s.PmittelLbl, s.CalcExplainPm),
             ("a1", s.CalcExplainA1),
             ("a2", s.CalcExplainA2),
             ("a", s.CalcExplainA),
