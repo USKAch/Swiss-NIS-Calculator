@@ -478,6 +478,18 @@
                                         Foreground="{DynamicResource DangerButtonBrush}"/>
                             </StackPanel>
                         </Border>
+
+                        <!-- Data Folder section -->
+                        <Border Background="{DynamicResource PanelBackgroundBrush}" CornerRadius="4" Padding="20">
+                            <StackPanel Spacing="10">
+                                <TextBlock Text="{Binding DataFolder, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" FontSize="14"/>
+                                <TextBlock Text="{Binding DataFolderDesc, Source={x:Static loc:Strings.Instance}}"
+                                           Opacity="0.7" TextWrapping="Wrap" FontSize="12"/>
+                                <Button Content="{Binding OpenDataFolder, Source={x:Static loc:Strings.Instance}}"
+                                        Command="{Binding OpenDataFolderCommand}"
+                                        Padding="20,10" Margin="0,5,0,0"/>
+                            </StackPanel>
+                        </Border>
                     </StackPanel>
                 </Grid>
             </TabItem>

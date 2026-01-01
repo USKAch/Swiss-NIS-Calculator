@@ -54,7 +54,7 @@ public partial class MainShellViewModel : ViewModelBase
     private Func<string, string, Task<bool>>? _showConfirmDialog;
 
     // Dialog callback (set by App.axaml.cs)
-    public Func<string, string, Task<bool>>? ShowConfirmDialog
+    public new Func<string, string, Task<bool>>? ShowConfirmDialog
     {
         get => _showConfirmDialog;
         set
@@ -130,7 +130,7 @@ public partial class MainShellViewModel : ViewModelBase
                 if (HasProject) NavigateToResults();
                 break;
             case "ExportPdf":
-                if (HasProject) NavigateToResults();
+                if (HasProject) _ = ExportPdfDirectly();
                 break;
             case "StationInfo":
                 if (HasProject) NavigateToEditProjectInfo();
@@ -206,6 +206,7 @@ public partial class MainShellViewModel : ViewModelBase
         _projectInfoViewModel = new ProjectInfoViewModel(Strings.Instance.Language);
         _projectInfoViewModel.NavigateBack = NavigateToProjectList;
         _projectInfoViewModel.NavigateToProjectOverview = NavigateToProjectOverviewAfterCreate;
+        _projectInfoViewModel.ShowConfirmDialog = ShowConfirmDialog;
         CurrentView = _projectInfoViewModel;
         Breadcrumb = $"{Strings.Instance.Home} > {Strings.Instance.CreateProject}";
         WindowTitle = "Swiss NIS Calculator";
@@ -263,7 +264,9 @@ public partial class MainShellViewModel : ViewModelBase
         _projectInfoViewModel.Callsign = ProjectViewModel.Project.Callsign;
         _projectInfoViewModel.Address = ProjectViewModel.Project.Address;
         _projectInfoViewModel.Location = ProjectViewModel.Project.Location;
+        _projectInfoViewModel.IsDirty = false; // Reset after loading
         _projectInfoViewModel.NavigateBack = NavigateToProjectOverview;
+        _projectInfoViewModel.ShowConfirmDialog = ShowConfirmDialog;
         _projectInfoViewModel.NavigateToProjectOverview = (vm) =>
         {
             ProjectViewModel.Project.Name = vm.ProjectName;
@@ -284,6 +287,7 @@ public partial class MainShellViewModel : ViewModelBase
     {
         _configurationEditorViewModel = new ConfigurationEditorViewModel();
         _configurationEditorViewModel.MarkProjectDirty = ProjectViewModel.MarkDirty;
+        _configurationEditorViewModel.ShowConfirmDialog = ShowConfirmDialog;
 
         // All master data comes from DatabaseService (single source of truth)
 
@@ -292,6 +296,7 @@ public partial class MainShellViewModel : ViewModelBase
             var index = ProjectViewModel.Project.AntennaConfigurations.IndexOf(existing);
             _configurationEditorViewModel.ConfigurationNumber = index + 1;
             _configurationEditorViewModel.LoadFromConfiguration(existing);
+            _configurationEditorViewModel.IsDirty = false; // Reset after loading
         }
         else
         {
@@ -445,6 +450,11 @@ public partial class MainShellViewModel : ViewModelBase
         _importExportViewModel.StorageProvider = StorageProvider;
         _importExportViewModel.ShowConfirmDialog = ShowConfirmDialog;
         _importExportViewModel.NavigateBack = HasProject ? NavigateToProjectOverview : NavigateToProjectList;
+        _importExportViewModel.OnProjectImported = () =>
+        {
+            _welcomeViewModel?.RefreshProjects();
+            _projectListViewModel?.RefreshProjects();
+        };
         CurrentView = _importExportViewModel;
         Breadcrumb = Strings.Instance.ImportExport;
         WindowTitle = "Swiss NIS Calculator";
@@ -468,12 +478,57 @@ public partial class MainShellViewModel : ViewModelBase
         }
     }
 
+    private async Task ExportPdfDirectly()
+    {
+        if (StorageProvider == null || ProjectViewModel?.Project == null) return;
+
+        var project = ProjectViewModel.Project;
+        var reportLabel = !string.IsNullOrWhiteSpace(project.Name)
+            ? project.Name
+            : project.Operator ?? "Project";
+
+        // Use ResultsViewModel to calculate and generate PDF
+        var resultsVm = new ResultsViewModel();
+        await resultsVm.CalculateAsync(project);
+
+        if (resultsVm.Results.Count == 0) return;
+
+        // Show file picker
+        var startFolder = await StorageProvider.TryGetFolderFromPathAsync(Services.AppPaths.ExportFolder);
+        var file = await StorageProvider.SaveFilePickerAsync(new Avalonia.Platform.Storage.FilePickerSaveOptions
+        {
+            Title = "Export PDF Report",
+            SuggestedStartLocation = startFolder,
+            SuggestedFileName = $"{reportLabel}_{DateTime.Now:yyyyMMdd}.pdf",
+            DefaultExtension = ".pdf",
+            FileTypeChoices = new[]
+            {
+                new Avalonia.Platform.Storage.FilePickerFileType("PDF") { Patterns = new[] { "*.pdf" } }
+            }
+        });
+
+        if (file != null)
+        {
+            try
+            {
+                var pdfGenerator = new Services.PdfReportGenerator();
+                pdfGenerator.GenerateReport(project, resultsVm.Results.ToList(), file.Path.LocalPath);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"PDF export failed: {ex.Message}");
+            }
+        }
+    }
+
     public void NavigateToAntennaMasterEditor(NIS.Desktop.Models.Antenna? existing, bool isReadOnly = false)
     {
         _antennaMasterEditorViewModel = new AntennaMasterEditorViewModel();
+        _antennaMasterEditorViewModel.ShowConfirmDialog = ShowConfirmDialog;
         if (existing != null)
         {
             _antennaMasterEditorViewModel.InitializeEdit(existing);
+            _antennaMasterEditorViewModel.IsDirty = false;
         }
         else
         {
@@ -518,9 +573,11 @@ public partial class MainShellViewModel : ViewModelBase
     public void NavigateToCableMasterEditor(NIS.Desktop.Models.Cable? existing, bool isReadOnly = false)
     {
         _cableMasterEditorViewModel = new CableMasterEditorViewModel();
+        _cableMasterEditorViewModel.ShowConfirmDialog = ShowConfirmDialog;
         if (existing != null)
         {
             _cableMasterEditorViewModel.InitializeEdit(existing);
+            _cableMasterEditorViewModel.IsDirty = false;
         }
         else
         {
@@ -565,9 +622,11 @@ public partial class MainShellViewModel : ViewModelBase
     public void NavigateToRadioMasterEditor(NIS.Desktop.Models.Radio? existing, bool isReadOnly = false)
     {
         _radioMasterEditorViewModel = new RadioMasterEditorViewModel();
+        _radioMasterEditorViewModel.ShowConfirmDialog = ShowConfirmDialog;
         if (existing != null)
         {
             _radioMasterEditorViewModel.InitializeEdit(existing);
+            _radioMasterEditorViewModel.IsDirty = false;
         }
         else
         {
@@ -612,9 +671,11 @@ public partial class MainShellViewModel : ViewModelBase
     public void NavigateToOkaMasterEditor(NIS.Desktop.Models.Oka? existing)
     {
         _okaMasterEditorViewModel = new OkaMasterEditorViewModel();
+        _okaMasterEditorViewModel.ShowConfirmDialog = ShowConfirmDialog;
         if (existing != null)
         {
             _okaMasterEditorViewModel.InitializeEdit(existing);
+            _okaMasterEditorViewModel.IsDirty = false;
         }
         else
         {

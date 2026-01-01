@@ -32,6 +32,8 @@
                 </StackPanel>
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
                     <Button Content="{Binding ExportMarkdown, Source={x:Static loc:Strings.Instance}}" Command="{Binding ExportMarkdownCommand}"
+                            Padding="15,8"/>
+                    <Button Content="{Binding ExportPdf, Source={x:Static loc:Strings.Instance}}" Command="{Binding ExportPdfCommand}"
                             Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,8"/>
                 </StackPanel>
             </Grid>
@@ -69,7 +71,7 @@
                                         <TextBlock Text="{Binding OkaName}" FontWeight="SemiBold"/>
                                         <TextBlock Opacity="0.6" FontSize="12">
                                             <TextBlock.Text>
-                                                <MultiBinding StringFormat="{}Distance: {0:F1}m | Damping: {1:F0}dB">
+                                                <MultiBinding StringFormat="{}Distance: {0:F1}m | Damping: {1:F2}dB">
                                                     <Binding Path="OkaDistance"/>
                                                     <Binding Path="BuildingDampingDb"/>
                                                 </MultiBinding>
@@ -117,12 +119,12 @@
                                                             </TextBlock>
                                                             <TextBlock Grid.Column="1" HorizontalAlignment="Center">
                                                                 <TextBlock.Text>
-                                                                    <Binding Path="GainDbi" StringFormat="{}{0:F1} dBi"/>
+                                                                    <Binding Path="GainDbi" StringFormat="{}{0:F2} dBi"/>
                                                                 </TextBlock.Text>
                                                             </TextBlock>
                                                             <TextBlock Grid.Column="2" HorizontalAlignment="Center">
                                                                 <TextBlock.Text>
-                                                                    <Binding Path="MeanPowerW" StringFormat="{}{0:F1} W"/>
+                                                                    <Binding Path="MeanPowerW" StringFormat="{}{0:F2} W"/>
                                                                 </TextBlock.Text>
                                                             </TextBlock>
                                                             <TextBlock Grid.Column="3" HorizontalAlignment="Center" FontWeight="SemiBold">

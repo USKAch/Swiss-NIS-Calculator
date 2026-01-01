@@ -214,7 +214,7 @@ public class DatabaseService : IDisposable
 
     private void ImportFactoryDataFromBundled()
     {
-        var folderPath = AppPaths.BundledDataFolder;
+        var folderPath = AppPaths.DataFolder;
         if (!Directory.Exists(folderPath))
         {
             return;
@@ -829,34 +829,6 @@ public class DatabaseService : IDisposable
         _connection.Execute("DELETE FROM Radios");
         _connection.Execute("DELETE FROM Okas");
         _connection.Execute("DELETE FROM Modulations");
-    }
-
-    /// <summary>
-    /// Imports the demo project from the bundled sample file.
-    /// Returns the project ID if successful, 0 if demo not found.
-    /// </summary>
-    public int ImportDemoProject()
-    {
-        var demoPath = System.IO.Path.Combine(AppPaths.BundledDataFolder, "samples", "demo.nisproj");
-        if (!System.IO.File.Exists(demoPath)) return 0;
-
-        try
-        {
-            var json = System.IO.File.ReadAllText(demoPath);
-            var options = new System.Text.Json.JsonSerializerOptions
-            {
-                PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase,
-                PropertyNameCaseInsensitive = true
-            };
-            var project = System.Text.Json.JsonSerializer.Deserialize<Models.Project>(json, options);
-            if (project == null) return 0;
-
-            return CreateProject(project);
-        }
-        catch
-        {
-            return 0;
-        }
     }
 
     /// <summary>

@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NIS.Desktop.Models;
@@ -35,6 +36,11 @@ public partial class OkaMasterEditorViewModel : ViewModelBase
     private string _validationMessage = string.Empty;
 
     public string Title => IsEditing ? Strings.EditOka : Strings.AddOka;
+
+    // Track dirty state for all editable properties
+    partial void OnNameChanged(string value) => MarkDirty();
+    partial void OnDefaultDampingDbChanged(double? value) => MarkDirty();
+    partial void OnDefaultDistanceMetersChanged(double? value) => MarkDirty();
 
     /// <summary>
     /// Initialize for creating a new OKA.
@@ -75,6 +81,20 @@ public partial class OkaMasterEditorViewModel : ViewModelBase
             return;
         }
 
+        // DefaultDistanceMeters must be > 0 (FSD 6.3)
+        if (DefaultDistanceMeters <= 0)
+        {
+            ValidationMessage = Strings.OkaDistanceRequired;
+            return;
+        }
+
+        // DefaultDampingDb must be >= 0 (FSD 6.3)
+        if (DefaultDampingDb < 0)
+        {
+            ValidationMessage = Strings.OkaDampingNonNegative;
+            return;
+        }
+
         var oka = new Oka
         {
             Id = Id,
@@ -87,8 +107,11 @@ public partial class OkaMasterEditorViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void Cancel()
+    private async Task Cancel()
     {
-        NavigateBack?.Invoke();
+        if (await CanNavigateAwayAsync())
+        {
+            NavigateBack?.Invoke();
+        }
     }
 }

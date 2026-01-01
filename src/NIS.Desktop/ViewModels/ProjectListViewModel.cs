@@ -42,7 +42,7 @@ public partial class ProjectListViewModel : ViewModelBase
     // Navigation callbacks
     public Action<string>? NavigateToNewProject { get; set; }
     public Action<int>? NavigateToEditProject { get; set; }
-    public Func<string, string, Task<bool>>? ShowConfirmDialog { get; set; }
+    public new Func<string, string, Task<bool>>? ShowConfirmDialog { get; set; }
 
     public ProjectListViewModel()
     {
@@ -120,21 +120,6 @@ public partial class ProjectListViewModel : ViewModelBase
         catch (Exception ex)
         {
             StatusMessage = $"Error: {ex.Message}";
-        }
-    }
-
-    [RelayCommand]
-    private void LoadDemoProject()
-    {
-        var projectId = DatabaseService.Instance.ImportDemoProject();
-        if (projectId > 0)
-        {
-            StatusMessage = Strings.Instance.DemoProjectLoaded;
-            RefreshProjects();
-        }
-        else
-        {
-            StatusMessage = "Demo project not found";
         }
     }
 }

@@ -11,7 +11,6 @@ class Program
     {
         // Ensure portable app folders exist before anything else
         AppPaths.EnsureFoldersExist();
-        AppPaths.EnsureDatabaseSeeded();
 
         BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
     }

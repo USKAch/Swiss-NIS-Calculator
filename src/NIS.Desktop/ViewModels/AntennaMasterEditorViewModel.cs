@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NIS.Desktop.Models;
@@ -189,7 +190,15 @@ public partial class AntennaMasterEditorViewModel : ViewModelBase
         {
             IsRotatable = false;
         }
+        MarkDirty();
     }
+
+    // Track dirty state for all editable properties
+    partial void OnManufacturerChanged(string value) => MarkDirty();
+    partial void OnModelChanged(string value) => MarkDirty();
+    partial void OnIsRotatableChanged(bool value) => MarkDirty();
+    partial void OnHorizontalAngleDegreesChanged(double value) => MarkDirty();
+    partial void OnAntennaTypeChanged(string value) => MarkDirty();
 
     public ObservableCollection<EditableBandItem> Bands { get; } = new();
 
@@ -247,6 +256,7 @@ public partial class AntennaMasterEditorViewModel : ViewModelBase
     private void AddBand()
     {
         Bands.Add(new EditableBandItem { FrequencyMHz = 50, GainDbi = 0 });
+        MarkDirty();
     }
 
     [RelayCommand]
@@ -255,6 +265,7 @@ public partial class AntennaMasterEditorViewModel : ViewModelBase
         if (Bands.Count > 1)
         {
             Bands.Remove(band);
+            MarkDirty();
         }
     }
 
@@ -317,6 +328,13 @@ public partial class AntennaMasterEditorViewModel : ViewModelBase
             return;
         }
 
+        // If vertically polarized, rotatable must be false (FSD 6.3)
+        if (!IsHorizontallyPolarized && IsRotatable)
+        {
+            ValidationMessage = "Vertically polarized antennas cannot be rotatable.";
+            return;
+        }
+
         var antenna = new Antenna
         {
             Manufacturer = Manufacturer.Trim(),
@@ -332,8 +350,11 @@ public partial class AntennaMasterEditorViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void Cancel()
+    private async Task Cancel()
     {
-        NavigateBack?.Invoke();
+        if (await CanNavigateAwayAsync())
+        {
+            NavigateBack?.Invoke();
+        }
     }
 }

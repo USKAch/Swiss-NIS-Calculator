@@ -12,9 +12,34 @@
         <vm:ProjectOverviewViewModel/>
     </Design.DataContext>
 
-    <Grid RowDefinitions="*,Auto">
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- Header with editable project name and actions -->
+        <Border Grid.Row="0" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Padding="20,15">
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <TextBox Text="{Binding ProjectName, Mode=TwoWay}"
+                             FontSize="20" FontWeight="Bold"
+                             Background="White"
+                             MinWidth="300" MaxWidth="500"
+                             Watermark="{Binding ProjectName, Source={x:Static loc:Strings.Instance}}"/>
+                    <TextBlock Text="{Binding DirtyIndicator}" FontSize="20" FontWeight="Bold"
+                               Foreground="{DynamicResource DangerButtonBrush}" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
+                    <Button Content="{Binding Save, Source={x:Static loc:Strings.Instance}}"
+                            Command="{Binding SaveProjectCommand}"
+                            Padding="15,8"/>
+                    <Button Content="{Binding ExportReport, Source={x:Static loc:Strings.Instance}}"
+                            Command="{Binding ExportReportCommand}"
+                            IsEnabled="{Binding HasConfigurations}"
+                            Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}"
+                            Padding="15,8"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
         <!-- Main Content -->
-        <ScrollViewer Grid.Row="0" Padding="20,20,10,20" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer Grid.Row="1" Padding="20,20,10,20" VerticalScrollBarVisibility="Auto">
             <StackPanel Spacing="20">
 
                 <!-- Project Info Panel -->
@@ -65,8 +90,8 @@
                                   SelectionMode="Single"
                                   HeadersVisibility="Column"
                                   GridLinesVisibility="All"
-                                  HorizontalGridLinesBrush="#CCCCCC"
-                                  VerticalGridLinesBrush="#888888"
+                                  HorizontalGridLinesBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                  VerticalGridLinesBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                   BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                   BorderThickness="1"
                                   HorizontalAlignment="Left"
@@ -148,7 +173,7 @@
         </ScrollViewer>
 
         <!-- Footer -->
-        <Border Grid.Row="1" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" Padding="20,12">
+        <Border Grid.Row="2" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" Padding="20,12">
             <TextBlock Text="{Binding NisvCompliance, Source={x:Static loc:Strings.Instance}}"
                        FontSize="12" Opacity="0.5" HorizontalAlignment="Center"/>
         </Border>

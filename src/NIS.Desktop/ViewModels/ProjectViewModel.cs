@@ -83,7 +83,7 @@ public partial class ProjectViewModel : ViewModelBase
         OnPropertyChanged(nameof(Configurations));
     }
 
-    public void MarkDirty()
+    public new void MarkDirty()
     {
         IsDirty = true;
     }

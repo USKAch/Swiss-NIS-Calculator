@@ -64,7 +64,7 @@
                                                 <Border Background="{DynamicResource PanelBackgroundBrush}" CornerRadius="3" Padding="4,1" Margin="0,0">
                                                     <StackPanel Orientation="Horizontal" Spacing="6">
                                                         <TextBlock Text="{Binding FrequencyMHz, StringFormat='{}{0} MHz'}" FontWeight="SemiBold" FontSize="11" Width="55"/>
-                                                        <TextBlock Text="{Binding GainDbi, StringFormat='{}{0:F1} dBi'}" FontSize="11" Opacity="0.7"/>
+                                                        <TextBlock Text="{Binding GainDbi, StringFormat='{}{0:F2} dBi'}" FontSize="11" Opacity="0.7"/>
                                                     </StackPanel>
                                                 </Border>
                                             </DataTemplate>
@@ -146,23 +146,33 @@
                         <StackPanel Grid.Column="4" Spacing="6">
                             <TextBlock Text="{Binding EvaluationPoint, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
 
-                            <!-- OKA Name/Dropdown -->
+                            <!-- OKA Selector -->
                             <StackPanel Spacing="8">
                                 <ComboBox ItemsSource="{Binding Okas}"
-                                          SelectedItem="{Binding SelectedOka}"
-                                          IsEditable="True"
-                                          Text="{Binding OkaName}"
-                                          PlaceholderText="{Binding SelectOka, Source={x:Static loc:Strings.Instance}}"
-                                          HorizontalAlignment="Stretch">
+                                          SelectedItem="{Binding SelectedOka}" HorizontalAlignment="Stretch"
+                                          IsTextSearchEnabled="True"
+                                          PlaceholderText="{Binding SelectOka, Source={x:Static loc:Strings.Instance}}">
                                     <ComboBox.ItemTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding DisplayName}"/>
                                         </DataTemplate>
                                     </ComboBox.ItemTemplate>
                                 </ComboBox>
-                                <Button Content="{Binding New, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddOkaCommand}"
-                                        Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}"
-                                        Padding="8,4" HorizontalAlignment="Left"/>
+                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                    <!-- Edit button (green) for user-created items -->
+                                    <Button Command="{Binding EditOkaCommand}"
+                                            IsEnabled="{Binding SelectedOka, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                            IsVisible="{Binding SelectedOka.IsUserData}"
+                                            Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}"
+                                            Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
+                                    <!-- View button (default) for supplied items -->
+                                    <Button Command="{Binding EditOkaCommand}"
+                                            IsEnabled="{Binding SelectedOka, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                            IsVisible="{Binding !SelectedOka.IsUserData}"
+                                            Content="{Binding View, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
+                                    <Button Content="{Binding New, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddOkaCommand}"
+                                            Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="8,4"/>
+                                </StackPanel>
                             </StackPanel>
 
                             <!-- OKA Distance -->

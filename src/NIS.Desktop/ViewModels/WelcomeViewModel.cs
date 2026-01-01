@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -24,6 +25,7 @@ public partial class WelcomeViewModel : ViewModelBase
     // Navigation callbacks
     public Action<string>? NavigateToProjectInfo { get; set; }
     public Action? NavigateToProjectOverview { get; set; }
+    public Action<bool>? NavigateToMasterData { get; set; }
 
     /// <summary>
     /// Load project from database by ID and navigate to overview.
@@ -31,7 +33,7 @@ public partial class WelcomeViewModel : ViewModelBase
     public Action<int>? LoadProjectFromDatabase { get; set; }
 
     // Dialog callback (set by view)
-    public Func<string, string, Task<bool>>? ShowConfirmDialog { get; set; }
+    public new Func<string, string, Task<bool>>? ShowConfirmDialog { get; set; }
 
     [ObservableProperty]
     private string _statusMessage = string.Empty;
@@ -46,6 +48,16 @@ public partial class WelcomeViewModel : ViewModelBase
     /// Whether there are any projects in the database.
     /// </summary>
     public bool HasProjectsInDatabase => ProjectList.Count > 0;
+
+    /// <summary>
+    /// Whether there are any filtered projects to display.
+    /// </summary>
+    public bool HasFilteredProjects => FilteredProjects.Count > 0;
+
+    /// <summary>
+    /// Whether to show the "no search results" message.
+    /// </summary>
+    public bool ShowNoSearchResults => HasProjectsInDatabase && !HasFilteredProjects && !string.IsNullOrEmpty(SearchText);
 
     public List<string> SortOptions => new()
     {
@@ -77,6 +89,12 @@ public partial class WelcomeViewModel : ViewModelBase
         NavigateToProjectInfo?.Invoke(Strings.Instance.Language);
     }
 
+    [RelayCommand]
+    private void ClearSearch()
+    {
+        SearchText = string.Empty;
+    }
+
     partial void OnSearchTextChanged(string value) => ApplyFilter();
     partial void OnSortOptionChanged(string value) => ApplyFilter();
 
@@ -96,6 +114,8 @@ public partial class WelcomeViewModel : ViewModelBase
         {
             FilteredProjects.Add(project);
         }
+        OnPropertyChanged(nameof(HasFilteredProjects));
+        OnPropertyChanged(nameof(ShowNoSearchResults));
     }
 
     [RelayCommand]

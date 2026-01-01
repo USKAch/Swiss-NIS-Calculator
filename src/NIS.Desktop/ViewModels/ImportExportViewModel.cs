@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
@@ -21,11 +22,17 @@ public partial class ImportExportViewModel : ViewModelBase
     [ObservableProperty]
     private string _statusMessage = string.Empty;
 
+    /// <summary>
+    /// When true, shows factory mode indicator and development tools.
+    /// </summary>
+    [ObservableProperty]
+    private bool _isFactoryMode;
+
     // Storage provider for file dialogs
     public IStorageProvider? StorageProvider { get; set; }
 
     // Dialog callback
-    public Func<string, string, Task<bool>>? ShowConfirmDialog { get; set; }
+    public new Func<string, string, Task<bool>>? ShowConfirmDialog { get; set; }
 
     // Navigation callback
     public Action? NavigateBack { get; set; }

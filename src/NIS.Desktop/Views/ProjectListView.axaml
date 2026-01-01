@@ -21,19 +21,15 @@
                 <Border BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                         BorderThickness="1" CornerRadius="8" Padding="15">
                     <StackPanel Spacing="10">
-                    <Grid ColumnDefinitions="*,Auto,Auto">
+                    <Grid ColumnDefinitions="*,Auto">
                         <TextBlock Text="{Binding Projects, Source={x:Static loc:Strings.Instance}}"
                                    FontSize="18" FontWeight="Bold"/>
                         <Button Grid.Column="1"
-                                Command="{Binding LoadDemoProjectCommand}"
-                                Content="{Binding LoadDemoProject, Source={x:Static loc:Strings.Instance}}"
-                                    Padding="15,8" Margin="0,0,10,0"/>
-                            <Button Grid.Column="2"
-                                    Command="{Binding AddProjectCommand}"
-                                    Content="{Binding CreateProject, Source={x:Static loc:Strings.Instance}}"
-                                    Background="{DynamicResource SuccessButtonBrush}"
-                                    Foreground="{DynamicResource HeaderForegroundBrush}"
-                                    Padding="15,8"/>
+                                Command="{Binding AddProjectCommand}"
+                                Content="{Binding CreateProject, Source={x:Static loc:Strings.Instance}}"
+                                Background="{DynamicResource SuccessButtonBrush}"
+                                Foreground="{DynamicResource HeaderForegroundBrush}"
+                                Padding="15,8"/>
                     </Grid>
 
                     <!-- Search and sort -->
@@ -60,8 +56,8 @@
                                   SelectionMode="Single"
                                   HeadersVisibility="Column"
                                   GridLinesVisibility="All"
-                                  HorizontalGridLinesBrush="#CCCCCC"
-                                  VerticalGridLinesBrush="#888888"
+                                  HorizontalGridLinesBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                  VerticalGridLinesBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                   BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                   BorderThickness="1"
                                   MaxHeight="400"

@@ -217,6 +217,7 @@ public partial class ProjectOverviewViewModel : ViewModelBase
     [RelayCommand]
     private void ExportReport()
     {
-        StatusMessage = "Export report not implemented yet";
+        // Navigate to Results view where export options are available
+        NavigateToResults?.Invoke();
     }
 }

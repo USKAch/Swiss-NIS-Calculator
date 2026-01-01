@@ -5,16 +5,13 @@ namespace NIS.Desktop.Services;
 
 /// <summary>
 /// Centralized path management.
-/// Persistent user data is stored under %APPDATA%\SwissNISCalculator.
-/// Bundled seed data is read from the app install folder.
+/// Portable application: all data is stored in the application folder.
+/// No data is stored in %APPDATA% or other system folders.
 /// </summary>
 public static class AppPaths
 {
     private static readonly string _appRoot = Path.GetDirectoryName(
         System.Reflection.Assembly.GetExecutingAssembly().Location) ?? ".";
-    private static readonly string _appDataRoot = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-        "SwissNISCalculator");
 
     /// <summary>
     /// Application root folder (where the executable is located).
@@ -22,9 +19,10 @@ public static class AppPaths
     public static string AppRoot => _appRoot;
 
     /// <summary>
-    /// Application data root in %APPDATA%.
+    /// Data folder containing database, settings, translations, and exports.
+    /// Located in the application folder for portability.
     /// </summary>
-    public static string AppDataRoot => _appDataRoot;
+    public static string DataFolder => Path.Combine(AppRoot, "Data");
 
     /// <summary>
     /// User settings file.
@@ -32,29 +30,9 @@ public static class AppPaths
     public static string SettingsFile => Path.Combine(DataFolder, "settings.json");
 
     /// <summary>
-    /// Data folder containing database, translations, and exports.
-    /// </summary>
-    public static string DataFolder => Path.Combine(AppDataRoot, "Data");
-
-    /// <summary>
-    /// Seed data folder containing the immutable seed database.
-    /// </summary>
-    public static string SeedDataFolder => Path.Combine(AppRoot, "Data", "seed");
-
-    /// <summary>
-    /// Bundled master data folder (antennas.json, cables.json, radios.json).
-    /// </summary>
-    public static string BundledDataFolder => Path.Combine(AppRoot, "Data");
-
-    /// <summary>
-    /// SQLite database file.
+    /// SQLite database file containing all master data and projects.
     /// </summary>
     public static string DatabaseFile => Path.Combine(DataFolder, "nisdata.db");
-
-    /// <summary>
-    /// Seed SQLite database file.
-    /// </summary>
-    public static string SeedDatabaseFile => Path.Combine(SeedDataFolder, "factory.db");
 
     /// <summary>
     /// Custom translations file.
@@ -62,7 +40,7 @@ public static class AppPaths
     public static string TranslationsFile => Path.Combine(DataFolder, "translations.json");
 
     /// <summary>
-    /// Master data JSON file (bands and constants).
+    /// Master data JSON file (bands and constants) - for import/export only.
     /// </summary>
     public static string MasterDataFile => Path.Combine(DataFolder, "masterdata.json");
 
@@ -82,22 +60,8 @@ public static class AppPaths
     /// </summary>
     public static void EnsureFoldersExist()
     {
-        Directory.CreateDirectory(AppDataRoot);
         Directory.CreateDirectory(DataFolder);
-        Directory.CreateDirectory(SeedDataFolder);
         Directory.CreateDirectory(ProjectsFolder);
         Directory.CreateDirectory(ExportFolder);
-    }
-
-    /// <summary>
-    /// Ensures the writable database exists by copying the seed database once.
-    /// </summary>
-    public static void EnsureDatabaseSeeded()
-    {
-        if (!File.Exists(DatabaseFile))
-        {
-            Directory.CreateDirectory(DataFolder);
-            using var _ = File.Create(DatabaseFile);
-        }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using Avalonia.Data.Converters;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -151,6 +152,27 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
             OkaDistanceMeters = value.DefaultDistanceMeters;
             OkaBuildingDampingDb = value.DefaultDampingDb;
         }
+        MarkDirty();
+    }
+
+    partial void OnSelectedAntennaChanged(Antenna? value) => MarkDirty();
+    partial void OnSelectedRadioChanged(Radio? value) => MarkDirty();
+    partial void OnSelectedLinearChanged(Radio? value) => MarkDirty();
+    partial void OnSelectedCableChanged(Cable? value) => MarkDirty();
+    partial void OnSelectedModulationChanged(Modulation? value) => MarkDirty();
+    partial void OnPowerWattsChanged(double value) => MarkDirty();
+    partial void OnCableLengthMetersChanged(double value) => MarkDirty();
+    partial void OnAdditionalLossDbChanged(double value) => MarkDirty();
+    partial void OnHeightMetersChanged(double value) => MarkDirty();
+    partial void OnActivityFactorChanged(double value) => MarkDirty();
+    partial void OnOkaNameChanged(string value) => MarkDirty();
+    partial void OnOkaDistanceMetersChanged(double value) => MarkDirty();
+    partial void OnOkaBuildingDampingDbChanged(double value) => MarkDirty();
+
+    [RelayCommand]
+    private void EditOka()
+    {
+        NavigateToOkaEditor?.Invoke(SelectedOka);
     }
 
     [RelayCommand]
@@ -249,9 +271,12 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void Cancel()
+    private async Task Cancel()
     {
-        NavigateBack?.Invoke();
+        if (await CanNavigateAwayAsync())
+        {
+            NavigateBack?.Invoke();
+        }
     }
 
     [RelayCommand]
@@ -313,7 +338,7 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
     {
         NavigateToLinearEditor?.Invoke(null);
     }
-}
+
     partial void OnHasLinearChanged(bool value)
     {
         if (!value)
@@ -321,3 +346,4 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
             SelectedLinear = null;
         }
     }
+}

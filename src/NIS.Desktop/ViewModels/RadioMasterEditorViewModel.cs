@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NIS.Desktop.Models;
@@ -44,6 +45,11 @@ public partial class RadioMasterEditorViewModel : ViewModelBase
     private string _validationMessage = string.Empty;
 
     public string Title => IsEditing ? "Edit Radio" : "Add New Radio";
+
+    // Track dirty state for all editable properties
+    partial void OnManufacturerChanged(string value) => MarkDirty();
+    partial void OnModelChanged(string value) => MarkDirty();
+    partial void OnMaxPowerWattsChanged(double value) => MarkDirty();
 
     /// <summary>
     /// Initialize for creating a new radio.
@@ -103,8 +109,11 @@ public partial class RadioMasterEditorViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void Cancel()
+    private async Task Cancel()
     {
-        NavigateBack?.Invoke();
+        if (await CanNavigateAwayAsync())
+        {
+            NavigateBack?.Invoke();
+        }
     }
 }

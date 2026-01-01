@@ -582,6 +582,34 @@ public partial class MasterDataManagerViewModel : ViewModelBase
         }
     }
 
+    [RelayCommand]
+    private void OpenDataFolder()
+    {
+        if (!IsAdminMode) return;
+
+        try
+        {
+            var folder = Services.AppPaths.DataFolder;
+            if (System.IO.Directory.Exists(folder))
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = folder,
+                    UseShellExecute = true
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBoxManager
+                .GetMessageBoxStandard(
+                    "Error",
+                    $"Failed to open data folder: {ex.Message}",
+                    ButtonEnum.Ok, Icon.Error)
+                .ShowAsync();
+        }
+    }
+
     public bool AntennaExists(string manufacturer, string model, Antenna? exclude = null)
     {
         return DatabaseService.Instance.AntennaExists(manufacturer, model);

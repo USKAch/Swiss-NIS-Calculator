@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NIS.Desktop.Localization;
@@ -56,15 +57,26 @@ public partial class ProjectInfoViewModel : ViewModelBase
         // Language parameter is kept for compatibility but we use Strings.Instance.Language
     }
 
+    // Track dirty state for all fields
+    partial void OnProjectNameChanged(string value) => MarkDirty();
+    partial void OnOperatorNameChanged(string value) => MarkDirty();
+    partial void OnCallsignChanged(string value) => MarkDirty();
+    partial void OnAddressChanged(string value) => MarkDirty();
+    partial void OnLocationChanged(string value) => MarkDirty();
+
     [RelayCommand]
-    private void Cancel()
+    private async Task Cancel()
     {
-        NavigateBack?.Invoke();
+        if (await CanNavigateAwayAsync())
+        {
+            NavigateBack?.Invoke();
+        }
     }
 
     [RelayCommand]
     private void Create()
     {
+        IsDirty = false;
         NavigateToProjectOverview?.Invoke(this);
     }
 }

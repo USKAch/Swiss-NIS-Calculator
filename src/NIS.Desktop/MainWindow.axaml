@@ -39,7 +39,7 @@
 
             <ui:NavigationViewItem Content="{Binding OpenProject, Source={x:Static loc:Strings.Instance}}" Tag="OpenProject">
                 <ui:NavigationViewItem.IconSource>
-                    <ui:SymbolIconSource Symbol="FolderOpen"/>
+                    <ui:SymbolIconSource Symbol="OpenFolder"/>
                 </ui:NavigationViewItem.IconSource>
             </ui:NavigationViewItem>
 
@@ -72,6 +72,11 @@
             <ui:NavigationViewItem Content="{Binding Settings, Source={x:Static loc:Strings.Instance}}" Tag="Settings">
                 <ui:NavigationViewItem.IconSource>
                     <ui:SymbolIconSource Symbol="Setting"/>
+                </ui:NavigationViewItem.IconSource>
+            </ui:NavigationViewItem>
+            <ui:NavigationViewItem Content="{Binding Factory, Source={x:Static loc:Strings.Instance}}" Tag="Factory">
+                <ui:NavigationViewItem.IconSource>
+                    <ui:SymbolIconSource Symbol="Admin"/>
                 </ui:NavigationViewItem.IconSource>
             </ui:NavigationViewItem>
         </ui:NavigationView.FooterMenuItems>

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NIS.Desktop.Models;
@@ -89,6 +90,25 @@ public partial class CableMasterEditorViewModel : ViewModelBase
     private string _validationMessage = string.Empty;
 
     public string Title => IsEditing ? "Edit Cable" : "Add New Cable";
+
+    // Track dirty state for all editable properties
+    partial void OnNameChanged(string value) => MarkDirty();
+    partial void OnAtten1_8Changed(double? value) => MarkDirty();
+    partial void OnAtten3_5Changed(double? value) => MarkDirty();
+    partial void OnAtten7Changed(double? value) => MarkDirty();
+    partial void OnAtten10Changed(double? value) => MarkDirty();
+    partial void OnAtten14Changed(double? value) => MarkDirty();
+    partial void OnAtten18Changed(double? value) => MarkDirty();
+    partial void OnAtten21Changed(double? value) => MarkDirty();
+    partial void OnAtten24Changed(double? value) => MarkDirty();
+    partial void OnAtten28Changed(double? value) => MarkDirty();
+    partial void OnAtten50Changed(double? value) => MarkDirty();
+    partial void OnAtten144Changed(double? value) => MarkDirty();
+    partial void OnAtten430Changed(double? value) => MarkDirty();
+    partial void OnAtten1240Changed(double? value) => MarkDirty();
+    partial void OnAtten2300Changed(double? value) => MarkDirty();
+    partial void OnAtten5650Changed(double? value) => MarkDirty();
+    partial void OnAtten10000Changed(double? value) => MarkDirty();
 
     /// <summary>
     /// Initialize for creating a new cable.
@@ -198,18 +218,37 @@ public partial class CableMasterEditorViewModel : ViewModelBase
             return;
         }
 
+        var attenuationDict = BuildAttenuationDictionary();
+
+        // At least one attenuation frequency should be provided (FSD 6.3)
+        if (attenuationDict.Count == 0)
+        {
+            ValidationMessage = "Please enter at least one attenuation value.";
+            return;
+        }
+
+        // Attenuation values must be non-negative (FSD 6.3)
+        if (attenuationDict.Any(kvp => kvp.Value < 0))
+        {
+            ValidationMessage = "Attenuation values must be non-negative.";
+            return;
+        }
+
         var cable = new Cable
         {
             Name = Name.Trim(),
-            AttenuationPer100m = BuildAttenuationDictionary()
+            AttenuationPer100m = attenuationDict
         };
 
         OnSave?.Invoke(cable);
     }
 
     [RelayCommand]
-    private void Cancel()
+    private async Task Cancel()
     {
-        NavigateBack?.Invoke();
+        if (await CanNavigateAwayAsync())
+        {
+            NavigateBack?.Invoke();
+        }
     }
 }

@@ -64,8 +64,6 @@ public class Strings : INotifyPropertyChanged
 
         // Welcome
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AppTitle)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AppSubtitle)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectLanguage)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Theme)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ThemeLight)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ThemeDark)));
@@ -85,15 +83,10 @@ public class Strings : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SettingsAboutCredits1)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SettingsAboutCredits2)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NewProject)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentProject)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(OpenProject)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Continue)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(GetStarted)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RecentProjects)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MasterData)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NisvCompliance)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Home)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(File)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Project)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Settings)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ImportExport)));
@@ -101,12 +94,10 @@ public class Strings : INotifyPropertyChanged
         // Project Info
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ProjectInfo)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ProjectName)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StationInfo)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Operator)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Address)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Location)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CreateProject)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(EditStationInfo)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AddressExample)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LocationExample)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Callsign)));
@@ -120,7 +111,6 @@ public class Strings : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ExportPdf)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NoConfigurations)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SearchProjects)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SortBy)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SortByName)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SortByModified)));
 
@@ -158,7 +148,6 @@ public class Strings : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Factor)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AddModulation)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MasterDataManager)));
 
         // Results
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalculationResults)));
@@ -174,7 +163,6 @@ public class Strings : INotifyPropertyChanged
     // COMMON / BUTTONS
     // ============================================================
     public string Save => Get("Save");
-    public string SaveAs => Get("SaveAs");
     public string Cancel => Get("Cancel");
     public string Edit => Get("Edit");
     public string View => Get("View");
@@ -192,8 +180,6 @@ public class Strings : INotifyPropertyChanged
     // WELCOME SCREEN
     // ============================================================
     public string AppTitle => Get("AppTitle");
-    public string AppSubtitle => Get("AppSubtitle");
-    public string SelectLanguage => Get("SelectLanguage");
     public string Theme => Get("Theme");
     public string ThemeLight => Get("ThemeLight");
     public string ThemeDark => Get("ThemeDark");
@@ -213,16 +199,11 @@ public class Strings : INotifyPropertyChanged
     public string SettingsAboutCredits1 => Get("SettingsAboutCredits1");
     public string SettingsAboutCredits2 => Get("SettingsAboutCredits2");
     public string NewProject => Get("NewProject");
-    public string CurrentProject => Get("CurrentProject");
     public string OpenProject => Get("OpenProject");
-    public string Continue => Get("Continue");
-    public string GetStarted => Get("GetStarted");
-    public string RecentProjects => Get("RecentProjects");
     public string MasterData => Get("MasterData");
     public string NisvCompliance => Get("NisvCompliance");
     public string Home => Get("Home");
     public string Projects => Get("Projects");
-    public string File => Get("File");
     public string Project => Get("Project");
     public string Settings => Get("Settings");
     public string ImportExport => Get("ImportExport");
@@ -232,13 +213,11 @@ public class Strings : INotifyPropertyChanged
     // ============================================================
     public string ProjectInfo => Get("ProjectInfo");
     public string ProjectName => Get("ProjectName");
-    public string StationInfo => Get("StationInfo");
     public string Operator => Get("Operator");
     public string Callsign => Get("Callsign");
     public string Address => Get("Address");
     public string Location => Get("Location");
     public string CreateProject => Get("CreateProject");
-    public string EditStationInfo => Get("EditStationInfo");
     public string AddressExample => Get("AddressExample");
     public string LocationExample => Get("LocationExample");
 
@@ -253,7 +232,7 @@ public class Strings : INotifyPropertyChanged
     public string ExportPdf => Get("ExportPdf");
     public string NoConfigurations => Get("NoConfigurations");
     public string SearchProjects => Get("SearchProjects");
-    public string SortBy => Get("SortBy");
+    public string NoSearchResults => Get("NoSearchResults");
     public string SortByName => Get("SortByName");
     public string SortByModified => Get("SortByModified");
 
@@ -302,12 +281,14 @@ public class Strings : INotifyPropertyChanged
     public string OkaNumber => Get("OkaNumber");
     public string OkaNameLabel => Get("OkaNameLabel");
     public string OkaNameRequired => Get("OkaNameRequired");
+    public string OkaDistanceRequired => Get("OkaDistanceRequired");
+    public string OkaDampingNonNegative => Get("OkaDampingNonNegative");
+    public string EditOka => Get("EditOka");
     public string DefaultDamping => Get("DefaultDamping");
     public string DefaultDampingHint => Get("DefaultDampingHint");
     public string DefaultDistance => Get("DefaultDistance");
     public string DefaultDistanceHint => Get("DefaultDistanceHint");
     public string AddOka => Get("AddOka");
-    public string EditOka => Get("EditOka");
     public string SelectOka => Get("SelectOka");
 
     // ============================================================
@@ -329,19 +310,13 @@ public class Strings : INotifyPropertyChanged
     public string PatternExplanation => Get("PatternExplanation");
     public string AddAtLeastOneBand => Get("AddAtLeastOneBand");
     public string AddNewAntenna => Get("AddNewAntenna");
-    public string AntennaRepository => Get("AntennaRepository");
     public string SelectAntennaPrompt => Get("SelectAntennaPrompt");
     public string TypeToSearch => Get("TypeToSearch");
-    public string HorizontallyRotatable => Get("HorizontallyRotatable");
     public string TypeToSearchDescription => Get("TypeToSearchDescription");
-    public string ManufacturerExample => Get("ManufacturerExample");
-    public string ModelExample => Get("ModelExample");
-    public string SaveAntenna => Get("SaveAntenna");
     public string AntennaMfgExample => Get("AntennaMfgExample");
     public string AntennaModelExample => Get("AntennaModelExample");
     public string AntennaTypeLabel => Get("AntennaTypeLabel");
     public string GenerateFromGain => Get("GenerateFromGain");
-    public string GenerateAllPatterns => Get("GenerateAllPatterns");
 
     // ============================================================
     // CABLE EDITOR
@@ -376,7 +351,6 @@ public class Strings : INotifyPropertyChanged
     public string Name => Get("Name");
     public string AddModulation => Get("AddModulation");
     public string Translations => Get("Translations");
-    public string MasterDataManager => Get("MasterDataManager");
     public string Clear => Get("Clear");
     public string SearchAntennas => Get("SearchAntennas");
     public string SearchCables => Get("SearchCables");
@@ -388,7 +362,6 @@ public class Strings : INotifyPropertyChanged
     public string AddRadioButton => Get("AddRadioButton");
     public string SaveChanges => Get("SaveChanges");
     public string TranslationEditorInfo => Get("TranslationEditorInfo");
-    public string ColumnKey => Get("ColumnKey");
     public string ColumnCategory => Get("ColumnCategory");
     public string ColumnGerman => Get("ColumnGerman");
     public string ColumnFrench => Get("ColumnFrench");
@@ -396,10 +369,6 @@ public class Strings : INotifyPropertyChanged
     public string ColumnEnglish => Get("ColumnEnglish");
     public string Database => Get("Database");
     public string DatabaseTabInfo => Get("DatabaseTabInfo");
-    public string ExportDatabase => Get("ExportDatabase");
-    public string ExportDatabaseDesc => Get("ExportDatabaseDesc");
-    public string ImportDatabase => Get("ImportDatabase");
-    public string ImportDatabaseDesc => Get("ImportDatabaseDesc");
 
     // ============================================================
     // RESULTS
@@ -429,39 +398,38 @@ public class Strings : INotifyPropertyChanged
     // ============================================================
     // PROJECT MANAGEMENT
     // ============================================================
-    public string Callsign => Get("Callsign");
-    public string LoadDemoProject => Get("LoadDemoProject");
-    public string LoadDemoProjectDesc => Get("LoadDemoProjectDesc");
     public string NoProjects => Get("NoProjects");
-    public string DeleteProject => Get("DeleteProject");
     public string DeleteProjectConfirm => Get("DeleteProjectConfirm");
     public string DeleteProjectMessage => Get("DeleteProjectMessage");
     public string ProjectDeleted => Get("ProjectDeleted");
-    public string DemoProjectLoaded => Get("DemoProjectLoaded");
 
     // ============================================================
-    // USER DATA EXPORT/IMPORT
+    // IMPORT/EXPORT
     // ============================================================
-    public string ExportUserData => Get("ExportUserData");
-    public string ImportUserData => Get("ImportUserData");
-    public string ExportUserDataDesc => Get("ExportUserDataDesc");
-    public string ImportUserDataDesc => Get("ImportUserDataDesc");
-    public string ImportConfirmMessage => Get("ImportConfirmMessage");
     public string ExportFactoryData => Get("ExportFactoryData");
     public string ImportFactoryData => Get("ImportFactoryData");
     public string ExportFactoryDataDesc => Get("ExportFactoryDataDesc");
+    public string ImportDatabaseDesc => Get("ImportDatabaseDesc");
     public string ImportFactoryConfirmMessage => Get("ImportFactoryConfirmMessage");
+    public string OpenDataFolder => Get("OpenDataFolder");
+    public string DataFolder => Get("DataFolder");
+    public string DataFolderDesc => Get("DataFolderDesc");
+    public string Factory => Get("Factory");
+    public string FactoryMode => Get("FactoryMode");
+    public string EnterFactoryPassword => Get("EnterFactoryPassword");
+    public string WrongPassword => Get("WrongPassword");
+    public string ImportProject => Get("ImportProject");
+    public string ExportProject => Get("ExportProject");
+    public string ImportProjectConfirmMessage => Get("ImportProjectConfirmMessage");
+    public string ProjectImportExportDesc => Get("ProjectImportExportDesc");
     public string ExportSuccess => Get("ExportSuccess");
     public string ExportFailed => Get("ExportFailed");
     public string ImportSuccess => Get("ImportSuccess");
     public string ImportFailed => Get("ImportFailed");
-    public string ImportProject => Get("ImportProject");
-    public string ExportProject => Get("ExportProject");
-    public string ImportProjectConfirmMessage => Get("ImportProjectConfirmMessage");
+    public string ImportUserData => Get("ImportUserData");
+    public string ExportUserData => Get("ExportUserData");
+    public string ImportConfirmMessage => Get("ImportConfirmMessage");
     public string SelectProjectToExport => Get("SelectProjectToExport");
-    public string ProjectImportExportDesc => Get("ProjectImportExportDesc");
-    public string UserData => Get("UserData");
-    public string FactoryData => Get("FactoryData");
 
     // ============================================================
     // UNITS (not translated, but centralized)
@@ -578,6 +546,7 @@ public class Strings : INotifyPropertyChanged
         ["ExportPdf"] = "ProjectOverview",
         ["NoConfigurations"] = "ProjectOverview",
         ["SearchProjects"] = "ProjectOverview",
+        ["NoSearchResults"] = "ProjectOverview",
         ["SortBy"] = "ProjectOverview",
         ["SortByName"] = "ProjectOverview",
         ["SortByModified"] = "ProjectOverview",
@@ -772,6 +741,7 @@ public class Strings : INotifyPropertyChanged
         ["ExportPdf"] = new() { ["de"] = "PDF exportieren", ["fr"] = "Exporter PDF", ["it"] = "Esporta PDF", ["en"] = "Export PDF" },
         ["NoConfigurations"] = new() { ["de"] = "Keine Konfigurationen. Klicken Sie auf '+ Konfiguration hinzufügen'.", ["fr"] = "Aucune configuration. Cliquez sur '+ Ajouter configuration'.", ["it"] = "Nessuna configurazione. Clicca su '+ Aggiungi configurazione'.", ["en"] = "No configurations. Click '+ Add Configuration' to get started." },
         ["SearchProjects"] = new() { ["de"] = "Projekte suchen...", ["fr"] = "Rechercher projets...", ["it"] = "Cerca progetti...", ["en"] = "Search projects..." },
+        ["NoSearchResults"] = new() { ["de"] = "Keine Projekte gefunden.", ["fr"] = "Aucun projet trouvé.", ["it"] = "Nessun progetto trovato.", ["en"] = "No projects found." },
         ["SortBy"] = new() { ["de"] = "Sortieren nach", ["fr"] = "Trier par", ["it"] = "Ordina per", ["en"] = "Sort by" },
         ["SortByName"] = new() { ["de"] = "Name", ["fr"] = "Nom", ["it"] = "Nome", ["en"] = "Name" },
         ["SortByModified"] = new() { ["de"] = "Zuletzt geändert", ["fr"] = "Dernière modification", ["it"] = "Ultima modifica", ["en"] = "Last modified" },
@@ -813,6 +783,8 @@ public class Strings : INotifyPropertyChanged
         ["OkaNumber"] = new() { ["de"] = "Nummer", ["fr"] = "Numéro", ["it"] = "Numero", ["en"] = "Number" },
         ["OkaNameLabel"] = new() { ["de"] = "Bezeichnung", ["fr"] = "Désignation", ["it"] = "Designazione", ["en"] = "Name" },
         ["OkaNameRequired"] = new() { ["de"] = "Bitte eine Bezeichnung eingeben.", ["fr"] = "Veuillez entrer une désignation.", ["it"] = "Inserire una designazione.", ["en"] = "Please enter a name." },
+        ["OkaDistanceRequired"] = new() { ["de"] = "Die Distanz muss grösser als 0 sein.", ["fr"] = "La distance doit être supérieure à 0.", ["it"] = "La distanza deve essere maggiore di 0.", ["en"] = "Distance must be greater than 0." },
+        ["OkaDampingNonNegative"] = new() { ["de"] = "Die Dämpfung darf nicht negativ sein.", ["fr"] = "L'atténuation ne peut pas être négative.", ["it"] = "L'attenuazione non può essere negativa.", ["en"] = "Damping cannot be negative." },
         ["DefaultDamping"] = new() { ["de"] = "Standard-Dämpfung", ["fr"] = "Atténuation par défaut", ["it"] = "Attenuazione predefinita", ["en"] = "Default Damping" },
         ["DefaultDampingHint"] = new() { ["de"] = "0 dB für Aussenbereich, typisch 6-12 dB für Innenräume", ["fr"] = "0 dB pour l'extérieur, typiquement 6-12 dB pour l'intérieur", ["it"] = "0 dB per l'esterno, tipicamente 6-12 dB per interni", ["en"] = "0 dB for outdoor, typically 6-12 dB for indoor" },
         ["DefaultDistance"] = new() { ["de"] = "Horizontale Distanz", ["fr"] = "Distance horizontale", ["it"] = "Distanza orizzontale", ["en"] = "Horizontal Distance" },
@@ -957,5 +929,20 @@ public class Strings : INotifyPropertyChanged
         ["ExportFactoryDataDesc"] = new() { ["de"] = "Exportiert alle Projekte, OKAs und Stammdaten (Factory)", ["fr"] = "Exporte tous les projets, OKAs et données de base (usine)", ["it"] = "Esporta tutti i progetti, OKA e dati master (fabbrica)", ["en"] = "Export all projects, OKAs, and master data (factory)" },
         ["ImportFactoryConfirmMessage"] = new() { ["de"] = "Dies löscht alle bestehenden Daten und ersetzt sie durch die Werksdaten. Fortfahren?", ["fr"] = "Cela supprime toutes les données existantes et les remplace par les données usine. Continuer?", ["it"] = "Questo elimina tutti i dati esistenti e li sostituisce con i dati di fabbrica. Continuare?", ["en"] = "This deletes all existing data and replaces it with factory data. Continue?" },
         ["ImportProjectConfirmMessage"] = new() { ["de"] = "Ein neues Projekt wird importiert. Fortfahren?", ["fr"] = "Un nouveau projet sera importé. Continuer?", ["it"] = "Verrà importato un nuovo progetto. Continuare?", ["en"] = "A new project will be imported. Continue?" },
+        ["FactoryDevelopment"] = new() { ["de"] = "Werksentwicklung", ["fr"] = "Développement usine", ["it"] = "Sviluppo fabbrica", ["en"] = "Factory Development" },
+        ["FactoryDevelopmentDesc"] = new() { ["de"] = "Tools zum Erstellen und Bearbeiten der mitgelieferten Datenbank", ["fr"] = "Outils pour créer et modifier la base de données livrée", ["it"] = "Strumenti per creare e modificare il database fornito", ["en"] = "Tools for creating and modifying the shipped database" },
+        ["ExportAsDemo"] = new() { ["de"] = "Als Demo exportieren", ["fr"] = "Exporter comme démo", ["it"] = "Esporta come demo", ["en"] = "Export as Demo" },
+        ["OpenDataFolder"] = new() { ["de"] = "Datenordner öffnen", ["fr"] = "Ouvrir dossier données", ["it"] = "Apri cartella dati", ["en"] = "Open Data Folder" },
+        ["DemoProjectFailed"] = new() { ["de"] = "Demo-Projekt konnte nicht geladen werden", ["fr"] = "Impossible de charger le projet démo", ["it"] = "Impossibile caricare il progetto demo", ["en"] = "Failed to load demo project" },
+        ["DemoProjectExported"] = new() { ["de"] = "Demo-Projekt exportiert", ["fr"] = "Projet démo exporté", ["it"] = "Progetto demo esportato", ["en"] = "Demo project exported" },
+        ["DemoProject"] = new() { ["de"] = "Demo-Projekt", ["fr"] = "Projet démo", ["it"] = "Progetto demo", ["en"] = "Demo Project" },
+        ["DemoProjectDesc"] = new() { ["de"] = "Demo-Projekt für neue Benutzer erstellen und verwalten", ["fr"] = "Créer et gérer le projet démo pour les nouveaux utilisateurs", ["it"] = "Crea e gestisci il progetto demo per i nuovi utenti", ["en"] = "Create and manage the demo project for new users" },
+        ["DataFolder"] = new() { ["de"] = "Datenordner", ["fr"] = "Dossier données", ["it"] = "Cartella dati", ["en"] = "Data Folder" },
+        ["DataFolderDesc"] = new() { ["de"] = "Öffnet den Datenordner mit der Datenbank (nisdata.db) für Git-Commits", ["fr"] = "Ouvre le dossier de données avec la base de données (nisdata.db) pour les commits Git", ["it"] = "Apre la cartella dati con il database (nisdata.db) per i commit Git", ["en"] = "Opens the data folder containing the database (nisdata.db) for Git commits" },
+        ["DataFolderOpened"] = new() { ["de"] = "Datenordner geöffnet", ["fr"] = "Dossier données ouvert", ["it"] = "Cartella dati aperta", ["en"] = "Data folder opened" },
+        ["Factory"] = new() { ["de"] = "Fabrik", ["fr"] = "Usine", ["it"] = "Fabbrica", ["en"] = "Factory" },
+        ["FactoryMode"] = new() { ["de"] = "WERKSMODUS", ["fr"] = "MODE USINE", ["it"] = "MODALITÀ FABBRICA", ["en"] = "FACTORY MODE" },
+        ["EnterFactoryPassword"] = new() { ["de"] = "Bitte Werkspasswort eingeben:", ["fr"] = "Veuillez entrer le mot de passe usine:", ["it"] = "Inserisci la password di fabbrica:", ["en"] = "Please enter factory password:" },
+        ["WrongPassword"] = new() { ["de"] = "Falsches Passwort", ["fr"] = "Mot de passe incorrect", ["it"] = "Password errata", ["en"] = "Wrong password" },
     };
 }

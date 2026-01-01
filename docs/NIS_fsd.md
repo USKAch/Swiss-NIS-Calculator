@@ -172,48 +172,46 @@ Central hub for managing master data, OKAs, and language strings. Accessed via *
 **Navigation Structure**:
 ```
 Master Data Manager
-+-- Antennas Tab
-|   +-- List of all antennas (searchable, filterable)
-|   +-- [Add Antenna] -> Antenna Master Editor
-|   +-- [Edit] -> Antenna Master Editor (with existing data)
-+-- Cables Tab
-|   +-- List of all cables (searchable)
-|   +-- [Add Cable] -> Cable Master Editor
-|   +-- [Edit] -> Cable Master Editor (with existing data)
-+-- Radios Tab
-|   +-- List of all radios (searchable)
-|   +-- [Add Radio] -> Radio Master Editor
-|   +-- [Edit] -> Radio Master Editor (with existing data)
-+-- OKA Tab (master data)
-|   +-- List of OKAs shared across projects (factory table is empty; all entries are user data)
-|   +-- [Add OKA] -> OKA Editor
-|   +-- [Edit] -> OKA Editor (with existing data)
-+-- Modulations Tab (factory mode editable)
-|   +-- SSB=0.2, CW=0.4, FM=1.0
-|   +-- [Add], [Edit], and [Save] enabled only in factory mode
-+-- Constants Tab (factory mode editable)
-|   +-- Ground Reflection Factor kr=1.6
-|   +-- Default Activity Factor=0.5
-|   +-- [Edit] and [Save] enabled only in factory mode
-|   +-- Constants list is fixed; no add/remove actions
-|   +-- Persisted in `masterdata.json`
-+-- Bands Tab (factory mode editable)
-|   +-- List of standard bands (name + center frequency)
-|   +-- [Add], [Edit], and [Save] enabled only in factory mode
-|   +-- Used for antenna band definitions and cable attenuation points
-|   +-- Persisted in `masterdata.json`
-+-- Translations Tab
-|   +-- Data grid with columns (German first, English last): Category, German (master), French, Italian, English
-|   +-- Translation ID/key is hidden (not displayed) and cannot be changed
-|   +-- Search and category filter available
-|   +-- [Save Changes] persists to `translations.json` in the Data folder
-+-- Database Tab (admin mode only)
-    +-- Export/Import master data (factory mode)
+|-- Antennas
+|   |-- List of all antennas (searchable, filterable)
+|   |-- [Add Antenna] -> Antenna Master Editor
+|   |-- [Edit] -> Antenna Master Editor (with existing data)
+|-- Cables
+|   |-- List of all cables (searchable)
+|   |-- [Add Cable] -> Cable Master Editor
+|   |-- [Edit] -> Cable Master Editor (with existing data)
+|-- Radios
+|   |-- List of all radios (searchable)
+|   |-- [Add Radio] -> Radio Master Editor
+|   |-- [Edit] -> Radio Master Editor (with existing data)
+|-- OKA (master data)
+|   |-- List of OKAs shared across projects (factory table is empty; all entries are user data)
+|   |-- [Add OKA] -> OKA Editor
+|   |-- [Edit] -> OKA Editor (with existing data)
+|-- Modulations (factory mode editable)
+|   |-- SSB=0.2, CW=0.4, FM=1.0
+|   |-- [Add], [Edit], and [Save] enabled only in factory mode
+|-- Constants (factory mode editable)
+|   |-- Ground Reflection Factor kr=1.6
+|   |-- Default Activity Factor=0.5
+|   |-- [Edit] and [Save] enabled only in factory mode
+|   |-- Constants list is fixed; no add/remove actions
+|   |-- Persisted in `masterdata.json`
+|-- Bands (factory mode editable)
+|   |-- List of standard bands (name + center frequency)
+|   |-- [Add], [Edit], and [Save] enabled only in factory mode
+|   |-- Used for antenna band definitions and cable attenuation points
+|   |-- Persisted in `masterdata.json`
+|-- Translations
+|   |-- Data grid with columns (German first, English last): Category, German (master), French, Italian, English
+|   |-- Translation ID/key is hidden (not displayed) and cannot be changed
+|   |-- Search and category filter available
+|   |-- [Save Changes] persists to `translations.json` in the Data folder
+|-- Database (admin mode only)
+    |-- Export/Import master data (factory mode)
 ```
 
-**Factory/Admin mode**:
-- Activated by Shift+Click on **Master Data** in the navigation pane.
-- Allows editing factory data and shows the Database tab.
+**Factory Mode**: See **Section 9** for factory mode activation, features, and workflow.
 
 **Actions**:
 - Back -> Returns to Project list or Project Overview (depending on context)
@@ -784,13 +782,88 @@ For omnidirectional antennas (like a collinear array), the logic holds up well:
 
 *Total: 319 antennas. Complete data stored in SQLite database (see Section 7).*
 
-## 9. Localization and Theme
+## 9. Factory Mode
+
+Factory Mode provides access to administrative features for managing shipped master data and the demo project. This mode is intended for application maintainers and developers.
+
+### 9.1 Activation
+
+Factory Mode is accessed via the **Factory** item in the navigation pane (bottom section). When clicked, a password dialog appears. Enter the password **`HB9BLA`** to access Factory Mode.
+
+### 9.2 Features Enabled in Factory Mode
+
+When Factory Mode is active:
+
+1. **FACTORY MODE indicator**: A red banner appears in the footer.
+
+2. **Editable Factory Data**:
+   - Modulations: Add, edit, and delete entries
+   - Constants: Edit ground reflection factor (kr) and default activity factor
+   - Bands: Add, edit, and delete frequency band definitions
+   - Factory master data (antennas, cables, radios with `IsUserData=false`) can be modified
+
+3. **Database Operations**:
+   - Export Factory Data: Exports all master data to JSON file
+   - Import Factory Data: Replaces entire database with imported data (warning: deletes all user data)
+
+4. **Demo Project**: The shipped database includes a demo project that users can explore immediately
+
+### 9.3 Demo Project
+
+The demo project is a regular project in the shipped `nisdata.db` database. Factory can:
+- Create or edit the demo project like any other project
+- The demo project should showcase typical antenna configurations
+- Changes are committed with the database to GitHub
+
+### 9.4 Factory Mode Workflow
+
+Typical workflow for updating shipped master data and distributing via GitHub:
+
+#### Step 1: Enter Factory Mode
+1. Navigate to **Factory** in the navigation pane (bottom section)
+2. Enter the password **`HB9BLA`**
+3. Verify the red **FACTORY MODE** indicator appears
+
+#### Step 2: Modify Master Data
+1. Go to the appropriate tab (Antennas, Cables, Radios, Database)
+2. Add, edit, or delete entries as needed
+3. For each entry, ensure `IsUserData=false` (factory data)
+4. Modulations, Constants, and Bands can be edited in the Database tab
+
+#### Step 3: Update Demo Project (Optional)
+1. Create or modify a sample project named "Demo" that showcases typical configurations
+2. The demo project is stored directly in the database alongside master data
+
+#### Step 4: Commit to GitHub
+Factory Mode edits `src/NIS.Desktop/Data/nisdata.db` directly.
+1. Stage and commit the updated database:
+   ```bash
+   git add src/NIS.Desktop/Data/nisdata.db
+   git commit -m "Update master data: [describe changes]"
+   git push origin main
+   ```
+
+#### Step 5: Create Release
+1. Tag the commit with a version number:
+   ```bash
+   git tag v1.x.x
+   git push origin v1.x.x
+   ```
+2. GitHub Actions builds and packages the release with the updated database
+
+### 9.5 Security Notes
+
+- Factory Mode password is hardcoded - this is intentional as it's for development/maintenance access only
+- Factory imports replace all data including user customizations - always warn before proceeding
+- The `IsUserData` flag distinguishes factory data (false) from user-created data (true)
+
+## 10. Localization and Theme
 
 Accessible via: **Navigation Pane -> Settings**
 
-### 9.1 Language Handling
+### 10.1 Language Handling
 
-#### 9.1.1 Supported Languages
+#### 10.1.1 Supported Languages
 
 | Code | Language | Display Name |
 |------|----------|--------------|
@@ -801,19 +874,16 @@ Accessible via: **Navigation Pane -> Settings**
 
 Default language: **de** (Deutsch)
 
-#### 9.1.2 Language Selection
+#### 10.1.2 Language Selection
 
 **In Settings:**
 - Four toggle buttons displayed horizontally: de | fr | it | en
 - Language change takes effect immediately across the entire UI
-- Selected language persists for the session
+- Selected language persists across sessions
 - Stored in settings.json and applied at startup
+- All exports and reports use the current UI language setting
 
-**Per Project:**
-- Language selected when creating a new project is stored in project file
-- Export/report output uses the project's language setting
-
-#### 9.1.3 Localization Architecture
+#### 10.1.3 Localization Architecture
 
 The application uses a centralized localization system:
 
@@ -829,7 +899,7 @@ The application uses a centralized localization system:
 <Button Content="{Binding Cancel, Source={x:Static loc:Strings.Instance}}"/>
 ```
 
-#### 9.1.4 Translation Storage
+#### 10.1.4 Translation Storage
 
 **Embedded Translations:**
 - Default translations are compiled into the application
@@ -842,7 +912,7 @@ The application uses a centralized localization system:
 - Custom translations override embedded defaults
 - Translations are stored in JSON only and are not persisted in SQLite
 
-#### 9.1.5 In-App Translation Editor
+#### 10.1.5 In-App Translation Editor
 
 Accessible via: **Navigation Pane → Master Data → Translations Tab**
 
@@ -869,7 +939,7 @@ Accessible via: **Navigation Pane → Master Data → Translations Tab**
 - Warning dialog when leaving with unsaved changes
 - Options: Save / Discard / Cancel
 
-#### 9.1.6 String Categories
+#### 10.1.6 String Categories
 
 | Category | Description | Examples |
 |----------|-------------|----------|
@@ -885,7 +955,7 @@ Accessible via: **Navigation Pane → Master Data → Translations Tab**
 | Results | Calculation results | Pass, Fail, FieldStrength |
 | Validation | Error messages | ValidationRequired, ValidationModel |
 
-#### 9.1.7 Adding New Translations
+#### 10.1.7 Adding New Translations
 
 When adding new UI elements:
 
@@ -914,39 +984,98 @@ When adding new UI elements:
    <TextBlock Text="{Binding NewLabel, Source={x:Static loc:Strings.Instance}}"/>
    ```
 
-#### 9.1.8 Output Document Language
+#### 10.1.8 Output Document Language
 
-- Markdown export uses the project's stored language
+- Markdown and PDF exports use the current UI language setting
 - All parameter names, descriptions, and explanations are translated
 - Numerical values and units remain unchanged across languages
 
-### 9.2 Theme Support
+### 10.2 Theme Support
 
 - **Light Mode**: Default theme
 - **Dark Mode**: Toggle available in Settings
 - Theme applies globally to the entire application
 - Stored in settings.json and applied at startup
 
-### 9.3 Design Guidelines
+### 10.3 Design Guidelines
 
 UI should follow Windows 11 look and feel:
 - Fluent-style surfaces, rounded corners, and soft shadows
 - Segmented controls and modern toggle styles
 - Consistent spacing and typography typical of Windows 11 apps
 
-## 10. Distribution
+## 11. Distribution
+
+### 11.1 Platforms
 
 CI/CD must produce packaged releases for:
-- Windows
-- macOS
-- Linux
+- Windows (x64)
+- macOS (x64, ARM64)
+- Linux (x64)
 
-GitHub Actions should build versioned artifacts for all three platforms.
+### 11.2 Bundled Data
+
+The application ships with a single pre-populated SQLite database:
+
+| File | Content | Location |
+|------|---------|----------|
+| `nisdata.db` | Factory master data + demo project | `Data/nisdata.db` |
+
+The database contains:
+- All factory master data (antennas, cables, radios, modulations, constants, bands) with `IsUserData=false`
+- One demo project ready to explore
+
+**Portable Application**: All files reside in the application folder. No data is stored in %APPDATA% or other system folders. Users can run the app from any location (USB drive, local folder, etc.).
+
+### 11.3 Build and Release Process
+
+#### Local Build
+```bash
+# Build for development
+dotnet build
+
+# Publish as standalone Windows executable
+dotnet publish -c Release -r win-x64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
+```
+
+#### GitHub Actions Workflow (`.github/workflows/build.yml`)
+
+Triggered by:
+- Push to `main` branch (build + test only)
+- Version tag `v*` (build + test + release)
+
+| Job | Platforms | Description |
+|-----|-----------|-------------|
+| build | Windows, macOS, Linux | Restore, build, test, publish as single-file self-contained executable |
+| sign-windows | Windows | Signs the Windows executable with SignPath (tags only) |
+| release | - | Creates GitHub Release with platform archives (tags only) |
+
+**Artifacts produced:**
+- `SwissNISCalculator-Windows.zip` (signed)
+- `SwissNISCalculator-macOS.zip`
+- `SwissNISCalculator-Linux.tar.gz`
+
+Each artifact contains a portable application (Section 11.2) with:
+- Single executable file
+- `Data/nisdata.db` - pre-populated database with factory master data and demo project
+
+### 11.4 Master Data Update Workflow
+
+Complete workflow for updating shipped master data (see also Section 9.4):
+
+1. **Enter Factory Mode** (Section 9.1): Navigate to Factory in navigation pane, enter password
+2. **Modify Data** (Section 9.2): Edit master data (antennas, cables, radios, modulations, constants, bands)
+3. **Update Demo Project** (Section 9.3): Create or modify the demo project
+4. **Commit**: Push `src/NIS.Desktop/Data/nisdata.db` to GitHub
+5. **Tag Release**: Create version tag (`git tag v1.x.x && git push origin v1.x.x`)
+6. **Distribute**: GitHub Actions builds and publishes the release automatically
+
+**Note**: No upgrade path exists. Each version ships a complete fresh database. Users start over with each new version.
 
 ## Appendix A: Antennas with Generated Vertical Radiation Patterns
 
 This appendix is summarized to avoid listing all antenna records in the FSD.
-Full antenna inventories and generated patterns are stored in the seed database (`factory.db`) and the application SQLite database.
+Full antenna inventories and generated patterns are stored in the application database (`nisdata.db`).
 Generated patterns follow the formulas in Section 8.4.
 
 ## Appendix B: Database Schema and JSON Formats

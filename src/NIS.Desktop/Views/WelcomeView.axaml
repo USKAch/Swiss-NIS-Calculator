@@ -32,11 +32,18 @@
                     </Grid>
 
                     <!-- Search and sort -->
-                    <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,10">
+                    <Grid ColumnDefinitions="*,Auto,Auto" Margin="0,0,0,10">
                         <TextBox Text="{Binding SearchText}"
                                  Watermark="{Binding SearchProjects, Source={x:Static loc:Strings.Instance}}"
                                  Padding="10,8"/>
-                        <ComboBox Grid.Column="1"
+                        <Button Grid.Column="1"
+                                Content="✕"
+                                Command="{Binding ClearSearchCommand}"
+                                IsVisible="{Binding SearchText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                Margin="5,0,0,0"
+                                Padding="8,6"
+                                ToolTip.Tip="{Binding Clear, Source={x:Static loc:Strings.Instance}}"/>
+                        <ComboBox Grid.Column="2"
                                   ItemsSource="{Binding SortOptions}"
                                   SelectedItem="{Binding SortOption}"
                                   Margin="10,0,0,0"
@@ -45,7 +52,7 @@
 
                     <!-- Project DataGrid -->
                     <DataGrid ItemsSource="{Binding FilteredProjects}"
-                              IsVisible="{Binding HasProjectsInDatabase}"
+                              IsVisible="{Binding HasFilteredProjects}"
                               AutoGenerateColumns="False"
                               CanUserReorderColumns="False"
                               CanUserResizeColumns="True"
@@ -54,8 +61,8 @@
                               SelectionMode="Single"
                               HeadersVisibility="Column"
                               GridLinesVisibility="All"
-                              HorizontalGridLinesBrush="#CCCCCC"
-                              VerticalGridLinesBrush="#888888"
+                              HorizontalGridLinesBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                              VerticalGridLinesBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                               BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                               BorderThickness="1"
                               MaxHeight="400">
@@ -99,7 +106,12 @@
                         </DataGrid.Columns>
                     </DataGrid>
 
-                    <!-- Empty state -->
+                    <!-- No search results state -->
+                    <TextBlock Text="{Binding NoSearchResults, Source={x:Static loc:Strings.Instance}}"
+                               IsVisible="{Binding ShowNoSearchResults}"
+                               Opacity="0.5" FontStyle="Italic" Margin="10,5"/>
+
+                    <!-- Empty state (no projects at all) -->
                     <TextBlock Text="{Binding NoProjects, Source={x:Static loc:Strings.Instance}}"
                                IsVisible="{Binding !HasProjectsInDatabase}"
                                Opacity="0.5" FontStyle="Italic" Margin="10,5"/>

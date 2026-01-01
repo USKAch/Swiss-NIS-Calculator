@@ -43,9 +43,10 @@ public class Oka
 
     /// <summary>
     /// Display name combining ID and name.
+    /// For unsaved items (Id=0), shows just the name.
     /// </summary>
     [JsonIgnore]
-    public string DisplayName => $"{Id}. {Name}";
+    public string DisplayName => Id > 0 ? $"{Id}. {Name}" : Name;
 
     /// <summary>
     /// Returns DisplayName for text search in ComboBox.
