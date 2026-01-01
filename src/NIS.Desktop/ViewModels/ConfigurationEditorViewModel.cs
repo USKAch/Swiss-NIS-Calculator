@@ -194,7 +194,7 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
             r.Manufacturer == config.Radio.Manufacturer &&
             r.Model == config.Radio.Model);
 
-        // Linear amplifier
+        // Linear
         LinearName = config.Linear?.Name ?? string.Empty;
         LinearPowerWatts = config.Linear?.PowerWatts ?? 0;
 

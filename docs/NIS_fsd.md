@@ -151,11 +151,11 @@ Screen for creating or editing one antenna configuration. Header shows "Configur
   - Edit → Navigates to Radio Editor with selected radio
   - Add → Navigates to Radio Editor for new radio
   - Includes common HAM transceivers (Icom, Yaesu, Kenwood, Elecraft, FlexRadio) for HF/VHF/UHF
-- Linear Amplifier (optional): [text field] + [power in W]
-  - Free text entry for amplifier name
+- Linear (optional): [text field] + [power in W]
+  - Free text entry for linear name
   - Power field becomes enabled when name is entered
-  - When set, amplifier power is used in calculations instead of radio power
-- Output Power: [number] W (at radio output, used when no amplifier is configured)
+  - When set, linear power is used in calculations instead of radio power
+- Output Power: [number] W (at radio output, used when no linear is configured)
 
 **Section 3: Feed Line**
 - Cable Type: [dropdown from master data] [Edit] [+ Add]
@@ -406,7 +406,7 @@ One table per antenna configuration. Each report contains a configuration summar
 
 **Configuration Summary (example fields):**
 - Sender power
-- Linear amplifier (or None)
+- Linear (or None)
 - Antenna model
 - Polarization and rotation angle
 - OKA name and distance
@@ -511,7 +511,7 @@ For JSON file formats, see **Appendix B.3**.
 **Export Project**:
 - Writes a .nisproj file containing the project header and configurations.
 - Each configuration includes references to antenna, cable, radio, and evaluation point by name/model (not DB IDs).
- - Linear amplifier is optional; when absent, the `linear` field is null. When present, it contains `name` (string) and `powerWatts` (number).
+ - Linear is optional; when absent, the `linear` field is null. When present, it contains `name` (string) and `powerWatts` (number).
 
 **Import Project**:
 - Reads a .nisproj file and creates a new project.
@@ -661,7 +661,7 @@ Installation (nisdata.db)
         ├── Radio → (reference to Master Data)
         │   └── Power (W)
         │
-        ├── Linear Amplifier → (optional)
+        ├── Linear → (optional)
         │   ├── Name (text)
         │   └── Power (W)
         │
@@ -1297,7 +1297,7 @@ User and Factory exports share the same JSON structure. Factory import uses the 
 ```
 
 Notes:
-- `linear` is optional; use `null` when no amplifier is present. When present, it contains `name` (string) and `powerWatts` (number), e.g., `{ "name": "SPE Expert 1.5K", "powerWatts": 1500 }`.
+- `linear` is optional; use `null` when no linear is present. When present, it contains `name` (string) and `powerWatts` (number), e.g., `{ "name": "SPE Expert 1.5K", "powerWatts": 1500 }`.
 
 ### B.5 settings.json
 

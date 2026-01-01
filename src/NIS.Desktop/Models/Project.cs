@@ -39,7 +39,7 @@ public class RadioConfig
 }
 
 /// <summary>
-/// Linear amplifier configuration (optional).
+/// Linear configuration (optional).
 /// Contains name and output power.
 /// </summary>
 public class LinearConfig

@@ -124,8 +124,8 @@ public class Strings : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Height)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FrequencyBands)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectRadio)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AmplifierName)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UseLinearAmplifier)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Linear)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LinearNamePlaceholder)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Power)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Cable)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectCable)));
@@ -255,8 +255,8 @@ public class Strings : INotifyPropertyChanged
 
     // Transmitter section
     public string SelectRadio => Get("SelectRadio");
-    public string AmplifierName => Get("AmplifierName");
-    public string UseLinearAmplifier => Get("UseLinearAmplifier");
+    public string Linear => Get("Linear");
+    public string LinearNamePlaceholder => Get("LinearNamePlaceholder");
     public string Power => Get("Power");
 
     // Feed line section
@@ -377,7 +377,6 @@ public class Strings : INotifyPropertyChanged
     // ============================================================
     // RESULTS
     // ============================================================
-    public string Amplifier => Get("Amplifier");
     public string None => Get("None");
     public string HorizontalDistance => Get("HorizontalDistance");
     public string DistanceAntennaOka => Get("DistanceAntennaOka");
@@ -571,8 +570,8 @@ public class Strings : INotifyPropertyChanged
         ["Height"] = "ConfigEditor",
         ["FrequencyBands"] = "ConfigEditor",
         ["SelectRadio"] = "ConfigEditor",
-        ["SelectLinear"] = "ConfigEditor",
-        ["UseLinearAmplifier"] = "ConfigEditor",
+        ["Linear"] = "ConfigEditor",
+        ["LinearNamePlaceholder"] = "ConfigEditor",
         ["Power"] = "ConfigEditor",
         ["Cable"] = "ConfigEditor",
         ["SelectCable"] = "ConfigEditor",
@@ -772,8 +771,8 @@ public class Strings : INotifyPropertyChanged
         ["Bands"] = new() { ["de"] = "Bänder", ["fr"] = "Bandes", ["it"] = "Bande", ["en"] = "Bands" },
 
         ["SelectRadio"] = new() { ["de"] = "-- Transceiver wählen --", ["fr"] = "-- Sélectionner émetteur --", ["it"] = "-- Seleziona ricetrasmettitore --", ["en"] = "-- Select Radio --" },
-        ["AmplifierName"] = new() { ["de"] = "Name der Endstufe (optional)", ["fr"] = "Nom de l'amplificateur (optionnel)", ["it"] = "Nome amplificatore (opzionale)", ["en"] = "Amplifier name (optional)" },
-        ["UseLinearAmplifier"] = new() { ["de"] = "Endstufe", ["fr"] = "Amplificateur", ["it"] = "Amplificatore", ["en"] = "Amplifier" },
+        ["Linear"] = new() { ["de"] = "Endstufe", ["fr"] = "Amplificateur", ["it"] = "Amplificatore", ["en"] = "Linear" },
+        ["LinearNamePlaceholder"] = new() { ["de"] = "Name der Endstufe (optional)", ["fr"] = "Nom de l'amplificateur (optionnel)", ["it"] = "Nome amplificatore (opzionale)", ["en"] = "Linear name (optional)" },
         ["Power"] = new() { ["de"] = "Leistung", ["fr"] = "Puissance", ["it"] = "Potenza", ["en"] = "Power" },
 
         ["Cable"] = new() { ["de"] = "Kabel", ["fr"] = "Câble", ["it"] = "Cavo", ["en"] = "Cable" },
@@ -895,7 +894,6 @@ public class Strings : INotifyPropertyChanged
         ["ImportDatabaseDesc"] = new() { ["de"] = "Importiert Werksdaten aus einer JSON-Datei. ACHTUNG: Alle Daten werden gel?scht!", ["fr"] = "Importe les donn?es usine depuis un fichier JSON. ATTENTION: Toutes les donn?es seront supprim?es!", ["it"] = "Importa i dati di fabbrica da un file JSON. ATTENZIONE: Tutti i dati saranno eliminati!", ["en"] = "Import factory data from a JSON file. WARNING: All data will be deleted!" },
 
         // Results
-        ["Amplifier"] = new() { ["de"] = "Endstufe", ["fr"] = "Amplificateur", ["it"] = "Amplificatore", ["en"] = "Amplifier" },
         ["None"] = new() { ["de"] = "Keine", ["fr"] = "Aucun", ["it"] = "Nessuno", ["en"] = "None" },
         ["HorizontalDistance"] = new() { ["de"] = "Horiz. Distanz", ["fr"] = "Dist. horiz.", ["it"] = "Dist. orizz.", ["en"] = "Horiz. dist." },
         ["DistanceAntennaOka"] = new() { ["de"] = "Distanz Antenne-OKA", ["fr"] = "Distance Antenne-LSM", ["it"] = "Distanza Antenna-LST", ["en"] = "Distance Antenna-PSS" },

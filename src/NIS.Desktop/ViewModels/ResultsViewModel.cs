@@ -49,7 +49,7 @@ public class ConfigurationResult
     /// <summary>
     /// Formatted configuration description with localized labels on 3 lines.
     /// Line 1: Antenna info (name, height)
-    /// Line 2: Radio/power, linear amplifier, cable
+    /// Line 2: Radio/power, linear, cable
     /// Line 3: OKA info (name, horizontal distance, real distance)
     /// </summary>
     public string ConfigDescription
@@ -61,7 +61,7 @@ public class ConfigurationResult
                 : LinearName;
 
             return $"{Strings.Instance.Antenna}: {AntennaName}, {AntennaHeight:F0}m {Strings.Instance.AboveOka}\n" +
-                   $"{Strings.Instance.Transmitter}: {RadioName}, {Strings.Instance.Amplifier}: {linearInfo}, {Strings.Instance.Cable}: {CableDescription}\n" +
+                   $"{Strings.Instance.Transmitter}: {RadioName}, {Strings.Instance.Linear}: {linearInfo}, {Strings.Instance.Cable}: {CableDescription}\n" +
                    $"{Strings.Instance.OkaFullName}: {OkaName}, {OkaDistance:F0}m {Strings.Instance.HorizDistToMast}, {Strings.Instance.DistanceAntennaOka}: {RealDistance:F1}m";
         }
     }
@@ -181,7 +181,7 @@ public partial class ResultsViewModel : ViewModelBase
         var modulation = DatabaseService.Instance.GetModulationByName(config.Modulation);
         var constants = MasterDataStore.Load().Constants;
 
-        // Use amplifier power if set, otherwise use radio power
+        // Use linear power if set, otherwise use radio power
         double effectivePower = (config.Linear != null && config.Linear.PowerWatts > 0)
             ? config.Linear.PowerWatts
             : config.PowerWatts;
@@ -262,7 +262,7 @@ public partial class ResultsViewModel : ViewModelBase
 
         double modulationFactor = modulation?.Factor ?? 0.4;
 
-        // Use amplifier power if set, otherwise use radio power
+        // Use linear power if set, otherwise use radio power
         double effectivePower = (config.Linear != null && config.Linear.PowerWatts > 0)
             ? config.Linear.PowerWatts
             : config.PowerWatts;
