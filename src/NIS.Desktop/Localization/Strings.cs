@@ -98,8 +98,6 @@ public class Strings : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Address)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Location)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CreateProject)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AddressExample)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LocationExample)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Callsign)));
 
         // Project Overview
@@ -125,7 +123,6 @@ public class Strings : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FrequencyBands)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectRadio)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Linear)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LinearNamePlaceholder)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Power)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Cable)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectCable)));
@@ -220,8 +217,6 @@ public class Strings : INotifyPropertyChanged
     public string Address => Get("Address");
     public string Location => Get("Location");
     public string CreateProject => Get("CreateProject");
-    public string AddressExample => Get("AddressExample");
-    public string LocationExample => Get("LocationExample");
 
     // ============================================================
     // PROJECT OVERVIEW
@@ -256,7 +251,6 @@ public class Strings : INotifyPropertyChanged
     // Transmitter section
     public string SelectRadio => Get("SelectRadio");
     public string Linear => Get("Linear");
-    public string LinearNamePlaceholder => Get("LinearNamePlaceholder");
     public string Power => Get("Power");
 
     // Feed line section
@@ -274,8 +268,6 @@ public class Strings : INotifyPropertyChanged
     public string OkaDistance => Get("OkaDistance");
     public string OkaDamping => Get("OkaDamping");
     public string OkaExplanation => Get("OkaExplanation");
-    public string AdditionalLossExample => Get("AdditionalLossExample");
-    public string OkaNameExample => Get("OkaNameExample");
 
     // OKA Master Editor
     public string OkaDetails => Get("OkaDetails");
@@ -317,8 +309,6 @@ public class Strings : INotifyPropertyChanged
     public string SelectAntennaPrompt => Get("SelectAntennaPrompt");
     public string TypeToSearch => Get("TypeToSearch");
     public string TypeToSearchDescription => Get("TypeToSearchDescription");
-    public string AntennaMfgExample => Get("AntennaMfgExample");
-    public string AntennaModelExample => Get("AntennaModelExample");
     public string AntennaTypeLabel => Get("AntennaTypeLabel");
     public string GenerateFromGain => Get("GenerateFromGain");
 
@@ -330,7 +320,6 @@ public class Strings : INotifyPropertyChanged
     public string AttenuationHint => Get("AttenuationHint");
     public string HfBands => Get("HfBands");
     public string VhfUhfShfBands => Get("VhfUhfShfBands");
-    public string CableNameExample => Get("CableNameExample");
 
     // ============================================================
     // RADIO EDITOR
@@ -338,8 +327,6 @@ public class Strings : INotifyPropertyChanged
     public string RadioDetails => Get("RadioDetails");
     public string MaxPower => Get("MaxPower");
     public string MaxPowerHint => Get("MaxPowerHint");
-    public string RadioManufacturerExample => Get("RadioManufacturerExample");
-    public string RadioModelExample => Get("RadioModelExample");
 
     // ============================================================
     // MASTER DATA MANAGER
@@ -546,7 +533,6 @@ public class Strings : INotifyPropertyChanged
         ["Location"] = "ProjectInfo",
         ["CreateProject"] = "ProjectInfo",
         ["EditStationInfo"] = "ProjectInfo",
-        ["AddressExample"] = "ProjectInfo",
         // ProjectOverview
         ["Configurations"] = "ProjectOverview",
         ["Configuration"] = "ProjectOverview",
@@ -571,7 +557,6 @@ public class Strings : INotifyPropertyChanged
         ["FrequencyBands"] = "ConfigEditor",
         ["SelectRadio"] = "ConfigEditor",
         ["Linear"] = "ConfigEditor",
-        ["LinearNamePlaceholder"] = "ConfigEditor",
         ["Power"] = "ConfigEditor",
         ["Cable"] = "ConfigEditor",
         ["SelectCable"] = "ConfigEditor",
@@ -583,8 +568,6 @@ public class Strings : INotifyPropertyChanged
         ["OkaDistance"] = "ConfigEditor",
         ["OkaDamping"] = "ConfigEditor",
         ["OkaExplanation"] = "ConfigEditor",
-        ["AdditionalLossExample"] = "ConfigEditor",
-        ["OkaNameExample"] = "ConfigEditor",
         // AntennaEditor
         ["AntennaDetails"] = "AntennaEditor",
         ["Manufacturer"] = "AntennaEditor",
@@ -610,8 +593,6 @@ public class Strings : INotifyPropertyChanged
         ["ManufacturerExample"] = "AntennaEditor",
         ["ModelExample"] = "AntennaEditor",
         ["SaveAntenna"] = "AntennaEditor",
-        ["AntennaMfgExample"] = "AntennaEditor",
-        ["AntennaModelExample"] = "AntennaEditor",
         ["AntennaTypeLabel"] = "AntennaEditor",
         ["GenerateFromGain"] = "AntennaEditor",
         ["GenerateAllPatterns"] = "AntennaEditor",
@@ -621,13 +602,10 @@ public class Strings : INotifyPropertyChanged
         ["AttenuationHint"] = "CableEditor",
         ["HfBands"] = "CableEditor",
         ["VhfUhfShfBands"] = "CableEditor",
-        ["CableNameExample"] = "CableEditor",
         // RadioEditor
         ["RadioDetails"] = "RadioEditor",
         ["MaxPower"] = "RadioEditor",
         ["MaxPowerHint"] = "RadioEditor",
-        ["RadioManufacturerExample"] = "RadioEditor",
-        ["RadioModelExample"] = "RadioEditor",
         // MasterData
         ["Antennas"] = "MasterData",
         ["Cables"] = "MasterData",
@@ -741,8 +719,6 @@ public class Strings : INotifyPropertyChanged
         ["Location"] = new() { ["de"] = "Ort", ["fr"] = "Localité", ["it"] = "Località", ["en"] = "Location" },
         ["CreateProject"] = new() { ["de"] = "Projekt erstellen", ["fr"] = "Créer projet", ["it"] = "Crea progetto", ["en"] = "Create Project" },
         ["EditStationInfo"] = new() { ["de"] = "Stationsinfo bearbeiten", ["fr"] = "Modifier info station", ["it"] = "Modifica info stazione", ["en"] = "Edit Station Info" },
-        ["AddressExample"] = new() { ["de"] = "z.B. Musterstrasse 1", ["fr"] = "p. ex. Rue Exemple 1", ["it"] = "p.es. Via Esempio 1", ["en"] = "e.g. Example Street 1" },
-        ["LocationExample"] = new() { ["de"] = "z.B. 8000 Zürich", ["fr"] = "p. ex. 1000 Lausanne", ["it"] = "p.es. 6500 Bellinzona", ["en"] = "e.g. 8000 Zurich" },
 
         // Project Overview
         ["Configurations"] = new() { ["de"] = "Konfigurationen", ["fr"] = "Configurations", ["it"] = "Configurazioni", ["en"] = "Configurations" },
@@ -772,7 +748,6 @@ public class Strings : INotifyPropertyChanged
 
         ["SelectRadio"] = new() { ["de"] = "-- Transceiver wählen --", ["fr"] = "-- Sélectionner émetteur --", ["it"] = "-- Seleziona ricetrasmettitore --", ["en"] = "-- Select Radio --" },
         ["Linear"] = new() { ["de"] = "Endstufe", ["fr"] = "Amplificateur", ["it"] = "Amplificatore", ["en"] = "Linear" },
-        ["LinearNamePlaceholder"] = new() { ["de"] = "Name der Endstufe (optional)", ["fr"] = "Nom de l'amplificateur (optionnel)", ["it"] = "Nome amplificatore (opzionale)", ["en"] = "Linear name (optional)" },
         ["Power"] = new() { ["de"] = "Leistung", ["fr"] = "Puissance", ["it"] = "Potenza", ["en"] = "Power" },
 
         ["Cable"] = new() { ["de"] = "Kabel", ["fr"] = "Câble", ["it"] = "Cavo", ["en"] = "Cable" },
@@ -787,8 +762,6 @@ public class Strings : INotifyPropertyChanged
         ["OkaDistance"] = new() { ["de"] = "Distanz", ["fr"] = "Distance", ["it"] = "Distanza", ["en"] = "Distance" },
         ["OkaDamping"] = new() { ["de"] = "Gebäudedämpfung", ["fr"] = "Atténuation bâtiment", ["it"] = "Attenuazione edificio", ["en"] = "Building Damping" },
         ["OkaExplanation"] = new() { ["de"] = "OKA = Ort für kurzfristigen Aufenthalt", ["fr"] = "LSM = Lieu de séjour momentané", ["it"] = "LST = Luogo di soggiorno temporaneo", ["en"] = "PSS = Place of Short-Term Stay" },
-        ["AdditionalLossExample"] = new() { ["de"] = "z.B. Stecker, Schalter", ["fr"] = "ex. Connecteurs, commutateur", ["it"] = "es. Connettori, interruttore", ["en"] = "e.g. Connectors, switch" },
-        ["OkaNameExample"] = new() { ["de"] = "z.B. Balkon des Nachbarn", ["fr"] = "ex. Balcon du voisin", ["it"] = "es. Balcone del vicino", ["en"] = "e.g. Neighbor's balcony" },
 
         // OKA Master Editor (OKA=DE, LSM=FR, LST=IT, PSS=EN)
         ["OkaDetails"] = new() { ["de"] = "OKA Details", ["fr"] = "Détails LSM", ["it"] = "Dettagli LST", ["en"] = "PSS Details" },
@@ -833,8 +806,6 @@ public class Strings : INotifyPropertyChanged
         ["ManufacturerExample"] = new() { ["de"] = "z.B. Cushcraft", ["fr"] = "ex. Cushcraft", ["it"] = "es. Cushcraft", ["en"] = "e.g. Cushcraft" },
         ["ModelExample"] = new() { ["de"] = "z.B. A3S", ["fr"] = "ex. A3S", ["it"] = "es. A3S", ["en"] = "e.g. A3S" },
         ["SaveAntenna"] = new() { ["de"] = "Antenne speichern", ["fr"] = "Enregistrer antenne", ["it"] = "Salva antenna", ["en"] = "Save Antenna" },
-        ["AntennaMfgExample"] = new() { ["de"] = "z.B. Fritzel", ["fr"] = "ex. Fritzel", ["it"] = "es. Fritzel", ["en"] = "e.g. Fritzel" },
-        ["AntennaModelExample"] = new() { ["de"] = "z.B. FB-Do450", ["fr"] = "ex. FB-Do450", ["it"] = "es. FB-Do450", ["en"] = "e.g. FB-Do450" },
         ["AntennaTypeLabel"] = new() { ["de"] = "Antennentyp", ["fr"] = "Type d'antenne", ["it"] = "Tipo di antenna", ["en"] = "Antenna Type" },
         ["GenerateFromGain"] = new() { ["de"] = "Automatisch berechnen", ["fr"] = "Calculer automatiquement", ["it"] = "Calcola automaticamente", ["en"] = "Auto-calculate" },
         ["GenerateAllPatterns"] = new() { ["de"] = "Strahlungsdiagramme aus Gewinn berechnen", ["fr"] = "Calculer diagrammes depuis gain", ["it"] = "Calcola diagrammi da guadagno", ["en"] = "Generate Patterns from Gain" },
@@ -845,14 +816,11 @@ public class Strings : INotifyPropertyChanged
         ["AttenuationHint"] = new() { ["de"] = "Geben Sie die Dämpfungswerte für die verfügbaren Frequenzen ein. Leer lassen wenn unbekannt.", ["fr"] = "Entrez les valeurs d'atténuation pour les fréquences disponibles. Laissez vide si inconnu.", ["it"] = "Inserisci i valori di attenuazione per le frequenze disponibili. Lascia vuoto se sconosciuto.", ["en"] = "Enter attenuation values for the frequencies you have data for. Leave empty if unknown." },
         ["HfBands"] = new() { ["de"] = "KW-Bänder", ["fr"] = "Bandes HF", ["it"] = "Bande HF", ["en"] = "HF Bands" },
         ["VhfUhfShfBands"] = new() { ["de"] = "VHF / UHF / SHF Bänder", ["fr"] = "Bandes VHF / UHF / SHF", ["it"] = "Bande VHF / UHF / SHF", ["en"] = "VHF / UHF / SHF Bands" },
-        ["CableNameExample"] = new() { ["de"] = "z.B. EcoFlex10, RG-213", ["fr"] = "ex. EcoFlex10, RG-213", ["it"] = "es. EcoFlex10, RG-213", ["en"] = "e.g. EcoFlex10, RG-213" },
 
         // Radio Editor
         ["RadioDetails"] = new() { ["de"] = "Transceiver-Details", ["fr"] = "Détails émetteur-récepteur", ["it"] = "Dettagli ricetrasmettitore", ["en"] = "Radio / Transceiver Details" },
         ["MaxPower"] = new() { ["de"] = "Max. Leistung", ["fr"] = "Puissance max.", ["it"] = "Potenza max.", ["en"] = "Max Power" },
         ["MaxPowerHint"] = new() { ["de"] = "W (maximale Ausgangsleistung)", ["fr"] = "W (puissance de sortie maximale)", ["it"] = "W (potenza di uscita massima)", ["en"] = "W (maximum output power)" },
-        ["RadioManufacturerExample"] = new() { ["de"] = "z.B. Yaesu, Icom, Kenwood", ["fr"] = "ex. Yaesu, Icom, Kenwood", ["it"] = "es. Yaesu, Icom, Kenwood", ["en"] = "e.g. Yaesu, Icom, Kenwood" },
-        ["RadioModelExample"] = new() { ["de"] = "z.B. FT-1000, IC-7300", ["fr"] = "ex. FT-1000, IC-7300", ["it"] = "es. FT-1000, IC-7300", ["en"] = "e.g. FT-1000, IC-7300" },
 
         // Master Data Manager
         ["Antennas"] = new() { ["de"] = "Antennen", ["fr"] = "Antennes", ["it"] = "Antenne", ["en"] = "Antennas" },

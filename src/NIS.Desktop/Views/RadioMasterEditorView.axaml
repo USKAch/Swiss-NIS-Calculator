@@ -32,10 +32,10 @@
 
                         <Grid ColumnDefinitions="120,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="12" ColumnSpacing="15">
                             <TextBlock Text="{Binding Manufacturer, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                            <TextBox Grid.Column="1" Text="{Binding Manufacturer}" Watermark="{Binding RadioManufacturerExample, Source={x:Static loc:Strings.Instance}}" IsEnabled="{Binding CanEdit}"/>
+                            <TextBox Grid.Column="1" Text="{Binding Manufacturer}" IsEnabled="{Binding CanEdit}"/>
 
                             <TextBlock Grid.Row="1" Text="{Binding Model, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Model}" Watermark="{Binding RadioModelExample, Source={x:Static loc:Strings.Instance}}" IsEnabled="{Binding CanEdit}"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Model}" IsEnabled="{Binding CanEdit}"/>
 
                             <TextBlock Grid.Row="2" Text="{Binding MaxPower, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Spacing="10">

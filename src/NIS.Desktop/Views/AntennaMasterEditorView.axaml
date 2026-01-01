@@ -33,10 +33,10 @@
                         <!-- Line 1: Manufacturer and Model -->
                         <StackPanel Orientation="Horizontal" Spacing="15">
                             <TextBlock Text="{Binding Manufacturer, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                            <TextBox Text="{Binding Manufacturer}" Watermark="{Binding AntennaMfgExample, Source={x:Static loc:Strings.Instance}}" Width="300" IsEnabled="{Binding CanEdit}"/>
+                            <TextBox Text="{Binding Manufacturer}" Width="300" IsEnabled="{Binding CanEdit}"/>
 
                             <TextBlock Text="{Binding Model, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                            <TextBox Text="{Binding Model}" Watermark="{Binding AntennaModelExample, Source={x:Static loc:Strings.Instance}}" Width="300" IsEnabled="{Binding CanEdit}"/>
+                            <TextBox Text="{Binding Model}" Width="300" IsEnabled="{Binding CanEdit}"/>
                         </StackPanel>
 
                         <!-- Line 2: Antenna Type, Polarization, and Rotatable -->

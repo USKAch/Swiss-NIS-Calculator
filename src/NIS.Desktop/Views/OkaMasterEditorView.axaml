@@ -33,9 +33,7 @@
                         <!-- Name -->
                         <Grid ColumnDefinitions="150,3*" ColumnSpacing="15">
                             <TextBlock Text="{Binding OkaNameLabel, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                            <TextBox Grid.Column="1" Text="{Binding Name}"
-                                     Watermark="{Binding OkaNameExample, Source={x:Static loc:Strings.Instance}}"
-                                     MinWidth="400"/>
+                            <TextBox Grid.Column="1" Text="{Binding Name}" MinWidth="400"/>
                         </Grid>
 
                         <!-- Horizontal Distance -->

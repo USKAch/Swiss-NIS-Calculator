@@ -19,7 +19,7 @@
                 <!-- Project Name -->
                 <StackPanel Spacing="5">
                     <TextBlock Text="{Binding ProjectNameLabel}" FontWeight="SemiBold"/>
-                    <TextBox Text="{Binding ProjectName, Mode=TwoWay}" Watermark="z.B. Hauptstation Zürich"/>
+                    <TextBox Text="{Binding ProjectName, Mode=TwoWay}"/>
                 </StackPanel>
 
                 <!-- Operator -->
@@ -37,13 +37,13 @@
                 <!-- Address -->
                 <StackPanel Spacing="5">
                     <TextBlock Text="{Binding AddressLabel}" FontWeight="SemiBold"/>
-                    <TextBox Text="{Binding Address, Mode=TwoWay}" Watermark="{Binding AddressExample, Source={x:Static loc:Strings.Instance}}"/>
+                    <TextBox Text="{Binding Address, Mode=TwoWay}"/>
                 </StackPanel>
 
                 <!-- Location -->
                 <StackPanel Spacing="5">
                     <TextBlock Text="{Binding LocationLabel}" FontWeight="SemiBold"/>
-                    <TextBox Text="{Binding Location, Mode=TwoWay}" Watermark="{Binding LocationExample, Source={x:Static loc:Strings.Instance}}"/>
+                    <TextBox Text="{Binding Location, Mode=TwoWay}"/>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

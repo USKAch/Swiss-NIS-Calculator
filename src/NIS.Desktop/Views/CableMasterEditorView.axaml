@@ -45,7 +45,6 @@
                     <TextBlock Text="{Binding CableName, Source={x:Static loc:Strings.Instance}}"
                                FontWeight="SemiBold" FontSize="14"/>
                     <TextBox Text="{Binding Name}"
-                             Watermark="{Binding CableNameExample, Source={x:Static loc:Strings.Instance}}"
                              MaxWidth="400" HorizontalAlignment="Left" IsEnabled="{Binding CanEdit}"/>
                 </StackPanel>
 
