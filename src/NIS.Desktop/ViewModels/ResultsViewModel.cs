@@ -9,6 +9,7 @@ using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NIS.Desktop.Calculations;
+using NIS.Desktop.Localization;
 using NIS.Desktop.Models;
 using NIS.Desktop.Services;
 
@@ -30,6 +31,7 @@ public class ConfigurationResult
     public required double PowerWatts { get; init; }
     public required string Modulation { get; init; }
     public required double OkaDistance { get; init; }
+    public required double AntennaHeight { get; init; }
     public required string OkaName { get; init; }
     public required double BuildingDampingDb { get; init; }
     public required string CableDescription { get; init; }
@@ -37,6 +39,21 @@ public class ConfigurationResult
     public required bool IsRotatable { get; init; }
     public required int HorizontalAngleDegrees { get; init; }
     public required bool IsHorizontallyPolarized { get; init; }
+
+    /// <summary>
+    /// Real 3D distance from antenna to OKA = √(horizontal² + height²)
+    /// </summary>
+    public double RealDistance => Math.Sqrt(OkaDistance * OkaDistance + AntennaHeight * AntennaHeight);
+
+    /// <summary>
+    /// Formatted configuration description with localized labels.
+    /// Format: "Antenna: Name, Xm above OKA, Cable: Xm Type, Full OKA name: OkaName, Xm horizontal distance to mast, Distance Antenna-OKA: Xm"
+    /// </summary>
+    public string ConfigDescription =>
+        $"{Strings.Instance.Antenna}: {AntennaName}, {AntennaHeight:F0}m {Strings.Instance.AboveOka}, " +
+        $"{Strings.Instance.Cable}: {CableDescription}, " +
+        $"{Strings.Instance.OkaFullName}: {OkaName}, {OkaDistance:F0}m {Strings.Instance.HorizDistToMast}, " +
+        $"{Strings.Instance.DistanceAntennaOka}: {RealDistance:F1}m";
 
     public ObservableCollection<BandResult> BandResults { get; } = new();
 
@@ -160,6 +177,7 @@ public partial class ResultsViewModel : ViewModelBase
             PowerWatts = config.PowerWatts,
             Modulation = config.ModulationDisplay,
             OkaDistance = config.OkaDistanceMeters,
+            AntennaHeight = config.Antenna.HeightMeters,
             OkaName = config.OkaName,
             BuildingDampingDb = config.OkaBuildingDampingDb,
             CableDescription = $"{config.Cable.LengthMeters:F1}m {config.Cable.Type}",
@@ -211,24 +229,28 @@ public partial class ResultsViewModel : ViewModelBase
 
     private BandResult CalculateBand(AntennaConfiguration config, AntennaBand band, Cable? cable, Modulation? modulation, double groundReflectionFactor)
     {
-        double distance = Math.Max(config.OkaDistanceMeters, 0.001); // Guard against division by zero
+        double horizontalDistance = Math.Max(config.OkaDistanceMeters, 0.001); // Guard against division by zero
+        double antennaHeight = config.Antenna.HeightMeters;
         double frequencyMHz = band.FrequencyMHz;
+
+        // Calculate real 3D distance from antenna to OKA: √(horizontal² + height²)
+        double realDistance = Math.Sqrt(horizontalDistance * horizontalDistance + antennaHeight * antennaHeight);
 
         // Cable loss calculation
         double cableLossDb = cable?.CalculateLoss(config.Cable.LengthMeters, frequencyMHz) ?? 0;
 
-        // Calculate vertical angle to OKA based on antenna height and distance
-        double antennaHeight = config.Antenna.HeightMeters;
-        double verticalAngle = Math.Atan(antennaHeight / distance) * 180 / Math.PI;
+        // Calculate vertical angle to OKA, then look up vertical attenuation from antenna pattern
+        double verticalAngle = Math.Atan(antennaHeight / horizontalDistance) * 180 / Math.PI;
         double verticalAttenuation = band.GetAttenuationAtAngle(verticalAngle);
 
         double modulationFactor = modulation?.Factor ?? 0.4;
 
         // Use Core calculator for field strength computation
+        // Use real 3D distance for field strength calculation
         var input = new CalculationInput
         {
             FrequencyMHz = frequencyMHz,
-            DistanceMeters = distance,
+            DistanceMeters = realDistance,
             TxPowerWatts = config.PowerWatts,
             ActivityFactor = config.ActivityFactor,
             ModulationFactor = modulationFactor,

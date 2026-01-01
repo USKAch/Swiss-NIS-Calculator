@@ -54,19 +54,17 @@
                             </StackPanel>
 
                             <!-- Antenna Bands Display -->
-                            <Border Background="{DynamicResource CardBackgroundFillColorDefault}" CornerRadius="4" Padding="8"
+                            <Border Background="{DynamicResource CardBackgroundFillColorDefault}" CornerRadius="4" Padding="8,6"
                                     IsVisible="{Binding SelectedAntenna, Converter={x:Static ObjectConverters.IsNotNull}}">
-                                <StackPanel Spacing="6">
+                                <StackPanel Spacing="4">
                                     <TextBlock Text="{Binding FrequencyBands, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" FontSize="12"/>
                                     <ItemsControl ItemsSource="{Binding SelectedAntenna.Bands}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <Border Background="{DynamicResource PanelBackgroundBrush}" CornerRadius="3" Padding="4,1" Margin="0,0">
-                                                    <StackPanel Orientation="Horizontal" Spacing="6">
-                                                        <TextBlock Text="{Binding FrequencyMHz, StringFormat='{}{0} MHz'}" FontWeight="SemiBold" FontSize="11" Width="55"/>
-                                                        <TextBlock Text="{Binding GainDbi, StringFormat='{}{0:F2} dBi'}" FontSize="11" Opacity="0.7"/>
-                                                    </StackPanel>
-                                                </Border>
+                                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                                    <TextBlock Text="{Binding FrequencyMHz, StringFormat='{}{0} MHz'}" FontSize="11" Width="55"/>
+                                                    <TextBlock Text="{Binding GainDbi, StringFormat='{}{0:F1} dBi'}" FontSize="11" Opacity="0.7"/>
+                                                </StackPanel>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
@@ -74,11 +72,15 @@
                             </Border>
 
                             <!-- Height -->
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <TextBlock Text="{Binding Height, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                                <NumericUpDown Value="{Binding HeightMeters}" ShowButtonSpinner="False"
-                                               Minimum="0" Maximum="100" Increment="0.5" Width="80"/>
-                                <TextBlock Text="m" VerticalAlignment="Center"/>
+                            <StackPanel Spacing="2">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="{Binding Height, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                                    <NumericUpDown Value="{Binding HeightMeters}" ShowButtonSpinner="False"
+                                                   Minimum="0" Maximum="100" Increment="0.5" Width="80"/>
+                                    <TextBlock Text="m" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <TextBlock Text="{Binding HeightHint, Source={x:Static loc:Strings.Instance}}"
+                                           Opacity="0.6" FontSize="11" FontStyle="Italic"/>
                             </StackPanel>
                         </StackPanel>
 
@@ -176,11 +178,15 @@
                             </StackPanel>
 
                             <!-- OKA Distance -->
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <TextBlock Text="{Binding OkaDistance, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                                <NumericUpDown Value="{Binding OkaDistanceMeters}" ShowButtonSpinner="False"
-                                               Minimum="0.1" Maximum="1000" Increment="0.5" Width="80"/>
-                                <TextBlock Text="m" VerticalAlignment="Center"/>
+                            <StackPanel Spacing="2">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="{Binding OkaDistance, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                                    <NumericUpDown Value="{Binding OkaDistanceMeters}" ShowButtonSpinner="False"
+                                                   Minimum="0.1" Maximum="1000" Increment="0.5" Width="80"/>
+                                    <TextBlock Text="m" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <TextBlock Text="{Binding OkaDistanceHint, Source={x:Static loc:Strings.Instance}}"
+                                           Opacity="0.6" FontSize="11" FontStyle="Italic" TextWrapping="Wrap"/>
                             </StackPanel>
 
                             <!-- OKA Building Damping -->
@@ -192,7 +198,7 @@
                             </StackPanel>
 
                             <TextBlock Text="{Binding OkaExplanation, Source={x:Static loc:Strings.Instance}}"
-                                       Opacity="0.6" FontSize="10" FontStyle="Italic" TextWrapping="Wrap"/>
+                                       Opacity="0.6" FontSize="11" FontStyle="Italic" TextWrapping="Wrap"/>
                         </StackPanel>
                     </Grid>
                 </Border>

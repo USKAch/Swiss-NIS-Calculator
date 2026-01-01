@@ -30,12 +30,6 @@
                     <StackPanel Spacing="15">
                         <TextBlock Text="{Binding OkaDetails, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
 
-                        <!-- ID (read-only) -->
-                        <Grid ColumnDefinitions="150,*" ColumnSpacing="15">
-                            <TextBlock Text="{Binding OkaNumber, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                            <TextBlock Grid.Column="1" Text="{Binding Id}" VerticalAlignment="Center" FontSize="16" FontWeight="Bold"/>
-                        </Grid>
-
                         <!-- Name -->
                         <Grid ColumnDefinitions="150,3*" ColumnSpacing="15">
                             <TextBlock Text="{Binding OkaNameLabel, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>

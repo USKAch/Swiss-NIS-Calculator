@@ -37,12 +37,6 @@
                 </ui:NavigationViewItem.IconSource>
             </ui:NavigationViewItem>
 
-            <ui:NavigationViewItem Content="{Binding OpenProject, Source={x:Static loc:Strings.Instance}}" Tag="OpenProject">
-                <ui:NavigationViewItem.IconSource>
-                    <ui:SymbolIconSource Symbol="OpenFolder"/>
-                </ui:NavigationViewItem.IconSource>
-            </ui:NavigationViewItem>
-
             <ui:NavigationViewItem Content="{Binding MasterData, Source={x:Static loc:Strings.Instance}}" Tag="MasterData">
                 <ui:NavigationViewItem.IconSource>
                     <ui:SymbolIconSource Symbol="Library"/>

@@ -42,11 +42,10 @@ public class Oka
     public bool IsUserData { get; set; } = true;
 
     /// <summary>
-    /// Display name combining ID and name.
-    /// For unsaved items (Id=0), shows just the name.
+    /// Display name for the OKA (just the name, no ID).
     /// </summary>
     [JsonIgnore]
-    public string DisplayName => Id > 0 ? $"{Id}. {Name}" : Name;
+    public string DisplayName => Name;
 
     /// <summary>
     /// Returns DisplayName for text search in ComboBox.

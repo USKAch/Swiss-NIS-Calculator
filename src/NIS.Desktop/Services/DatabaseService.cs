@@ -596,20 +596,24 @@ public class DatabaseService : IDisposable
 
     public void SaveOka(Oka oka, bool isAdminMode = false)
     {
-        var existing = GetOka(oka.Name);
-        var isUserData = existing?.IsUserData ?? !isAdminMode;
-        if (existing != null)
+        // If Id > 0, this is an update - look up by Id to allow name changes
+        if (oka.Id > 0)
         {
+            var existing = GetOkaById(oka.Id);
+            var isUserData = existing?.IsUserData ?? oka.IsUserData;
             _connection.Execute(@"
                 UPDATE Okas SET
+                    Name = @Name,
                     DefaultDistanceMeters = @DefaultDistanceMeters,
                     DefaultDampingDb = @DefaultDampingDb,
                     IsUserData = @IsUserData
-                WHERE Name = @Name",
-                new { oka.Name, oka.DefaultDistanceMeters, oka.DefaultDampingDb, IsUserData = isUserData ? 1 : 0 });
+                WHERE Id = @Id",
+                new { oka.Id, oka.Name, oka.DefaultDistanceMeters, oka.DefaultDampingDb, IsUserData = isUserData ? 1 : 0 });
         }
         else
         {
+            // New OKA - insert
+            var isUserData = !isAdminMode;
             _connection.Execute(@"
                 INSERT INTO Okas (Name, DefaultDistanceMeters, DefaultDampingDb, IsUserData)
                 VALUES (@Name, @DefaultDistanceMeters, @DefaultDampingDb, @IsUserData)",

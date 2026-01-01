@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NIS.Desktop.Models;
+using NIS.Desktop.Services;
 
 namespace NIS.Desktop.ViewModels;
 
@@ -81,6 +82,15 @@ public partial class OkaMasterEditorViewModel : ViewModelBase
             return;
         }
 
+        // Check for duplicate name (different OKA with same name)
+        var trimmedName = Name.Trim();
+        var existing = DatabaseService.Instance.GetOka(trimmedName);
+        if (existing != null && existing.Id != Id)
+        {
+            ValidationMessage = Strings.OkaNameDuplicate;
+            return;
+        }
+
         // DefaultDistanceMeters must be > 0 (FSD 6.3)
         if (DefaultDistanceMeters <= 0)
         {
@@ -100,7 +110,8 @@ public partial class OkaMasterEditorViewModel : ViewModelBase
             Id = Id,
             Name = Name.Trim(),
             DefaultDampingDb = DefaultDampingDb ?? 0,
-            DefaultDistanceMeters = DefaultDistanceMeters ?? 10
+            DefaultDistanceMeters = DefaultDistanceMeters ?? 10,
+            IsUserData = true
         };
 
         OnSave?.Invoke(oka);

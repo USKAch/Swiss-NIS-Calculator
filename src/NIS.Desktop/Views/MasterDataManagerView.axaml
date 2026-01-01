@@ -450,7 +450,7 @@
                             <StackPanel Spacing="5">
                                 <TextBlock Text="FACTORY MODE" FontWeight="Bold" FontSize="16" Foreground="White"/>
                                 <TextBlock Text="{Binding DatabaseTabInfo, Source={x:Static loc:Strings.Instance}}"
-                                           Foreground="White" TextWrapping="Wrap" FontSize="13"/>
+                                           Foreground="White" TextWrapping="Wrap" FontSize="12"/>
                             </StackPanel>
                         </Border>
 

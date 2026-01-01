@@ -150,6 +150,8 @@ public class Strings : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AddModulation)));
 
         // Results
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HorizontalDistance)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DistanceAntennaOka)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalculationResults)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Limit)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ExportMarkdown)));
@@ -250,7 +252,6 @@ public class Strings : INotifyPropertyChanged
     public string Height => Get("Height");
     public string FrequencyBands => Get("FrequencyBands");
     public string Bands => Get("Bands");
-    public string Distance => Get("OkaDistance");
 
     // Transmitter section
     public string SelectRadio => Get("SelectRadio");
@@ -281,6 +282,7 @@ public class Strings : INotifyPropertyChanged
     public string OkaNumber => Get("OkaNumber");
     public string OkaNameLabel => Get("OkaNameLabel");
     public string OkaNameRequired => Get("OkaNameRequired");
+    public string OkaNameDuplicate => Get("OkaNameDuplicate");
     public string OkaDistanceRequired => Get("OkaDistanceRequired");
     public string OkaDampingNonNegative => Get("OkaDampingNonNegative");
     public string EditOka => Get("EditOka");
@@ -288,6 +290,8 @@ public class Strings : INotifyPropertyChanged
     public string DefaultDampingHint => Get("DefaultDampingHint");
     public string DefaultDistance => Get("DefaultDistance");
     public string DefaultDistanceHint => Get("DefaultDistanceHint");
+    public string HeightHint => Get("HeightHint");
+    public string OkaDistanceHint => Get("OkaDistanceHint");
     public string AddOka => Get("AddOka");
     public string SelectOka => Get("SelectOka");
 
@@ -373,6 +377,11 @@ public class Strings : INotifyPropertyChanged
     // ============================================================
     // RESULTS
     // ============================================================
+    public string HorizontalDistance => Get("HorizontalDistance");
+    public string DistanceAntennaOka => Get("DistanceAntennaOka");
+    public string OkaFullName => Get("OkaFullName");
+    public string AboveOka => Get("AboveOka");
+    public string HorizDistToMast => Get("HorizDistToMast");
     public string CalculationResults => Get("CalculationResults");
     public string Limit => Get("Limit");
     public string ExportMarkdown => Get("ExportMarkdown");
@@ -649,6 +658,8 @@ public class Strings : INotifyPropertyChanged
         ["ImportDatabase"] = "MasterData",
         ["ImportDatabaseDesc"] = "MasterData",
         // Results
+        ["HorizontalDistance"] = "Results",
+        ["DistanceAntennaOka"] = "Results",
         ["CalculationResults"] = "Results",
         ["Limit"] = "Results",
         ["ExportMarkdown"] = "Results",
@@ -754,7 +765,7 @@ public class Strings : INotifyPropertyChanged
         ["EvaluationPoint"] = new() { ["de"] = "Beurteilungspunkt (OKA)", ["fr"] = "Point d'évaluation (LSM)", ["it"] = "Punto di valutazione (LSBD)", ["en"] = "Evaluation Point (OKA)" },
 
         ["SelectAntenna"] = new() { ["de"] = "-- Antenne wählen --", ["fr"] = "-- Sélectionner antenne --", ["it"] = "-- Seleziona antenna --", ["en"] = "-- Select Antenna --" },
-        ["Height"] = new() { ["de"] = "Höhe über OKA", ["fr"] = "Hauteur au-dessus du LSM", ["it"] = "Altezza sopra LSBD", ["en"] = "Height above OKA" },
+        ["Height"] = new() { ["de"] = "Höhe", ["fr"] = "Hauteur", ["it"] = "Altezza", ["en"] = "Height" },
         ["FrequencyBands"] = new() { ["de"] = "Frequenzbänder", ["fr"] = "Bandes de fréquence", ["it"] = "Bande di frequenza", ["en"] = "Frequency Bands" },
         ["Bands"] = new() { ["de"] = "Bänder", ["fr"] = "Bandes", ["it"] = "Bande", ["en"] = "Bands" },
 
@@ -783,12 +794,15 @@ public class Strings : INotifyPropertyChanged
         ["OkaNumber"] = new() { ["de"] = "Nummer", ["fr"] = "Numéro", ["it"] = "Numero", ["en"] = "Number" },
         ["OkaNameLabel"] = new() { ["de"] = "Bezeichnung", ["fr"] = "Désignation", ["it"] = "Designazione", ["en"] = "Name" },
         ["OkaNameRequired"] = new() { ["de"] = "Bitte eine Bezeichnung eingeben.", ["fr"] = "Veuillez entrer une désignation.", ["it"] = "Inserire una designazione.", ["en"] = "Please enter a name." },
+        ["OkaNameDuplicate"] = new() { ["de"] = "Diese Bezeichnung existiert bereits.", ["fr"] = "Cette désignation existe déjà.", ["it"] = "Questa designazione esiste già.", ["en"] = "This name already exists." },
         ["OkaDistanceRequired"] = new() { ["de"] = "Die Distanz muss grösser als 0 sein.", ["fr"] = "La distance doit être supérieure à 0.", ["it"] = "La distanza deve essere maggiore di 0.", ["en"] = "Distance must be greater than 0." },
         ["OkaDampingNonNegative"] = new() { ["de"] = "Die Dämpfung darf nicht negativ sein.", ["fr"] = "L'atténuation ne peut pas être négative.", ["it"] = "L'attenuazione non può essere negativa.", ["en"] = "Damping cannot be negative." },
         ["DefaultDamping"] = new() { ["de"] = "Standard-Dämpfung", ["fr"] = "Atténuation par défaut", ["it"] = "Attenuazione predefinita", ["en"] = "Default Damping" },
         ["DefaultDampingHint"] = new() { ["de"] = "0 dB für Aussenbereich, typisch 6-12 dB für Innenräume", ["fr"] = "0 dB pour l'extérieur, typiquement 6-12 dB pour l'intérieur", ["it"] = "0 dB per l'esterno, tipicamente 6-12 dB per interni", ["en"] = "0 dB for outdoor, typically 6-12 dB for indoor" },
         ["DefaultDistance"] = new() { ["de"] = "Horizontale Distanz", ["fr"] = "Distance horizontale", ["it"] = "Distanza orizzontale", ["en"] = "Horizontal Distance" },
         ["DefaultDistanceHint"] = new() { ["de"] = "Distanz von der Antenne", ["fr"] = "Distance de l'antenne", ["it"] = "Distanza dall'antenna", ["en"] = "Distance from antenna" },
+        ["HeightHint"] = new() { ["de"] = "Antennenhöhe über OKA", ["fr"] = "Hauteur de l'antenne au-dessus du LSM", ["it"] = "Altezza dell'antenna sopra LSBD", ["en"] = "Antenna height above OKA" },
+        ["OkaDistanceHint"] = new() { ["de"] = "Horizontale Distanz vom OKA zum Antennenmast", ["fr"] = "Distance horizontale du LSM au mât d'antenne", ["it"] = "Distanza orizzontale dal LSBD al palo dell'antenna", ["en"] = "Horizontal distance from OKA to antenna mast" },
         ["AddOka"] = new() { ["de"] = "OKA hinzufügen", ["fr"] = "Ajouter LSM", ["it"] = "Aggiungi LSBD", ["en"] = "Add OKA" },
         ["EditOka"] = new() { ["de"] = "OKA bearbeiten", ["fr"] = "Modifier LSM", ["it"] = "Modifica LSBD", ["en"] = "Edit OKA" },
         ["SelectOka"] = new() { ["de"] = "-- OKA wählen --", ["fr"] = "-- Sélectionner LSM --", ["it"] = "-- Seleziona LSBD --", ["en"] = "-- Select OKA --" },
@@ -879,6 +893,11 @@ public class Strings : INotifyPropertyChanged
         ["ImportDatabaseDesc"] = new() { ["de"] = "Importiert Werksdaten aus einer JSON-Datei. ACHTUNG: Alle Daten werden gel?scht!", ["fr"] = "Importe les donn?es usine depuis un fichier JSON. ATTENTION: Toutes les donn?es seront supprim?es!", ["it"] = "Importa i dati di fabbrica da un file JSON. ATTENZIONE: Tutti i dati saranno eliminati!", ["en"] = "Import factory data from a JSON file. WARNING: All data will be deleted!" },
 
         // Results
+        ["HorizontalDistance"] = new() { ["de"] = "Horiz. Distanz", ["fr"] = "Dist. horiz.", ["it"] = "Dist. orizz.", ["en"] = "Horiz. dist." },
+        ["DistanceAntennaOka"] = new() { ["de"] = "Distanz Antenne-OKA", ["fr"] = "Distance Antenne-LSM", ["it"] = "Distanza Antenna-LSBD", ["en"] = "Distance Antenna-OKA" },
+        ["OkaFullName"] = new() { ["de"] = "Ort für kurzfristigen Aufenthalt", ["fr"] = "Lieu de séjour momentané", ["it"] = "Luogo di soggiorno di breve durata", ["en"] = "Place of short-term stay" },
+        ["AboveOka"] = new() { ["de"] = "über OKA", ["fr"] = "au-dessus du LSM", ["it"] = "sopra LSBD", ["en"] = "above OKA" },
+        ["HorizDistToMast"] = new() { ["de"] = "horizontale Distanz zum Antennenmast", ["fr"] = "distance horizontale au mât", ["it"] = "distanza orizzontale al palo", ["en"] = "horizontal distance to antenna mast" },
         ["CalculationResults"] = new() { ["de"] = "Berechnungsergebnisse", ["fr"] = "Résultats du calcul", ["it"] = "Risultati del calcolo", ["en"] = "Calculation Results" },
         ["Limit"] = new() { ["de"] = "Grenzwert", ["fr"] = "Limite", ["it"] = "Limite", ["en"] = "Limit" },
         ["ExportMarkdown"] = new() { ["de"] = "Markdown exportieren", ["fr"] = "Exporter Markdown", ["it"] = "Esporta Markdown", ["en"] = "Export Markdown" },
@@ -940,7 +959,7 @@ public class Strings : INotifyPropertyChanged
         ["DataFolder"] = new() { ["de"] = "Datenordner", ["fr"] = "Dossier données", ["it"] = "Cartella dati", ["en"] = "Data Folder" },
         ["DataFolderDesc"] = new() { ["de"] = "Öffnet den Datenordner mit der Datenbank (nisdata.db) für Git-Commits", ["fr"] = "Ouvre le dossier de données avec la base de données (nisdata.db) pour les commits Git", ["it"] = "Apre la cartella dati con il database (nisdata.db) per i commit Git", ["en"] = "Opens the data folder containing the database (nisdata.db) for Git commits" },
         ["DataFolderOpened"] = new() { ["de"] = "Datenordner geöffnet", ["fr"] = "Dossier données ouvert", ["it"] = "Cartella dati aperta", ["en"] = "Data folder opened" },
-        ["Factory"] = new() { ["de"] = "Fabrik", ["fr"] = "Usine", ["it"] = "Fabbrica", ["en"] = "Factory" },
+        ["Factory"] = new() { ["de"] = "Werksmodus", ["fr"] = "Mode usine", ["it"] = "Modalità fabbrica", ["en"] = "Factory Mode" },
         ["FactoryMode"] = new() { ["de"] = "WERKSMODUS", ["fr"] = "MODE USINE", ["it"] = "MODALITÀ FABBRICA", ["en"] = "FACTORY MODE" },
         ["EnterFactoryPassword"] = new() { ["de"] = "Bitte Werkspasswort eingeben:", ["fr"] = "Veuillez entrer le mot de passe usine:", ["it"] = "Inserisci la password di fabbrica:", ["en"] = "Please enter factory password:" },
         ["WrongPassword"] = new() { ["de"] = "Falsches Passwort", ["fr"] = "Mot de passe incorrect", ["it"] = "Password errata", ["en"] = "Wrong password" },

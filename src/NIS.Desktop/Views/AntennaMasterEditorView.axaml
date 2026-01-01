@@ -149,7 +149,7 @@
                                                     </StackPanel>
                                                 </Grid>
                                                 <TextBlock Text="{Binding PatternExplanation, Source={x:Static loc:Strings.Instance}}"
-                                                           FontSize="10" Opacity="0.5" FontStyle="Italic"/>
+                                                           FontSize="11" Opacity="0.5" FontStyle="Italic"/>
                                             </StackPanel>
                                         </StackPanel>
                                     </Border>

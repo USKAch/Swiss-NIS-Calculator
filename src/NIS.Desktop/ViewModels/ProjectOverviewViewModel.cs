@@ -31,7 +31,7 @@ public class ConfigurationDisplayItem
     public string FrequencyDisplay => GetFrequencies();
     public string HeightDisplay => $"{Configuration.Antenna.HeightMeters}m";
     public string CableDisplay => Configuration.Cable.Type;
-    public string PowerDisplay => $"{Configuration.PowerWatts}W";
+    public string PowerDisplay => $"{Configuration.PowerWatts}W/{Configuration.Modulation}";
     public string OkaNameDisplay => Configuration.OkaName ?? "";
     public string OkaDistanceDisplay => Configuration.OkaDistanceMeters > 0 ? $"{Configuration.OkaDistanceMeters}m" : "";
 

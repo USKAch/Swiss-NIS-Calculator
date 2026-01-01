@@ -13,14 +13,18 @@ Welcome Screen
 
 Navigation Pane
     -> [Projects] -> Project List
-    -> [Open Project] -> Project Overview
+    -> [New Project] -> Project Info -> Project Overview
     -> [Master Data] -> Master Data Manager
        -> [Add/Edit Antenna] -> Antenna Editor -> Master Data Manager
        -> [Add/Edit Cable] -> Cable Editor -> Master Data Manager
        -> [Add/Edit Radio] -> Radio Editor -> Master Data Manager
        -> [Add/Edit OKA] -> OKA Editor -> Master Data Manager
        -> [Translations] -> Translation Editor
+    -> [Calculate All] -> Results
+    -> [Export Report] -> Results with export options
+    -> [Export PDF] -> PDF generation
     -> [Settings] -> Settings
+    -> [Factory] -> Factory Mode
 
 Project Overview
     -> [Edit Station Info] -> Project Info -> Project Overview
@@ -51,25 +55,22 @@ First screen shown when app launches:
 
 Global navigation available from most screens:
 
-- **Settings** -> Language and Theme (Section 9)
 - **Projects** -> Project list (same as Welcome screen)
-- **Open Project** -> File picker for .nisproj files
+- **New Project** -> Create a new project
 - **Master Data** -> Master Data Manager (Section 3.6)
 - **Calculate All** -> Runs calculation for current project (Section 3.7)
 - **Export Report** -> Results view with export options (Section 3.7)
 - **Export PDF** -> Generates PDF report from Results
+- **Settings** -> Language and Theme (Section 10)
+- **Factory** -> Factory mode access (Section 9)
 
 ### 3.3 Project Overview (Main Screen)
-
 
 Primary workspace after project is loaded/created. Users can edit and add configurations here.
 
 **Header Bar**:
-- Project name (editable text field with white background)
-- Station info summary (callsign)
-- Save / Export buttons
-  - Save: validates and persists the project
-  - Export: opens Results and export options
+- Project name (read-only display)
+- Dirty indicator (*) shown when unsaved changes exist
 
 **Station Info Panel** (non-collapsible):
 - Callsign: HB9FS/HB9BL
@@ -93,8 +94,8 @@ Example:
 - Each configuration has its own OKA (evaluation point) with distance and damping
 
 **Action Buttons**:
+- "Back" → Returns to project list
 - "Calculate All" → Runs calculation for all configs → Navigates to Results (Section 3.7)
-- "Export Report" → Navigates to Results view with export options (Section 3.7)
 
 ### 3.4 Project Info
 
@@ -127,6 +128,7 @@ Screen for creating or editing one antenna configuration. Header shows "Configur
   - Edit → Navigates to Antenna Editor with selected antenna
   - Add → Navigates to Antenna Editor for new antenna
 - Height: [number] m
+  - Hint: "Antenna height above OKA" (translated)
 - Polarization: [radio buttons] Horizontal | Vertical (mutually exclusive)
   - Fixed by antenna master data (not overrideable per configuration)
   - If Horizontal: Rotation Angle: [number] degrees (default 360) - *information only, not used in calculation*
@@ -156,10 +158,11 @@ These apply to all bands of the selected antenna. Bands (frequency, gain, patter
 
 **Section 5: Evaluation Point (OKA)**
 - Name: [text] (e.g., "Neighbor's balcony")
-- Distance: [number] m (horizontal ground distance)
+- Distance: [number] m
+  - Hint: "Horizontal distance from OKA to antenna mast" (translated)
 - Building Damping: [number] dB
 
-Note: Each configuration has exactly one OKA, selected from master data shared across projects. OKA = Ort des kurzfristigen Aufenthalts (place of short-term stay).
+Note: Each configuration has exactly one OKA, selected from master data shared across projects. OKA = Ort des kurzfristigen Aufenthalts (place of short-term stay). The real 3D distance used in calculations is computed as √(horizontal² + height²).
 
 **Actions**:
 - Save → Returns to Project Overview
@@ -223,7 +226,19 @@ For CRUD permissions and alternative access points, see **Section 6.1**.
 Results displayed after "Calculate All":
 
 **Per Configuration**:
-- Summary: Pass or Fail with highest field strength
+- Configuration title: Antenna name with Pass/Fail badge
+- Configuration summary line (translated):
+  ```
+  Antenna: [name], [height]m above OKA, Cable: [description],
+  [OKA full name]: [OKA name], [distance]m horizontal distance to antenna mast,
+  Distance Antenna-OKA: [calculated]m
+  ```
+  Example (German):
+  ```
+  Antenne: Fritzel FB-33, 10m über OKA, Kabel: 15m RG-213,
+  Ort für kurzfristigen Aufenthalt: Balkon Nachbar, 4m horizontale Distanz zum Antennenmast,
+  Distanz Antenne-OKA: 10.8m
+  ```
 - Detailed table (see Section 5 Output and Reports)
 
 **Safety Distance Visualization** (optional):
@@ -243,16 +258,20 @@ Results displayed after "Calculate All":
 | Parameter | Symbol | Unit | Source |
 |-----------|--------|------|--------|
 | Frequency | f | MHz | User selection |
-| Distance to antenna | d | m | Horizontal ground distance to OKA |
+| Horizontal distance | d_h | m | Horizontal ground distance from OKA to antenna mast |
+| Antenna height | h | m | Antenna height above OKA |
+| Distance antenna-OKA | d | m | Real 3D distance = √(d_h² + h²) |
 | TX Power | P | W | User input |
 | Activity factor | AF | - | Default 0.5 |
 | Modulation factor | MF | - | SSB=0.2, CW=0.4, FM=1.0 |
 | Cable attenuation | a1 | dB | Calculated from project cable data |
 | Additional losses | a2 | dB | User input (connectors, switches) |
 | Antenna gain | g1 | dBi | From project antenna data |
-| Vertical angle attenuation | g2 | dB | From antenna pattern |
+| Vertical angle attenuation | g2 | dB | From antenna pattern (interpolated) |
 | Building damping | ag | dB | User input |
 | Ground reflection factor | kr | - | Fixed 1.6 |
+
+**Distance Calculation**: The field strength formula uses the real 3D distance from antenna to OKA, calculated as `d = √(horizontal² + height²)`. The vertical angle (used for pattern lookup) is calculated from the horizontal distance and height.
 
 **Data Source Policy**: Configurations reference master data via foreign keys in the database. For data protection and export/import, see **Section 6 (Data Operations)**.
 
@@ -277,9 +296,7 @@ The vertical angle attenuation (g2) is automatically calculated based on the geo
 
 **Angle Calculation:**
 ```
-Vertical Angle = atan(Antenna Height / Horizontal Distance to OKA)
-
-Distance to OKA is treated as horizontal ground distance in calculations.
+Vertical Angle = atan(Antenna Height / Horizontal Distance)
 ```
 
 Where:
@@ -287,7 +304,7 @@ Where:
 - 90° = Looking straight down (OKA directly below antenna)
 
 **Pattern Lookup:**
-The pattern array contains 10 values representing attenuation in dB at angles 0°, 10°, 20°, 30°, 40°, 50°, 60°, 70°, 80°, 90°:
+The vertical angle is used to extrapolate the vertical attenuation from the antenna's radiation pattern. The pattern array contains 10 values representing attenuation in dB at angles 0°, 10°, 20°, 30°, 40°, 50°, 60°, 70°, 80°, 90°:
 
 | Index | Angle | Description |
 |-------|-------|-------------|
@@ -296,11 +313,20 @@ The pattern array contains 10 values representing attenuation in dB at angles 0�
 | ... | ... | ... |
 | 9 | 90° | Straight down toward OKA |
 
+Linear interpolation is used for angles between data points.
+
+**Real Distance Calculation:**
+The field strength formula uses the real 3D distance:
+```
+Real Distance (d) = √(Horizontal Distance² + Antenna Height²)
+```
+
 **Example:**
-- Antenna height: 12m
-- OKA distance: 5.4m horizontally
-- Vertical angle: atan(12/5.4) = 65.8° ≈ 66°
+- Antenna height: 10m
+- Horizontal distance: 4m
+- Vertical angle: atan(10/4) = 68.2°
 - Pattern lookup: interpolate between index 6 (60°) and index 7 (70°)
+- Real distance: √(4² + 10²) = √116 = 10.8m (used in field strength formula)
 
 ### 4.3 Ground Reflection Factor (kr)
 
@@ -328,6 +354,8 @@ ERP:                  P's = Ps / 1.64
 Building factor:      AG = 10^(-ag/10)
 Field strength:       E' = 1.6 × sqrt(30 × Pm × A × G × AG) / d
 Safety distance:      ds = 1.6 × sqrt(30 × Pm × A × G × AG) / EIGW
+
+where d = √(d_h² + h²) is the real 3D distance from antenna to OKA
 ```
 
 ### 4.5 NIS Limits (Swiss NISV)

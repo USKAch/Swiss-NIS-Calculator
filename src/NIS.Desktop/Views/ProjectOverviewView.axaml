@@ -13,29 +13,14 @@
     </Design.DataContext>
 
     <Grid RowDefinitions="Auto,*,Auto">
-        <!-- Header with editable project name and actions -->
+        <!-- Header with project name -->
         <Border Grid.Row="0" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Padding="20,15">
-            <Grid ColumnDefinitions="*,Auto">
-                <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                    <TextBox Text="{Binding ProjectName, Mode=TwoWay}"
-                             FontSize="20" FontWeight="Bold"
-                             Background="White"
-                             MinWidth="300" MaxWidth="500"
-                             Watermark="{Binding ProjectName, Source={x:Static loc:Strings.Instance}}"/>
-                    <TextBlock Text="{Binding DirtyIndicator}" FontSize="20" FontWeight="Bold"
-                               Foreground="{DynamicResource DangerButtonBrush}" VerticalAlignment="Center"/>
-                </StackPanel>
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
-                    <Button Content="{Binding Save, Source={x:Static loc:Strings.Instance}}"
-                            Command="{Binding SaveProjectCommand}"
-                            Padding="15,8"/>
-                    <Button Content="{Binding ExportReport, Source={x:Static loc:Strings.Instance}}"
-                            Command="{Binding ExportReportCommand}"
-                            IsEnabled="{Binding HasConfigurations}"
-                            Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}"
-                            Padding="15,8"/>
-                </StackPanel>
-            </Grid>
+            <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                <TextBlock Text="{Binding ProjectName}"
+                           FontSize="20" FontWeight="Bold"/>
+                <TextBlock Text="{Binding DirtyIndicator}" FontSize="20" FontWeight="Bold"
+                           Foreground="{DynamicResource DangerButtonBrush}" VerticalAlignment="Center"/>
+            </StackPanel>
         </Border>
 
         <!-- Main Content -->
@@ -73,7 +58,7 @@
                         BorderThickness="1" CornerRadius="8" Padding="15">
                     <StackPanel Spacing="10">
                         <Grid ColumnDefinitions="*,Auto">
-                            <TextBlock Text="{Binding Configurations, Source={x:Static loc:Strings.Instance}}" FontSize="18" FontWeight="Bold"/>
+                            <TextBlock Text="{Binding Configurations, Source={x:Static loc:Strings.Instance}}" FontSize="16" FontWeight="Bold"/>
                             <Button Grid.Column="1" Content="{Binding AddConfiguration, Source={x:Static loc:Strings.Instance}}"
                                     Command="{Binding AddConfigurationCommand}"
                                     Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,8"/>
@@ -103,27 +88,46 @@
                                     <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
                                     <Setter Property="FontSize" Value="14"/>
                                     <Setter Property="FontWeight" Value="SemiBold"/>
-                                    <Setter Property="Padding" Value="12,8"/>
-                                    <Setter Property="MinHeight" Value="40"/>
+                                    <Setter Property="Padding" Value="10,6"/>
+                                    <Setter Property="MinHeight" Value="36"/>
                                 </Style>
                             </DataGrid.Styles>
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="#" Binding="{Binding NumberDisplay}" Width="Auto"/>
                                 <!-- Antenna Group -->
                                 <DataGridTextColumn Header="{Binding Antenna, Source={x:Static loc:Strings.Instance}}" Binding="{Binding AntennaDisplay}" Width="Auto"/>
-                                <DataGridTextColumn Header="{Binding Bands, Source={x:Static loc:Strings.Instance}}" Binding="{Binding FrequencyDisplay}" Width="Auto"/>
-                                <DataGridTextColumn Header="{Binding Height, Source={x:Static loc:Strings.Instance}}" Binding="{Binding HeightDisplay}" Width="Auto"/>
-                                <!-- Separator -->
-                                <DataGridTextColumn Header="" Width="8"/>
+                                <DataGridTemplateColumn Header="{Binding Bands, Source={x:Static loc:Strings.Instance}}" Width="Auto">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding FrequencyDisplay}" FontSize="11" VerticalAlignment="Center" Padding="10,6"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <!-- Height with right border as group separator -->
+                                <DataGridTemplateColumn Header="{Binding Height, Source={x:Static loc:Strings.Instance}}" Width="Auto">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Border BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}" BorderThickness="0,0,2,0" Padding="10,6,12,6">
+                                                <TextBlock Text="{Binding HeightDisplay}" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
                                 <!-- Transmitter/Cable Group -->
                                 <DataGridTextColumn Header="{Binding Cable, Source={x:Static loc:Strings.Instance}}" Binding="{Binding CableDisplay}" Width="Auto"/>
-                                <DataGridTextColumn Header="{Binding Power, Source={x:Static loc:Strings.Instance}}" Binding="{Binding PowerDisplay}" Width="Auto"/>
-                                <!-- Separator -->
-                                <DataGridTextColumn Header="" Width="8"/>
+                                <!-- Power with right border as group separator -->
+                                <DataGridTemplateColumn Header="{Binding Power, Source={x:Static loc:Strings.Instance}}" Width="Auto">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Border BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}" BorderThickness="0,0,2,0" Padding="10,6,20,6">
+                                                <TextBlock Text="{Binding PowerDisplay}" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
                                 <!-- OKA Group -->
                                 <DataGridTextColumn Header="OKA" Binding="{Binding OkaNameDisplay}" Width="Auto"/>
                                 <DataGridTextColumn Header="{Binding Distance, Source={x:Static loc:Strings.Instance}}" Binding="{Binding OkaDistanceDisplay}" Width="Auto"/>
-                                <DataGridTemplateColumn Header="{Binding Actions, Source={x:Static loc:Strings.Instance}}" Width="Auto">
+                                <DataGridTemplateColumn Header="" Width="Auto">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" Margin="5,0">
@@ -155,18 +159,11 @@
                         <Button Content="{Binding Back, Source={x:Static loc:Strings.Instance}}"
                                 Command="{Binding GoBackCommand}"
                                 Padding="20,10"/>
-                        <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="20">
-                            <Button Content="{Binding CalculateAll, Source={x:Static loc:Strings.Instance}}"
-                                    Command="{Binding CalculateAllCommand}"
-                                    IsEnabled="{Binding CanCalculate}"
-                                    Background="{DynamicResource HeaderPrimaryBrush}" Foreground="{DynamicResource HeaderForegroundBrush}"
-                                    Padding="30,15" FontSize="16"/>
-                            <Button Content="{Binding ExportReport, Source={x:Static loc:Strings.Instance}}"
-                                    Command="{Binding ExportReportCommand}"
-                                    IsEnabled="{Binding HasResults}"
-                                    Background="{DynamicResource SuccessButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}"
-                                    Padding="30,15" FontSize="16"/>
-                        </StackPanel>
+                        <Button Grid.Column="2" Content="{Binding CalculateAll, Source={x:Static loc:Strings.Instance}}"
+                                Command="{Binding CalculateAllCommand}"
+                                IsEnabled="{Binding CanCalculate}"
+                                Background="{DynamicResource HeaderPrimaryBrush}" Foreground="{DynamicResource HeaderForegroundBrush}"
+                                Padding="30,15" FontSize="16"/>
                     </Grid>
                 </Border>
             </StackPanel>
