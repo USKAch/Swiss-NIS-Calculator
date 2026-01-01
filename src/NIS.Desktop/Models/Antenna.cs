@@ -10,15 +10,34 @@ namespace NIS.Desktop.Models;
 /// </summary>
 public static class AntennaTypes
 {
-    public const string LogPeriodic = "log-periodic";
-    public const string Loop = "loop";
-    public const string Other = "other";
-    public const string Quad = "quad";
-    public const string Vertical = "vertical";
-    public const string Wire = "wire";
-    public const string Yagi = "yagi";
+    public const string LogPeriodic = "Log-Periodic";
+    public const string Loop = "Loop";
+    public const string Other = "Other";
+    public const string Quad = "Quad";
+    public const string Vertical = "Vertical";
+    public const string Wire = "Wire";
+    public const string Yagi = "Yagi";
 
-    public static readonly string[] All = { LogPeriodic, Loop, Other, Quad, Vertical, Wire, Yagi };
+    public static readonly string[] All = { Yagi, Vertical, Wire, Loop, LogPeriodic, Quad, Other };
+
+    /// <summary>
+    /// Normalize antenna type to proper case (handles legacy lowercase values).
+    /// </summary>
+    public static string Normalize(string? type)
+    {
+        if (string.IsNullOrEmpty(type)) return Other;
+        return type.ToLowerInvariant() switch
+        {
+            "log-periodic" => LogPeriodic,
+            "loop" => Loop,
+            "quad" => Quad,
+            "vertical" => Vertical,
+            "wire" => Wire,
+            "yagi" => Yagi,
+            _ => string.IsNullOrEmpty(type) ? Other :
+                 char.ToUpper(type[0]) + type.Substring(1).ToLowerInvariant()
+        };
+    }
 }
 
 /// <summary>
@@ -102,12 +121,6 @@ public class Antenna
     }
 
     /// <summary>
-    /// Whether the antenna is horizontally rotatable.
-    /// </summary>
-    [JsonPropertyName("isRotatable")]
-    public bool IsRotatable { get; set; }
-
-    /// <summary>
     /// Antenna type classification. See <see cref="AntennaTypes"/> for valid values.
     /// Used to determine if vertical pattern formulas apply.
     /// </summary>
@@ -119,12 +132,6 @@ public class Antenna
     /// </summary>
     [JsonPropertyName("isHorizontallyPolarized")]
     public bool IsHorizontallyPolarized { get; set; } = true;
-
-    /// <summary>
-    /// Horizontal rotation angle in degrees (information only, not used in calculation).
-    /// </summary>
-    [JsonPropertyName("horizontalAngleDegrees")]
-    public double HorizontalAngleDegrees { get; set; } = 360;
 
     /// <summary>
     /// Frequency bands supported by this antenna with gain and pattern data.
@@ -175,6 +182,12 @@ public class Antenna
     /// </summary>
     [JsonIgnore]
     public string DisplayName => $"{Manufacturer} {Model}".Trim();
+
+    /// <summary>
+    /// Antenna type with proper capitalization for display.
+    /// </summary>
+    [JsonIgnore]
+    public string AntennaTypeDisplay => AntennaTypes.Normalize(AntennaType);
 
     /// <summary>
     /// Returns DisplayName for text search in ComboBox.

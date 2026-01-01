@@ -41,7 +41,7 @@ public class Radio
     public string DisplayName => $"{Manufacturer} {Model}".Trim();
 
     /// <summary>
-    /// Returns display name with power for text search in ComboBox.
+    /// Returns display name for text search in ComboBox.
     /// </summary>
-    public override string ToString() => $"{Manufacturer} {Model} ({MaxPowerWatts}W)";
+    public override string ToString() => DisplayName;
 }

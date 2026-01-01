@@ -102,6 +102,7 @@ public class BandResult
     public double FieldStrength { get; init; }
     public double Limit { get; init; }
     public double SafetyDistance { get; init; }
+    public double OkaDistance { get; init; }
     public bool IsCompliant => FieldStrength <= Limit;
 }
 
@@ -199,8 +200,8 @@ public partial class ResultsViewModel : ViewModelBase
             BuildingDampingDb = config.OkaBuildingDampingDb,
             CableDescription = $"{config.Cable.LengthMeters:F1}m {config.Cable.Type}",
             LinearName = config.Linear?.Name ?? "",
-            IsRotatable = antenna?.IsRotatable ?? false,
-            HorizontalAngleDegrees = (int)(antenna?.HorizontalAngleDegrees ?? 360),
+            IsRotatable = config.Antenna.IsRotatable,
+            HorizontalAngleDegrees = (int)config.Antenna.HorizontalAngleDegrees,
             IsHorizontallyPolarized = antenna?.IsHorizontallyPolarized ?? true
         };
 
@@ -308,7 +309,8 @@ public partial class ResultsViewModel : ViewModelBase
             GroundReflectionFactor = groundReflectionFactor,
             FieldStrength = result.FieldStrengthVm,
             Limit = result.NisLimitVm,
-            SafetyDistance = result.SafetyDistanceMeters
+            SafetyDistance = result.SafetyDistanceMeters,
+            OkaDistance = config.OkaDistanceMeters
         };
     }
 
@@ -388,40 +390,17 @@ public partial class ResultsViewModel : ViewModelBase
     private string GenerateMarkdown()
     {
         var sb = new StringBuilder();
-        var lang = Localization.Strings.Instance.Language;
+        var s = Localization.Strings.Instance;
 
         var reportLabel = !string.IsNullOrWhiteSpace(_project?.Name)
             ? _project!.Name
             : _project?.Operator ?? "Project";
 
-        // Localized strings
-        var (titlePrefix, opLabel, addrLabel, dateLabel, senderLabel, cableLabel, antennaLabel,
-             polLabel, rotLabel, linearLabel, okaLabel, modLabel, dampLabel,
-             statusCompliant, statusNonCompliant) = lang switch
-        {
-            "de" => ("Immissionsberechnung für", "Betreiber", "Adresse", "Datum", "Sender", "Kabel", "Antenne",
-                     "Polarisation", "Rotation", "Linear", "OKA", "Modulation", "Gebäudedämpfung",
-                     "**Status: KONFORM** - Alle Frequenzen innerhalb der Grenzwerte",
-                     "**Status: NICHT KONFORM** - Grenzwerte überschritten!"),
-            "fr" => ("Calcul d'immission pour", "Opérateur", "Adresse", "Date", "Émetteur", "Câble", "Antenne",
-                     "Polarisation", "Rotation", "Linéaire", "LSM", "Modulation", "Atténuation bâtiment",
-                     "**Statut: CONFORME** - Toutes les fréquences dans les limites",
-                     "**Statut: NON CONFORME** - Limites dépassées!"),
-            "it" => ("Calcolo immissione per", "Operatore", "Indirizzo", "Data", "Trasmettitore", "Cavo", "Antenna",
-                     "Polarizzazione", "Rotazione", "Lineare", "LSBD", "Modulazione", "Attenuazione edificio",
-                     "**Stato: CONFORME** - Tutte le frequenze entro i limiti",
-                     "**Stato: NON CONFORME** - Limiti superati!"),
-            _ => ("Emission Calculation for", "Operator", "Address", "Date", "Transmitter", "Cable", "Antenna",
-                  "Polarization", "Rotation", "Linear", "OKA", "Modulation", "Building Damping",
-                  "**Status: COMPLIANT** - All frequencies within limits",
-                  "**Status: NON-COMPLIANT** - Limits exceeded!")
-        };
-
-        sb.AppendLine($"# {titlePrefix} {reportLabel}");
+        sb.AppendLine($"# {s.CalcTitlePrefix} {reportLabel}");
         sb.AppendLine();
-        sb.AppendLine($"**{opLabel}:** {_project?.Operator}");
-        sb.AppendLine($"**{addrLabel}:** {_project?.Address}, {_project?.Location}");
-        sb.AppendLine($"**{dateLabel}:** {DateTime.Now:dd.MM.yyyy}");
+        sb.AppendLine($"**{s.CalcOperator}:** {_project?.Operator}");
+        sb.AppendLine($"**{s.CalcAddress}:** {_project?.Address}, {_project?.Location}");
+        sb.AppendLine($"**{s.CalcDate}:** {DateTime.Now:dd.MM.yyyy}");
         sb.AppendLine();
 
         foreach (var result in Results)
@@ -432,15 +411,15 @@ public partial class ResultsViewModel : ViewModelBase
             // Configuration summary table
             sb.AppendLine("| | |");
             sb.AppendLine("|:------------------------|:-------------------------------------------------------|");
-            sb.AppendLine($"| **{senderLabel}:**      | {result.PowerWatts}W                                   |");
-            sb.AppendLine($"| **{cableLabel}:**       | {result.CableDescription}                              |");
-            sb.AppendLine($"| **{antennaLabel}:**     | {result.AntennaName}                                   |");
-            sb.AppendLine($"| **{polLabel}:**         | {(result.IsHorizontallyPolarized ? "Horizontal" : "Vertical")} |");
-            sb.AppendLine($"| **{rotLabel}:**         | {(result.IsRotatable ? $"{result.HorizontalAngleDegrees}°" : "Fix")} |");
-            sb.AppendLine($"| **{linearLabel}:**      | {result.LinearName}                                    |");
-            sb.AppendLine($"| **{okaLabel}:**         | {result.OkaName} @ {result.OkaDistance:F1}m            |");
-            sb.AppendLine($"| **{modLabel}:**         | {result.Modulation}                                    |");
-            sb.AppendLine($"| **{dampLabel}:**        | {result.BuildingDampingDb:F2} dB                       |");
+            sb.AppendLine($"| **{s.CalcTransmitter}:**      | {result.PowerWatts}W                                   |");
+            sb.AppendLine($"| **{s.CalcCable}:**       | {result.CableDescription}                              |");
+            sb.AppendLine($"| **{s.CalcAntenna}:**     | {result.AntennaName}                                   |");
+            sb.AppendLine($"| **{s.CalcPolarization}:**         | {(result.IsHorizontallyPolarized ? s.CalcHorizontal : s.CalcVertical)} |");
+            sb.AppendLine($"| **{s.CalcRotation}:**         | {(result.IsRotatable ? $"{result.HorizontalAngleDegrees}°" : s.CalcFixed)} |");
+            sb.AppendLine($"| **{s.CalcLinear}:**      | {result.LinearName}                                    |");
+            sb.AppendLine($"| **{s.CalcOka}:**         | {result.OkaName} @ {result.OkaDistance:F1}m            |");
+            sb.AppendLine($"| **{s.CalcModulation}:**         | {result.Modulation}                                    |");
+            sb.AppendLine($"| **{s.CalcBuildingDamping}:**        | {result.BuildingDampingDb:F2} dB                       |");
             sb.AppendLine();
 
             // Band results header - FSD Section 5 columns
@@ -459,167 +438,76 @@ public partial class ResultsViewModel : ViewModelBase
             sb.AppendLine();
 
             // FSD Section 5 required rows
-            AppendRow(sb, GetLabel(lang, "Frequency", "Frequenz", "Fréquence", "Frequenza"), "f", "MHz", result.BandResults, b => b.FrequencyMHz, "F0");
-            AppendRow(sb, GetLabel(lang, "Distance to antenna", "Abstand zur Antenne", "Distance à l'antenne", "Distanza dall'antenna"), "d", "m", result.BandResults, _ => result.OkaDistance, "F1");
-            AppendRow(sb, GetLabel(lang, "TX Power", "Senderleistung", "Puissance TX", "Potenza TX"), "P", "W", result.BandResults, b => b.TxPowerW, "F2");
-            AppendRow(sb, GetLabel(lang, "Activity factor", "Aktivitätsfaktor", "Facteur d'activité", "Fattore di attività"), "AF", "-", result.BandResults, b => b.ActivityFactor, "F2");
-            AppendRow(sb, GetLabel(lang, "Modulation factor", "Modulationsfaktor", "Facteur de modulation", "Fattore di modulazione"), "MF", "-", result.BandResults, b => b.ModulationFactor, "F2");
-            AppendRow(sb, GetLabel(lang, "Mean power", "Mittlere Leistung", "Puissance moyenne", "Potenza media"), "Pm", "W", result.BandResults, b => b.MeanPowerW, "F2");
-            AppendRow(sb, GetLabel(lang, "Cable attenuation", "Kabeldämpfung", "Atténuation câble", "Attenuazione cavo"), "a1", "dB", result.BandResults, b => b.CableLossDb, "F2");
-            AppendRow(sb, GetLabel(lang, "Additional losses", "Übrige Dämpfung", "Pertes supplémentaires", "Perdite aggiuntive"), "a2", "dB", result.BandResults, b => b.AdditionalLossDb, "F2");
-            AppendRow(sb, GetLabel(lang, "Total attenuation", "Gesamtdämpfung", "Atténuation totale", "Attenuazione totale"), "a", "dB", result.BandResults, b => b.TotalLossDb, "F2");
-            AppendRow(sb, GetLabel(lang, "Attenuation factor", "Dämpfungsfaktor", "Facteur d'atténuation", "Fattore di attenuazione"), "A", "-", result.BandResults, b => b.AttenuationFactor, "F2");
-            AppendRow(sb, GetLabel(lang, "Antenna gain", "Antennengewinn", "Gain d'antenne", "Guadagno antenna"), "g1", "dBi", result.BandResults, b => b.GainDbi, "F2");
-            AppendRow(sb, GetLabel(lang, "Vertical angle attenuation", "Vertikale Winkeldämpfung", "Atténuation angle vertical", "Attenuazione angolo verticale"), "g2", "dB", result.BandResults, b => b.VerticalAttenuation, "F2");
-            AppendRow(sb, GetLabel(lang, "Total antenna gain", "Totaler Antennengewinn", "Gain d'antenne total", "Guadagno antenna totale"), "g", "dB", result.BandResults, b => b.TotalGainDbi, "F2");
-            AppendRow(sb, GetLabel(lang, "Gain factor", "Gewinnfaktor", "Facteur de gain", "Fattore di guadagno"), "G", "-", result.BandResults, b => b.GainFactor, "F2");
-            AppendRow(sb, GetLabel(lang, "EIRP", "EIRP", "PIRE", "EIRP"), "Ps", "W", result.BandResults, b => b.Eirp, "F2");
-            AppendRow(sb, GetLabel(lang, "ERP", "ERP", "PAR", "ERP"), "P's", "W", result.BandResults, b => b.Erp, "F2");
-            AppendRow(sb, GetLabel(lang, "Building damping", "Gebäudedämpfung", "Atténuation bâtiment", "Attenuazione edificio"), "ag", "dB", result.BandResults, b => b.BuildingDampingDb, "F2");
-            AppendRow(sb, GetLabel(lang, "Building damping factor", "Gebäudedämpfungsfaktor", "Facteur atténuation bât.", "Fattore attenuazione ed."), "AG", "-", result.BandResults, b => b.BuildingDampingFactor, "F2");
-            AppendRow(sb, GetLabel(lang, "Ground reflection factor", "Bodenreflexionsfaktor", "Facteur réflexion sol", "Fattore riflessione suolo"), "kr", "-", result.BandResults, b => b.GroundReflectionFactor, "F2");
-            AppendRow(sb, "**" + GetLabel(lang, "Field strength at OKA", "Feldstärke am OKA", "Champ au LSM", "Campo al LSBD") + "**", "E'", "V/m", result.BandResults, b => b.FieldStrength, "F2");
-            AppendRow(sb, "**" + GetLabel(lang, "Limit", "Grenzwert", "Limite", "Limite") + "**", "EIGW", "V/m", result.BandResults, b => b.Limit, "F1");
-            AppendRow(sb, "**" + GetLabel(lang, "Safety distance", "Sicherheitsabstand", "Distance de sécurité", "Distanza di sicurezza") + "**", "ds", "m", result.BandResults, b => b.SafetyDistance, "F2");
+            AppendRow(sb, s.CalcFrequency, "f", "MHz", result.BandResults, b => b.FrequencyMHz, "F0");
+            AppendRow(sb, s.CalcDistanceToAntenna, "d", "m", result.BandResults, _ => result.OkaDistance, "F1");
+            AppendRow(sb, s.CalcTxPower, "P", "W", result.BandResults, b => b.TxPowerW, "F2");
+            AppendRow(sb, s.CalcActivityFactor, "AF", "-", result.BandResults, b => b.ActivityFactor, "F2");
+            AppendRow(sb, s.CalcModulationFactor, "MF", "-", result.BandResults, b => b.ModulationFactor, "F2");
+            AppendRow(sb, s.CalcMeanPower, "Pm", "W", result.BandResults, b => b.MeanPowerW, "F2");
+            AppendRow(sb, s.CalcCableAttenuation, "a1", "dB", result.BandResults, b => b.CableLossDb, "F2");
+            AppendRow(sb, s.CalcAdditionalLosses, "a2", "dB", result.BandResults, b => b.AdditionalLossDb, "F2");
+            AppendRow(sb, s.CalcTotalAttenuation, "a", "dB", result.BandResults, b => b.TotalLossDb, "F2");
+            AppendRow(sb, s.CalcAttenuationFactor, "A", "-", result.BandResults, b => b.AttenuationFactor, "F2");
+            AppendRow(sb, s.CalcAntennaGain, "g1", "dBi", result.BandResults, b => b.GainDbi, "F2");
+            AppendRow(sb, s.CalcVerticalAttenuation, "g2", "dB", result.BandResults, b => b.VerticalAttenuation, "F2");
+            AppendRow(sb, s.CalcTotalAntennaGain, "g", "dB", result.BandResults, b => b.TotalGainDbi, "F2");
+            AppendRow(sb, s.CalcGainFactor, "G", "-", result.BandResults, b => b.GainFactor, "F2");
+            AppendRow(sb, s.CalcEirp, "Ps", "W", result.BandResults, b => b.Eirp, "F2");
+            AppendRow(sb, s.CalcErp, "P's", "W", result.BandResults, b => b.Erp, "F2");
+            AppendRow(sb, s.CalcBuildingDampingRow, "ag", "dB", result.BandResults, b => b.BuildingDampingDb, "F2");
+            AppendRow(sb, s.CalcBuildingDampingFactor, "AG", "-", result.BandResults, b => b.BuildingDampingFactor, "F2");
+            AppendRow(sb, s.CalcGroundReflection, "kr", "-", result.BandResults, b => b.GroundReflectionFactor, "F2");
+            AppendRow(sb, "**" + s.CalcFieldStrength + "**", "E'", "V/m", result.BandResults, b => b.FieldStrength, "F2");
+            AppendRow(sb, "**" + s.CalcLimit + "**", "EIGW", "V/m", result.BandResults, b => b.Limit, "F1");
+            AppendRow(sb, "**" + s.CalcMinSafetyDistance + "**", "ds", "m", result.BandResults, b => b.SafetyDistance, "F2");
+            AppendRow(sb, "**" + s.CalcOkaDistance + "**", "d", "m", result.BandResults, _ => result.OkaDistance, "F1");
 
             sb.AppendLine();
 
             // Compliance status
-            sb.AppendLine(result.IsCompliant ? statusCompliant : statusNonCompliant);
+            sb.AppendLine(result.IsCompliant ? s.CalcStatusCompliant : s.CalcStatusNonCompliant);
             sb.AppendLine();
             sb.AppendLine("---");
             sb.AppendLine();
         }
 
         // Column explanations section (FSD Section 5.2)
-        AppendColumnExplanations(sb, lang);
+        AppendColumnExplanations(sb);
 
         return sb.ToString();
     }
 
-    private static string GetLabel(string lang, string en, string de, string fr, string it) => lang switch
+    private static void AppendColumnExplanations(StringBuilder sb)
     {
-        "de" => de,
-        "fr" => fr,
-        "it" => it,
-        _ => en
-    };
+        var s = Localization.Strings.Instance;
 
-    private static void AppendColumnExplanations(StringBuilder sb, string lang)
-    {
-        var title = lang switch
-        {
-            "de" => "## Spaltenlegende",
-            "fr" => "## Légende des colonnes",
-            "it" => "## Legenda delle colonne",
-            _ => "## Column Explanations"
-        };
-
-        sb.AppendLine(title);
+        sb.AppendLine(s.CalcColumnExplanations);
         sb.AppendLine();
 
-        var explanations = lang switch
+        var explanations = new[]
         {
-            "de" => new[]
-            {
-                ("f", "Frequenz in MHz"),
-                ("d", "Horizontaler Abstand vom OKA zur Antenne in Metern"),
-                ("P", "Senderausgangsleistung in Watt"),
-                ("AF", "Aktivitätsfaktor (typisch 0.5 = 50% Sendezeit)"),
-                ("MF", "Modulationsfaktor (SSB=0.2, CW=0.4, FM/Digital=1.0)"),
-                ("Pm", "Mittlere Leistung = P × AF × MF"),
-                ("a1", "Kabeldämpfung in dB"),
-                ("a2", "Zusätzliche Dämpfung (Stecker, Schalter) in dB"),
-                ("a", "Gesamtdämpfung = a1 + a2"),
-                ("A", "Dämpfungsfaktor = 10^(-a/10)"),
-                ("g1", "Antennengewinn in dBi"),
-                ("g2", "Vertikale Winkeldämpfung basierend auf Antennendiagramm in dB"),
-                ("g", "Totaler Antennengewinn = g1 - g2"),
-                ("G", "Gewinnfaktor = 10^(g/10)"),
-                ("Ps", "EIRP (Equivalent Isotropic Radiated Power) = Pm × A × G"),
-                ("P's", "ERP (Effective Radiated Power) = Ps / 1.64"),
-                ("ag", "Gebäudedämpfung in dB (0 für Aussenbereich)"),
-                ("AG", "Gebäudedämpfungsfaktor = 10^(-ag/10)"),
-                ("kr", "Bodenreflexionsfaktor (1.6 gemäss NISV Anhang 2)"),
-                ("E'", "Berechnete Feldstärke am OKA in V/m"),
-                ("EIGW", "Immissions-Grenzwert gemäss NISV in V/m"),
-                ("ds", "Sicherheitsabstand in Metern")
-            },
-            "fr" => new[]
-            {
-                ("f", "Fréquence en MHz"),
-                ("d", "Distance horizontale du LSM à l'antenne en mètres"),
-                ("P", "Puissance de sortie de l'émetteur en Watts"),
-                ("AF", "Facteur d'activité (typique 0.5 = 50% du temps d'émission)"),
-                ("MF", "Facteur de modulation (SSB=0.2, CW=0.4, FM/Digital=1.0)"),
-                ("Pm", "Puissance moyenne = P × AF × MF"),
-                ("a1", "Atténuation du câble en dB"),
-                ("a2", "Pertes supplémentaires (connecteurs, commutateurs) en dB"),
-                ("a", "Atténuation totale = a1 + a2"),
-                ("A", "Facteur d'atténuation = 10^(-a/10)"),
-                ("g1", "Gain d'antenne en dBi"),
-                ("g2", "Atténuation angle vertical basée sur le diagramme d'antenne en dB"),
-                ("g", "Gain d'antenne total = g1 - g2"),
-                ("G", "Facteur de gain = 10^(g/10)"),
-                ("Ps", "PIRE (Puissance Isotrope Rayonnée Équivalente) = Pm × A × G"),
-                ("P's", "PAR (Puissance Apparente Rayonnée) = Ps / 1.64"),
-                ("ag", "Atténuation du bâtiment en dB (0 pour l'extérieur)"),
-                ("AG", "Facteur d'atténuation du bâtiment = 10^(-ag/10)"),
-                ("kr", "Facteur de réflexion au sol (1.6 selon ORNI Annexe 2)"),
-                ("E'", "Intensité de champ calculée au LSM en V/m"),
-                ("EIGW", "Valeur limite d'immission selon ORNI en V/m"),
-                ("ds", "Distance de sécurité en mètres")
-            },
-            "it" => new[]
-            {
-                ("f", "Frequenza in MHz"),
-                ("d", "Distanza orizzontale dal LSBD all'antenna in metri"),
-                ("P", "Potenza di uscita del trasmettitore in Watt"),
-                ("AF", "Fattore di attività (tipico 0.5 = 50% del tempo di trasmissione)"),
-                ("MF", "Fattore di modulazione (SSB=0.2, CW=0.4, FM/Digital=1.0)"),
-                ("Pm", "Potenza media = P × AF × MF"),
-                ("a1", "Attenuazione del cavo in dB"),
-                ("a2", "Perdite aggiuntive (connettori, interruttori) in dB"),
-                ("a", "Attenuazione totale = a1 + a2"),
-                ("A", "Fattore di attenuazione = 10^(-a/10)"),
-                ("g1", "Guadagno dell'antenna in dBi"),
-                ("g2", "Attenuazione angolo verticale basata sul diagramma dell'antenna in dB"),
-                ("g", "Guadagno totale dell'antenna = g1 - g2"),
-                ("G", "Fattore di guadagno = 10^(g/10)"),
-                ("Ps", "EIRP (Potenza Isotropa Irradiata Equivalente) = Pm × A × G"),
-                ("P's", "ERP (Potenza Effettiva Irradiata) = Ps / 1.64"),
-                ("ag", "Attenuazione dell'edificio in dB (0 per esterni)"),
-                ("AG", "Fattore di attenuazione dell'edificio = 10^(-ag/10)"),
-                ("kr", "Fattore di riflessione al suolo (1.6 secondo ORNI Allegato 2)"),
-                ("E'", "Intensità di campo calcolata al LSBD in V/m"),
-                ("EIGW", "Valore limite di immissione secondo ORNI in V/m"),
-                ("ds", "Distanza di sicurezza in metri")
-            },
-            _ => new[]
-            {
-                ("f", "Frequency in MHz"),
-                ("d", "Horizontal distance from OKA to antenna in meters"),
-                ("P", "Transmitter output power in Watts"),
-                ("AF", "Activity factor (typical 0.5 = 50% transmit time)"),
-                ("MF", "Modulation factor (SSB=0.2, CW=0.4, FM/Digital=1.0)"),
-                ("Pm", "Mean power = P × AF × MF"),
-                ("a1", "Cable attenuation in dB"),
-                ("a2", "Additional losses (connectors, switches) in dB"),
-                ("a", "Total attenuation = a1 + a2"),
-                ("A", "Attenuation factor = 10^(-a/10)"),
-                ("g1", "Antenna gain in dBi"),
-                ("g2", "Vertical angle attenuation based on antenna pattern in dB"),
-                ("g", "Total antenna gain = g1 - g2"),
-                ("G", "Gain factor = 10^(g/10)"),
-                ("Ps", "EIRP (Equivalent Isotropic Radiated Power) = Pm × A × G"),
-                ("P's", "ERP (Effective Radiated Power) = Ps / 1.64"),
-                ("ag", "Building damping in dB (0 for outdoor)"),
-                ("AG", "Building damping factor = 10^(-ag/10)"),
-                ("kr", "Ground reflection factor (1.6 per NISV Annex 2)"),
-                ("E'", "Calculated field strength at OKA in V/m"),
-                ("EIGW", "Emission limit per NISV in V/m"),
-                ("ds", "Safety distance in meters")
-            }
+            ("f", s.CalcExplainF),
+            ("d", s.CalcExplainD),
+            ("P", s.CalcExplainP),
+            ("AF", s.CalcExplainAF),
+            ("MF", s.CalcExplainMF),
+            ("Pm", s.CalcExplainPm),
+            ("a1", s.CalcExplainA1),
+            ("a2", s.CalcExplainA2),
+            ("a", s.CalcExplainA),
+            ("A", s.CalcExplainAFactor),
+            ("g1", s.CalcExplainG1),
+            ("g2", s.CalcExplainG2),
+            ("g", s.CalcExplainG),
+            ("G", s.CalcExplainGFactor),
+            ("Ps", s.CalcExplainPs),
+            ("P's", s.CalcExplainPsPrime),
+            ("ag", s.CalcExplainAg),
+            ("AG", s.CalcExplainAG),
+            ("kr", s.CalcExplainKr),
+            ("E'", s.CalcExplainE),
+            ("EIGW", s.CalcExplainEigw),
+            ("ds", s.CalcExplainDs)
         };
 
         foreach (var (symbol, description) in explanations)

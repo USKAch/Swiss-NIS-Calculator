@@ -39,7 +39,7 @@
                             <TextBox Text="{Binding Model}" Width="300" IsEnabled="{Binding CanEdit}"/>
                         </StackPanel>
 
-                        <!-- Line 2: Antenna Type, Polarization, and Rotatable -->
+                        <!-- Line 2: Antenna Type and Polarization -->
                         <StackPanel Orientation="Horizontal" Spacing="15">
                             <TextBlock Text="{Binding AntennaTypeLabel, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <ComboBox SelectedItem="{Binding AntennaType}" ItemsSource="{Binding AvailableAntennaTypes}" MinWidth="120" IsEnabled="{Binding CanEdit}"/>
@@ -47,15 +47,6 @@
                             <TextBlock Text="{Binding Polarization, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold" Margin="20,0,0,0"/>
                             <RadioButton Content="{Binding Horizontal, Source={x:Static loc:Strings.Instance}}" IsChecked="{Binding IsHorizontallyPolarized}" GroupName="Polarization" IsEnabled="{Binding CanEdit}"/>
                             <RadioButton Content="{Binding Vertical, Source={x:Static loc:Strings.Instance}}" IsChecked="{Binding IsVerticallyPolarized}" GroupName="Polarization" IsEnabled="{Binding CanEdit}"/>
-
-                            <!-- Rotatable (only for horizontal polarization) -->
-                            <CheckBox IsChecked="{Binding IsRotatable}" Content="{Binding Rotatable, Source={x:Static loc:Strings.Instance}}" IsEnabled="{Binding CanEdit}"
-                                      IsVisible="{Binding IsHorizontallyPolarized}" Margin="20,0,0,0"/>
-                            <NumericUpDown Value="{Binding HorizontalAngleDegrees}" ShowButtonSpinner="False"
-                                           Minimum="0" Maximum="360" Increment="10" Width="80"
-                                           IsVisible="{Binding IsRotatable}" IsEnabled="{Binding CanEdit}"/>
-                            <TextBlock Text="{Binding DegreeInfoOnly, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" Opacity="0.6"
-                                       IsVisible="{Binding IsRotatable}"/>
                         </StackPanel>
                     </StackPanel>
                 </Border>
@@ -90,7 +81,7 @@
                                                 <TextBlock Grid.Column="2" Text="{Binding Gain, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" Margin="15,0,8,0" FontWeight="SemiBold"/>
                                                 <NumericUpDown Grid.Column="3" Value="{Binding GainDbi}" ShowButtonSpinner="False" Minimum="-20" Maximum="50" Increment="0.5" FormatString="F1" Width="80"
                                                                IsEnabled="{Binding $parent[ItemsControl].((vm:AntennaMasterEditorViewModel)DataContext).CanEdit}"/>
-                                                <TextBlock Grid.Column="4" Text="{Binding GainRange, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" Margin="5,0,0,0" Opacity="0.6"/>
+                                                <TextBlock Grid.Column="4" Text="dBi" VerticalAlignment="Center" Margin="5,0,0,0"/>
                                                 <Button Grid.Column="5" Content="{Binding GenerateFromGain, Source={x:Static loc:Strings.Instance}}"
                                                         Command="{Binding $parent[ItemsControl].((vm:AntennaMasterEditorViewModel)DataContext).GeneratePatternCommand}"
                                                         CommandParameter="{Binding}"

@@ -33,6 +33,14 @@ public partial class MasterDataManagerViewModel : ViewModelBase
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanEditMasterData))]
     [NotifyPropertyChangedFor(nameof(IsReadOnlyForFactory))]
+    [NotifyPropertyChangedFor(nameof(CanEditSelectedAntenna))]
+    [NotifyPropertyChangedFor(nameof(CanDeleteSelectedAntenna))]
+    [NotifyPropertyChangedFor(nameof(CanEditSelectedCable))]
+    [NotifyPropertyChangedFor(nameof(CanDeleteSelectedCable))]
+    [NotifyPropertyChangedFor(nameof(CanEditSelectedRadio))]
+    [NotifyPropertyChangedFor(nameof(CanDeleteSelectedRadio))]
+    [NotifyPropertyChangedFor(nameof(CanEditSelectedOka))]
+    [NotifyPropertyChangedFor(nameof(CanDeleteSelectedOka))]
     private bool _isAdminMode;
 
     public bool CanEditMasterData => IsAdminMode;

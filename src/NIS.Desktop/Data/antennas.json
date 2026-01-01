@@ -3,7 +3,6 @@
     {
       "manufacturer": "Cushcraft",
       "model": "10-3CD",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 28,
@@ -22,12 +21,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Hy-Gain",
       "model": "103BAS",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 28,
@@ -46,12 +44,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Hy-Gain",
       "model": "105BAS",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 28,
@@ -70,12 +67,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Cushcraft",
       "model": "124WB",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -94,12 +90,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Cushcraft",
       "model": "13B2N",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -118,12 +113,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Cushcraft",
       "model": "15-4CD",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 21,
@@ -142,12 +136,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Hy-Gain",
       "model": "155BAS",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 21,
@@ -166,12 +159,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Cubex",
       "model": "2-El_Cubex",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -270,12 +262,11 @@
           ]
         }
       ],
-      "antennaType": "quad"
+      "antennaType": "Quad"
     },
     {
       "manufacturer": "Hy-Gain",
       "model": "2-El_Quad",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -326,12 +317,11 @@
           ]
         }
       ],
-      "antennaType": "quad"
+      "antennaType": "Quad"
     },
     {
       "manufacturer": "Cubex",
       "model": "2-El_SpitzCu",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -414,12 +404,11 @@
           ]
         }
       ],
-      "antennaType": "quad"
+      "antennaType": "Quad"
     },
     {
       "manufacturer": "Cushcraft",
       "model": "20-4CD",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -438,12 +427,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Tonna",
       "model": "20089",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -462,12 +450,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Hy-Gain",
       "model": "204BAS",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -486,12 +473,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Tonna",
       "model": "20505",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 50,
@@ -510,12 +496,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Hy-Gain",
       "model": "205BAS",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -534,12 +519,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Tonna",
       "model": "20623",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1240,
@@ -558,12 +542,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Tonna",
       "model": "20624",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1240,
@@ -582,12 +565,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Tonna",
       "model": "20635",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1240,
@@ -606,12 +588,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Tonna",
       "model": "20636",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1240,
@@ -630,12 +611,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Tonna",
       "model": "20650",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1240,
@@ -654,12 +634,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Tonna",
       "model": "20655",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1240,
@@ -678,12 +657,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Tonna",
       "model": "20725",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 2400,
@@ -702,12 +680,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Tonna",
       "model": "20804",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -726,12 +703,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Tonna",
       "model": "20808",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -750,12 +726,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Tonna",
       "model": "20809",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -774,12 +749,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Tonna",
       "model": "20813",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -798,12 +772,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Tonna",
       "model": "20818",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -822,12 +795,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Tonna",
       "model": "20919",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 430,
@@ -846,12 +818,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Tonna",
       "model": "20922",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 432,
@@ -870,12 +841,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Flexa",
       "model": "2xFX213hor",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -894,12 +864,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Flexa",
       "model": "2xFX217hor",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -918,12 +887,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Flexa",
       "model": "2xFx224hor",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -942,12 +910,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Flexa",
       "model": "2xFx2304horiz",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1240,
@@ -966,12 +933,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Flexa",
       "model": "2xFx2317hor",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1240,
@@ -990,12 +956,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Cushcraft",
       "model": "40-2CD",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -1014,12 +979,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Flexa",
       "model": "4xFX213hor",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -1038,12 +1002,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Flexa",
       "model": "4xFx2317hor",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1240,
@@ -1062,12 +1025,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Cushcraft",
       "model": "719B",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 432,
@@ -1086,12 +1048,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Cushcraft",
       "model": "729B",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 432,
@@ -1110,12 +1071,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Cushcraft",
       "model": "A-3-S",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -1166,12 +1126,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Cushcraft",
       "model": "A-3-WS",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 18,
@@ -1206,12 +1165,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Cushcraft",
       "model": "A-4-S",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -1262,12 +1220,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Cushcraft",
       "model": "A14410SN",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -1286,12 +1243,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Cushcraft",
       "model": "A27-10S",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -1326,12 +1282,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Cushcraft",
       "model": "A270-6S",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -1366,12 +1321,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Cushcraft",
       "model": "A43011N",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 432,
@@ -1390,12 +1344,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Cushcraft",
       "model": "A50-3S",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 50,
@@ -1414,12 +1367,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Cushcraft",
       "model": "A50-5S",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 50,
@@ -1438,12 +1390,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Cushcraft",
       "model": "A503S",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 50,
@@ -1462,12 +1413,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Cushcraft",
       "model": "A505S",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 50,
@@ -1486,12 +1436,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Cushcraft",
       "model": "A506S",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 50,
@@ -1510,12 +1459,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Cushcraft",
       "model": "ASL201",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -1598,12 +1546,11 @@
           ]
         }
       ],
-      "antennaType": "log-periodic"
+      "antennaType": "Log-Periodic"
     },
     {
       "manufacturer": "Hy-Gain",
       "model": "AV-640",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -1718,12 +1665,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Eigenbau",
       "model": "Bi-Square",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -1742,12 +1688,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Barker & Williamson",
       "model": "BWD-90",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 10,
@@ -1846,12 +1791,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Hy-Gain",
       "model": "CA-2x4max",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -1886,12 +1830,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Comet",
       "model": "CA-52HB4",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 50,
@@ -1910,12 +1853,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Mosley",
       "model": "CL-33-M",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -1966,12 +1908,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Mosley",
       "model": "CL-33warc",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -2054,12 +1995,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Mosley",
       "model": "CL-36-M",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -2110,12 +2050,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Diamond",
       "model": "CP5",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 3.5,
@@ -2198,12 +2137,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Comet",
       "model": "CX-725",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 50,
@@ -2254,12 +2192,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Comet",
       "model": "CX-901",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -2310,12 +2247,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Comet",
       "model": "CX-902",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -2366,12 +2302,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Cushcraft",
       "model": "D-3-W",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 10,
@@ -2422,12 +2357,11 @@
           ]
         }
       ],
-      "antennaType": "wire"
+      "antennaType": "Wire"
     },
     {
       "manufacturer": "Cushcraft",
       "model": "D-4",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -2494,12 +2428,11 @@
           ]
         }
       ],
-      "antennaType": "wire"
+      "antennaType": "Wire"
     },
     {
       "manufacturer": "Wimo",
       "model": "D2T",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -2614,12 +2547,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Allgemein",
       "model": "DeltaLoop 84m",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1.8,
@@ -2766,12 +2698,11 @@
           ]
         }
       ],
-      "antennaType": "loop"
+      "antennaType": "Loop"
     },
     {
       "manufacturer": "Allgemein",
       "model": "DeltaLoop120m",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1.8,
@@ -2918,12 +2849,11 @@
           ]
         }
       ],
-      "antennaType": "loop"
+      "antennaType": "Loop"
     },
     {
       "manufacturer": "Allgemein",
       "model": "DeltaLoop42m",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1.8,
@@ -3070,12 +3000,11 @@
           ]
         }
       ],
-      "antennaType": "loop"
+      "antennaType": "Loop"
     },
     {
       "manufacturer": "Allgemein",
       "model": "DeltaLoop 84m",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1.8,
@@ -3222,12 +3151,11 @@
           ]
         }
       ],
-      "antennaType": "loop"
+      "antennaType": "Loop"
     },
     {
       "manufacturer": "Allgemein",
       "model": "Dipol",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1.8,
@@ -3454,12 +3382,11 @@
           ]
         }
       ],
-      "antennaType": "wire"
+      "antennaType": "Wire"
     },
     {
       "manufacturer": "Allgemein",
       "model": "Dipol",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1.8,
@@ -3686,12 +3613,11 @@
           ]
         }
       ],
-      "antennaType": "wire"
+      "antennaType": "Wire"
     },
     {
       "manufacturer": "Titanex",
       "model": "DLP-10_6",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 28,
@@ -3726,12 +3652,11 @@
           ]
         }
       ],
-      "antennaType": "log-periodic"
+      "antennaType": "Log-Periodic"
     },
     {
       "manufacturer": "Titan",
       "model": "DLP-19",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -3846,12 +3771,11 @@
           ]
         }
       ],
-      "antennaType": "log-periodic"
+      "antennaType": "Log-Periodic"
     },
     {
       "manufacturer": "Diverse",
       "model": "Doublet_2x10m",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1.8,
@@ -3998,12 +3922,11 @@
           ]
         }
       ],
-      "antennaType": "wire"
+      "antennaType": "Wire"
     },
     {
       "manufacturer": "Diverse",
       "model": "Doublet_2x15m",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1.8,
@@ -4150,12 +4073,11 @@
           ]
         }
       ],
-      "antennaType": "wire"
+      "antennaType": "Wire"
     },
     {
       "manufacturer": "Diverse",
       "model": "Doublet_2x20m",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1.8,
@@ -4302,12 +4224,11 @@
           ]
         }
       ],
-      "antennaType": "wire"
+      "antennaType": "Wire"
     },
     {
       "manufacturer": "Diamond",
       "model": "DP-CP6",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -4390,12 +4311,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Muehla",
       "model": "DX2000",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 3.5,
@@ -4526,12 +4446,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Diamond",
       "model": "F-23",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -4550,12 +4469,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Tonna",
       "model": "F9FT-horiz",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -4574,12 +4492,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Tonna",
       "model": "F9FT-vert",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -4598,12 +4515,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Fritzel",
       "model": "FB-Do450",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -4686,12 +4602,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Fritzel",
       "model": "FB-Do505",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -4774,12 +4689,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Fritzel",
       "model": "FB-DX460",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 10,
@@ -4878,12 +4792,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Fritzel",
       "model": "FB-Dx506",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 10,
@@ -4982,12 +4895,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Fritzel",
       "model": "FB-DX660",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -5038,12 +4950,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Fritzel",
       "model": "FB13",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -5094,12 +5005,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Fritzel",
       "model": "FB23",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -5150,12 +5060,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Fritzel",
       "model": "FB33",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -5206,12 +5115,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Fritzel",
       "model": "FB34",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -5278,12 +5186,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Fritzel",
       "model": "FB53",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -5334,12 +5241,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Fritzel",
       "model": "FD3",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 3.5,
@@ -5422,12 +5328,11 @@
           ]
         }
       ],
-      "antennaType": "wire"
+      "antennaType": "Wire"
     },
     {
       "manufacturer": "Fritzel",
       "model": "FD4",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 3.5,
@@ -5558,12 +5463,11 @@
           ]
         }
       ],
-      "antennaType": "wire"
+      "antennaType": "Wire"
     },
     {
       "manufacturer": "Flexa",
       "model": "FX1308-V",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 2400,
@@ -5582,12 +5486,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Flexa",
       "model": "Fx205v",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -5606,12 +5509,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Flexa",
       "model": "FX210",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -5630,12 +5532,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Flexa",
       "model": "FX213",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -5654,12 +5555,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Flexa",
       "model": "Fx217",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -5678,12 +5578,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Flexa",
       "model": "Fx224",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -5702,12 +5601,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Flexa",
       "model": "Fx2304horiz",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1240,
@@ -5726,12 +5624,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Flexa",
       "model": "Fx2304v",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1240,
@@ -5750,12 +5647,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Flexa",
       "model": "Fx2309",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1240,
@@ -5774,12 +5670,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Flexa",
       "model": "Fx2317",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1240,
@@ -5798,12 +5693,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Flexa",
       "model": "Fx2317hor",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1240,
@@ -5822,12 +5716,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Flexa",
       "model": "Fx2317vert",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1240,
@@ -5846,12 +5739,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Flexa",
       "model": "Fx7015v",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 432,
@@ -5870,12 +5762,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Flexa",
       "model": "Fx7033",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 432,
@@ -5894,12 +5785,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Flexa",
       "model": "Fx7033hor",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 432,
@@ -5918,12 +5808,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Flexa",
       "model": "Fx7033vert",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 432,
@@ -5942,12 +5831,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Flexa",
       "model": "Fx7044-4",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 432,
@@ -5966,12 +5854,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Flexa",
       "model": "Fx7044",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 432,
@@ -5990,12 +5877,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Flexa",
       "model": "Fx7056",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 432,
@@ -6014,12 +5900,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Flexa",
       "model": "Fx7073",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 432,
@@ -6038,12 +5923,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Flexa",
       "model": "Fx7073hor",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 432,
@@ -6062,12 +5946,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Flexa",
       "model": "Fx7073vert",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 432,
@@ -6086,12 +5969,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Diamond",
       "model": "G-200",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 2400,
@@ -6110,12 +5992,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Allgemein",
       "model": "G5RV 15m",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -6230,12 +6111,11 @@
           ]
         }
       ],
-      "antennaType": "wire"
+      "antennaType": "Wire"
     },
     {
       "manufacturer": "Allgemein",
       "model": "G5RV 31m",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 3.5,
@@ -6366,12 +6246,11 @@
           ]
         }
       ],
-      "antennaType": "wire"
+      "antennaType": "Wire"
     },
     {
       "manufacturer": "Titanex",
       "model": "GPA80-10",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 3.5,
@@ -6502,12 +6381,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Allgemein",
       "model": "GP Triple",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -6574,12 +6452,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Comet",
       "model": "GP-15",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 50,
@@ -6630,12 +6507,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Comet",
       "model": "GP-21",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1240,
@@ -6654,12 +6530,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Comet",
       "model": "GP-3N",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -6694,12 +6569,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Comet",
       "model": "GP-91",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -6750,12 +6624,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Comet",
       "model": "GP-95",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -6806,12 +6679,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Comet",
       "model": "GP-9N",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -6846,12 +6718,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Fritzel",
       "model": "GPA30",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -6902,12 +6773,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Fritzel",
       "model": "GPA404",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -6974,12 +6844,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Fritzel",
       "model": "GPA50",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 3.5,
@@ -7062,12 +6931,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Allgemein",
       "model": "HB9CV",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -7214,12 +7082,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Allgemein",
       "model": "Helix-2",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 432,
@@ -7270,12 +7137,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Allgemein",
       "model": "Helix",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 432,
@@ -7326,12 +7192,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Butterfly",
       "model": "HF-5",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -7414,12 +7279,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "KLM",
       "model": "KT-34A",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -7470,12 +7334,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "KLM",
       "model": "KT-34XA",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -7526,12 +7389,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Titanex",
       "model": "LP-10",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -7614,12 +7476,11 @@
           ]
         }
       ],
-      "antennaType": "log-periodic"
+      "antennaType": "Log-Periodic"
     },
     {
       "manufacturer": "Titanex",
       "model": "LP-1030",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 10,
@@ -7718,12 +7579,11 @@
           ]
         }
       ],
-      "antennaType": "log-periodic"
+      "antennaType": "Log-Periodic"
     },
     {
       "manufacturer": "Titanex",
       "model": "LP-11",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -7806,12 +7666,11 @@
           ]
         }
       ],
-      "antennaType": "log-periodic"
+      "antennaType": "Log-Periodic"
     },
     {
       "manufacturer": "Titanex",
       "model": "LP-12",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -7894,12 +7753,11 @@
           ]
         }
       ],
-      "antennaType": "log-periodic"
+      "antennaType": "Log-Periodic"
     },
     {
       "manufacturer": "Titanex",
       "model": "LP-15",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -7982,12 +7840,11 @@
           ]
         }
       ],
-      "antennaType": "log-periodic"
+      "antennaType": "Log-Periodic"
     },
     {
       "manufacturer": "Titanex",
       "model": "LP-1830",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 18,
@@ -8054,12 +7911,11 @@
           ]
         }
       ],
-      "antennaType": "log-periodic"
+      "antennaType": "Log-Periodic"
     },
     {
       "manufacturer": "Titanex",
       "model": "LP-5",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -8142,12 +7998,11 @@
           ]
         }
       ],
-      "antennaType": "log-periodic"
+      "antennaType": "Log-Periodic"
     },
     {
       "manufacturer": "Titanex",
       "model": "LP-6",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -8230,12 +8085,11 @@
           ]
         }
       ],
-      "antennaType": "log-periodic"
+      "antennaType": "Log-Periodic"
     },
     {
       "manufacturer": "Titanex",
       "model": "LP-7",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 10,
@@ -8334,12 +8188,11 @@
           ]
         }
       ],
-      "antennaType": "log-periodic"
+      "antennaType": "Log-Periodic"
     },
     {
       "manufacturer": "Titan",
       "model": "LP-8",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -8422,12 +8275,11 @@
           ]
         }
       ],
-      "antennaType": "log-periodic"
+      "antennaType": "Log-Periodic"
     },
     {
       "manufacturer": "Titanex",
       "model": "LPDA-5",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -8510,12 +8362,11 @@
           ]
         }
       ],
-      "antennaType": "log-periodic"
+      "antennaType": "Log-Periodic"
     },
     {
       "manufacturer": "Langdraht",
       "model": "LW 100m",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1.8,
@@ -8662,12 +8513,11 @@
           ]
         }
       ],
-      "antennaType": "wire"
+      "antennaType": "Wire"
     },
     {
       "manufacturer": "Langdraht",
       "model": "LW 10m",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1.8,
@@ -8814,12 +8664,11 @@
           ]
         }
       ],
-      "antennaType": "wire"
+      "antennaType": "Wire"
     },
     {
       "manufacturer": "Langdraht",
       "model": "LW 12m",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1.8,
@@ -8966,12 +8815,11 @@
           ]
         }
       ],
-      "antennaType": "wire"
+      "antennaType": "Wire"
     },
     {
       "manufacturer": "Langdraht",
       "model": "LW 14m",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1.8,
@@ -9118,12 +8966,11 @@
           ]
         }
       ],
-      "antennaType": "wire"
+      "antennaType": "Wire"
     },
     {
       "manufacturer": "Langdraht",
       "model": "LW 16m",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1.8,
@@ -9270,12 +9117,11 @@
           ]
         }
       ],
-      "antennaType": "wire"
+      "antennaType": "Wire"
     },
     {
       "manufacturer": "Langdraht",
       "model": "LW 18m",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1.8,
@@ -9422,12 +9268,11 @@
           ]
         }
       ],
-      "antennaType": "wire"
+      "antennaType": "Wire"
     },
     {
       "manufacturer": "Langdraht",
       "model": "LW 20m",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1.8,
@@ -9574,12 +9419,11 @@
           ]
         }
       ],
-      "antennaType": "wire"
+      "antennaType": "Wire"
     },
     {
       "manufacturer": "Langdraht",
       "model": "LW 30m",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1.8,
@@ -9726,12 +9570,11 @@
           ]
         }
       ],
-      "antennaType": "wire"
+      "antennaType": "Wire"
     },
     {
       "manufacturer": "Langdraht",
       "model": "LW 40m",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1.8,
@@ -9878,12 +9721,11 @@
           ]
         }
       ],
-      "antennaType": "wire"
+      "antennaType": "Wire"
     },
     {
       "manufacturer": "Langdraht",
       "model": "LW 60m",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1.8,
@@ -10030,12 +9872,11 @@
           ]
         }
       ],
-      "antennaType": "wire"
+      "antennaType": "Wire"
     },
     {
       "manufacturer": "Langdraht",
       "model": "LW 80m",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1.8,
@@ -10182,12 +10023,11 @@
           ]
         }
       ],
-      "antennaType": "wire"
+      "antennaType": "Wire"
     },
     {
       "manufacturer": "Langdraht",
       "model": "LW 8m",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1.8,
@@ -10334,12 +10174,11 @@
           ]
         }
       ],
-      "antennaType": "wire"
+      "antennaType": "Wire"
     },
     {
       "manufacturer": "Magn. Loop",
       "model": "m-loop162cm",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 3.5,
@@ -10406,12 +10245,11 @@
           ]
         }
       ],
-      "antennaType": "loop"
+      "antennaType": "Loop"
     },
     {
       "manufacturer": "Magn. Loop",
       "model": "m-loop194cm",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 3.5,
@@ -10446,12 +10284,11 @@
           ]
         }
       ],
-      "antennaType": "loop"
+      "antennaType": "Loop"
     },
     {
       "manufacturer": "Magn. Loop",
       "model": "m-loop79cm",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 3.5,
@@ -10582,12 +10419,11 @@
           ]
         }
       ],
-      "antennaType": "loop"
+      "antennaType": "Loop"
     },
     {
       "manufacturer": "Magn. Loop",
       "model": "m-loop825mm",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -10638,12 +10474,11 @@
           ]
         }
       ],
-      "antennaType": "loop"
+      "antennaType": "Loop"
     },
     {
       "manufacturer": "Magn. Loop",
       "model": "m-loop84cm",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 3.5,
@@ -10774,12 +10609,11 @@
           ]
         }
       ],
-      "antennaType": "loop"
+      "antennaType": "Loop"
     },
     {
       "manufacturer": "Fritzel",
       "model": "MFB23",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -10830,12 +10664,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Mosley",
       "model": "Mini-33",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -10886,12 +10719,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Mosley",
       "model": "MP-33N warc",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -10974,12 +10806,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Mosley",
       "model": "MP-33N",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -11030,12 +10861,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB10-3W",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -11086,12 +10916,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB11-3",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -11142,12 +10971,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB11-5",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -11230,12 +11058,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB12-4",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -11302,12 +11129,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB12-4WARC",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -11374,12 +11200,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Optibeam",
       "model": "OB12-6",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -11478,12 +11303,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB13-6",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -11582,12 +11406,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB15-7",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -11702,12 +11525,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB16-3",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -11758,12 +11580,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB16-5",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -11846,12 +11667,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB17-4",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -11918,12 +11738,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB18-6",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -12022,12 +11841,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB2-30",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 10,
@@ -12046,12 +11864,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB2-40",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -12070,12 +11887,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB2-40M",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -12094,12 +11910,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB2-80",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 3.5,
@@ -12118,12 +11933,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB3-30",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 10,
@@ -12142,12 +11956,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB3-80",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 3.5,
@@ -12166,12 +11979,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB4-2W",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 18,
@@ -12206,12 +12018,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB4-2WARC",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 18,
@@ -12246,12 +12057,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB4-40",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -12270,12 +12080,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB4020",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -12310,12 +12119,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB4030",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -12350,12 +12158,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB5-10",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 28,
@@ -12374,12 +12181,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB5-12",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 24,
@@ -12398,12 +12204,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB5-15",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 21,
@@ -12422,12 +12227,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB5-17",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 18,
@@ -12446,12 +12250,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB5-20",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -12470,12 +12273,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB5-6",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 50,
@@ -12494,12 +12296,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB6-10",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 28,
@@ -12518,12 +12319,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB6-2WARC",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 24,
@@ -12558,12 +12358,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB6-3M",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -12614,12 +12413,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB6-6",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 50,
@@ -12638,12 +12436,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB7-2W",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 18,
@@ -12678,12 +12475,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB7-2WARC",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 18,
@@ -12718,12 +12514,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB7-3",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -12774,12 +12569,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB7-3M",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -12830,12 +12624,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Optibeam",
       "model": "OB8-4M",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -12902,12 +12695,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB804020",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 3.5,
@@ -12958,12 +12750,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Optibeam",
       "model": "OB8_4M",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -13030,12 +12821,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB9-2W",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 18,
@@ -13070,12 +12860,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB9-2WARC",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 18,
@@ -13110,12 +12899,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OB9-5",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -13198,12 +12986,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Opti-Beam",
       "model": "OBW10-5",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -13286,12 +13073,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "DJ2UT",
       "model": "P5C",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -13342,12 +13128,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Mosley",
       "model": "Pro-57B-40",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -13446,12 +13231,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Mosley",
       "model": "Pro-57B",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -13534,12 +13318,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Mosley",
       "model": "Pro-67A",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -13622,12 +13405,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Mosley",
       "model": "Pro-67B",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -13710,12 +13492,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Mosley",
       "model": "Pro-67c-3",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -13830,12 +13611,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Mosley",
       "model": "Pro-77A",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -13950,12 +13730,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Mosley",
       "model": "Pro-95",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -14038,12 +13817,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Mosley",
       "model": "Pro-96",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -14142,12 +13920,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Allgemein",
       "model": "Quad-2El",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -14230,12 +14007,11 @@
           ]
         }
       ],
-      "antennaType": "quad"
+      "antennaType": "Quad"
     },
     {
       "manufacturer": "Allgemein",
       "model": "Quad-3El",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -14318,12 +14094,11 @@
           ]
         }
       ],
-      "antennaType": "quad"
+      "antennaType": "Quad"
     },
     {
       "manufacturer": "Cushcraft",
       "model": "R5",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -14406,12 +14181,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Cushcraft",
       "model": "R6000",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -14510,12 +14284,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Cushcraft",
       "model": "R6xyz",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -14614,12 +14387,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Cushcraft",
       "model": "R7",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -14734,12 +14506,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Cushcraft",
       "model": "R7000",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 3.5,
@@ -14870,12 +14641,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Cush-Craft",
       "model": "R8",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -14990,12 +14760,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Allgemein",
       "model": "Ringo Range",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -15030,12 +14799,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "SHF",
       "model": "SHF1340",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 2400,
@@ -15054,12 +14822,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "SHF",
       "model": "SHF1367",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 2400,
@@ -15078,12 +14845,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "SHF",
       "model": "SHF2328",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1240,
@@ -15102,12 +14868,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "SHF",
       "model": "SHF2344",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1240,
@@ -15126,12 +14891,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "SHF",
       "model": "SHF2367",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 1240,
@@ -15150,12 +14914,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "SteppIR",
       "model": "SteppIR_2El",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -15254,12 +15017,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "SteppIR",
       "model": "SteppIR_3El",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -15358,12 +15120,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "SteppIR",
       "model": "SteppIR_4El",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -15462,12 +15223,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "SteppIR",
       "model": "Stepp_3El",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -15566,12 +15326,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Tonna",
       "model": "T-17El-horiz",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -15590,12 +15349,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Tonna",
       "model": "T-17El-vert",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -15614,12 +15372,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Tonna",
       "model": "T-4x17El-horiz",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -15638,12 +15395,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Tonna",
       "model": "T-4x17El-vert",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -15662,12 +15418,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Mosley",
       "model": "TA-31jrn",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -15718,12 +15473,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Mosley",
       "model": "TA-31M",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -15774,12 +15528,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Mosley",
       "model": "TA-32jrn",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -15830,12 +15583,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Mosley",
       "model": "TA-32M",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -15886,12 +15638,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Mosle",
       "model": "TA-33jrn warc",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -15974,12 +15725,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Mosley",
       "model": "TA-33jrn",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -16030,12 +15780,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Mosle",
       "model": "TA-33M warc",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -16118,12 +15867,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Mosle",
       "model": "TA-33M",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -16174,12 +15922,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Mosle",
       "model": "TA-34xl warc",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -16262,12 +16009,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Mosle",
       "model": "TA-34xl",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -16318,12 +16064,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Mosley",
       "model": "TA-53M",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -16406,12 +16151,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Hy-Gain",
       "model": "TH11DX",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -16494,12 +16238,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Hy-Gain",
       "model": "TH2Mk3",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -16550,12 +16293,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Hy-Gain",
       "model": "TH3JRS",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -16606,12 +16348,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Hy-Gain",
       "model": "TH3Mk3",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -16662,12 +16403,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Hy-Gain",
       "model": "TH5Mk2",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -16718,12 +16458,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Hy-Gain",
       "model": "TH6DXX",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -16774,12 +16513,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Hy-Gain",
       "model": "TH7DX",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -16830,12 +16568,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Mosle",
       "model": "TW-23M",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 18,
@@ -16870,12 +16607,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Mosle",
       "model": "TW-24xl",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 18,
@@ -16910,12 +16646,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Mosle",
       "model": "TW-31xl",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 10,
@@ -16966,12 +16701,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Mosle",
       "model": "TW-32xl",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 10,
@@ -17022,12 +16756,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Mosle",
       "model": "TW-33xl",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 10,
@@ -17078,12 +16811,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Fritzel",
       "model": "UFB12",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 18,
@@ -17118,12 +16850,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Fritzel",
       "model": "UFB13",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 10,
@@ -17174,12 +16905,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Fritzel",
       "model": "UFB33",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 10,
@@ -17230,12 +16960,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Diamon",
       "model": "V-2000",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 50,
@@ -17286,12 +17015,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Diamon",
       "model": "V2000",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 50,
@@ -17342,12 +17070,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Fritzel",
       "model": "W3-200",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 3.5,
@@ -17478,12 +17205,11 @@
           ]
         }
       ],
-      "antennaType": "wire"
+      "antennaType": "Wire"
     },
     {
       "manufacturer": "Fritzel",
       "model": "W3-2000",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 3.5,
@@ -17614,12 +17340,11 @@
           ]
         }
       ],
-      "antennaType": "wire"
+      "antennaType": "Wire"
     },
     {
       "manufacturer": "Allgemein",
       "model": "W3DZZ",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 3.5,
@@ -17750,12 +17475,11 @@
           ]
         }
       ],
-      "antennaType": "wire"
+      "antennaType": "Wire"
     },
     {
       "manufacturer": "Maspro",
       "model": "WH-59hor",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -17790,12 +17514,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Maspro",
       "model": "WH-59vert",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -17830,12 +17553,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Maspr",
       "model": "WHS-32N",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -17870,12 +17592,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Wimo",
       "model": "Wx208",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -17894,12 +17615,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Wimo",
       "model": "Wx214",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -17918,12 +17638,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Wimo",
       "model": "Wx220",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -17942,12 +17661,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Wimo",
       "model": "Wx7020",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 432,
@@ -17966,12 +17684,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Wimo",
       "model": "Wx7036",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 432,
@@ -17990,12 +17707,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Wimo",
       "model": "Wy204",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -18014,12 +17730,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Wimo",
       "model": "Wy207",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -18038,12 +17753,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Wimo",
       "model": "Wy210",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -18062,12 +17776,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Wimo",
       "model": "Wy7010",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 432,
@@ -18086,12 +17799,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Wimo",
       "model": "Wy7018",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 432,
@@ -18110,12 +17822,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Wimo",
       "model": "Wy7023",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 432,
@@ -18134,12 +17845,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Wimo",
       "model": "Wy706",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 432,
@@ -18158,12 +17868,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Diamond",
       "model": "X-200",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -18198,12 +17907,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Diamond",
       "model": "X-30",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -18238,12 +17946,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Diamond",
       "model": "X-300",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -18278,12 +17985,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Diamond",
       "model": "X-4000",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -18334,12 +18040,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Diamond",
       "model": "X-50",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -18374,12 +18079,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Diamond",
       "model": "X-5000",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -18430,12 +18134,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Diamond",
       "model": "X-500H",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -18470,12 +18173,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Diamond",
       "model": "X-510N",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -18510,12 +18212,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Diamond",
       "model": "X-6000",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -18566,12 +18267,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Diamond",
       "model": "X-7000",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -18622,12 +18322,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Diamond",
       "model": "X-700H",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -18662,12 +18361,11 @@
           ]
         }
       ],
-      "antennaType": "vertical"
+      "antennaType": "Vertical"
     },
     {
       "manufacturer": "Wimo",
       "model": "X-Quad-2",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 144,
@@ -18686,12 +18384,11 @@
           ]
         }
       ],
-      "antennaType": "quad"
+      "antennaType": "Quad"
     },
     {
       "manufacturer": "Wimo",
       "model": "X-Quad-70",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 432,
@@ -18710,12 +18407,11 @@
           ]
         }
       ],
-      "antennaType": "quad"
+      "antennaType": "Quad"
     },
     {
       "manufacturer": "Cush_Craft",
       "model": "X7",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -18766,12 +18462,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Cush-Craft",
       "model": "XM510",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 28,
@@ -18790,12 +18485,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Cush-Craft",
       "model": "XM515",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 21,
@@ -18814,12 +18508,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Cush-Craft",
       "model": "XM520",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 14,
@@ -18838,12 +18531,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Somme",
       "model": "XP406",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -18942,12 +18634,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Somme",
       "model": "XP507",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -19062,12 +18753,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Somme",
       "model": "XP707",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -19182,12 +18872,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Somme",
       "model": "XP807",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -19302,12 +18991,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Allgemein",
       "model": "Yagi-2El",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -19486,12 +19174,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Allgemei",
       "model": "Yagi-3El",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -19670,12 +19357,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Allgemein",
       "model": "Yagi-4El",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -19854,12 +19540,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Allgemein",
       "model": "Yagi-5El",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -20038,12 +19723,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Allgemein",
       "model": "Yagi-6El",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -20222,12 +19906,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Allgemein",
       "model": "Yagi-7El",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -20406,12 +20089,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Allgemein",
       "model": "Yagi-8El",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 7,
@@ -20574,12 +20256,11 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     },
     {
       "manufacturer": "Wimo",
       "model": "ZX6-2",
-      "isRotatable": true,
       "bands": [
         {
           "frequencyMHz": 50,
@@ -20598,7 +20279,7 @@
           ]
         }
       ],
-      "antennaType": "yagi"
+      "antennaType": "Yagi"
     }
   ]
 }

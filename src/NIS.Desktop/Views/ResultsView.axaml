@@ -68,40 +68,81 @@
                                             <RowDefinition Height="*"/>
                                         </Grid.RowDefinitions>
 
-                                        <!-- Table Header -->
-                                        <Grid ColumnDefinitions="60,60,90,90,80,95,75,90,75,55,60,60" Background="{DynamicResource SystemControlBackgroundAltMediumLowBrush}" Margin="-10,-10,-10,0">
-                                            <TextBlock Text="f (MHz)" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Padding="4,6" HorizontalAlignment="Center"/>
-                                            <TextBlock Grid.Column="1" Text="Pm (W)" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Padding="4,6" HorizontalAlignment="Center"/>
-                                            <TextBlock Grid.Column="2" Text="Cable Loss (dB)" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Padding="4,6" HorizontalAlignment="Center"/>
-                                            <TextBlock Grid.Column="3" Text="Ant.Gain (dBi)" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Padding="4,6" HorizontalAlignment="Center"/>
-                                            <TextBlock Grid.Column="4" Text="Vert.Att (dB)" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Padding="4,6" HorizontalAlignment="Center"/>
-                                            <TextBlock Grid.Column="5" Text="Total Gain (dB)" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Padding="4,6" HorizontalAlignment="Center"/>
-                                            <TextBlock Grid.Column="6" Text="EIRP (W)" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Padding="4,6" HorizontalAlignment="Center"/>
-                                            <TextBlock Grid.Column="7" Text="Bld.Damp (dB)" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Padding="4,6" HorizontalAlignment="Center"/>
-                                            <TextBlock Grid.Column="8" Text="E' (V/m)" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Padding="4,6" HorizontalAlignment="Center"/>
-                                            <TextBlock Grid.Column="9" Text="Limit" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Padding="4,6" HorizontalAlignment="Center"/>
-                                            <TextBlock Grid.Column="10" Text="ds (m)" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Padding="4,6" HorizontalAlignment="Center"/>
-                                            <TextBlock Grid.Column="11" Text="Status" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Padding="4,6" HorizontalAlignment="Center"/>
+                                        <!-- Table Header (two lines: label + unit) -->
+                                        <Grid ColumnDefinitions="45,50,55,55,50,70,55,50,55,55,60,60,55" Background="{DynamicResource SystemControlBackgroundAltMediumLowBrush}" Margin="-10,-10,-10,0">
+                                            <StackPanel HorizontalAlignment="Center" Margin="0,6,0,4">
+                                                <TextBlock Text="f" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="MHz" FontSize="11" Foreground="{DynamicResource TextFillColorTertiaryBrush}" HorizontalAlignment="Center"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" HorizontalAlignment="Center" Margin="0,6,0,4">
+                                                <TextBlock Text="Pm" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="W" FontSize="11" Foreground="{DynamicResource TextFillColorTertiaryBrush}" HorizontalAlignment="Center"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="2" HorizontalAlignment="Center" Margin="0,6,0,4">
+                                                <TextBlock Text="{Binding CableLbl, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="dB" FontSize="11" Foreground="{DynamicResource TextFillColorTertiaryBrush}" HorizontalAlignment="Center"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="3" HorizontalAlignment="Center" Margin="0,6,0,4">
+                                                <TextBlock Text="{Binding GainLbl, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="dBi" FontSize="11" Foreground="{DynamicResource TextFillColorTertiaryBrush}" HorizontalAlignment="Center"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="4" HorizontalAlignment="Center" Margin="0,6,0,4">
+                                                <TextBlock Text="{Binding VertLbl, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="dB" FontSize="11" Foreground="{DynamicResource TextFillColorTertiaryBrush}" HorizontalAlignment="Center"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="5" HorizontalAlignment="Center" Margin="0,6,0,4">
+                                                <TextBlock Text="{Binding TotGainLbl, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="dB" FontSize="11" Foreground="{DynamicResource TextFillColorTertiaryBrush}" HorizontalAlignment="Center"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="6" HorizontalAlignment="Center" Margin="0,6,0,4">
+                                                <TextBlock Text="{Binding EirpLbl, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="W" FontSize="11" Foreground="{DynamicResource TextFillColorTertiaryBrush}" HorizontalAlignment="Center"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="7" HorizontalAlignment="Center" Margin="0,6,0,4">
+                                                <TextBlock Text="{Binding BldLbl, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="dB" FontSize="11" Foreground="{DynamicResource TextFillColorTertiaryBrush}" HorizontalAlignment="Center"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="8" HorizontalAlignment="Center" Margin="0,6,0,4">
+                                                <TextBlock Text="E'" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="V/m" FontSize="11" Foreground="{DynamicResource TextFillColorTertiaryBrush}" HorizontalAlignment="Center"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="9" HorizontalAlignment="Center" Margin="0,6,0,4">
+                                                <TextBlock Text="{Binding LimitLbl, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="V/m" FontSize="11" Foreground="{DynamicResource TextFillColorTertiaryBrush}" HorizontalAlignment="Center"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="10" HorizontalAlignment="Center" Margin="0,6,0,4">
+                                                <TextBlock Text="{Binding SafeDistLbl, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="m" FontSize="11" Foreground="{DynamicResource TextFillColorTertiaryBrush}" HorizontalAlignment="Center"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="11" HorizontalAlignment="Center" Margin="0,6,0,4">
+                                                <TextBlock Text="{Binding OkaDistLbl, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="m" FontSize="11" Foreground="{DynamicResource TextFillColorTertiaryBrush}" HorizontalAlignment="Center"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="12" HorizontalAlignment="Center" Margin="0,6,0,4">
+                                                <TextBlock Text="{Binding StatusHeader, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+                                                <TextBlock Text=" " FontSize="11" HorizontalAlignment="Center"/>
+                                            </StackPanel>
                                         </Grid>
 
                                         <!-- Table Rows -->
-                                        <ItemsControl Grid.Row="1" ItemsSource="{Binding BandResults}" Margin="0,5,0,0">
+                                        <ItemsControl Grid.Row="1" ItemsSource="{Binding BandResults}" Margin="0,8,0,0">
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
-                                                    <Border Padding="4,4" Margin="0,1">
-                                                        <Grid ColumnDefinitions="60,60,90,90,80,95,75,90,75,55,60,60">
+                                                    <Border Padding="0,4" Margin="0,1">
+                                                        <Grid ColumnDefinitions="45,50,55,55,50,70,55,50,55,55,60,60,55" Margin="-10,0,0,0">
                                                             <TextBlock Text="{Binding FrequencyMHz, StringFormat='{}{0:F0}'}" FontSize="13" HorizontalAlignment="Center"/>
-                                                            <TextBlock Grid.Column="1" Text="{Binding MeanPowerW, StringFormat='{}{0:F2}'}" FontSize="13" HorizontalAlignment="Center"/>
-                                                            <TextBlock Grid.Column="2" Text="{Binding TotalLossDb, StringFormat='{}{0:F2}'}" FontSize="13" HorizontalAlignment="Center"/>
-                                                            <TextBlock Grid.Column="3" Text="{Binding GainDbi, StringFormat='{}{0:F2}'}" FontSize="13" HorizontalAlignment="Center"/>
-                                                            <TextBlock Grid.Column="4" Text="{Binding VerticalAttenuation, StringFormat='{}{0:F2}'}" FontSize="13" HorizontalAlignment="Center"/>
-                                                            <TextBlock Grid.Column="5" Text="{Binding TotalGainDbi, StringFormat='{}{0:F2}'}" FontSize="13" HorizontalAlignment="Center"/>
-                                                            <TextBlock Grid.Column="6" Text="{Binding Eirp, StringFormat='{}{0:F2}'}" FontSize="13" HorizontalAlignment="Center"/>
-                                                            <TextBlock Grid.Column="7" Text="{Binding BuildingDampingDb, StringFormat='{}{0:F2}'}" FontSize="13" HorizontalAlignment="Center"/>
+                                                            <TextBlock Grid.Column="1" Text="{Binding MeanPowerW, StringFormat='{}{0:F1}'}" FontSize="13" HorizontalAlignment="Center"/>
+                                                            <TextBlock Grid.Column="2" Text="{Binding TotalLossDb, StringFormat='{}{0:F1}'}" FontSize="13" HorizontalAlignment="Center"/>
+                                                            <TextBlock Grid.Column="3" Text="{Binding GainDbi, StringFormat='{}{0:F1}'}" FontSize="13" HorizontalAlignment="Center"/>
+                                                            <TextBlock Grid.Column="4" Text="{Binding VerticalAttenuation, StringFormat='{}{0:F1}'}" FontSize="13" HorizontalAlignment="Center"/>
+                                                            <TextBlock Grid.Column="5" Text="{Binding TotalGainDbi, StringFormat='{}{0:F1}'}" FontSize="13" HorizontalAlignment="Center"/>
+                                                            <TextBlock Grid.Column="6" Text="{Binding Eirp, StringFormat='{}{0:F1}'}" FontSize="13" HorizontalAlignment="Center"/>
+                                                            <TextBlock Grid.Column="7" Text="{Binding BuildingDampingDb, StringFormat='{}{0:F1}'}" FontSize="13" HorizontalAlignment="Center"/>
                                                             <TextBlock Grid.Column="8" Text="{Binding FieldStrength, StringFormat='{}{0:F2}'}" FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center"/>
                                                             <TextBlock Grid.Column="9" Text="{Binding Limit, StringFormat='{}{0:F1}'}" FontSize="13" HorizontalAlignment="Center"/>
-                                                            <TextBlock Grid.Column="10" Text="{Binding SafetyDistance, StringFormat='{}{0:F2}'}" FontSize="13" HorizontalAlignment="Center"/>
-                                                            <TextBlock Grid.Column="11" FontSize="13" HorizontalAlignment="Center"
+                                                            <TextBlock Grid.Column="10" Text="{Binding SafetyDistance, StringFormat='{}{0:F1}'}" FontSize="13" HorizontalAlignment="Center"/>
+                                                            <TextBlock Grid.Column="11" Text="{Binding OkaDistance, StringFormat='{}{0:F1}'}" FontSize="13" HorizontalAlignment="Center"/>
+                                                            <TextBlock Grid.Column="12" FontSize="13" HorizontalAlignment="Center"
                                                                        Text="{Binding IsCompliant, Converter={StaticResource ComplianceTextConverter}}"
                                                                        Foreground="{Binding IsCompliant, Converter={StaticResource ComplianceColorConverter}}"
                                                                        FontWeight="SemiBold"/>

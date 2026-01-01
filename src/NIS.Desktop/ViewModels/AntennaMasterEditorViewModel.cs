@@ -165,13 +165,7 @@ public partial class AntennaMasterEditorViewModel : ViewModelBase
     private string _model = string.Empty;
 
     [ObservableProperty]
-    private bool _isRotatable = true;
-
-    [ObservableProperty]
     private bool _isHorizontallyPolarized = true;
-
-    [ObservableProperty]
-    private double _horizontalAngleDegrees = 360;
 
     [ObservableProperty]
     private string _antennaType = AntennaTypes.Yagi;
@@ -188,7 +182,6 @@ public partial class AntennaMasterEditorViewModel : ViewModelBase
         // Vertical antennas cannot be rotatable
         if (!value)
         {
-            IsRotatable = false;
         }
         MarkDirty();
     }
@@ -196,8 +189,6 @@ public partial class AntennaMasterEditorViewModel : ViewModelBase
     // Track dirty state for all editable properties
     partial void OnManufacturerChanged(string value) => MarkDirty();
     partial void OnModelChanged(string value) => MarkDirty();
-    partial void OnIsRotatableChanged(bool value) => MarkDirty();
-    partial void OnHorizontalAngleDegreesChanged(double value) => MarkDirty();
     partial void OnAntennaTypeChanged(string value) => MarkDirty();
 
     public ObservableCollection<EditableBandItem> Bands { get; } = new();
@@ -216,9 +207,7 @@ public partial class AntennaMasterEditorViewModel : ViewModelBase
         IsEditing = false;
         Manufacturer = string.Empty;
         Model = string.Empty;
-        IsRotatable = true;
         IsHorizontallyPolarized = true;
-        HorizontalAngleDegrees = 360;
         AntennaType = AntennaTypes.Yagi;
         Bands.Clear();
 
@@ -235,9 +224,7 @@ public partial class AntennaMasterEditorViewModel : ViewModelBase
         IsEditing = true;
         Manufacturer = antenna.Manufacturer;
         Model = antenna.Model;
-        IsRotatable = antenna.IsRotatable;
         IsHorizontallyPolarized = antenna.IsHorizontallyPolarized;
-        HorizontalAngleDegrees = antenna.HorizontalAngleDegrees;
         AntennaType = antenna.AntennaType;
 
         Bands.Clear();
@@ -322,26 +309,11 @@ public partial class AntennaMasterEditorViewModel : ViewModelBase
             }
         }
 
-        if (IsRotatable && (HorizontalAngleDegrees < 0 || HorizontalAngleDegrees > 360))
-        {
-            ValidationMessage = "Rotation angle must be between 0 and 360 degrees.";
-            return;
-        }
-
-        // If vertically polarized, rotatable must be false (FSD 6.3)
-        if (!IsHorizontallyPolarized && IsRotatable)
-        {
-            ValidationMessage = "Vertically polarized antennas cannot be rotatable.";
-            return;
-        }
-
         var antenna = new Antenna
         {
             Manufacturer = Manufacturer.Trim(),
             Model = Model.Trim(),
-            IsRotatable = IsRotatable,
             IsHorizontallyPolarized = IsHorizontallyPolarized,
-            HorizontalAngleDegrees = HorizontalAngleDegrees,
             AntennaType = AntennaType,
             Bands = Bands.Select(b => b.ToBand()).ToList()
         };

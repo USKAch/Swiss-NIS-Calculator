@@ -73,6 +73,23 @@ public partial class TranslationEditorViewModel : ViewModelBase
     [ObservableProperty]
     private bool _hasUnsavedChanges;
 
+    [ObservableProperty]
+    private bool _isEditing;
+
+    [ObservableProperty]
+    private string _editingGerman = string.Empty;
+
+    [ObservableProperty]
+    private string _editingFrench = string.Empty;
+
+    [ObservableProperty]
+    private string _editingItalian = string.Empty;
+
+    [ObservableProperty]
+    private string _editingEnglish = string.Empty;
+
+    private TranslationItem? _editingItem;
+
     public TranslationEditorViewModel()
     {
         LoadTranslations();
@@ -213,6 +230,51 @@ public partial class TranslationEditorViewModel : ViewModelBase
         LoadTranslations();
         HasUnsavedChanges = false;
         StatusMessage = Strings.Instance.ChangesDiscarded;
+    }
+
+    [RelayCommand]
+    private void StartEdit()
+    {
+        if (SelectedItem == null) return;
+
+        _editingItem = SelectedItem;
+        EditingGerman = SelectedItem.German;
+        EditingFrench = SelectedItem.French;
+        EditingItalian = SelectedItem.Italian;
+        EditingEnglish = SelectedItem.English;
+        IsEditing = true;
+    }
+
+    [RelayCommand]
+    private void SaveEdit()
+    {
+        if (_editingItem == null) return;
+
+        // Update the item
+        _editingItem.German = EditingGerman;
+        _editingItem.French = EditingFrench;
+        _editingItem.Italian = EditingItalian;
+        _editingItem.English = EditingEnglish;
+
+        // Update Strings class
+        Strings.UpdateTranslation(_editingItem.Key, "de", EditingGerman);
+        Strings.UpdateTranslation(_editingItem.Key, "fr", EditingFrench);
+        Strings.UpdateTranslation(_editingItem.Key, "it", EditingItalian);
+        Strings.UpdateTranslation(_editingItem.Key, "en", EditingEnglish);
+
+        // Save to file
+        SaveToFile();
+
+        IsEditing = false;
+        _editingItem = null;
+        StatusMessage = "Translation saved";
+    }
+
+    [RelayCommand]
+    private void CancelEdit()
+    {
+        IsEditing = false;
+        _editingItem = null;
     }
 
     /// <summary>

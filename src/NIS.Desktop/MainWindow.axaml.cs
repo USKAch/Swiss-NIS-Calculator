@@ -108,7 +108,8 @@ public partial class MainWindow : Window
                 }
             },
             PrimaryButtonText = "OK",
-            CloseButtonText = Strings.Instance.Cancel
+            CloseButtonText = Strings.Instance.Cancel,
+            DefaultButton = ContentDialogButton.Primary
         };
 
         var result = await dialog.ShowAsync();

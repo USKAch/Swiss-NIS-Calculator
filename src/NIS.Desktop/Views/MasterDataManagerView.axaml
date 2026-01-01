@@ -39,7 +39,7 @@
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <Border Padding="10,8" BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}" BorderThickness="0,0,0,1">
-                                        <Grid ColumnDefinitions="*,Auto">
+                                        <Grid ColumnDefinitions="250,*">
                                             <StackPanel>
                                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                                     <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" FontSize="14"/>
@@ -48,28 +48,21 @@
                                                                Foreground="{DynamicResource SuccessButtonBrush}"
                                                                FontSize="12" VerticalAlignment="Center"/>
                                                 </StackPanel>
-                                                <StackPanel Orientation="Horizontal" Spacing="15" Margin="0,3,0,0">
-                                                    <TextBlock Opacity="0.6" FontSize="12">
-                                                        <TextBlock.Text>
-                                                            <MultiBinding StringFormat="{}{0} bands">
-                                                                <Binding Path="Bands.Count"/>
-                                                            </MultiBinding>
-                                                        </TextBlock.Text>
-                                                    </TextBlock>
-                                                    <TextBlock Text="{Binding IsRotatable, StringFormat='Rotatable: {0}'}"
+                                                <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,3,0,0">
+                                                    <TextBlock Text="{Binding AntennaTypeDisplay}"
                                                                Opacity="0.6" FontSize="12"/>
                                                 </StackPanel>
                                             </StackPanel>
-                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">
                                                 <ItemsControl ItemsSource="{Binding Bands}">
                                                     <ItemsControl.ItemsPanel>
                                                         <ItemsPanelTemplate>
-                                                            <StackPanel Orientation="Horizontal" Spacing="5"/>
+                                                            <WrapPanel Orientation="Horizontal"/>
                                                         </ItemsPanelTemplate>
                                                     </ItemsControl.ItemsPanel>
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
-                                                            <Border Background="{DynamicResource PanelBackgroundBrush}" CornerRadius="3" Padding="6,2">
+                                                            <Border Background="{DynamicResource PanelBackgroundBrush}" CornerRadius="3" Padding="6,2" Margin="0,0,5,3">
                                                                 <TextBlock FontSize="11" Foreground="{DynamicResource PrimaryButtonBrush}">
                                                                     <TextBlock.Text>
                                                                         <MultiBinding StringFormat="{}{0}MHz">
@@ -93,9 +86,9 @@
                     <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
                         <Button Content="{Binding AddAntennaButton, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddAntennaCommand}"
                                 Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,8"/>
-                        <!-- Show Edit if can edit, View otherwise -->
+                        <!-- Show Edit if can edit, View otherwise - only when antenna selected -->
                         <Button Command="{Binding EditAntennaCommand}"
-                                IsEnabled="{Binding SelectedAntenna, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                IsVisible="{Binding SelectedAntenna, Converter={x:Static ObjectConverters.IsNotNull}}"
                                 Padding="15,8">
                             <Button.Content>
                                 <Panel>
@@ -105,7 +98,7 @@
                             </Button.Content>
                         </Button>
                         <Button Content="{Binding Delete, Source={x:Static loc:Strings.Instance}}" Command="{Binding DeleteAntennaCommand}"
-                                IsEnabled="{Binding CanDeleteSelectedAntenna}"
+                                IsVisible="{Binding CanDeleteSelectedAntenna}"
                                 Foreground="{DynamicResource DangerButtonBrush}" Padding="15,8"/>
                     </StackPanel>
                 </Grid>
@@ -161,7 +154,7 @@
                         <Button Content="{Binding AddCableButton, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddCableCommand}"
                                 Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,8"/>
                         <Button Command="{Binding EditCableCommand}"
-                                IsEnabled="{Binding SelectedCable, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                IsVisible="{Binding SelectedCable, Converter={x:Static ObjectConverters.IsNotNull}}"
                                 Padding="15,8">
                             <Button.Content>
                                 <Panel>
@@ -171,7 +164,7 @@
                             </Button.Content>
                         </Button>
                         <Button Content="{Binding Delete, Source={x:Static loc:Strings.Instance}}" Command="{Binding DeleteCableCommand}"
-                                IsEnabled="{Binding CanDeleteSelectedCable}"
+                                IsVisible="{Binding CanDeleteSelectedCable}"
                                 Foreground="{DynamicResource DangerButtonBrush}" Padding="15,8"/>
                     </StackPanel>
                 </Grid>
@@ -234,7 +227,7 @@
                         <Button Content="{Binding AddRadioButton, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddRadioCommand}"
                                 Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,8"/>
                         <Button Command="{Binding EditRadioCommand}"
-                                IsEnabled="{Binding SelectedRadio, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                IsVisible="{Binding SelectedRadio, Converter={x:Static ObjectConverters.IsNotNull}}"
                                 Padding="15,8">
                             <Button.Content>
                                 <Panel>
@@ -244,7 +237,7 @@
                             </Button.Content>
                         </Button>
                         <Button Content="{Binding Delete, Source={x:Static loc:Strings.Instance}}" Command="{Binding DeleteRadioCommand}"
-                                IsEnabled="{Binding CanDeleteSelectedRadio}"
+                                IsVisible="{Binding CanDeleteSelectedRadio}"
                                 Foreground="{DynamicResource DangerButtonBrush}" Padding="15,8"/>
                     </StackPanel>
                 </Grid>
@@ -289,104 +282,103 @@
                     <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
                         <Button Content="{Binding AddOka, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddOkaCommand}"
                                 Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,8"/>
-                        <Button Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Command="{Binding EditOkaCommand}"
-                                IsEnabled="{Binding CanEditSelectedOka}"
-                                Padding="15,8"/>
+                        <Button Command="{Binding EditOkaCommand}"
+                                IsVisible="{Binding SelectedOka, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                Padding="15,8">
+                            <Button.Content>
+                                <Panel>
+                                    <TextBlock Text="{Binding Edit, Source={x:Static loc:Strings.Instance}}" IsVisible="{Binding CanEditSelectedOka}"/>
+                                    <TextBlock Text="{Binding View, Source={x:Static loc:Strings.Instance}}" IsVisible="{Binding !CanEditSelectedOka}"/>
+                                </Panel>
+                            </Button.Content>
+                        </Button>
                         <Button Content="{Binding Delete, Source={x:Static loc:Strings.Instance}}" Command="{Binding DeleteOkaCommand}"
-                                IsEnabled="{Binding CanDeleteSelectedOka}"
+                                IsVisible="{Binding CanDeleteSelectedOka}"
                                 Foreground="{DynamicResource DangerButtonBrush}" Padding="15,8"/>
                     </StackPanel>
                 </Grid>
             </TabItem>
 
-            <!-- Modulations Tab -->
-            <TabItem Header="{Binding Modulations, Source={x:Static loc:Strings.Instance}}">
-                <Grid RowDefinitions="*,Auto" Margin="0,10,0,0">
-                    <Border Grid.Row="0" Background="{DynamicResource SystemControlBackgroundAltMediumHighBrush}" CornerRadius="4" BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}" BorderThickness="1">
-                        <DataGrid ItemsSource="{Binding Modulations}"
-                                  SelectedItem="{Binding SelectedModulation}"
-                                  AutoGenerateColumns="False"
-                                  CanUserResizeColumns="True"
-                                  CanUserReorderColumns="False"
-                                  GridLinesVisibility="Horizontal"
-                                  HeadersVisibility="Column"
-                                  IsReadOnly="{Binding IsReadOnlyForFactory}">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="{Binding Name, Source={x:Static loc:Strings.Instance}}" Binding="{Binding Name}" Width="*"/>
-                                <DataGridTextColumn Header="{Binding Factor, Source={x:Static loc:Strings.Instance}}" Binding="{Binding Factor}" Width="120"/>
-                            </DataGrid.Columns>
-                        </DataGrid>
+            <!-- Factory Settings Tab (Modulations, Constants, Bands - Admin Mode only) -->
+            <TabItem Header="{Binding FactorySettings, Source={x:Static loc:Strings.Instance}}" IsVisible="{Binding IsAdminMode}">
+                <Grid ColumnDefinitions="*,20,*" Margin="0,10,0,0">
+                    <!-- Bands Section (left, full height) -->
+                    <Border Background="{DynamicResource PanelBackgroundBrush}" CornerRadius="4" Padding="15">
+                        <Grid RowDefinitions="Auto,*,Auto">
+                            <TextBlock Text="{Binding Bands, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,10"/>
+                            <Border Grid.Row="1" Background="{DynamicResource SystemControlBackgroundAltMediumHighBrush}" CornerRadius="4" BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}" BorderThickness="1">
+                                <DataGrid ItemsSource="{Binding Bands}"
+                                          SelectedItem="{Binding SelectedBand}"
+                                          AutoGenerateColumns="False"
+                                          CanUserResizeColumns="True"
+                                          CanUserReorderColumns="False"
+                                          GridLinesVisibility="Horizontal"
+                                          HeadersVisibility="Column">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="{Binding Name, Source={x:Static loc:Strings.Instance}}" Binding="{Binding Name}" Width="*"/>
+                                        <DataGridTextColumn Header="{Binding Frequency, Source={x:Static loc:Strings.Instance}}" Binding="{Binding FrequencyMHz}" Width="100"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </Border>
+                            <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
+                                <Button Content="{Binding AddBand, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddBandCommand}"
+                                        Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="10,6"/>
+                                <Button Content="{Binding Delete, Source={x:Static loc:Strings.Instance}}" Command="{Binding DeleteBandCommand}" Padding="10,6"/>
+                                <Button Content="{Binding Save, Source={x:Static loc:Strings.Instance}}" Command="{Binding SaveBandsCommand}" Padding="10,6"/>
+                            </StackPanel>
+                        </Grid>
                     </Border>
 
-                    <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
-                        <Button Content="{Binding AddModulation, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddModulationCommand}"
-                                IsEnabled="{Binding IsAdminMode}"
-                                Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,8"/>
-                        <Button Content="{Binding Delete, Source={x:Static loc:Strings.Instance}}" Command="{Binding DeleteModulationCommand}"
-                                IsEnabled="{Binding IsAdminMode}" Padding="15,8"/>
-                        <Button Content="{Binding Save, Source={x:Static loc:Strings.Instance}}" Command="{Binding SaveModulationsCommand}"
-                                IsEnabled="{Binding IsAdminMode}" Padding="15,8"/>
-                    </StackPanel>
-                </Grid>
-            </TabItem>
+                    <!-- Right column: Constants + Modulations stacked -->
+                    <StackPanel Grid.Column="2" Spacing="20">
+                        <!-- Constants Section -->
+                        <Border Background="{DynamicResource PanelBackgroundBrush}" CornerRadius="4" Padding="15">
+                            <StackPanel Spacing="10">
+                                <TextBlock Text="{Binding Constants, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" FontSize="14"/>
+                                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                                    <TextBlock Text="{Binding GroundReflectionFactor, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center"/>
+                                    <NumericUpDown Grid.Column="1" Value="{Binding GroundReflectionFactor}" Minimum="0" Maximum="10" Increment="0.1" Width="100"/>
+                                    <TextBlock Grid.Row="1" Text="{Binding DefaultActivityFactor, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" Margin="0,8,0,0"/>
+                                    <NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding DefaultActivityFactor}" Minimum="0" Maximum="1" Increment="0.1" Width="100" Margin="0,8,0,0"/>
+                                </Grid>
+                                <Button Content="{Binding Save, Source={x:Static loc:Strings.Instance}}" Command="{Binding SaveConstantsCommand}"
+                                        HorizontalAlignment="Left" Padding="10,6" Margin="0,5,0,0"/>
+                            </StackPanel>
+                        </Border>
 
-            <!-- Constants Tab -->
-            <TabItem Header="{Binding Constants, Source={x:Static loc:Strings.Instance}}">
-                <Grid RowDefinitions="Auto,Auto,Auto" Margin="0,10,0,0">
-                    <StackPanel Spacing="10">
-                        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                            <TextBlock Text="{Binding GroundReflectionFactor, Source={x:Static loc:Strings.Instance}}" Width="220" VerticalAlignment="Center"/>
-                            <NumericUpDown Value="{Binding GroundReflectionFactor}" Minimum="0" Maximum="10" Increment="0.1"
-                                           IsEnabled="{Binding IsAdminMode}" Width="120"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                            <TextBlock Text="{Binding DefaultActivityFactor, Source={x:Static loc:Strings.Instance}}" Width="220" VerticalAlignment="Center"/>
-                            <NumericUpDown Value="{Binding DefaultActivityFactor}" Minimum="0" Maximum="1" Increment="0.1"
-                                           IsEnabled="{Binding IsAdminMode}" Width="120"/>
-                        </StackPanel>
-                    </StackPanel>
-
-                    <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
-                        <Button Content="{Binding Save, Source={x:Static loc:Strings.Instance}}" Command="{Binding SaveConstantsCommand}"
-                                IsEnabled="{Binding IsAdminMode}" Padding="15,8"/>
-                    </StackPanel>
-                </Grid>
-            </TabItem>
-
-            <!-- Bands Tab -->
-            <TabItem Header="{Binding Bands, Source={x:Static loc:Strings.Instance}}">
-                <Grid RowDefinitions="*,Auto" Margin="0,10,0,0">
-                    <Border Grid.Row="0" Background="{DynamicResource SystemControlBackgroundAltMediumHighBrush}" CornerRadius="4" BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}" BorderThickness="1">
-                        <DataGrid ItemsSource="{Binding Bands}"
-                                  SelectedItem="{Binding SelectedBand}"
-                                  AutoGenerateColumns="False"
-                                  CanUserResizeColumns="True"
-                                  CanUserReorderColumns="False"
-                                  GridLinesVisibility="Horizontal"
-                                  HeadersVisibility="Column"
-                                  IsReadOnly="{Binding IsReadOnlyForFactory}">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="{Binding Name, Source={x:Static loc:Strings.Instance}}" Binding="{Binding Name}" Width="*"/>
-                                <DataGridTextColumn Header="{Binding Frequency, Source={x:Static loc:Strings.Instance}}" Binding="{Binding FrequencyMHz}" Width="150"/>
-                            </DataGrid.Columns>
-                        </DataGrid>
-                    </Border>
-
-                    <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
-                        <Button Content="{Binding AddBand, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddBandCommand}"
-                                IsEnabled="{Binding IsAdminMode}"
-                                Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,8"/>
-                        <Button Content="{Binding Delete, Source={x:Static loc:Strings.Instance}}" Command="{Binding DeleteBandCommand}"
-                                IsEnabled="{Binding IsAdminMode}" Padding="15,8"/>
-                        <Button Content="{Binding Save, Source={x:Static loc:Strings.Instance}}" Command="{Binding SaveBandsCommand}"
-                                IsEnabled="{Binding IsAdminMode}" Padding="15,8"/>
+                        <!-- Modulations Section -->
+                        <Border Background="{DynamicResource PanelBackgroundBrush}" CornerRadius="4" Padding="15">
+                            <Grid RowDefinitions="Auto,*,Auto">
+                                <TextBlock Text="{Binding Modulations, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,10"/>
+                                <Border Grid.Row="1" Background="{DynamicResource SystemControlBackgroundAltMediumHighBrush}" CornerRadius="4" BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}" BorderThickness="1" MinHeight="150">
+                                    <DataGrid ItemsSource="{Binding Modulations}"
+                                              SelectedItem="{Binding SelectedModulation}"
+                                              AutoGenerateColumns="False"
+                                              CanUserResizeColumns="True"
+                                              CanUserReorderColumns="False"
+                                              GridLinesVisibility="Horizontal"
+                                              HeadersVisibility="Column">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="{Binding Name, Source={x:Static loc:Strings.Instance}}" Binding="{Binding Name}" Width="*"/>
+                                            <DataGridTextColumn Header="{Binding Factor, Source={x:Static loc:Strings.Instance}}" Binding="{Binding Factor}" Width="80"/>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </Border>
+                                <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
+                                    <Button Content="{Binding AddModulation, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddModulationCommand}"
+                                            Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="10,6"/>
+                                    <Button Content="{Binding Delete, Source={x:Static loc:Strings.Instance}}" Command="{Binding DeleteModulationCommand}" Padding="10,6"/>
+                                    <Button Content="{Binding Save, Source={x:Static loc:Strings.Instance}}" Command="{Binding SaveModulationsCommand}" Padding="10,6"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
                     </StackPanel>
                 </Grid>
             </TabItem>
 
             <!-- Translations Tab -->
             <TabItem Header="{Binding Translations, Source={x:Static loc:Strings.Instance}}">
-                <Grid RowDefinitions="Auto,Auto,*,Auto,Auto" Margin="0,10,0,0" DataContext="{Binding TranslationEditor}">
+                <Grid RowDefinitions="Auto,*,Auto,Auto" Margin="0,10,0,0" DataContext="{Binding TranslationEditor}">
                     <!-- Search and Filter -->
                     <Grid ColumnDefinitions="*,Auto,Auto" Margin="0,0,0,10">
                         <TextBox Text="{Binding SearchText}"
@@ -400,44 +392,51 @@
                                   Margin="10,0,0,0" MinWidth="150"/>
                     </Grid>
 
-                    <!-- Info banner -->
-                    <Border Grid.Row="1" Background="{DynamicResource PanelBackgroundBrush}" CornerRadius="4" Padding="12,8" Margin="0,0,0,10">
-                        <TextBlock Text="{Binding TranslationEditorInfo, Source={x:Static loc:Strings.Instance}}"
-                                   Foreground="{DynamicResource PrimaryButtonBrush}" FontSize="12"/>
-                    </Border>
-
-                    <!-- Translation list -->
-                    <Border Grid.Row="2" Background="{DynamicResource SystemControlBackgroundAltMediumHighBrush}" CornerRadius="4" BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}" BorderThickness="1">
-                        <DataGrid ItemsSource="{Binding FilteredTranslations}"
+                    <!-- Translation list (read-only, double-click to edit) -->
+                    <Border Grid.Row="1" Background="{DynamicResource SystemControlBackgroundAltMediumHighBrush}" CornerRadius="4" BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}" BorderThickness="1">
+                        <DataGrid x:Name="TranslationsDataGrid"
+                                  ItemsSource="{Binding FilteredTranslations}"
                                   SelectedItem="{Binding SelectedItem}"
+                                  DoubleTapped="OnTranslationDoubleTapped"
                                   AutoGenerateColumns="False"
                                   CanUserResizeColumns="True"
                                   CanUserReorderColumns="False"
                                   GridLinesVisibility="Horizontal"
                                   HeadersVisibility="Column"
-                                  IsReadOnly="False">
+                                  IsReadOnly="True">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="{Binding ColumnCategory, Source={x:Static loc:Strings.Instance}}" Binding="{Binding Category}" IsReadOnly="True" Width="100"/>
-                                <DataGridTextColumn Header="{Binding ColumnGerman, Source={x:Static loc:Strings.Instance}}" Binding="{Binding German}" Width="*"/>
-                                <DataGridTextColumn Header="{Binding ColumnFrench, Source={x:Static loc:Strings.Instance}}" Binding="{Binding French}" Width="*"/>
-                                <DataGridTextColumn Header="{Binding ColumnItalian, Source={x:Static loc:Strings.Instance}}" Binding="{Binding Italian}" Width="*"/>
-                                <DataGridTextColumn Header="{Binding ColumnEnglish, Source={x:Static loc:Strings.Instance}}" Binding="{Binding English}" Width="*"/>
+                                <DataGridTextColumn Header="DE" Binding="{Binding German}" Width="*"/>
+                                <DataGridTextColumn Header="FR" Binding="{Binding French}" Width="*"/>
+                                <DataGridTextColumn Header="IT" Binding="{Binding Italian}" Width="*"/>
+                                <DataGridTextColumn Header="EN" Binding="{Binding English}" Width="*"/>
                             </DataGrid.Columns>
                         </DataGrid>
+                    </Border>
+
+                    <!-- Edit panel (shown when editing) -->
+                    <Border Grid.Row="2" Background="{DynamicResource PanelBackgroundBrush}" CornerRadius="4" Padding="15" Margin="0,10,0,0"
+                            IsVisible="{Binding IsEditing}">
+                        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="60,*">
+                            <TextBlock Text="DE" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <TextBox Grid.Column="1" Text="{Binding EditingGerman}" Margin="0,0,0,8"/>
+                            <TextBlock Grid.Row="1" Text="FR" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding EditingFrench}" Margin="0,0,0,8"/>
+                            <TextBlock Grid.Row="2" Text="IT" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding EditingItalian}" Margin="0,0,0,8"/>
+                            <TextBlock Grid.Row="3" Text="EN" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding EditingEnglish}" Margin="0,0,0,8"/>
+                            <StackPanel Grid.Row="4" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right">
+                                <Button Content="{Binding Cancel, Source={x:Static loc:Strings.Instance}}" Command="{Binding CancelEditCommand}" Padding="15,8"/>
+                                <Button Content="{Binding Save, Source={x:Static loc:Strings.Instance}}" Command="{Binding SaveEditCommand}"
+                                        Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,8"/>
+                            </StackPanel>
+                        </Grid>
                     </Border>
 
                     <!-- Status message -->
                     <TextBlock Grid.Row="3" Text="{Binding StatusMessage}" Margin="0,10,0,0"
                                Opacity="0.6" FontSize="12"
                                IsVisible="{Binding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
-
-                    <!-- Action buttons -->
-                    <StackPanel Grid.Row="4" Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
-                        <Button Content="{Binding SaveChanges, Source={x:Static loc:Strings.Instance}}" Command="{Binding SaveTranslationsCommand}"
-                                Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,8"/>
-                        <Button Content="{Binding Cancel, Source={x:Static loc:Strings.Instance}}" Command="{Binding CancelChangesCommand}"
-                                Padding="15,8"/>
-                    </StackPanel>
                 </Grid>
             </TabItem>
 

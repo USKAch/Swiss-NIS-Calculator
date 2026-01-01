@@ -86,6 +86,18 @@ public class AntennaPlacement
     [JsonPropertyName("heightMeters")]
     public double HeightMeters { get; set; }
 
+    /// <summary>
+    /// Whether the antenna is rotatable (can be pointed in different directions).
+    /// </summary>
+    [JsonPropertyName("isRotatable")]
+    public bool IsRotatable { get; set; }
+
+    /// <summary>
+    /// Horizontal rotation angle in degrees (0-360). Only relevant if IsRotatable is true.
+    /// </summary>
+    [JsonPropertyName("horizontalAngleDegrees")]
+    public double HorizontalAngleDegrees { get; set; } = 360;
+
     [JsonIgnore]
     public string DisplayName => $"{Manufacturer} {Model}".Trim();
 }

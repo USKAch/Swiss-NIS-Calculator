@@ -42,4 +42,12 @@ public partial class MasterDataManagerView : UserControl
             vm.EditOkaCommand.Execute(null);
         }
     }
+
+    private void OnTranslationDoubleTapped(object? sender, TappedEventArgs e)
+    {
+        if (DataContext is MasterDataManagerViewModel vm && vm.TranslationEditor.SelectedItem != null)
+        {
+            vm.TranslationEditor.StartEditCommand.Execute(null);
+        }
+    }
 }
