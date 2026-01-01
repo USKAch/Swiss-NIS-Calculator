@@ -93,13 +93,27 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
     private Radio? _selectedRadio;
 
     [ObservableProperty]
+    private double _powerWatts = 100;
+
+    // Linear amplifier section
+    [ObservableProperty]
+    private bool _useLinear;
+
+    [ObservableProperty]
     private string _linearName = string.Empty;
 
     [ObservableProperty]
     private double _linearPowerWatts;
 
-    [ObservableProperty]
-    private double _powerWatts = 100;
+    /// <summary>
+    /// True when linear power is set and greater than 0, meaning radio power is not used.
+    /// </summary>
+    public bool HasLinearPower => UseLinear && LinearPowerWatts > 0;
+
+    /// <summary>
+    /// The effective power used in calculations (linear power if set, otherwise radio power).
+    /// </summary>
+    public double EffectivePower => HasLinearPower ? LinearPowerWatts : PowerWatts;
 
     // Cable Section
     [ObservableProperty]
@@ -120,6 +134,12 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
 
     [ObservableProperty]
     private double _heightMeters = 10;
+
+    [ObservableProperty]
+    private bool _isRotatable;
+
+    [ObservableProperty]
+    private double _horizontalAngleDegrees = 360;
 
     // Operating Parameters (apply to all bands)
     [ObservableProperty]
@@ -155,15 +175,40 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
     }
 
     partial void OnSelectedAntennaChanged(Antenna? value) => MarkDirty();
-    partial void OnSelectedRadioChanged(Radio? value) => MarkDirty();
+    partial void OnSelectedRadioChanged(Radio? value)
+    {
+        MarkDirty();
+        // Auto-populate power from radio's max power
+        if (value != null)
+        {
+            PowerWatts = value.MaxPowerWatts;
+        }
+    }
+    partial void OnUseLinearChanged(bool value)
+    {
+        MarkDirty();
+        OnPropertyChanged(nameof(HasLinearPower));
+        OnPropertyChanged(nameof(EffectivePower));
+    }
     partial void OnLinearNameChanged(string value) => MarkDirty();
-    partial void OnLinearPowerWattsChanged(double value) => MarkDirty();
+    partial void OnLinearPowerWattsChanged(double value)
+    {
+        MarkDirty();
+        OnPropertyChanged(nameof(HasLinearPower));
+        OnPropertyChanged(nameof(EffectivePower));
+    }
     partial void OnSelectedCableChanged(Cable? value) => MarkDirty();
     partial void OnSelectedModulationChanged(Modulation? value) => MarkDirty();
-    partial void OnPowerWattsChanged(double value) => MarkDirty();
+    partial void OnPowerWattsChanged(double value)
+    {
+        MarkDirty();
+        OnPropertyChanged(nameof(EffectivePower));
+    }
     partial void OnCableLengthMetersChanged(double value) => MarkDirty();
     partial void OnAdditionalLossDbChanged(double value) => MarkDirty();
     partial void OnHeightMetersChanged(double value) => MarkDirty();
+    partial void OnIsRotatableChanged(bool value) => MarkDirty();
+    partial void OnHorizontalAngleDegreesChanged(double value) => MarkDirty();
     partial void OnActivityFactorChanged(double value) => MarkDirty();
     partial void OnOkaNameChanged(string value) => MarkDirty();
     partial void OnOkaDistanceMetersChanged(double value) => MarkDirty();
@@ -195,6 +240,7 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
             r.Model == config.Radio.Model);
 
         // Linear
+        UseLinear = config.Linear != null;
         LinearName = config.Linear?.Name ?? string.Empty;
         LinearPowerWatts = config.Linear?.PowerWatts ?? 0;
 
@@ -209,6 +255,8 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
             a.Manufacturer.Equals(config.Antenna.Manufacturer, StringComparison.OrdinalIgnoreCase) &&
             a.Model.Equals(config.Antenna.Model, StringComparison.OrdinalIgnoreCase));
         HeightMeters = config.Antenna.HeightMeters;
+        IsRotatable = config.Antenna.IsRotatable;
+        HorizontalAngleDegrees = config.Antenna.HorizontalAngleDegrees;
         // Operating parameters
         ActivityFactor = config.ActivityFactor;
         SelectedModulation = Modulations.FirstOrDefault(m =>
@@ -239,7 +287,7 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
                 Manufacturer = SelectedRadio?.Manufacturer ?? "",
                 Model = SelectedRadio?.Model ?? ""
             },
-            Linear = string.IsNullOrWhiteSpace(LinearName) ? null : new LinearConfig
+            Linear = !UseLinear ? null : new LinearConfig
             {
                 Name = LinearName.Trim(),
                 PowerWatts = LinearPowerWatts
@@ -255,7 +303,9 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
             {
                 Manufacturer = SelectedAntenna?.Manufacturer ?? "",
                 Model = SelectedAntenna?.Model ?? "",
-                HeightMeters = HeightMeters
+                HeightMeters = HeightMeters,
+                IsRotatable = IsRotatable,
+                HorizontalAngleDegrees = HorizontalAngleDegrees
             },
             Modulation = SelectedModulation?.Name ?? "CW",
             ActivityFactor = ActivityFactor,

@@ -82,6 +82,15 @@
                                 <TextBlock Text="{Binding HeightHint, Source={x:Static loc:Strings.Instance}}"
                                            Opacity="0.6" FontSize="11" FontStyle="Italic"/>
                             </StackPanel>
+
+                            <!-- Rotatable -->
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <CheckBox IsChecked="{Binding IsRotatable}" Content="{Binding Rotatable, Source={x:Static loc:Strings.Instance}}"/>
+                                <NumericUpDown Value="{Binding HorizontalAngleDegrees}" ShowButtonSpinner="False"
+                                               Minimum="0" Maximum="360" Increment="10" Width="80"
+                                               IsVisible="{Binding IsRotatable}"/>
+                                <TextBlock Text="°" VerticalAlignment="Center" IsVisible="{Binding IsRotatable}"/>
+                            </StackPanel>
                         </StackPanel>
 
                         <!-- Vertical Separator -->
@@ -124,7 +133,7 @@
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <TextBlock Text="{Binding CableLength, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                                 <NumericUpDown Value="{Binding CableLengthMeters}" ShowButtonSpinner="False"
-                                               Minimum="0" Maximum="500" Increment="1" Width="80"/>
+                                               Minimum="0" Maximum="1000" Increment="1" Width="80"/>
                                 <TextBlock Text="m" VerticalAlignment="Center"/>
                             </StackPanel>
 
@@ -181,8 +190,7 @@
                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                     <TextBlock Text="{Binding OkaDistance, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                                     <NumericUpDown Value="{Binding OkaDistanceMeters}" ShowButtonSpinner="False"
-                                                   Minimum="0.1" Maximum="1000" Increment="0.5" Width="80"/>
-                                    <TextBlock Text="m" VerticalAlignment="Center"/>
+                                                   Minimum="0.1" Maximum="100" Increment="0.5" Width="80"/>
                                 </StackPanel>
                                 <TextBlock Text="{Binding OkaDistanceHint, Source={x:Static loc:Strings.Instance}}"
                                            Opacity="0.6" FontSize="11" FontStyle="Italic" TextWrapping="Wrap"/>
@@ -193,7 +201,6 @@
                                 <TextBlock Text="{Binding OkaDamping, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                                 <NumericUpDown Value="{Binding OkaBuildingDampingDb}" ShowButtonSpinner="False"
                                                Minimum="0" Maximum="30" Increment="1" Width="80"/>
-                                <TextBlock Text="dB" VerticalAlignment="Center"/>
                             </StackPanel>
 
                             <TextBlock Text="{Binding OkaExplanation, Source={x:Static loc:Strings.Instance}}"
@@ -211,7 +218,7 @@
 
                             <!-- Radio -->
                             <ComboBox ItemsSource="{Binding Radios}"
-                                      SelectedItem="{Binding SelectedRadio}" HorizontalAlignment="Stretch"
+                                      SelectedItem="{Binding SelectedRadio}" Width="200" HorizontalAlignment="Left"
                                       IsTextSearchEnabled="True"
                                       PlaceholderText="{Binding SelectRadio, Source={x:Static loc:Strings.Instance}}"/>
                             <StackPanel Orientation="Horizontal" Spacing="5">
@@ -230,22 +237,20 @@
                                         Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="8,4"/>
                             </StackPanel>
 
-                            <!-- Linear (optional, free text with power) -->
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <TextBlock Text="{Binding Linear, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                                <TextBox Text="{Binding LinearName}" Width="200"/>
-                                <NumericUpDown Value="{Binding LinearPowerWatts}" ShowButtonSpinner="False"
-                                               Minimum="0" Maximum="10000" Increment="100" Width="80"
-                                               IsEnabled="{Binding LinearName, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
-                                <TextBlock Text="W" VerticalAlignment="Center"
-                                           IsVisible="{Binding LinearName, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
-                            </StackPanel>
-
-                            <!-- Power -->
-                            <StackPanel Orientation="Horizontal" Spacing="8">
+                            <!-- Radio Power -->
+                            <StackPanel Orientation="Horizontal" Spacing="8" IsEnabled="{Binding !HasLinearPower}">
                                 <TextBlock Text="{Binding Power, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                                 <NumericUpDown Value="{Binding PowerWatts}" ShowButtonSpinner="False"
                                                Minimum="1" Maximum="10000" Increment="10" Width="80"/>
+                                <TextBlock Text="W" VerticalAlignment="Center"/>
+                            </StackPanel>
+
+                            <!-- Linear (optional) -->
+                            <CheckBox IsChecked="{Binding UseLinear}" Content="{Binding Linear, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold"/>
+                            <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding UseLinear}" Margin="24,0,0,0">
+                                <TextBox Text="{Binding LinearName}" Width="150"/>
+                                <NumericUpDown Value="{Binding LinearPowerWatts}" ShowButtonSpinner="False"
+                                               Minimum="0" Maximum="10000" Increment="100" Width="80"/>
                                 <TextBlock Text="W" VerticalAlignment="Center"/>
                             </StackPanel>
                         </StackPanel>

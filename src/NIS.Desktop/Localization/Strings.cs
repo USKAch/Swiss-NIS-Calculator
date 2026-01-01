@@ -147,11 +147,93 @@ public class Strings : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AddModulation)));
 
         // Results
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HorizontalDistance)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DistanceAntennaOka)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalculationResults)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Limit)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ExportMarkdown)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FactorySettings)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StatusHeader)));
+
+        // Short labels for two-line headers
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CableLbl)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(GainLbl)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(VertLbl)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TotGainLbl)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(EirpLbl)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BldLbl)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LimitLbl)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SafeDistLbl)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(OkaDistLbl)));
+
+        // Calculation Report Labels
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcTitlePrefix)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcOperator)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcAddress)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcDate)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcTransmitter)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcCable)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcAntenna)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcPolarization)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcRotation)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcLinear)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcOka)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcModulation)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcBuildingDamping)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcStatusCompliant)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcStatusNonCompliant)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcHorizontal)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcVertical)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcFixed)));
+
+        // Calculation Table Row Labels
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcFrequency)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcDistanceToAntenna)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcTxPower)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcActivityFactor)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcModulationFactor)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcMeanPower)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcCableAttenuation)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcAdditionalLosses)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcTotalAttenuation)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcAttenuationFactor)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcAntennaGain)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcVerticalAttenuation)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcTotalAntennaGain)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcGainFactor)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcEirp)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcErp)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcBuildingDampingRow)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcBuildingDampingFactor)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcGroundReflection)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcFieldStrength)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcLimit)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcMinSafetyDistance)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcOkaDistance)));
+
+        // Column Explanations
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcColumnExplanations)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainF)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainD)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainP)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainAF)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainMF)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainPm)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainA1)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainA2)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainA)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainAFactor)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainG1)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainG2)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainG)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainGFactor)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainPs)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainPsPrime)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainAg)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainAG)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainKr)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainE)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainEigw)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainDs)));
     }
 
     private string Get(string key) =>
@@ -271,17 +353,13 @@ public class Strings : INotifyPropertyChanged
 
     // OKA Master Editor
     public string OkaDetails => Get("OkaDetails");
-    public string OkaNumber => Get("OkaNumber");
     public string OkaNameLabel => Get("OkaNameLabel");
     public string OkaNameRequired => Get("OkaNameRequired");
     public string OkaNameDuplicate => Get("OkaNameDuplicate");
     public string OkaDistanceRequired => Get("OkaDistanceRequired");
     public string OkaDampingNonNegative => Get("OkaDampingNonNegative");
     public string EditOka => Get("EditOka");
-    public string DefaultDamping => Get("DefaultDamping");
-    public string DefaultDampingHint => Get("DefaultDampingHint");
-    public string DefaultDistance => Get("DefaultDistance");
-    public string DefaultDistanceHint => Get("DefaultDistanceHint");
+    public string OkaDampingHint => Get("OkaDampingHint");
     public string HeightHint => Get("HeightHint");
     public string OkaDistanceHint => Get("OkaDistanceHint");
     public string AddOka => Get("AddOka");
@@ -297,10 +375,8 @@ public class Strings : INotifyPropertyChanged
     public string Horizontal => Get("Horizontal");
     public string Vertical => Get("Vertical");
     public string Rotatable => Get("Rotatable");
-    public string DegreeInfoOnly => Get("DegreeInfoOnly");
     public string Frequency => Get("Frequency");
     public string Gain => Get("Gain");
-    public string GainRange => Get("GainRange");
     public string AddBand => Get("AddBand");
     public string VerticalRadiationPattern => Get("VerticalRadiationPattern");
     public string PatternExplanation => Get("PatternExplanation");
@@ -351,21 +427,14 @@ public class Strings : INotifyPropertyChanged
     public string AddAntennaButton => Get("AddAntennaButton");
     public string AddCableButton => Get("AddCableButton");
     public string AddRadioButton => Get("AddRadioButton");
-    public string SaveChanges => Get("SaveChanges");
-    public string TranslationEditorInfo => Get("TranslationEditorInfo");
-    public string ColumnCategory => Get("ColumnCategory");
-    public string ColumnGerman => Get("ColumnGerman");
-    public string ColumnFrench => Get("ColumnFrench");
-    public string ColumnItalian => Get("ColumnItalian");
-    public string ColumnEnglish => Get("ColumnEnglish");
     public string Database => Get("Database");
     public string DatabaseTabInfo => Get("DatabaseTabInfo");
+    public string FactorySettings => Get("FactorySettings");
 
     // ============================================================
     // RESULTS
     // ============================================================
     public string None => Get("None");
-    public string HorizontalDistance => Get("HorizontalDistance");
     public string DistanceAntennaOka => Get("DistanceAntennaOka");
     public string OkaFullName => Get("OkaFullName");
     public string AboveOka => Get("AboveOka");
@@ -373,12 +442,88 @@ public class Strings : INotifyPropertyChanged
     public string CalculationResults => Get("CalculationResults");
     public string Limit => Get("Limit");
     public string ExportMarkdown => Get("ExportMarkdown");
-    public string FreqHeader => Get("FreqHeader");
-    public string GainHeader => Get("GainHeader");
-    public string PmHeader => Get("PmHeader");
-    public string FieldHeader => Get("FieldHeader");
-    public string SafetyHeader => Get("SafetyHeader");
     public string StatusHeader => Get("StatusHeader");
+
+    // Short labels for two-line headers
+    public string CableLbl => Get("CableLbl");
+    public string GainLbl => Get("GainLbl");
+    public string VertLbl => Get("VertLbl");
+    public string TotGainLbl => Get("TotGainLbl");
+    public string EirpLbl => Get("EirpLbl");
+    public string BldLbl => Get("BldLbl");
+    public string LimitLbl => Get("LimitLbl");
+    public string SafeDistLbl => Get("SafeDistLbl");
+    public string OkaDistLbl => Get("OkaDistLbl");
+
+    // Calculation Report Labels
+    public string CalcTitlePrefix => Get("CalcTitlePrefix");
+    public string CalcOperator => Get("CalcOperator");
+    public string CalcAddress => Get("CalcAddress");
+    public string CalcDate => Get("CalcDate");
+    public string CalcTransmitter => Get("CalcTransmitter");
+    public string CalcCable => Get("CalcCable");
+    public string CalcAntenna => Get("CalcAntenna");
+    public string CalcPolarization => Get("CalcPolarization");
+    public string CalcRotation => Get("CalcRotation");
+    public string CalcLinear => Get("CalcLinear");
+    public string CalcOka => Get("CalcOka");
+    public string CalcModulation => Get("CalcModulation");
+    public string CalcBuildingDamping => Get("CalcBuildingDamping");
+    public string CalcStatusCompliant => Get("CalcStatusCompliant");
+    public string CalcStatusNonCompliant => Get("CalcStatusNonCompliant");
+    public string CalcHorizontal => Get("CalcHorizontal");
+    public string CalcVertical => Get("CalcVertical");
+    public string CalcFixed => Get("CalcFixed");
+
+    // Calculation Table Row Labels
+    public string CalcFrequency => Get("CalcFrequency");
+    public string CalcDistanceToAntenna => Get("CalcDistanceToAntenna");
+    public string CalcTxPower => Get("CalcTxPower");
+    public string CalcActivityFactor => Get("CalcActivityFactor");
+    public string CalcModulationFactor => Get("CalcModulationFactor");
+    public string CalcMeanPower => Get("CalcMeanPower");
+    public string CalcCableAttenuation => Get("CalcCableAttenuation");
+    public string CalcAdditionalLosses => Get("CalcAdditionalLosses");
+    public string CalcTotalAttenuation => Get("CalcTotalAttenuation");
+    public string CalcAttenuationFactor => Get("CalcAttenuationFactor");
+    public string CalcAntennaGain => Get("CalcAntennaGain");
+    public string CalcVerticalAttenuation => Get("CalcVerticalAttenuation");
+    public string CalcTotalAntennaGain => Get("CalcTotalAntennaGain");
+    public string CalcGainFactor => Get("CalcGainFactor");
+    public string CalcEirp => Get("CalcEirp");
+    public string CalcErp => Get("CalcErp");
+    public string CalcBuildingDampingRow => Get("CalcBuildingDampingRow");
+    public string CalcBuildingDampingFactor => Get("CalcBuildingDampingFactor");
+    public string CalcGroundReflection => Get("CalcGroundReflection");
+    public string CalcFieldStrength => Get("CalcFieldStrength");
+    public string CalcLimit => Get("CalcLimit");
+    public string CalcMinSafetyDistance => Get("CalcMinSafetyDistance");
+    public string CalcOkaDistance => Get("CalcOkaDistance");
+
+    // Column Explanations
+    public string CalcColumnExplanations => Get("CalcColumnExplanations");
+    public string CalcExplainF => Get("CalcExplainF");
+    public string CalcExplainD => Get("CalcExplainD");
+    public string CalcExplainP => Get("CalcExplainP");
+    public string CalcExplainAF => Get("CalcExplainAF");
+    public string CalcExplainMF => Get("CalcExplainMF");
+    public string CalcExplainPm => Get("CalcExplainPm");
+    public string CalcExplainA1 => Get("CalcExplainA1");
+    public string CalcExplainA2 => Get("CalcExplainA2");
+    public string CalcExplainA => Get("CalcExplainA");
+    public string CalcExplainAFactor => Get("CalcExplainAFactor");
+    public string CalcExplainG1 => Get("CalcExplainG1");
+    public string CalcExplainG2 => Get("CalcExplainG2");
+    public string CalcExplainG => Get("CalcExplainG");
+    public string CalcExplainGFactor => Get("CalcExplainGFactor");
+    public string CalcExplainPs => Get("CalcExplainPs");
+    public string CalcExplainPsPrime => Get("CalcExplainPsPrime");
+    public string CalcExplainAg => Get("CalcExplainAg");
+    public string CalcExplainAG => Get("CalcExplainAG");
+    public string CalcExplainKr => Get("CalcExplainKr");
+    public string CalcExplainE => Get("CalcExplainE");
+    public string CalcExplainEigw => Get("CalcExplainEigw");
+    public string CalcExplainDs => Get("CalcExplainDs");
 
     // ============================================================
     // VALIDATION MESSAGES
@@ -576,10 +721,8 @@ public class Strings : INotifyPropertyChanged
         ["Horizontal"] = "AntennaEditor",
         ["Vertical"] = "AntennaEditor",
         ["Rotatable"] = "AntennaEditor",
-        ["DegreeInfoOnly"] = "AntennaEditor",
         ["Frequency"] = "AntennaEditor",
         ["Gain"] = "AntennaEditor",
-        ["GainRange"] = "AntennaEditor",
         ["AddBand"] = "AntennaEditor",
         ["VerticalRadiationPattern"] = "AntennaEditor",
         ["PatternExplanation"] = "AntennaEditor",
@@ -628,25 +771,18 @@ public class Strings : INotifyPropertyChanged
         ["AddAntennaButton"] = "MasterData",
         ["AddCableButton"] = "MasterData",
         ["AddRadioButton"] = "MasterData",
-        ["SaveChanges"] = "MasterData",
-        ["TranslationEditorInfo"] = "MasterData",
         ["Database"] = "MasterData",
         ["DatabaseTabInfo"] = "MasterData",
+        ["FactorySettings"] = "MasterData",
         ["ExportDatabase"] = "MasterData",
         ["ExportDatabaseDesc"] = "MasterData",
         ["ImportDatabase"] = "MasterData",
         ["ImportDatabaseDesc"] = "MasterData",
         // Results
-        ["HorizontalDistance"] = "Results",
         ["DistanceAntennaOka"] = "Results",
         ["CalculationResults"] = "Results",
         ["Limit"] = "Results",
         ["ExportMarkdown"] = "Results",
-        ["FreqHeader"] = "Results",
-        ["GainHeader"] = "Results",
-        ["PmHeader"] = "Results",
-        ["FieldHeader"] = "Results",
-        ["SafetyHeader"] = "Results",
         ["StatusHeader"] = "Results",
         // Dialogs
         ["UnsavedChanges"] = "Dialogs",
@@ -759,22 +895,18 @@ public class Strings : INotifyPropertyChanged
         ["ActivityFactor"] = new() { ["de"] = "Aktivitätsfaktor", ["fr"] = "Facteur d'activité", ["it"] = "Fattore di attività", ["en"] = "Activity Factor" },
         ["ParametersApplyToAllBands"] = new() { ["de"] = "Diese Parameter gelten für alle Bänder der gewählten Antenne.", ["fr"] = "Ces paramètres s'appliquent à toutes les bandes de l'antenne sélectionnée.", ["it"] = "Questi parametri si applicano a tutte le bande dell'antenna selezionata.", ["en"] = "These parameters apply to all bands of the selected antenna." },
 
-        ["OkaDistance"] = new() { ["de"] = "Distanz", ["fr"] = "Distance", ["it"] = "Distanza", ["en"] = "Distance" },
-        ["OkaDamping"] = new() { ["de"] = "Gebäudedämpfung", ["fr"] = "Atténuation bâtiment", ["it"] = "Attenuazione edificio", ["en"] = "Building Damping" },
+        ["OkaDistance"] = new() { ["de"] = "Distanz (m)", ["fr"] = "Distance (m)", ["it"] = "Distanza (m)", ["en"] = "Distance (m)" },
+        ["OkaDamping"] = new() { ["de"] = "Gebäudedämpfung (dB)", ["fr"] = "Atténuation bâtiment (dB)", ["it"] = "Attenuazione edificio (dB)", ["en"] = "Building Damping (dB)" },
         ["OkaExplanation"] = new() { ["de"] = "OKA = Ort für kurzfristigen Aufenthalt", ["fr"] = "LSM = Lieu de séjour momentané", ["it"] = "LST = Luogo di soggiorno temporaneo", ["en"] = "PSS = Place of Short-Term Stay" },
 
         // OKA Master Editor (OKA=DE, LSM=FR, LST=IT, PSS=EN)
         ["OkaDetails"] = new() { ["de"] = "OKA Details", ["fr"] = "Détails LSM", ["it"] = "Dettagli LST", ["en"] = "PSS Details" },
-        ["OkaNumber"] = new() { ["de"] = "Nummer", ["fr"] = "Numéro", ["it"] = "Numero", ["en"] = "Number" },
         ["OkaNameLabel"] = new() { ["de"] = "Bezeichnung", ["fr"] = "Désignation", ["it"] = "Designazione", ["en"] = "Name" },
         ["OkaNameRequired"] = new() { ["de"] = "Bitte eine Bezeichnung eingeben.", ["fr"] = "Veuillez entrer une désignation.", ["it"] = "Inserire una designazione.", ["en"] = "Please enter a name." },
         ["OkaNameDuplicate"] = new() { ["de"] = "Diese Bezeichnung existiert bereits.", ["fr"] = "Cette désignation existe déjà.", ["it"] = "Questa designazione esiste già.", ["en"] = "This name already exists." },
         ["OkaDistanceRequired"] = new() { ["de"] = "Die Distanz muss grösser als 0 sein.", ["fr"] = "La distance doit être supérieure à 0.", ["it"] = "La distanza deve essere maggiore di 0.", ["en"] = "Distance must be greater than 0." },
         ["OkaDampingNonNegative"] = new() { ["de"] = "Die Dämpfung darf nicht negativ sein.", ["fr"] = "L'atténuation ne peut pas être négative.", ["it"] = "L'attenuazione non può essere negativa.", ["en"] = "Damping cannot be negative." },
-        ["DefaultDamping"] = new() { ["de"] = "Standard-Dämpfung", ["fr"] = "Atténuation par défaut", ["it"] = "Attenuazione predefinita", ["en"] = "Default Damping" },
-        ["DefaultDampingHint"] = new() { ["de"] = "0 dB für Aussenbereich, typisch 6-12 dB für Innenräume", ["fr"] = "0 dB pour l'extérieur, typiquement 6-12 dB pour l'intérieur", ["it"] = "0 dB per l'esterno, tipicamente 6-12 dB per interni", ["en"] = "0 dB for outdoor, typically 6-12 dB for indoor" },
-        ["DefaultDistance"] = new() { ["de"] = "Horizontale Distanz", ["fr"] = "Distance horizontale", ["it"] = "Distanza orizzontale", ["en"] = "Horizontal Distance" },
-        ["DefaultDistanceHint"] = new() { ["de"] = "Distanz von der Antenne", ["fr"] = "Distance de l'antenne", ["it"] = "Distanza dall'antenna", ["en"] = "Distance from antenna" },
+        ["OkaDampingHint"] = new() { ["de"] = "0 dB für Aussenbereich, typisch 6-12 dB für Innenräume", ["fr"] = "0 dB pour l'extérieur, typiquement 6-12 dB pour l'intérieur", ["it"] = "0 dB per l'esterno, tipicamente 6-12 dB per interni", ["en"] = "0 dB for outdoor, typically 6-12 dB for indoor" },
         ["HeightHint"] = new() { ["de"] = "Antennenhöhe über OKA", ["fr"] = "Hauteur de l'antenne au-dessus du LSM", ["it"] = "Altezza dell'antenna sopra LST", ["en"] = "Antenna height above PSS" },
         ["OkaDistanceHint"] = new() { ["de"] = "Horizontale Distanz vom OKA zum Antennenmast", ["fr"] = "Distance horizontale du LSM au mât d'antenne", ["it"] = "Distanza orizzontale dal LST al palo dell'antenna", ["en"] = "Horizontal distance from PSS to antenna mast" },
         ["AddOka"] = new() { ["de"] = "OKA hinzufügen", ["fr"] = "Ajouter LSM", ["it"] = "Aggiungi LST", ["en"] = "Add PSS" },
@@ -789,10 +921,8 @@ public class Strings : INotifyPropertyChanged
         ["Horizontal"] = new() { ["de"] = "Horizontal", ["fr"] = "Horizontal", ["it"] = "Orizzontale", ["en"] = "Horizontal" },
         ["Vertical"] = new() { ["de"] = "Vertikal", ["fr"] = "Vertical", ["it"] = "Verticale", ["en"] = "Vertical" },
         ["Rotatable"] = new() { ["de"] = "Drehbar", ["fr"] = "Rotatif", ["it"] = "Rotabile", ["en"] = "Rotatable" },
-        ["DegreeInfoOnly"] = new() { ["de"] = "Grad (nur Info)", ["fr"] = "degrés (info seulement)", ["it"] = "gradi (solo info)", ["en"] = "deg (info only)" },
         ["Frequency"] = new() { ["de"] = "Frequenz", ["fr"] = "Fréquence", ["it"] = "Frequenza", ["en"] = "Frequency" },
         ["Gain"] = new() { ["de"] = "Gewinn", ["fr"] = "Gain", ["it"] = "Guadagno", ["en"] = "Gain" },
-        ["GainRange"] = new() { ["de"] = "dBi (-20 bis 50)", ["fr"] = "dBi (-20 à 50)", ["it"] = "dBi (-20 a 50)", ["en"] = "dBi (-20 to 50)" },
         ["AddBand"] = new() { ["de"] = "+ Band hinzufügen", ["fr"] = "+ Ajouter bande", ["it"] = "+ Aggiungi banda", ["en"] = "+ Add Band" },
         ["VerticalRadiationPattern"] = new() { ["de"] = "Vertikales Strahlungsdiagramm (Dämpfung in dB je Winkel vom Horizont)", ["fr"] = "Diagramme de rayonnement vertical (atténuation en dB par angle depuis l'horizon)", ["it"] = "Diagramma di radiazione verticale (attenuazione in dB per angolo dall'orizzonte)", ["en"] = "Vertical Radiation Pattern (attenuation in dB at each angle from horizon)" },
         ["PatternExplanation"] = new() { ["de"] = "0° = Horizont (max. Abstrahlung), 90° = Senkrecht nach unten (Richtung OKA). Werte: 0-60 dB Dämpfung.", ["fr"] = "0° = Horizon (rayonnement max), 90° = Verticalement vers le bas (direction LSM). Valeurs: 0-60 dB d'atténuation.", ["it"] = "0° = Orizzonte (radiazione max), 90° = Verticalmente verso il basso (direzione LSBD). Valori: 0-60 dB attenuazione.", ["en"] = "0° = Horizon (max radiation), 90° = Straight down (toward OKA). Values: 0-60 dB attenuation." },
@@ -828,11 +958,11 @@ public class Strings : INotifyPropertyChanged
         ["Radios"] = new() { ["de"] = "Transceiver", ["fr"] = "Émetteurs-récepteurs", ["it"] = "Ricetrasmettitori", ["en"] = "Radios" },
         ["Modulations"] = new() { ["de"] = "Modulationen", ["fr"] = "Modulations", ["it"] = "Modulazioni", ["en"] = "Modulations" },
         ["Constants"] = new() { ["de"] = "Konstanten", ["fr"] = "Constantes", ["it"] = "Costanti", ["en"] = "Constants" },
-        ["GroundReflectionFactor"] = new() { ["de"] = "Bodenreflexionsfaktor", ["fr"] = "Facteur de r?flexion au sol", ["it"] = "Fattore di riflessione a terra", ["en"] = "Ground Reflection Factor" },
-        ["DefaultActivityFactor"] = new() { ["de"] = "Standard-Aktivit?tsfaktor", ["fr"] = "Facteur d'activit? par d?faut", ["it"] = "Fattore di attivit? predefinito", ["en"] = "Default Activity Factor" },
+        ["GroundReflectionFactor"] = new() { ["de"] = "Bodenreflexionsfaktor", ["fr"] = "Facteur de réflexion au sol", ["it"] = "Fattore di riflessione a terra", ["en"] = "Ground Reflection Factor" },
+        ["DefaultActivityFactor"] = new() { ["de"] = "Standard-Aktivitätsfaktor", ["fr"] = "Facteur d'activité par défaut", ["it"] = "Fattore di attività predefinito", ["en"] = "Default Activity Factor" },
         ["Factor"] = new() { ["de"] = "Faktor", ["fr"] = "Facteur", ["it"] = "Fattore", ["en"] = "Factor" },
         ["Name"] = new() { ["de"] = "Name", ["fr"] = "Nom", ["it"] = "Nome", ["en"] = "Name" },
-        ["AddModulation"] = new() { ["de"] = "+ Modulation hinzuf?gen", ["fr"] = "+ Ajouter modulation", ["it"] = "+ Aggiungi modulazione", ["en"] = "+ Add Modulation" },
+        ["AddModulation"] = new() { ["de"] = "+ Modulation hinzufügen", ["fr"] = "+ Ajouter modulation", ["it"] = "+ Aggiungi modulazione", ["en"] = "+ Add Modulation" },
         ["Translations"] = new() { ["de"] = "Übersetzungen", ["fr"] = "Traductions", ["it"] = "Traduzioni", ["en"] = "Translations" },
         ["MasterDataManager"] = new() { ["de"] = "Stammdaten-Verwaltung", ["fr"] = "Gestion des données de base", ["it"] = "Gestione dati master", ["en"] = "Master Data Manager" },
         ["Clear"] = new() { ["de"] = "Löschen", ["fr"] = "Effacer", ["it"] = "Cancella", ["en"] = "Clear" },
@@ -844,26 +974,18 @@ public class Strings : INotifyPropertyChanged
         ["AddAntennaButton"] = new() { ["de"] = "+ Antenne hinzufügen", ["fr"] = "+ Ajouter antenne", ["it"] = "+ Aggiungi antenna", ["en"] = "+ Add Antenna" },
         ["AddCableButton"] = new() { ["de"] = "+ Kabel hinzufügen", ["fr"] = "+ Ajouter câble", ["it"] = "+ Aggiungi cavo", ["en"] = "+ Add Cable" },
         ["AddRadioButton"] = new() { ["de"] = "+ Transceiver hinzufügen", ["fr"] = "+ Ajouter émetteur", ["it"] = "+ Aggiungi ricetrasmettitore", ["en"] = "+ Add Radio" },
-        ["SaveChanges"] = new() { ["de"] = "Änderungen speichern", ["fr"] = "Enregistrer les modifications", ["it"] = "Salva modifiche", ["en"] = "Save Changes" },
-        ["TranslationEditorInfo"] = new() { ["de"] = "Übersetzungen direkt bearbeiten. Änderungen werden sofort wirksam. Klicken Sie auf Speichern, um die Änderungen dauerhaft zu speichern.", ["fr"] = "Modifiez les traductions directement. Les modifications prennent effet immédiatement. Cliquez sur Enregistrer pour conserver les modifications.", ["it"] = "Modifica le traduzioni direttamente. Le modifiche hanno effetto immediato. Clicca su Salva per rendere permanenti le modifiche.", ["en"] = "Edit translations directly. Changes take effect immediately. Click Save to persist changes across restarts." },
-        ["ColumnKey"] = new() { ["de"] = "Schlüssel", ["fr"] = "Clé", ["it"] = "Chiave", ["en"] = "Key" },
-        ["ColumnCategory"] = new() { ["de"] = "Kategorie", ["fr"] = "Catégorie", ["it"] = "Categoria", ["en"] = "Category" },
-        ["ColumnGerman"] = new() { ["de"] = "Deutsch (DE)", ["fr"] = "Allemand (DE)", ["it"] = "Tedesco (DE)", ["en"] = "German (DE)" },
-        ["ColumnFrench"] = new() { ["de"] = "Französisch (FR)", ["fr"] = "Français (FR)", ["it"] = "Francese (FR)", ["en"] = "French (FR)" },
-        ["ColumnItalian"] = new() { ["de"] = "Italienisch (IT)", ["fr"] = "Italien (IT)", ["it"] = "Italiano (IT)", ["en"] = "Italian (IT)" },
-        ["ColumnEnglish"] = new() { ["de"] = "Englisch (EN)", ["fr"] = "Anglais (EN)", ["it"] = "Inglese (EN)", ["en"] = "English (EN)" },
 
         // Database (Factory Mode)
         ["Database"] = new() { ["de"] = "Datenbank", ["fr"] = "Base de données", ["it"] = "Database", ["en"] = "Database" },
         ["DatabaseTabInfo"] = new() { ["de"] = "Änderungen an der Datenbank betreffen alle Benutzer. Nur für Wartung und Updates verwenden.", ["fr"] = "Les modifications de la base de données affectent tous les utilisateurs. Utiliser uniquement pour la maintenance.", ["it"] = "Le modifiche al database influenzano tutti gli utenti. Usare solo per manutenzione.", ["en"] = "Database changes affect all users. Use only for maintenance and updates." },
+        ["FactorySettings"] = new() { ["de"] = "Werkseinstellungen", ["fr"] = "Paramètres usine", ["it"] = "Impostazioni di fabbrica", ["en"] = "Factory Settings" },
         ["ExportDatabase"] = new() { ["de"] = "Datenbank exportieren", ["fr"] = "Exporter la base de données", ["it"] = "Esporta database", ["en"] = "Export Database" },
-        ["ExportDatabaseDesc"] = new() { ["de"] = "Exportiert die Werksdaten in eine JSON-Datei", ["fr"] = "Exporte les donn?es usine dans un fichier JSON", ["it"] = "Esporta i dati di fabbrica in un file JSON", ["en"] = "Export factory data to a JSON file" },
+        ["ExportDatabaseDesc"] = new() { ["de"] = "Exportiert die Werksdaten in eine JSON-Datei", ["fr"] = "Exporte les données usine dans un fichier JSON", ["it"] = "Esporta i dati di fabbrica in un file JSON", ["en"] = "Export factory data to a JSON file" },
         ["ImportDatabase"] = new() { ["de"] = "Datenbank importieren", ["fr"] = "Importer la base de données", ["it"] = "Importa database", ["en"] = "Import Database" },
-        ["ImportDatabaseDesc"] = new() { ["de"] = "Importiert Werksdaten aus einer JSON-Datei. ACHTUNG: Alle Daten werden gel?scht!", ["fr"] = "Importe les donn?es usine depuis un fichier JSON. ATTENTION: Toutes les donn?es seront supprim?es!", ["it"] = "Importa i dati di fabbrica da un file JSON. ATTENZIONE: Tutti i dati saranno eliminati!", ["en"] = "Import factory data from a JSON file. WARNING: All data will be deleted!" },
+        ["ImportDatabaseDesc"] = new() { ["de"] = "Importiert Werksdaten aus einer JSON-Datei. ACHTUNG: Alle Daten werden gelöscht!", ["fr"] = "Importe les données usine depuis un fichier JSON. ATTENTION: Toutes les données seront supprimées!", ["it"] = "Importa i dati di fabbrica da un file JSON. ATTENZIONE: Tutti i dati saranno eliminati!", ["en"] = "Import factory data from a JSON file. WARNING: All data will be deleted!" },
 
         // Results
         ["None"] = new() { ["de"] = "Keine", ["fr"] = "Aucun", ["it"] = "Nessuno", ["en"] = "None" },
-        ["HorizontalDistance"] = new() { ["de"] = "Horiz. Distanz", ["fr"] = "Dist. horiz.", ["it"] = "Dist. orizz.", ["en"] = "Horiz. dist." },
         ["DistanceAntennaOka"] = new() { ["de"] = "Distanz Antenne-OKA", ["fr"] = "Distance Antenne-LSM", ["it"] = "Distanza Antenna-LST", ["en"] = "Distance Antenna-PSS" },
         ["OkaFullName"] = new() { ["de"] = "Ort für kurzfristigen Aufenthalt", ["fr"] = "Lieu de séjour momentané", ["it"] = "Luogo di soggiorno temporaneo", ["en"] = "Place of Short-Term Stay" },
         ["AboveOka"] = new() { ["de"] = "über OKA", ["fr"] = "au-dessus du LSM", ["it"] = "sopra LST", ["en"] = "above PSS" },
@@ -871,12 +993,18 @@ public class Strings : INotifyPropertyChanged
         ["CalculationResults"] = new() { ["de"] = "Berechnungsergebnisse", ["fr"] = "Résultats du calcul", ["it"] = "Risultati del calcolo", ["en"] = "Calculation Results" },
         ["Limit"] = new() { ["de"] = "Grenzwert", ["fr"] = "Limite", ["it"] = "Limite", ["en"] = "Limit" },
         ["ExportMarkdown"] = new() { ["de"] = "Markdown exportieren", ["fr"] = "Exporter Markdown", ["it"] = "Esporta Markdown", ["en"] = "Export Markdown" },
-        ["FreqHeader"] = new() { ["de"] = "Freq", ["fr"] = "Fréq", ["it"] = "Freq", ["en"] = "Freq" },
-        ["GainHeader"] = new() { ["de"] = "Gewinn", ["fr"] = "Gain", ["it"] = "Guad", ["en"] = "Gain" },
-        ["PmHeader"] = new() { ["de"] = "Pm", ["fr"] = "Pm", ["it"] = "Pm", ["en"] = "Pm" },
-        ["FieldHeader"] = new() { ["de"] = "Feld (V/m)", ["fr"] = "Champ (V/m)", ["it"] = "Campo (V/m)", ["en"] = "Field (V/m)" },
-        ["SafetyHeader"] = new() { ["de"] = "Sicherh.", ["fr"] = "Sécu.", ["it"] = "Sicur.", ["en"] = "Safety" },
         ["StatusHeader"] = new() { ["de"] = "Status", ["fr"] = "Statut", ["it"] = "Stato", ["en"] = "Status" },
+
+        // Short labels for two-line headers
+        ["CableLbl"] = new() { ["de"] = "Kabel", ["fr"] = "Câble", ["it"] = "Cavo", ["en"] = "Cable" },
+        ["GainLbl"] = new() { ["de"] = "Gew.", ["fr"] = "Gain", ["it"] = "Guad.", ["en"] = "Gain" },
+        ["VertLbl"] = new() { ["de"] = "Vert.", ["fr"] = "Vert.", ["it"] = "Vert.", ["en"] = "Vert." },
+        ["TotGainLbl"] = new() { ["de"] = "Tot.Gew.", ["fr"] = "Gain tot.", ["it"] = "Guad.tot.", ["en"] = "Tot.Gain" },
+        ["EirpLbl"] = new() { ["de"] = "EIRP", ["fr"] = "PIRE", ["it"] = "EIRP", ["en"] = "EIRP" },
+        ["BldLbl"] = new() { ["de"] = "Geb.", ["fr"] = "Bât.", ["it"] = "Ed.", ["en"] = "Bld." },
+        ["LimitLbl"] = new() { ["de"] = "Grenzw.", ["fr"] = "Limite", ["it"] = "Limite", ["en"] = "Limit" },
+        ["SafeDistLbl"] = new() { ["de"] = "Sich.D.", ["fr"] = "Dist.S.", ["it"] = "Dist.S.", ["en"] = "Safe D." },
+        ["OkaDistLbl"] = new() { ["de"] = "OKA D.", ["fr"] = "LSM D.", ["it"] = "LSBD D.", ["en"] = "OKA D." },
 
         // Validation
 
@@ -902,7 +1030,7 @@ public class Strings : INotifyPropertyChanged
         ["ImportUserData"] = new() { ["de"] = "Benutzerdaten importieren", ["fr"] = "Importer données utilisateur", ["it"] = "Importa dati utente", ["en"] = "Import User Data" },
         ["ExportUserDataDesc"] = new() { ["de"] = "Exportiert alle Projekte, OKAs und benutzerdefinierte Stammdaten", ["fr"] = "Exporte tous les projets, LSMs et données de base personnalisées", ["it"] = "Esporta tutti i progetti, LST e dati master personalizzati", ["en"] = "Export all projects, PSSs, and custom master data" },
         ["ImportUserDataDesc"] = new() { ["de"] = "Importiert Benutzerdaten aus einer Sicherungsdatei", ["fr"] = "Importe les données utilisateur depuis un fichier de sauvegarde", ["it"] = "Importa i dati utente da un file di backup", ["en"] = "Import user data from a backup file" },
-        ["ImportConfirmMessage"] = new() { ["de"] = "Dies l?scht alle bestehenden Daten und ersetzt sie durch das Backup. Fortfahren?", ["fr"] = "Cela supprime toutes les donn?es existantes et les remplace par la sauvegarde. Continuer?", ["it"] = "Questo elimina tutti i dati esistenti e li sostituisce con il backup. Continuare?", ["en"] = "This deletes all existing data and replaces it with the backup. Continue?" },
+        ["ImportConfirmMessage"] = new() { ["de"] = "Dies löscht alle bestehenden Daten und ersetzt sie durch das Backup. Fortfahren?", ["fr"] = "Cela supprime toutes les données existantes et les remplace par la sauvegarde. Continuer?", ["it"] = "Questo elimina tutti i dati esistenti e li sostituisce con il backup. Continuare?", ["en"] = "This deletes all existing data and replaces it with the backup. Continue?" },
         ["ExportSuccess"] = new() { ["de"] = "Export erfolgreich", ["fr"] = "Export réussi", ["it"] = "Esportazione riuscita", ["en"] = "Export successful" },
         ["ExportFailed"] = new() { ["de"] = "Export fehlgeschlagen", ["fr"] = "Échec de l'export", ["it"] = "Esportazione fallita", ["en"] = "Export failed" },
         ["ImportSuccess"] = new() { ["de"] = "Import erfolgreich", ["fr"] = "Import réussi", ["it"] = "Importazione riuscita", ["en"] = "Import successful" },
@@ -933,5 +1061,75 @@ public class Strings : INotifyPropertyChanged
         ["FactoryMode"] = new() { ["de"] = "WERKSMODUS", ["fr"] = "MODE USINE", ["it"] = "MODALITÀ FABBRICA", ["en"] = "FACTORY MODE" },
         ["EnterFactoryPassword"] = new() { ["de"] = "Bitte Werkspasswort eingeben:", ["fr"] = "Veuillez entrer le mot de passe usine:", ["it"] = "Inserisci la password di fabbrica:", ["en"] = "Please enter factory password:" },
         ["WrongPassword"] = new() { ["de"] = "Falsches Passwort", ["fr"] = "Mot de passe incorrect", ["it"] = "Password errata", ["en"] = "Wrong password" },
+
+        // Calculation Report Labels
+        ["CalcTitlePrefix"] = new() { ["de"] = "Immissionsberechnung für", ["fr"] = "Calcul d'immission pour", ["it"] = "Calcolo immissione per", ["en"] = "Emission Calculation for" },
+        ["CalcOperator"] = new() { ["de"] = "Betreiber", ["fr"] = "Opérateur", ["it"] = "Operatore", ["en"] = "Operator" },
+        ["CalcAddress"] = new() { ["de"] = "Adresse", ["fr"] = "Adresse", ["it"] = "Indirizzo", ["en"] = "Address" },
+        ["CalcDate"] = new() { ["de"] = "Datum", ["fr"] = "Date", ["it"] = "Data", ["en"] = "Date" },
+        ["CalcTransmitter"] = new() { ["de"] = "Sender", ["fr"] = "Émetteur", ["it"] = "Trasmettitore", ["en"] = "Transmitter" },
+        ["CalcCable"] = new() { ["de"] = "Kabel", ["fr"] = "Câble", ["it"] = "Cavo", ["en"] = "Cable" },
+        ["CalcAntenna"] = new() { ["de"] = "Antenne", ["fr"] = "Antenne", ["it"] = "Antenna", ["en"] = "Antenna" },
+        ["CalcPolarization"] = new() { ["de"] = "Polarisation", ["fr"] = "Polarisation", ["it"] = "Polarizzazione", ["en"] = "Polarization" },
+        ["CalcRotation"] = new() { ["de"] = "Rotation", ["fr"] = "Rotation", ["it"] = "Rotazione", ["en"] = "Rotation" },
+        ["CalcLinear"] = new() { ["de"] = "Linear", ["fr"] = "Linéaire", ["it"] = "Lineare", ["en"] = "Linear" },
+        ["CalcOka"] = new() { ["de"] = "OKA", ["fr"] = "LSM", ["it"] = "LSBD", ["en"] = "OKA" },
+        ["CalcModulation"] = new() { ["de"] = "Modulation", ["fr"] = "Modulation", ["it"] = "Modulazione", ["en"] = "Modulation" },
+        ["CalcBuildingDamping"] = new() { ["de"] = "Gebäudedämpfung", ["fr"] = "Atténuation bâtiment", ["it"] = "Attenuazione edificio", ["en"] = "Building Damping" },
+        ["CalcStatusCompliant"] = new() { ["de"] = "**Status: KONFORM** - Alle Frequenzen innerhalb der Grenzwerte", ["fr"] = "**Statut: CONFORME** - Toutes les fréquences dans les limites", ["it"] = "**Stato: CONFORME** - Tutte le frequenze entro i limiti", ["en"] = "**Status: COMPLIANT** - All frequencies within limits" },
+        ["CalcStatusNonCompliant"] = new() { ["de"] = "**Status: NICHT KONFORM** - Grenzwerte überschritten!", ["fr"] = "**Statut: NON CONFORME** - Limites dépassées!", ["it"] = "**Stato: NON CONFORME** - Limiti superati!", ["en"] = "**Status: NON-COMPLIANT** - Limits exceeded!" },
+        ["CalcHorizontal"] = new() { ["de"] = "Horizontal", ["fr"] = "Horizontal", ["it"] = "Orizzontale", ["en"] = "Horizontal" },
+        ["CalcVertical"] = new() { ["de"] = "Vertikal", ["fr"] = "Vertical", ["it"] = "Verticale", ["en"] = "Vertical" },
+        ["CalcFixed"] = new() { ["de"] = "Fest", ["fr"] = "Fixe", ["it"] = "Fisso", ["en"] = "Fixed" },
+
+        // Calculation Table Row Labels
+        ["CalcFrequency"] = new() { ["de"] = "Frequenz", ["fr"] = "Fréquence", ["it"] = "Frequenza", ["en"] = "Frequency" },
+        ["CalcDistanceToAntenna"] = new() { ["de"] = "Abstand zur Antenne", ["fr"] = "Distance à l'antenne", ["it"] = "Distanza dall'antenna", ["en"] = "Distance to antenna" },
+        ["CalcTxPower"] = new() { ["de"] = "Senderleistung", ["fr"] = "Puissance TX", ["it"] = "Potenza TX", ["en"] = "TX Power" },
+        ["CalcActivityFactor"] = new() { ["de"] = "Aktivitätsfaktor", ["fr"] = "Facteur d'activité", ["it"] = "Fattore di attività", ["en"] = "Activity factor" },
+        ["CalcModulationFactor"] = new() { ["de"] = "Modulationsfaktor", ["fr"] = "Facteur de modulation", ["it"] = "Fattore di modulazione", ["en"] = "Modulation factor" },
+        ["CalcMeanPower"] = new() { ["de"] = "Mittlere Leistung", ["fr"] = "Puissance moyenne", ["it"] = "Potenza media", ["en"] = "Mean power" },
+        ["CalcCableAttenuation"] = new() { ["de"] = "Kabeldämpfung", ["fr"] = "Atténuation câble", ["it"] = "Attenuazione cavo", ["en"] = "Cable attenuation" },
+        ["CalcAdditionalLosses"] = new() { ["de"] = "Übrige Dämpfung", ["fr"] = "Pertes supplémentaires", ["it"] = "Perdite aggiuntive", ["en"] = "Additional losses" },
+        ["CalcTotalAttenuation"] = new() { ["de"] = "Gesamtdämpfung", ["fr"] = "Atténuation totale", ["it"] = "Attenuazione totale", ["en"] = "Total attenuation" },
+        ["CalcAttenuationFactor"] = new() { ["de"] = "Dämpfungsfaktor", ["fr"] = "Facteur d'atténuation", ["it"] = "Fattore di attenuazione", ["en"] = "Attenuation factor" },
+        ["CalcAntennaGain"] = new() { ["de"] = "Antennengewinn", ["fr"] = "Gain d'antenne", ["it"] = "Guadagno antenna", ["en"] = "Antenna gain" },
+        ["CalcVerticalAttenuation"] = new() { ["de"] = "Vertikale Winkeldämpfung", ["fr"] = "Atténuation angle vertical", ["it"] = "Attenuazione angolo verticale", ["en"] = "Vertical angle attenuation" },
+        ["CalcTotalAntennaGain"] = new() { ["de"] = "Totaler Antennengewinn", ["fr"] = "Gain d'antenne total", ["it"] = "Guadagno antenna totale", ["en"] = "Total antenna gain" },
+        ["CalcGainFactor"] = new() { ["de"] = "Gewinnfaktor", ["fr"] = "Facteur de gain", ["it"] = "Fattore di guadagno", ["en"] = "Gain factor" },
+        ["CalcEirp"] = new() { ["de"] = "EIRP", ["fr"] = "PIRE", ["it"] = "EIRP", ["en"] = "EIRP" },
+        ["CalcErp"] = new() { ["de"] = "ERP", ["fr"] = "PAR", ["it"] = "ERP", ["en"] = "ERP" },
+        ["CalcBuildingDampingRow"] = new() { ["de"] = "Gebäudedämpfung", ["fr"] = "Atténuation bâtiment", ["it"] = "Attenuazione edificio", ["en"] = "Building damping" },
+        ["CalcBuildingDampingFactor"] = new() { ["de"] = "Gebäudedämpfungsfaktor", ["fr"] = "Facteur atténuation bât.", ["it"] = "Fattore attenuazione ed.", ["en"] = "Building damping factor" },
+        ["CalcGroundReflection"] = new() { ["de"] = "Bodenreflexionsfaktor", ["fr"] = "Facteur réflexion sol", ["it"] = "Fattore riflessione suolo", ["en"] = "Ground reflection factor" },
+        ["CalcFieldStrength"] = new() { ["de"] = "Feldstärke am OKA", ["fr"] = "Champ au LSM", ["it"] = "Campo al LSBD", ["en"] = "Field strength at OKA" },
+        ["CalcLimit"] = new() { ["de"] = "Grenzwert", ["fr"] = "Limite", ["it"] = "Limite", ["en"] = "Limit" },
+        ["CalcMinSafetyDistance"] = new() { ["de"] = "Min. Sicherheitsabstand", ["fr"] = "Dist. sécurité min.", ["it"] = "Dist. sicurezza min.", ["en"] = "Min. safety distance" },
+        ["CalcOkaDistance"] = new() { ["de"] = "OKA Abstand", ["fr"] = "Distance LSM", ["it"] = "Distanza LSBD", ["en"] = "OKA distance" },
+
+        // Column Explanations
+        ["CalcColumnExplanations"] = new() { ["de"] = "## Spaltenlegende", ["fr"] = "## Légende des colonnes", ["it"] = "## Legenda delle colonne", ["en"] = "## Column Explanations" },
+        ["CalcExplainF"] = new() { ["de"] = "Frequenz in MHz", ["fr"] = "Fréquence en MHz", ["it"] = "Frequenza in MHz", ["en"] = "Frequency in MHz" },
+        ["CalcExplainD"] = new() { ["de"] = "Horizontaler Abstand vom OKA zur Antenne in Metern", ["fr"] = "Distance horizontale du LSM à l'antenne en mètres", ["it"] = "Distanza orizzontale dal LSBD all'antenna in metri", ["en"] = "Horizontal distance from OKA to antenna in meters" },
+        ["CalcExplainP"] = new() { ["de"] = "Senderausgangsleistung in Watt", ["fr"] = "Puissance de sortie de l'émetteur en Watts", ["it"] = "Potenza di uscita del trasmettitore in Watt", ["en"] = "Transmitter output power in Watts" },
+        ["CalcExplainAF"] = new() { ["de"] = "Aktivitätsfaktor (typisch 0.5 = 50% Sendezeit)", ["fr"] = "Facteur d'activité (typique 0.5 = 50% du temps d'émission)", ["it"] = "Fattore di attività (tipico 0.5 = 50% del tempo di trasmissione)", ["en"] = "Activity factor (typical 0.5 = 50% transmit time)" },
+        ["CalcExplainMF"] = new() { ["de"] = "Modulationsfaktor (SSB=0.2, CW=0.4, FM/Digital=1.0)", ["fr"] = "Facteur de modulation (SSB=0.2, CW=0.4, FM/Digital=1.0)", ["it"] = "Fattore di modulazione (SSB=0.2, CW=0.4, FM/Digital=1.0)", ["en"] = "Modulation factor (SSB=0.2, CW=0.4, FM/Digital=1.0)" },
+        ["CalcExplainPm"] = new() { ["de"] = "Mittlere Leistung = P × AF × MF", ["fr"] = "Puissance moyenne = P × AF × MF", ["it"] = "Potenza media = P × AF × MF", ["en"] = "Mean power = P × AF × MF" },
+        ["CalcExplainA1"] = new() { ["de"] = "Kabeldämpfung in dB", ["fr"] = "Atténuation du câble en dB", ["it"] = "Attenuazione del cavo in dB", ["en"] = "Cable attenuation in dB" },
+        ["CalcExplainA2"] = new() { ["de"] = "Zusätzliche Dämpfung (Stecker, Schalter) in dB", ["fr"] = "Pertes supplémentaires (connecteurs, commutateurs) en dB", ["it"] = "Perdite aggiuntive (connettori, interruttori) in dB", ["en"] = "Additional losses (connectors, switches) in dB" },
+        ["CalcExplainA"] = new() { ["de"] = "Gesamtdämpfung = a1 + a2", ["fr"] = "Atténuation totale = a1 + a2", ["it"] = "Attenuazione totale = a1 + a2", ["en"] = "Total attenuation = a1 + a2" },
+        ["CalcExplainAFactor"] = new() { ["de"] = "Dämpfungsfaktor = 10^(-a/10)", ["fr"] = "Facteur d'atténuation = 10^(-a/10)", ["it"] = "Fattore di attenuazione = 10^(-a/10)", ["en"] = "Attenuation factor = 10^(-a/10)" },
+        ["CalcExplainG1"] = new() { ["de"] = "Antennengewinn in dBi", ["fr"] = "Gain d'antenne en dBi", ["it"] = "Guadagno dell'antenna in dBi", ["en"] = "Antenna gain in dBi" },
+        ["CalcExplainG2"] = new() { ["de"] = "Vertikale Winkeldämpfung basierend auf Antennendiagramm in dB", ["fr"] = "Atténuation angle vertical basée sur le diagramme d'antenne en dB", ["it"] = "Attenuazione angolo verticale basata sul diagramma dell'antenna in dB", ["en"] = "Vertical angle attenuation based on antenna pattern in dB" },
+        ["CalcExplainG"] = new() { ["de"] = "Totaler Antennengewinn = g1 - g2", ["fr"] = "Gain d'antenne total = g1 - g2", ["it"] = "Guadagno totale dell'antenna = g1 - g2", ["en"] = "Total antenna gain = g1 - g2" },
+        ["CalcExplainGFactor"] = new() { ["de"] = "Gewinnfaktor = 10^(g/10)", ["fr"] = "Facteur de gain = 10^(g/10)", ["it"] = "Fattore di guadagno = 10^(g/10)", ["en"] = "Gain factor = 10^(g/10)" },
+        ["CalcExplainPs"] = new() { ["de"] = "EIRP (Equivalent Isotropic Radiated Power) = Pm × A × G", ["fr"] = "PIRE (Puissance Isotrope Rayonnée Équivalente) = Pm × A × G", ["it"] = "EIRP (Potenza Isotropa Irradiata Equivalente) = Pm × A × G", ["en"] = "EIRP (Equivalent Isotropic Radiated Power) = Pm × A × G" },
+        ["CalcExplainPsPrime"] = new() { ["de"] = "ERP (Effective Radiated Power) = Ps / 1.64", ["fr"] = "PAR (Puissance Apparente Rayonnée) = Ps / 1.64", ["it"] = "ERP (Potenza Effettiva Irradiata) = Ps / 1.64", ["en"] = "ERP (Effective Radiated Power) = Ps / 1.64" },
+        ["CalcExplainAg"] = new() { ["de"] = "Gebäudedämpfung in dB (0 für Aussenbereich)", ["fr"] = "Atténuation du bâtiment en dB (0 pour l'extérieur)", ["it"] = "Attenuazione dell'edificio in dB (0 per esterni)", ["en"] = "Building damping in dB (0 for outdoor)" },
+        ["CalcExplainAG"] = new() { ["de"] = "Gebäudedämpfungsfaktor = 10^(-ag/10)", ["fr"] = "Facteur d'atténuation du bâtiment = 10^(-ag/10)", ["it"] = "Fattore di attenuazione dell'edificio = 10^(-ag/10)", ["en"] = "Building damping factor = 10^(-ag/10)" },
+        ["CalcExplainKr"] = new() { ["de"] = "Bodenreflexionsfaktor (1.6 gemäss NISV Anhang 2)", ["fr"] = "Facteur de réflexion au sol (1.6 selon ORNI Annexe 2)", ["it"] = "Fattore di riflessione al suolo (1.6 secondo ORNI Allegato 2)", ["en"] = "Ground reflection factor (1.6 per NISV Annex 2)" },
+        ["CalcExplainE"] = new() { ["de"] = "Berechnete Feldstärke am OKA in V/m", ["fr"] = "Intensité de champ calculée au LSM en V/m", ["it"] = "Intensità di campo calcolata al LSBD in V/m", ["en"] = "Calculated field strength at OKA in V/m" },
+        ["CalcExplainEigw"] = new() { ["de"] = "Immissions-Grenzwert gemäss NISV in V/m", ["fr"] = "Valeur limite d'immission selon ORNI en V/m", ["it"] = "Valore limite di immissione secondo ORNI in V/m", ["en"] = "Emission limit per NISV in V/m" },
+        ["CalcExplainDs"] = new() { ["de"] = "Minimaler Sicherheitsabstand (Konformität wenn d > ds)", ["fr"] = "Distance de sécurité minimale (conforme si d > ds)", ["it"] = "Distanza di sicurezza minima (conforme se d > ds)", ["en"] = "Minimum safety distance (compliant if d > ds)" },
     };
 }

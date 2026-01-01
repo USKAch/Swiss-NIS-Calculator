@@ -37,22 +37,20 @@
                         </Grid>
 
                         <!-- Horizontal Distance -->
-                        <Grid ColumnDefinitions="150,Auto,Auto,*" ColumnSpacing="10">
-                            <TextBlock Text="{Binding DefaultDistance, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                        <Grid ColumnDefinitions="150,Auto,*" ColumnSpacing="10">
+                            <TextBlock Text="{Binding OkaDistance, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <NumericUpDown Grid.Column="1" Value="{Binding DefaultDistanceMeters}" ShowButtonSpinner="False"
-                                           Minimum="0.1" Maximum="1000" Increment="0.5" Width="100"/>
-                            <TextBlock Grid.Column="2" Text="m" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="3" Text="{Binding DefaultDistanceHint, Source={x:Static loc:Strings.Instance}}"
+                                           Minimum="0.1" Maximum="100" Increment="0.5" Width="100"/>
+                            <TextBlock Grid.Column="2" Text="{Binding OkaDistanceHint, Source={x:Static loc:Strings.Instance}}"
                                        Opacity="0.6" FontSize="12" VerticalAlignment="Center"/>
                         </Grid>
 
-                        <!-- Default Damping -->
-                        <Grid ColumnDefinitions="150,Auto,Auto,*" ColumnSpacing="10">
-                            <TextBlock Text="{Binding DefaultDamping, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                        <!-- Building Damping -->
+                        <Grid ColumnDefinitions="150,Auto,*" ColumnSpacing="10">
+                            <TextBlock Text="{Binding OkaDamping, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <NumericUpDown Grid.Column="1" Value="{Binding DefaultDampingDb}" ShowButtonSpinner="False"
                                            Minimum="0" Maximum="30" Increment="1" Width="100"/>
-                            <TextBlock Grid.Column="2" Text="dB" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="3" Text="{Binding DefaultDampingHint, Source={x:Static loc:Strings.Instance}}"
+                            <TextBlock Grid.Column="2" Text="{Binding OkaDampingHint, Source={x:Static loc:Strings.Instance}}"
                                        Opacity="0.6" FontSize="12" VerticalAlignment="Center"/>
                         </Grid>
                     </StackPanel>

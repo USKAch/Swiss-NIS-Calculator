@@ -477,7 +477,7 @@ PDF export contains:
 
 | Editor | Fields |
 |--------|--------|
-| **Antenna** | Manufacturer, Model, Type, Polarization, Rotatable, Bands (Freq/Gain/Pattern) |
+| **Antenna** | Manufacturer, Model, Type, Polarization, Bands (Freq/Gain/Pattern) |
 | **Cable** | Name, Attenuations at standard frequencies (dB/100m) |
 | **Radio** | Manufacturer, Model, MaxPower |
 | **Evaluation Point (PSS)** | Name, DefaultDistance, DefaultDamping |
@@ -589,6 +589,17 @@ On first launch:
 - Create default `settings.json` if missing (language=de, theme=system).
 - Load embedded translations, then merge `translations.json` if present.
 
+### 6.6 Database Schema Compatibility
+
+When the application detects an incompatible database schema (e.g., after an update that changes the table structure), it displays a warning dialog before resetting the database:
+
+- **Warning message**: Informs user that all projects and configurations will be deleted
+- **Options**:
+  - **Yes**: Reset database and continue (data will be lost)
+  - **No**: Exit application (user can manually backup or migrate the database)
+
+This ensures users are never surprised by data loss due to schema changes.
+
 ## 7. Data Model
 
 ### 7.1 Overview
@@ -622,7 +633,7 @@ Installation (nisdata.db)
 │   │   - true: user data (editable, protected on import)
 │   │
 │   ├── Antennas
-│   │   ├── Header: Manufacturer, Model, Type, Polarization, Rotatable
+│   │   ├── Header: Manufacturer, Model, Type, Polarization
 │   │   └── Bands[]
 │   │       ├── Frequency (MHz)
 │   │       ├── Gain (dBi)
@@ -651,7 +662,9 @@ Installation (nisdata.db)
         ├── Header: ConfigNumber, Name
         │
         ├── Antenna → (reference to Master Data)
-        │   └── Height (m)
+        │   ├── Height (m)
+        │   ├── IsRotatable (boolean)
+        │   └── HorizontalAngleDegrees (0-360)
         │
         ├── Cable → (reference to Master Data)
         │   ├── Length (m)
@@ -1136,8 +1149,6 @@ CREATE TABLE Antennas (
     Model TEXT NOT NULL,
     AntennaType TEXT DEFAULT 'other',
     IsHorizontallyPolarized INTEGER DEFAULT 1,
-    IsRotatable INTEGER DEFAULT 0,
-    HorizontalAngleDegrees REAL DEFAULT 360,
     IsUserData INTEGER DEFAULT 0,
     BandsJson TEXT DEFAULT '[]',
     UNIQUE(Manufacturer, Model)
@@ -1181,6 +1192,7 @@ CREATE TABLE Projects (
     Id INTEGER PRIMARY KEY AUTOINCREMENT,
     Name TEXT NOT NULL,
     OperatorName TEXT,
+    Callsign TEXT,
     Address TEXT,
     Location TEXT,
     CreatedAt TEXT NOT NULL,
@@ -1195,13 +1207,15 @@ CREATE TABLE Configurations (
     PowerWatts REAL DEFAULT 100,
     RadioId INTEGER,
     LinearName TEXT,
-    LinearPowerWatts REAL,
+    LinearPowerWatts REAL DEFAULT 0,
     CableId INTEGER,
     CableLengthMeters REAL DEFAULT 10,
     AdditionalLossDb REAL DEFAULT 0,
     AdditionalLossDescription TEXT,
     AntennaId INTEGER,
     HeightMeters REAL DEFAULT 10,
+    IsRotatable INTEGER DEFAULT 0,
+    HorizontalAngleDegrees REAL DEFAULT 360,
     ModulationId INTEGER,
     ActivityFactor REAL DEFAULT 0.5,
     OkaId INTEGER,

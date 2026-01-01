@@ -181,7 +181,9 @@ public partial class ImportExportViewModel : ViewModelBase
                             {
                                 Manufacturer = config.Antenna.Manufacturer,
                                 Model = config.Antenna.Model,
-                                HeightMeters = config.HeightMeters
+                                HeightMeters = config.HeightMeters,
+                                IsRotatable = config.RotationAngleDegrees != 360,
+                                HorizontalAngleDegrees = config.RotationAngleDegrees
                             },
                             Modulation = config.Modulation,
                             ActivityFactor = config.ActivityFactor,
@@ -224,8 +226,6 @@ public partial class ImportExportViewModel : ViewModelBase
                 Model = config.Antenna.Model,
                 AntennaType = AntennaTypes.Other,
                 IsHorizontallyPolarized = config.Polarization.Equals("horizontal", StringComparison.OrdinalIgnoreCase),
-                IsRotatable = config.RotationAngleDegrees != 360,
-                HorizontalAngleDegrees = config.RotationAngleDegrees,
                 IsUserData = true
             });
         }
@@ -327,7 +327,7 @@ public partial class ImportExportViewModel : ViewModelBase
                             },
                             HeightMeters = c.Antenna.HeightMeters,
                             Polarization = antenna?.IsHorizontallyPolarized == false ? "vertical" : "horizontal",
-                            RotationAngleDegrees = antenna?.HorizontalAngleDegrees ?? 360,
+                            RotationAngleDegrees = c.Antenna.HorizontalAngleDegrees,
                             Radio = new Reference
                             {
                                 Manufacturer = c.Radio.Manufacturer,

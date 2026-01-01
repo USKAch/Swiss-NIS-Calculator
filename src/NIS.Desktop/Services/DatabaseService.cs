@@ -58,6 +58,24 @@ public class DatabaseService : IDisposable
 
         if (!IsSchemaCompatible())
         {
+            // Show warning - user data will be lost
+            var result = MsBox.Avalonia.MessageBoxManager
+                .GetMessageBoxStandard(
+                    "Database Reset Required",
+                    "The database schema is incompatible and needs to be reset.\n\n" +
+                    "WARNING: All projects and configurations will be deleted!\n\n" +
+                    "Click Yes to reset the database, or No to exit the application.",
+                    MsBox.Avalonia.Enums.ButtonEnum.YesNo,
+                    MsBox.Avalonia.Enums.Icon.Warning)
+                .ShowAsync()
+                .GetAwaiter()
+                .GetResult();
+
+            if (result != MsBox.Avalonia.Enums.ButtonResult.Yes)
+            {
+                Environment.Exit(0);
+            }
+
             ResetDatabaseSchema();
         }
 
@@ -72,6 +90,11 @@ public class DatabaseService : IDisposable
         if (TableExists("Okas") && !HasColumn("Okas", "IsUserData")) return false;
         if (TableExists("Projects") && !HasColumn("Projects", "Callsign")) return false;
         if (TableExists("Configurations") && !HasColumn("Configurations", "ModulationId")) return false;
+        if (TableExists("Configurations") && !HasColumn("Configurations", "LinearName")) return false;
+        if (TableExists("Configurations") && !HasColumn("Configurations", "IsRotatable")) return false;
+        // Legacy columns that should NOT exist in clean schema
+        if (TableExists("Configurations") && HasColumn("Configurations", "HasLinear")) return false;
+        if (TableExists("Configurations") && HasColumn("Configurations", "LinearId")) return false;
         return true;
     }
 
@@ -111,8 +134,8 @@ public class DatabaseService : IDisposable
                 Model TEXT NOT NULL,
                 AntennaType TEXT NOT NULL DEFAULT 'other',
                 IsHorizontallyPolarized INTEGER NOT NULL DEFAULT 1,
-                IsRotatable INTEGER NOT NULL DEFAULT 0,
-                HorizontalAngleDegrees REAL NOT NULL DEFAULT 360,
+                
+                
                 IsUserData INTEGER NOT NULL DEFAULT 0,
                 BandsJson TEXT NOT NULL DEFAULT '[]',
                 UNIQUE(Manufacturer, Model)
@@ -167,14 +190,16 @@ public class DatabaseService : IDisposable
                 Name TEXT,
                 PowerWatts REAL NOT NULL DEFAULT 100,
                 RadioId INTEGER,
-                HasLinear INTEGER NOT NULL DEFAULT 0,
-                LinearId INTEGER,
+                LinearName TEXT,
+                LinearPowerWatts REAL NOT NULL DEFAULT 0,
                 CableId INTEGER,
                 CableLengthMeters REAL NOT NULL DEFAULT 10,
                 AdditionalLossDb REAL NOT NULL DEFAULT 0,
                 AdditionalLossDescription TEXT,
                 AntennaId INTEGER,
                 HeightMeters REAL NOT NULL DEFAULT 10,
+                IsRotatable INTEGER NOT NULL DEFAULT 0,
+                HorizontalAngleDegrees REAL NOT NULL DEFAULT 360,
                 ModulationId INTEGER,
                 ActivityFactor REAL NOT NULL DEFAULT 0.5,
                 OkaId INTEGER,
@@ -182,7 +207,6 @@ public class DatabaseService : IDisposable
                 OkaBuildingDampingDb REAL NOT NULL DEFAULT 0,
                 FOREIGN KEY (ProjectId) REFERENCES Projects(Id) ON DELETE CASCADE,
                 FOREIGN KEY (RadioId) REFERENCES Radios(Id) ON DELETE SET NULL,
-                FOREIGN KEY (LinearId) REFERENCES Radios(Id) ON DELETE SET NULL,
                 FOREIGN KEY (CableId) REFERENCES Cables(Id) ON DELETE SET NULL,
                 FOREIGN KEY (AntennaId) REFERENCES Antennas(Id) ON DELETE SET NULL,
                 FOREIGN KEY (ModulationId) REFERENCES Modulations(Id) ON DELETE SET NULL,
@@ -265,16 +289,16 @@ public class DatabaseService : IDisposable
         }), JsonOptions);
 
         _connection.Execute(
-            @"INSERT INTO Antennas (Manufacturer, Model, AntennaType, IsHorizontallyPolarized, IsRotatable, HorizontalAngleDegrees, IsUserData, BandsJson)
-              VALUES (@Manufacturer, @Model, @AntennaType, @IsHorizontallyPolarized, @IsRotatable, @HorizontalAngleDegrees, @IsUserData, @BandsJson)",
+            @"INSERT INTO Antennas (Manufacturer, Model, AntennaType, IsHorizontallyPolarized, IsUserData, BandsJson)
+              VALUES (@Manufacturer, @Model, @AntennaType, @IsHorizontallyPolarized, @IsUserData, @BandsJson)",
             new
             {
                 antenna.Manufacturer,
                 antenna.Model,
                 antenna.AntennaType,
                 IsHorizontallyPolarized = antenna.IsHorizontallyPolarized ? 1 : 0,
-                IsRotatable = antenna.IsRotatable ? 1 : 0,
-                antenna.HorizontalAngleDegrees,
+                
+                
                 IsUserData = isUserData ? 1 : 0,
                 BandsJson = bandsJson
             });
@@ -293,8 +317,8 @@ public class DatabaseService : IDisposable
             UPDATE Antennas SET
                 AntennaType = @AntennaType,
                 IsHorizontallyPolarized = @IsHorizontallyPolarized,
-                IsRotatable = @IsRotatable,
-                HorizontalAngleDegrees = @HorizontalAngleDegrees,
+                
+                
                 IsUserData = @IsUserData,
                 BandsJson = @BandsJson
             WHERE Manufacturer = @Manufacturer AND Model = @Model",
@@ -304,8 +328,8 @@ public class DatabaseService : IDisposable
                 antenna.Model,
                 antenna.AntennaType,
                 IsHorizontallyPolarized = antenna.IsHorizontallyPolarized ? 1 : 0,
-                IsRotatable = antenna.IsRotatable ? 1 : 0,
-                antenna.HorizontalAngleDegrees,
+                
+                
                 IsUserData = isUserData ? 1 : 0,
                 BandsJson = bandsJson
             });
@@ -348,8 +372,8 @@ public class DatabaseService : IDisposable
             Model = row.Model,
             AntennaType = row.AntennaType,
             IsHorizontallyPolarized = row.IsHorizontallyPolarized == 1,
-            IsRotatable = row.IsRotatable == 1,
-            HorizontalAngleDegrees = row.HorizontalAngleDegrees,
+            
+            
             IsUserData = row.IsUserData == 1,
             Bands = bands.Select(b => new AntennaBand
             {
@@ -865,8 +889,6 @@ public class DatabaseService : IDisposable
     {
         // Look up IDs from names
         var radioId = GetRadioId(config.Radio.Manufacturer, config.Radio.Model);
-        // Linear is now stored as name + power, not as a Radio reference
-        int? linearId = null;
         var cableId = GetCableId(config.Cable.Type);
         var antennaId = GetAntennaId(config.Antenna.Manufacturer, config.Antenna.Model);
         var modulationId = GetModulationId(config.Modulation);
@@ -875,16 +897,16 @@ public class DatabaseService : IDisposable
         _connection.Execute(@"
             INSERT INTO Configurations (
                 ProjectId, ConfigNumber, Name, PowerWatts,
-                RadioId, HasLinear, LinearId,
+                RadioId, LinearName, LinearPowerWatts,
                 CableId, CableLengthMeters, AdditionalLossDb, AdditionalLossDescription,
-                AntennaId, HeightMeters,
+                AntennaId, HeightMeters, IsRotatable, HorizontalAngleDegrees,
                 ModulationId, ActivityFactor,
                 OkaId, OkaDistanceMeters, OkaBuildingDampingDb
             ) VALUES (
                 @ProjectId, @ConfigNumber, @Name, @PowerWatts,
-                @RadioId, @HasLinear, @LinearId,
+                @RadioId, @LinearName, @LinearPowerWatts,
                 @CableId, @CableLengthMeters, @AdditionalLossDb, @AdditionalLossDescription,
-                @AntennaId, @HeightMeters,
+                @AntennaId, @HeightMeters, @IsRotatable, @HorizontalAngleDegrees,
                 @ModulationId, @ActivityFactor,
                 @OkaId, @OkaDistanceMeters, @OkaBuildingDampingDb
             )",
@@ -895,14 +917,16 @@ public class DatabaseService : IDisposable
                 config.Name,
                 config.PowerWatts,
                 RadioId = radioId,
-                HasLinear = config.Linear != null ? 1 : 0,
-                LinearId = linearId,
+                LinearName = config.Linear?.Name,
+                LinearPowerWatts = config.Linear?.PowerWatts ?? 0,
                 CableId = cableId,
                 CableLengthMeters = config.Cable.LengthMeters,
                 AdditionalLossDb = config.Cable.AdditionalLossDb,
                 AdditionalLossDescription = config.Cable.AdditionalLossDescription,
                 AntennaId = antennaId,
                 HeightMeters = config.Antenna.HeightMeters,
+                IsRotatable = config.Antenna.IsRotatable ? 1 : 0,
+                HorizontalAngleDegrees = config.Antenna.HorizontalAngleDegrees,
                 ModulationId = modulationId,
                 config.ActivityFactor,
                 OkaId = okaId,
@@ -939,11 +963,21 @@ public class DatabaseService : IDisposable
     {
         // Look up entities by ID
         var radio = row.RadioId.HasValue ? GetRadioById(row.RadioId.Value) : null;
-        var linear = row.HasLinear == 1 && row.LinearId.HasValue ? GetRadioById(row.LinearId.Value) : null;
         var cable = row.CableId.HasValue ? GetCableById(row.CableId.Value) : null;
         var antenna = row.AntennaId.HasValue ? GetAntennaById(row.AntennaId.Value) : null;
         var modulation = row.ModulationId.HasValue ? GetModulationById(row.ModulationId.Value) : null;
         var oka = row.OkaId.HasValue ? GetOkaById(row.OkaId.Value) : null;
+
+        // Build Linear config if LinearName or LinearPowerWatts is set
+        LinearConfig? linearConfig = null;
+        if (!string.IsNullOrEmpty(row.LinearName) || row.LinearPowerWatts > 0)
+        {
+            linearConfig = new LinearConfig
+            {
+                Name = row.LinearName ?? "",
+                PowerWatts = row.LinearPowerWatts
+            };
+        }
 
         return new AntennaConfiguration
         {
@@ -954,12 +988,7 @@ public class DatabaseService : IDisposable
                 Manufacturer = radio?.Manufacturer ?? "",
                 Model = radio?.Model ?? ""
             },
-            // Convert old LinearId (Radio reference) to new format (name + power)
-            Linear = row.HasLinear == 1 && linear != null ? new LinearConfig
-            {
-                Name = linear.DisplayName,
-                PowerWatts = linear.MaxPowerWatts
-            } : null,
+            Linear = linearConfig,
             Cable = new CableConfig
             {
                 Type = cable?.Name ?? "",
@@ -971,7 +1000,9 @@ public class DatabaseService : IDisposable
             {
                 Manufacturer = antenna?.Manufacturer ?? "",
                 Model = antenna?.Model ?? "",
-                HeightMeters = row.HeightMeters
+                HeightMeters = row.HeightMeters,
+                IsRotatable = row.IsRotatable == 1,
+                HorizontalAngleDegrees = row.HorizontalAngleDegrees
             },
             Modulation = modulation?.Name ?? "CW",
             ActivityFactor = row.ActivityFactor,
@@ -1051,9 +1082,9 @@ public class DatabaseService : IDisposable
                         Manufacturer = first.Manufacturer,
                         Model = first.Model,
                         AntennaType = first.AntennaType,
-                        IsRotatable = first.IsRotatable,
+                        
                         IsHorizontallyPolarized = first.IsHorizontallyPolarized,
-                        HorizontalAngleDegrees = first.HorizontalAngleDegrees,
+                        
                         IsUserData = false
                     };
                     foreach (var ant in g)
@@ -1253,8 +1284,6 @@ public class DatabaseService : IDisposable
         public string Model { get; set; } = "";
         public string AntennaType { get; set; } = "other";
         public int IsHorizontallyPolarized { get; set; }
-        public int IsRotatable { get; set; }
-        public double HorizontalAngleDegrees { get; set; }
         public int IsUserData { get; set; }
         public string BandsJson { get; set; } = "[]";
     }
@@ -1303,14 +1332,16 @@ public class DatabaseService : IDisposable
         public string? Name { get; set; }
         public double PowerWatts { get; set; }
         public int? RadioId { get; set; }
-        public int HasLinear { get; set; }
-        public int? LinearId { get; set; }
+        public string? LinearName { get; set; }
+        public double LinearPowerWatts { get; set; }
         public int? CableId { get; set; }
         public double CableLengthMeters { get; set; }
         public double AdditionalLossDb { get; set; }
         public string? AdditionalLossDescription { get; set; }
         public int? AntennaId { get; set; }
         public double HeightMeters { get; set; }
+        public int IsRotatable { get; set; }
+        public double HorizontalAngleDegrees { get; set; }
         public int? ModulationId { get; set; }
         public double ActivityFactor { get; set; }
         public int? OkaId { get; set; }
