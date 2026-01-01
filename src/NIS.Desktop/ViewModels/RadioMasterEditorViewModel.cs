@@ -100,6 +100,7 @@ public partial class RadioMasterEditorViewModel : ViewModelBase
 
         var radio = new Radio
         {
+            Id = _originalRadio?.Id ?? 0,
             Manufacturer = Manufacturer.Trim(),
             Model = Model.Trim(),
             MaxPowerWatts = MaxPowerWatts

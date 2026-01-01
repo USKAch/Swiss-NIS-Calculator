@@ -13,6 +13,12 @@ namespace NIS.Desktop.Models;
 public class Cable
 {
     /// <summary>
+    /// Database primary key.
+    /// </summary>
+    [JsonIgnore]
+    public int Id { get; set; }
+
+    /// <summary>
     /// Cable type name (e.g., "RG-213", "Aircom Plus").
     /// </summary>
     [JsonPropertyName("name")]

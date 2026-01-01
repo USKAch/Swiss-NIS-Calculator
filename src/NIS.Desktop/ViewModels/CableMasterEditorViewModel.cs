@@ -236,6 +236,7 @@ public partial class CableMasterEditorViewModel : ViewModelBase
 
         var cable = new Cable
         {
+            Id = _originalCable?.Id ?? 0,
             Name = Name.Trim(),
             AttenuationPer100m = attenuationDict
         };

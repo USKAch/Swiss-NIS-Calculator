@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
 using NIS.Desktop.Calculations;
 using NIS.Desktop.Localization;
 using NIS.Desktop.Models;
@@ -30,6 +32,8 @@ public class ConfigurationResult
     public required string AntennaName { get; init; }
     public required string RadioName { get; init; }
     public required double PowerWatts { get; init; }
+    public required double RadioPowerWatts { get; init; }
+    public required double LinearPowerWatts { get; init; }
     public required string Modulation { get; init; }
     public required double OkaDistance { get; init; }
     public required double AntennaHeight { get; init; }
@@ -40,6 +44,8 @@ public class ConfigurationResult
     public required bool IsRotatable { get; init; }
     public required int HorizontalAngleDegrees { get; init; }
     public required bool IsHorizontallyPolarized { get; init; }
+
+    public bool HasLinear => !string.IsNullOrWhiteSpace(LinearName);
 
     /// <summary>
     /// Real 3D distance from antenna to OKA = √(horizontal² + height²)
@@ -145,31 +151,65 @@ public partial class ResultsViewModel : ViewModelBase
     {
         _project = project;
         IsCalculating = true;
-        StatusMessage = "Calculating...";
+        StatusMessage = Strings.Instance.Calculating;
         Results.Clear();
 
+        // Validate all configurations first
+        if (project.AntennaConfigurations.Count == 0)
+        {
+            IsCalculating = false;
+            StatusMessage = Strings.Instance.NoConfigurationsToCalculate;
+            await MessageBoxManager.GetMessageBoxStandard(
+                Strings.Instance.Error,
+                Strings.Instance.NoConfigurationsToCalculate,
+                ButtonEnum.Ok,
+                Icon.Warning).ShowAsync();
+            return;
+        }
+
+        var validationErrors = new List<string>();
+        foreach (var config in project.AntennaConfigurations)
+        {
+            var error = ValidateConfiguration(config);
+            if (!string.IsNullOrEmpty(error))
+                validationErrors.Add(error);
+        }
+
+        if (validationErrors.Count > 0)
+        {
+            IsCalculating = false;
+            var errorList = string.Join("\n", validationErrors);
+            StatusMessage = Strings.Instance.ConfigurationIncomplete;
+            await MessageBoxManager.GetMessageBoxStandard(
+                Strings.Instance.ConfigurationIncomplete,
+                $"{Strings.Instance.FixErrorsBeforeCalculating}\n\n{errorList}",
+                ButtonEnum.Ok,
+                Icon.Warning).ShowAsync();
+            return;
+        }
+
+        // All validations passed, proceed with calculation
         await Task.Run(() =>
         {
-            foreach (var config in project.AntennaConfigurations)
+            try
             {
-                var validationError = ValidateConfiguration(config);
-                if (!string.IsNullOrEmpty(validationError))
+                foreach (var config in project.AntennaConfigurations)
                 {
-                    Avalonia.Threading.Dispatcher.UIThread.Post(() =>
-                    {
-                        Results.Clear();
-                        StatusMessage = validationError;
-                    });
-                    return;
+                    var result = CalculateConfiguration(config);
+                    Avalonia.Threading.Dispatcher.UIThread.Post(() => Results.Add(result));
                 }
-
-                var result = CalculateConfiguration(config);
-                Avalonia.Threading.Dispatcher.UIThread.Post(() => Results.Add(result));
+            }
+            catch (Exception ex)
+            {
+                Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                {
+                    StatusMessage = $"{Strings.Instance.Error}: {ex.Message}";
+                });
             }
         });
 
         IsCalculating = false;
-        StatusMessage = $"Calculation complete. {Results.Count} configuration(s) analyzed.";
+        StatusMessage = $"{Strings.Instance.CalculationComplete} {Results.Count} {Strings.Instance.ConfigurationsAnalyzed}";
         OnPropertyChanged(nameof(HasResults));
         OnPropertyChanged(nameof(AllCompliant));
         OnPropertyChanged(nameof(ComplianceSummary));
@@ -193,6 +233,8 @@ public partial class ResultsViewModel : ViewModelBase
             AntennaName = config.Antenna.DisplayName,
             RadioName = config.Radio.DisplayName,
             PowerWatts = effectivePower,
+            RadioPowerWatts = config.PowerWatts,
+            LinearPowerWatts = config.Linear?.PowerWatts ?? 0,
             Modulation = config.ModulationDisplay,
             OkaDistance = config.OkaDistanceMeters,
             AntennaHeight = config.Antenna.HeightMeters,
@@ -217,29 +259,87 @@ public partial class ResultsViewModel : ViewModelBase
         return result;
     }
 
-    private string? ValidateConfiguration(AntennaConfiguration config)
+    /// <summary>
+    /// Validates all configurations in a project and returns a list of error messages.
+    /// Returns empty list if all configurations are valid.
+    /// </summary>
+    public static List<string> ValidateAllConfigurations(Project project)
     {
-        if (config.OkaDistanceMeters <= 0)
+        var errors = new List<string>();
+
+        if (project.AntennaConfigurations.Count == 0)
         {
-            return $"OKA distance must be greater than 0 for {config.Antenna.DisplayName}.";
+            errors.Add(Strings.Instance.NoConfigurationsToCalculate);
+            return errors;
+        }
+
+        foreach (var config in project.AntennaConfigurations)
+        {
+            var error = ValidateConfiguration(config);
+            if (!string.IsNullOrEmpty(error))
+                errors.Add(error);
+        }
+
+        return errors;
+    }
+
+    /// <summary>
+    /// Validates a configuration and returns an error message if invalid, or null if valid.
+    /// </summary>
+    public static string? ValidateConfiguration(AntennaConfiguration config)
+    {
+        var configName = !string.IsNullOrEmpty(config.Name) ? config.Name : config.Antenna.DisplayName;
+
+        // Check antenna is selected
+        if (string.IsNullOrWhiteSpace(config.Antenna.Manufacturer) || string.IsNullOrWhiteSpace(config.Antenna.Model))
+        {
+            return $"{configName}: {Strings.Instance.NoAntennaSelected}";
         }
 
         var antenna = DatabaseService.Instance.GetAntenna(config.Antenna.Manufacturer, config.Antenna.Model);
-        if (antenna == null || antenna.Bands.Count == 0)
+        if (antenna == null)
         {
-            return $"Antenna bands missing for {config.Antenna.DisplayName}.";
+            return $"{configName}: {Strings.Instance.AntennaNotFound} ({config.Antenna.DisplayName})";
         }
 
-        var modulation = DatabaseService.Instance.GetModulationByName(config.Modulation);
-        if (modulation == null)
+        if (antenna.Bands.Count == 0)
         {
-            return $"Unknown modulation '{config.Modulation}' for {config.Antenna.DisplayName}.";
+            return $"{configName}: {Strings.Instance.AntennaNoBands} ({config.Antenna.DisplayName})";
+        }
+
+        // Check cable is selected
+        if (string.IsNullOrWhiteSpace(config.Cable.Type))
+        {
+            return $"{configName}: {Strings.Instance.NoCableSelected}";
         }
 
         var cable = DatabaseService.Instance.GetCable(config.Cable.Type);
         if (cable == null)
         {
-            return $"Cable '{config.Cable.Type}' not found for {config.Antenna.DisplayName}.";
+            return $"{configName}: {Strings.Instance.CableNotFound} ({config.Cable.Type})";
+        }
+
+        // Check modulation is selected
+        if (string.IsNullOrWhiteSpace(config.Modulation))
+        {
+            return $"{configName}: {Strings.Instance.NoModulationSelected}";
+        }
+
+        var modulation = DatabaseService.Instance.GetModulationByName(config.Modulation);
+        if (modulation == null)
+        {
+            return $"{configName}: {Strings.Instance.ModulationNotFound} ({config.Modulation})";
+        }
+
+        // Check OKA is configured
+        if (string.IsNullOrWhiteSpace(config.OkaName))
+        {
+            return $"{configName}: {Strings.Instance.NoOkaSelected}";
+        }
+
+        if (config.OkaDistanceMeters <= 0)
+        {
+            return $"{configName}: {Strings.Instance.OkaDistanceInvalid}";
         }
 
         return null;
@@ -405,18 +505,28 @@ public partial class ResultsViewModel : ViewModelBase
 
         foreach (var result in Results)
         {
-            sb.AppendLine($"## {result.ConfigurationName}");
+            var configName = !string.IsNullOrWhiteSpace(result.ConfigurationName)
+                ? result.ConfigurationName
+                : "Configuration";
+            sb.AppendLine($"## {configName}");
             sb.AppendLine();
 
             // Configuration summary table
             sb.AppendLine("| | |");
             sb.AppendLine("|:------------------------|:-------------------------------------------------------|");
-            sb.AppendLine($"| **{s.CalcTransmitter}:**      | {result.PowerWatts}W                                   |");
+            if (result.HasLinear)
+            {
+                sb.AppendLine($"| **{s.CalcTransmitter}:**      | {result.RadioName}                                     |");
+                sb.AppendLine($"| **{s.CalcLinear}:**      | {result.LinearName}, {result.LinearPowerWatts:F0}W     |");
+            }
+            else
+            {
+                sb.AppendLine($"| **{s.CalcTransmitter}:**      | {result.RadioName}, {result.RadioPowerWatts:F0}W       |");
+            }
             sb.AppendLine($"| **{s.CalcCable}:**       | {result.CableDescription}                              |");
             sb.AppendLine($"| **{s.CalcAntenna}:**     | {result.AntennaName}                                   |");
             sb.AppendLine($"| **{s.CalcPolarization}:**         | {(result.IsHorizontallyPolarized ? s.CalcHorizontal : s.CalcVertical)} |");
             sb.AppendLine($"| **{s.CalcRotation}:**         | {(result.IsRotatable ? $"{result.HorizontalAngleDegrees}°" : s.CalcFixed)} |");
-            sb.AppendLine($"| **{s.CalcLinear}:**      | {result.LinearName}                                    |");
             sb.AppendLine($"| **{s.CalcOka}:**         | {result.OkaName} @ {result.OkaDistance:F1}m            |");
             sb.AppendLine($"| **{s.CalcModulation}:**         | {result.Modulation}                                    |");
             sb.AppendLine($"| **{s.CalcBuildingDamping}:**        | {result.BuildingDampingDb:F2} dB                       |");
@@ -455,12 +565,11 @@ public partial class ResultsViewModel : ViewModelBase
             AppendRow(sb, s.CalcEirp, "Ps", "W", result.BandResults, b => b.Eirp, "F2");
             AppendRow(sb, s.CalcErp, "P's", "W", result.BandResults, b => b.Erp, "F2");
             AppendRow(sb, s.CalcBuildingDampingRow, "ag", "dB", result.BandResults, b => b.BuildingDampingDb, "F2");
-            AppendRow(sb, s.CalcBuildingDampingFactor, "AG", "-", result.BandResults, b => b.BuildingDampingFactor, "F2");
             AppendRow(sb, s.CalcGroundReflection, "kr", "-", result.BandResults, b => b.GroundReflectionFactor, "F2");
             AppendRow(sb, "**" + s.CalcFieldStrength + "**", "E'", "V/m", result.BandResults, b => b.FieldStrength, "F2");
             AppendRow(sb, "**" + s.CalcLimit + "**", "EIGW", "V/m", result.BandResults, b => b.Limit, "F1");
             AppendRow(sb, "**" + s.CalcMinSafetyDistance + "**", "ds", "m", result.BandResults, b => b.SafetyDistance, "F2");
-            AppendRow(sb, "**" + s.CalcOkaDistance + "**", "d", "m", result.BandResults, _ => result.OkaDistance, "F1");
+            AppendRow(sb, "**" + s.CalcOkaDistance + "**", "d(OKA)", "m", result.BandResults, _ => result.OkaDistance, "F1");
 
             sb.AppendLine();
 
@@ -503,11 +612,11 @@ public partial class ResultsViewModel : ViewModelBase
             ("Ps", s.CalcExplainPs),
             ("P's", s.CalcExplainPsPrime),
             ("ag", s.CalcExplainAg),
-            ("AG", s.CalcExplainAG),
             ("kr", s.CalcExplainKr),
             ("E'", s.CalcExplainE),
             ("EIGW", s.CalcExplainEigw),
-            ("ds", s.CalcExplainDs)
+            ("ds", s.CalcExplainDs),
+            ("d(OKA)", s.CalcExplainOkaDistance)
         };
 
         foreach (var (symbol, description) in explanations)

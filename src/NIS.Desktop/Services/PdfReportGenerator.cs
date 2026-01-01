@@ -58,14 +58,15 @@ public class PdfReportGenerator
 
     private void ComposeHeader(IContainer container, Project project)
     {
+        var s = Strings.Instance;
         container.Row(row =>
         {
             row.RelativeItem().Column(column =>
             {
-                var title = !string.IsNullOrWhiteSpace(project.Name) ? project.Name : "NIS Calculation Report";
+                var title = !string.IsNullOrWhiteSpace(project.Name) ? project.Name : s.CalcTitlePrefix;
                 column.Item().Text(title)
                     .FontSize(18).Bold().FontColor(Colors.Blue.Medium);
-                column.Item().Text("NISV Field Strength Calculation")
+                column.Item().Text(s.CalcSubtitle)
                     .FontSize(11).FontColor(Colors.Grey.Medium);
             });
 
@@ -76,12 +77,13 @@ public class PdfReportGenerator
 
     private void ComposeContent(IContainer container, Project project, List<ConfigurationResult> results)
     {
+        var s = Strings.Instance;
         container.PaddingVertical(10).Column(column =>
         {
             column.Spacing(12);
 
             // Project Information
-            column.Item().Element(c => ComposeSection(c, "Project Information", section =>
+            column.Item().Element(c => ComposeSection(c, s.CalcProjectInfo, section =>
             {
                 section.Item().Table(table =>
                 {
@@ -92,13 +94,13 @@ public class PdfReportGenerator
                     });
 
                     if (!string.IsNullOrEmpty(project.Operator))
-                        AddInfoRow(table, "Operator", project.Operator);
+                        AddInfoRow(table, s.CalcOperator, project.Operator);
                     if (!string.IsNullOrEmpty(project.Callsign))
-                        AddInfoRow(table, "Callsign", project.Callsign);
+                        AddInfoRow(table, s.CalcCallsign, project.Callsign);
                     if (!string.IsNullOrEmpty(project.Address))
-                        AddInfoRow(table, "Address", project.Address);
+                        AddInfoRow(table, s.CalcAddress, project.Address);
                     if (!string.IsNullOrEmpty(project.Location))
-                        AddInfoRow(table, "Location", project.Location);
+                        AddInfoRow(table, s.CalcLocation, project.Location);
                 });
             }));
 
@@ -113,35 +115,34 @@ public class PdfReportGenerator
             }
 
             // Disclaimer
-            column.Item().PaddingTop(15).Text(
-                "This calculation is based on the Swiss NISV (Verordnung über den Schutz vor nichtionisierender Strahlung) " +
-                "regulations and assumes free-space propagation with ground reflection factor of 1.6. " +
-                "Actual field strength may vary due to environmental factors.")
+            column.Item().PaddingTop(15).Text(s.CalcDisclaimer)
                 .FontSize(8).FontColor(Colors.Grey.Medium).Italic();
         });
     }
 
     private void ComposeComplianceSummary(IContainer container, bool allCompliant, int configCount)
     {
+        var s = Strings.Instance;
         var bgColor = allCompliant ? Colors.Green.Lighten4 : Colors.Red.Lighten4;
         var textColor = allCompliant ? Colors.Green.Darken2 : Colors.Red.Darken2;
 
         container.Background(bgColor).Padding(12).Column(column =>
         {
-            column.Item().AlignCenter().Text("COMPLIANCE SUMMARY")
+            column.Item().AlignCenter().Text(s.CalcComplianceSummary)
                 .FontSize(11).Bold().FontColor(textColor);
 
             column.Item().AlignCenter().PaddingVertical(8)
-                .Text(allCompliant ? "ALL CONFIGURATIONS COMPLIANT" : "NON-COMPLIANT CONFIGURATIONS DETECTED")
+                .Text(allCompliant ? s.CalcAllCompliant : s.CalcNonCompliantDetected)
                 .FontSize(14).Bold().FontColor(textColor);
 
-            column.Item().AlignCenter().Text($"{configCount} configuration(s) analyzed")
+            column.Item().AlignCenter().Text(string.Format(s.CalcConfigsAnalyzed, configCount))
                 .FontSize(10).FontColor(textColor);
         });
     }
 
     private void ComposeConfigurationResult(IContainer container, ConfigurationResult result)
     {
+        var s = Strings.Instance;
         var borderColor = result.IsCompliant ? Colors.Green.Medium : Colors.Red.Medium;
 
         container.Border(1).BorderColor(borderColor).Padding(10).Column(column =>
@@ -149,100 +150,133 @@ public class PdfReportGenerator
             column.Spacing(8);
 
             // Configuration Header
+            var configName = !string.IsNullOrWhiteSpace(result.ConfigurationName)
+                ? result.ConfigurationName
+                : "Configuration";
             column.Item().Row(row =>
             {
-                row.RelativeItem().Text(result.ConfigurationName).FontSize(12).Bold();
+                row.RelativeItem().Text(configName).FontSize(12).Bold();
 
                 var statusBg = result.IsCompliant ? Colors.Green.Lighten3 : Colors.Red.Lighten3;
-                var statusText = result.IsCompliant ? "COMPLIANT" : "NON-COMPLIANT";
-                row.ConstantItem(100).Background(statusBg).Padding(4).AlignCenter()
+                var statusText = result.IsCompliant ? s.Compliant : s.NonCompliant;
+                row.ConstantItem(120).Background(statusBg).Padding(4).AlignCenter()
                     .Text(statusText).FontSize(9).Bold();
             });
 
-            // Configuration Summary Table
-            column.Item().Table(table =>
+            // Configuration Summary Table (matching markdown)
+            column.Item().Background(Colors.Grey.Lighten4).Padding(8).Table(table =>
             {
                 table.ColumnsDefinition(columns =>
                 {
                     columns.RelativeColumn(1);
-                    columns.RelativeColumn(1);
-                    columns.RelativeColumn(1);
-                    columns.RelativeColumn(1);
+                    columns.RelativeColumn(2);
                 });
 
-                table.Cell().Text("Antenna:").FontSize(9).Bold();
-                table.Cell().Text(result.AntennaName).FontSize(9);
-                table.Cell().Text("Power:").FontSize(9).Bold();
-                table.Cell().Text($"{result.PowerWatts} W").FontSize(9);
+                // Radio/Transmitter
+                if (result.HasLinear)
+                {
+                    AddInfoRow(table, s.CalcTransmitter, result.RadioName);
+                    AddInfoRow(table, s.CalcLinear, $"{result.LinearName}, {result.LinearPowerWatts:F0}W");
+                }
+                else
+                {
+                    AddInfoRow(table, s.CalcTransmitter, $"{result.RadioName}, {result.RadioPowerWatts:F0}W");
+                }
 
-                table.Cell().Text("Modulation:").FontSize(9).Bold();
-                table.Cell().Text(result.Modulation).FontSize(9);
-                table.Cell().Text("OKA Distance:").FontSize(9).Bold();
-                table.Cell().Text($"{result.OkaDistance:F1} m").FontSize(9);
-
-                table.Cell().Text("Polarization:").FontSize(9).Bold();
-                table.Cell().Text(result.IsHorizontallyPolarized ? "Horizontal" : "Vertical").FontSize(9);
-                table.Cell().Text("Building Damping:").FontSize(9).Bold();
-                table.Cell().Text($"{result.BuildingDampingDb:F2} dB").FontSize(9);
+                AddInfoRow(table, s.CalcCable, result.CableDescription);
+                AddInfoRow(table, s.CalcAntenna, result.AntennaName);
+                AddInfoRow(table, s.CalcPolarization, result.IsHorizontallyPolarized ? s.CalcHorizontal : s.CalcVertical);
+                AddInfoRow(table, s.CalcRotation, result.IsRotatable ? $"{result.HorizontalAngleDegrees}°" : s.CalcFixed);
+                AddInfoRow(table, s.CalcOka, $"{result.OkaName} @ {result.OkaDistance:F1}m");
+                AddInfoRow(table, s.CalcModulation, result.Modulation);
+                AddInfoRow(table, s.CalcBuildingDamping, $"{result.BuildingDampingDb:F2} dB");
             });
 
-            // Band Results Table
+            // Band Results Table - detailed vertical format matching markdown
             if (result.BandResults.Count > 0)
             {
-                column.Item().PaddingTop(5).Table(table =>
+                column.Item().PaddingTop(8).Table(table =>
                 {
+                    // Column definitions: Parameter | Symbol | Unit | Band1 | Band2 | ...
                     table.ColumnsDefinition(columns =>
                     {
-                        columns.RelativeColumn(1);   // Freq
-                        columns.RelativeColumn(1);   // Gain
-                        columns.RelativeColumn(1);   // Pm
-                        columns.RelativeColumn(1);   // EIRP
-                        columns.RelativeColumn(1.2f); // Field
-                        columns.RelativeColumn(1);   // Limit
-                        columns.RelativeColumn(1);   // Safety
-                        columns.RelativeColumn(1);   // Status
+                        columns.RelativeColumn(3);    // Parameter name
+                        columns.RelativeColumn(0.8f); // Symbol
+                        columns.RelativeColumn(0.8f); // Unit
+                        foreach (var _ in result.BandResults)
+                        {
+                            columns.RelativeColumn(1); // One column per band
+                        }
                     });
 
-                    // Header
+                    // Header row with frequency values
                     table.Header(header =>
                     {
                         var headerStyle = TextStyle.Default.FontSize(8).Bold();
-                        header.Cell().Background(Colors.Grey.Lighten3).Padding(3).Text("Freq MHz").Style(headerStyle);
-                        header.Cell().Background(Colors.Grey.Lighten3).Padding(3).Text("Gain dBi").Style(headerStyle);
-                        header.Cell().Background(Colors.Grey.Lighten3).Padding(3).Text($"{Strings.Instance.PmittelLbl} W").Style(headerStyle);
-                        header.Cell().Background(Colors.Grey.Lighten3).Padding(3).Text("EIRP W").Style(headerStyle);
-                        header.Cell().Background(Colors.Grey.Lighten3).Padding(3).Text("E' V/m").Style(headerStyle);
-                        header.Cell().Background(Colors.Grey.Lighten3).Padding(3).Text("Limit V/m").Style(headerStyle);
-                        header.Cell().Background(Colors.Grey.Lighten3).Padding(3).Text("ds m").Style(headerStyle);
-                        header.Cell().Background(Colors.Grey.Lighten3).Padding(3).Text("Status").Style(headerStyle);
+                        var headerBg = Colors.Blue.Lighten4;
+                        header.Cell().Background(headerBg).Padding(3).Text("Parameter").Style(headerStyle);
+                        header.Cell().Background(headerBg).Padding(3).Text("Sym").Style(headerStyle);
+                        header.Cell().Background(headerBg).Padding(3).Text("Unit").Style(headerStyle);
+                        foreach (var band in result.BandResults)
+                        {
+                            header.Cell().Background(headerBg).Padding(3).AlignRight()
+                                .Text($"{band.FrequencyMHz:F0}").Style(headerStyle);
+                        }
                     });
 
-                    // Data rows
-                    foreach (var band in result.BandResults)
-                    {
-                        var rowStyle = TextStyle.Default.FontSize(8);
-                        var statusColor = band.IsCompliant ? Colors.Green.Darken1 : Colors.Red.Darken1;
-
-                        table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2).Padding(2)
-                            .Text($"{band.FrequencyMHz:F0}").Style(rowStyle);
-                        table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2).Padding(2)
-                            .Text($"{band.GainDbi:F2}").Style(rowStyle);
-                        table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2).Padding(2)
-                            .Text($"{band.MeanPowerW:F2}").Style(rowStyle);
-                        table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2).Padding(2)
-                            .Text($"{band.Eirp:F2}").Style(rowStyle);
-                        table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2).Padding(2)
-                            .Text($"{band.FieldStrength:F2}").Style(rowStyle).Bold();
-                        table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2).Padding(2)
-                            .Text($"{band.Limit:F1}").Style(rowStyle);
-                        table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2).Padding(2)
-                            .Text($"{band.SafetyDistance:F2}").Style(rowStyle);
-                        table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2).Padding(2)
-                            .Text(band.IsCompliant ? "OK" : "FAIL").Style(rowStyle).FontColor(statusColor).Bold();
-                    }
+                    // Data rows - matching FSD Section 5 format
+                    AddDataRow(table, s.CalcFrequency, "f", "MHz", result.BandResults, b => b.FrequencyMHz, "F0", false);
+                    AddDataRow(table, s.CalcDistanceToAntenna, "d", "m", result.BandResults, _ => result.OkaDistance, "F1", false);
+                    AddDataRow(table, s.CalcTxPower, "P", "W", result.BandResults, b => b.TxPowerW, "F2", false);
+                    AddDataRow(table, s.CalcActivityFactor, "AF", "-", result.BandResults, b => b.ActivityFactor, "F2", false);
+                    AddDataRow(table, s.CalcModulationFactor, "MF", "-", result.BandResults, b => b.ModulationFactor, "F2", false);
+                    AddDataRow(table, s.CalcMeanPower, s.PmittelLbl, "W", result.BandResults, b => b.MeanPowerW, "F2", false);
+                    AddDataRow(table, s.CalcCableAttenuation, "a1", "dB", result.BandResults, b => b.CableLossDb, "F2", false);
+                    AddDataRow(table, s.CalcAdditionalLosses, "a2", "dB", result.BandResults, b => b.AdditionalLossDb, "F2", false);
+                    AddDataRow(table, s.CalcTotalAttenuation, "a", "dB", result.BandResults, b => b.TotalLossDb, "F2", false);
+                    AddDataRow(table, s.CalcAttenuationFactor, "A", "-", result.BandResults, b => b.AttenuationFactor, "F2", false);
+                    AddDataRow(table, s.CalcAntennaGain, "g1", "dBi", result.BandResults, b => b.GainDbi, "F2", false);
+                    AddDataRow(table, s.CalcVerticalAttenuation, "g2", "dB", result.BandResults, b => b.VerticalAttenuation, "F2", false);
+                    AddDataRow(table, s.CalcTotalAntennaGain, "g", "dB", result.BandResults, b => b.TotalGainDbi, "F2", false);
+                    AddDataRow(table, s.CalcGainFactor, "G", "-", result.BandResults, b => b.GainFactor, "F2", false);
+                    AddDataRow(table, s.CalcEirp, "Ps", "W", result.BandResults, b => b.Eirp, "F2", false);
+                    AddDataRow(table, s.CalcErp, "P's", "W", result.BandResults, b => b.Erp, "F2", false);
+                    AddDataRow(table, s.CalcBuildingDampingRow, "ag", "dB", result.BandResults, b => b.BuildingDampingDb, "F2", false);
+                    AddDataRow(table, s.CalcGroundReflection, "kr", "-", result.BandResults, b => b.GroundReflectionFactor, "F2", false);
+                    AddDataRow(table, s.CalcFieldStrength, "E'", "V/m", result.BandResults, b => b.FieldStrength, "F2", true);
+                    AddDataRow(table, s.CalcLimit, "EIGW", "V/m", result.BandResults, b => b.Limit, "F1", true);
+                    AddDataRow(table, s.CalcMinSafetyDistance, "ds", "m", result.BandResults, b => b.SafetyDistance, "F2", true);
+                    AddDataRow(table, s.CalcOkaDistance, "d(OKA)", "m", result.BandResults, _ => result.OkaDistance, "F1", true);
                 });
+
+                // Compliance status
+                var statusBg = result.IsCompliant ? Colors.Green.Lighten4 : Colors.Red.Lighten4;
+                var statusColor = result.IsCompliant ? Colors.Green.Darken2 : Colors.Red.Darken2;
+                column.Item().PaddingTop(8).Background(statusBg).Padding(8)
+                    .Text(result.IsCompliant ? s.CalcStatusCompliant : s.CalcStatusNonCompliant)
+                    .FontSize(9).FontColor(statusColor).Bold();
             }
         });
+    }
+
+    private void AddDataRow(TableDescriptor table, string param, string symbol, string unit,
+        IEnumerable<BandResult> bands, Func<BandResult, double> getValue, string format, bool highlight)
+    {
+        var style = TextStyle.Default.FontSize(8);
+        var bgColor = highlight ? Colors.Yellow.Lighten4 : Colors.White;
+
+        table.Cell().Background(bgColor).BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(2)
+            .Text(param).Style(highlight ? style.Bold() : style);
+        table.Cell().Background(bgColor).BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(2)
+            .Text(symbol).Style(style);
+        table.Cell().Background(bgColor).BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(2)
+            .Text(unit).Style(style);
+
+        foreach (var band in bands)
+        {
+            table.Cell().Background(bgColor).BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(2)
+                .AlignRight().Text(getValue(band).ToString(format)).Style(highlight ? style.Bold() : style);
+        }
     }
 
     private void ComposeSection(IContainer container, string title, Action<ColumnDescriptor> content)

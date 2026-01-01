@@ -11,6 +11,12 @@ namespace NIS.Desktop.Models;
 public class Radio
 {
     /// <summary>
+    /// Database primary key.
+    /// </summary>
+    [JsonIgnore]
+    public int Id { get; set; }
+
+    /// <summary>
     /// Radio manufacturer name.
     /// </summary>
     [JsonPropertyName("manufacturer")]

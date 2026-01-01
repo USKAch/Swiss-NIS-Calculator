@@ -40,7 +40,8 @@
                         <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,8,0,0">
                             <Button Command="{Binding ExportProjectCommand}"
                                     Content="{Binding ExportProject, Source={x:Static loc:Strings.Instance}}"
-                                    Classes="accent"
+                                    Background="{DynamicResource PrimaryButtonBrush}"
+                                    Foreground="{DynamicResource HeaderForegroundBrush}"
                                     Padding="16,8"/>
                             <Button Command="{Binding ImportProjectCommand}"
                                     Content="{Binding ImportProject, Source={x:Static loc:Strings.Instance}}"

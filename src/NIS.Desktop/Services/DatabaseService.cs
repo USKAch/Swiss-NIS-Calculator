@@ -266,15 +266,18 @@ public class DatabaseService : IDisposable
 
     public void SaveAntenna(Antenna antenna, bool isAdminMode = false)
     {
-        var existing = GetAntenna(antenna.Manufacturer, antenna.Model);
-        var isUserData = existing?.IsUserData ?? !isAdminMode;
-
-        if (existing != null)
+        // Use Id to determine insert vs update
+        if (antenna.Id > 0)
         {
+            // Update existing - preserve IsUserData
+            var existing = GetAntennaById(antenna.Id);
+            var isUserData = existing?.IsUserData ?? !isAdminMode;
             UpdateAntenna(antenna, isUserData);
         }
         else
         {
+            // Insert new
+            var isUserData = !isAdminMode;
             InsertAntenna(antenna, isUserData);
         }
     }
@@ -315,21 +318,20 @@ public class DatabaseService : IDisposable
 
         _connection.Execute(@"
             UPDATE Antennas SET
+                Manufacturer = @Manufacturer,
+                Model = @Model,
                 AntennaType = @AntennaType,
                 IsHorizontallyPolarized = @IsHorizontallyPolarized,
-                
-                
                 IsUserData = @IsUserData,
                 BandsJson = @BandsJson
-            WHERE Manufacturer = @Manufacturer AND Model = @Model",
+            WHERE Id = @Id",
             new
             {
+                antenna.Id,
                 antenna.Manufacturer,
                 antenna.Model,
                 antenna.AntennaType,
                 IsHorizontallyPolarized = antenna.IsHorizontallyPolarized ? 1 : 0,
-                
-                
                 IsUserData = isUserData ? 1 : 0,
                 BandsJson = bandsJson
             });
@@ -368,12 +370,11 @@ public class DatabaseService : IDisposable
         var bands = JsonSerializer.Deserialize<List<BandData>>(row.BandsJson, JsonOptions) ?? new List<BandData>();
         return new Antenna
         {
+            Id = row.Id,
             Manufacturer = row.Manufacturer,
             Model = row.Model,
             AntennaType = row.AntennaType,
             IsHorizontallyPolarized = row.IsHorizontallyPolarized == 1,
-            
-            
             IsUserData = row.IsUserData == 1,
             Bands = bands.Select(b => new AntennaBand
             {
@@ -382,6 +383,20 @@ public class DatabaseService : IDisposable
                 Pattern = b.Pattern ?? new double[10]
             }).ToList()
         };
+    }
+
+    /// <summary>
+    /// Gets list of projects/configurations that use this antenna.
+    /// </summary>
+    public List<EntityUsage> GetAntennaUsage(int antennaId)
+    {
+        return _connection.Query<EntityUsage>(@"
+            SELECT p.Name as ProjectName, c.Name as ConfigurationName, c.ConfigNumber
+            FROM Configurations c
+            JOIN Projects p ON c.ProjectId = p.Id
+            WHERE c.AntennaId = @AntennaId
+            ORDER BY p.Name, c.ConfigNumber",
+            new { AntennaId = antennaId }).ToList();
     }
 
     #endregion
@@ -404,15 +419,18 @@ public class DatabaseService : IDisposable
 
     public void SaveCable(Cable cable, bool isAdminMode = false)
     {
-        var existing = GetCable(cable.Name);
-        var isUserData = existing?.IsUserData ?? !isAdminMode;
-
-        if (existing != null)
+        // Use Id to determine insert vs update
+        if (cable.Id > 0)
         {
+            // Update existing - preserve IsUserData
+            var existing = GetCableById(cable.Id);
+            var isUserData = existing?.IsUserData ?? !isAdminMode;
             UpdateCable(cable, isUserData);
         }
         else
         {
+            // Insert new
+            var isUserData = !isAdminMode;
             InsertCable(cable, isUserData);
         }
     }
@@ -438,11 +456,13 @@ public class DatabaseService : IDisposable
 
         _connection.Execute(@"
             UPDATE Cables SET
+                Name = @Name,
                 IsUserData = @IsUserData,
                 AttenuationsJson = @AttenuationsJson
-            WHERE Name = @Name",
+            WHERE Id = @Id",
             new
             {
+                cable.Id,
                 cable.Name,
                 IsUserData = isUserData ? 1 : 0,
                 AttenuationsJson = attenuationsJson
@@ -479,10 +499,25 @@ public class DatabaseService : IDisposable
             ?? new Dictionary<string, double>();
         return new Cable
         {
+            Id = row.Id,
             Name = row.Name,
             IsUserData = row.IsUserData == 1,
             AttenuationPer100m = attenuations
         };
+    }
+
+    /// <summary>
+    /// Gets list of projects/configurations that use this cable.
+    /// </summary>
+    public List<EntityUsage> GetCableUsage(int cableId)
+    {
+        return _connection.Query<EntityUsage>(@"
+            SELECT p.Name as ProjectName, c.Name as ConfigurationName, c.ConfigNumber
+            FROM Configurations c
+            JOIN Projects p ON c.ProjectId = p.Id
+            WHERE c.CableId = @CableId
+            ORDER BY p.Name, c.ConfigNumber",
+            new { CableId = cableId }).ToList();
     }
 
     #endregion
@@ -506,15 +541,18 @@ public class DatabaseService : IDisposable
 
     public void SaveRadio(Radio radio, bool isAdminMode = false)
     {
-        var existing = GetRadio(radio.Manufacturer, radio.Model);
-        var isUserData = existing?.IsUserData ?? !isAdminMode;
-
-        if (existing != null)
+        // Use Id to determine insert vs update
+        if (radio.Id > 0)
         {
+            // Update existing - preserve IsUserData
+            var existing = GetRadioById(radio.Id);
+            var isUserData = existing?.IsUserData ?? !isAdminMode;
             UpdateRadio(radio, isUserData);
         }
         else
         {
+            // Insert new
+            var isUserData = !isAdminMode;
             InsertRadio(radio, isUserData);
         }
     }
@@ -537,11 +575,14 @@ public class DatabaseService : IDisposable
     {
         _connection.Execute(@"
             UPDATE Radios SET
+                Manufacturer = @Manufacturer,
+                Model = @Model,
                 MaxPowerWatts = @MaxPowerWatts,
                 IsUserData = @IsUserData
-            WHERE Manufacturer = @Manufacturer AND Model = @Model",
+            WHERE Id = @Id",
             new
             {
+                radio.Id,
                 radio.Manufacturer,
                 radio.Model,
                 radio.MaxPowerWatts,
@@ -581,11 +622,26 @@ public class DatabaseService : IDisposable
     {
         return new Radio
         {
+            Id = row.Id,
             Manufacturer = row.Manufacturer,
             Model = row.Model,
             MaxPowerWatts = row.MaxPowerWatts,
             IsUserData = row.IsUserData == 1
         };
+    }
+
+    /// <summary>
+    /// Gets list of projects/configurations that use this radio.
+    /// </summary>
+    public List<EntityUsage> GetRadioUsage(int radioId)
+    {
+        return _connection.Query<EntityUsage>(@"
+            SELECT p.Name as ProjectName, c.Name as ConfigurationName, c.ConfigNumber
+            FROM Configurations c
+            JOIN Projects p ON c.ProjectId = p.Id
+            WHERE c.RadioId = @RadioId
+            ORDER BY p.Name, c.ConfigNumber",
+            new { RadioId = radioId }).ToList();
     }
 
     #endregion
@@ -654,6 +710,20 @@ public class DatabaseService : IDisposable
     {
         return _connection.ExecuteScalar<int>(
             "SELECT COUNT(*) FROM Okas WHERE Name = @Name", new { Name = name }) > 0;
+    }
+
+    /// <summary>
+    /// Gets list of projects/configurations that use this OKA.
+    /// </summary>
+    public List<EntityUsage> GetOkaUsage(int okaId)
+    {
+        return _connection.Query<EntityUsage>(@"
+            SELECT p.Name as ProjectName, c.Name as ConfigurationName, c.ConfigNumber
+            FROM Configurations c
+            JOIN Projects p ON c.ProjectId = p.Id
+            WHERE c.OkaId = @OkaId
+            ORDER BY p.Name, c.ConfigNumber",
+            new { OkaId = okaId }).ToList();
     }
 
     #endregion
@@ -1350,4 +1420,18 @@ public class DatabaseService : IDisposable
     }
 
     #endregion
+}
+
+/// <summary>
+/// Represents usage of a master data entity in a project configuration.
+/// </summary>
+public class EntityUsage
+{
+    public string ProjectName { get; set; } = "";
+    public string? ConfigurationName { get; set; }
+    public int ConfigNumber { get; set; }
+
+    public string DisplayName => string.IsNullOrEmpty(ConfigurationName)
+        ? $"{ProjectName} - Config {ConfigNumber}"
+        : $"{ProjectName} - {ConfigurationName}";
 }

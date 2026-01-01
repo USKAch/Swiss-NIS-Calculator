@@ -432,7 +432,6 @@ One table per antenna configuration. Each report contains a configuration summar
 - EIRP toward OKA (W)
 - ERP toward OKA (W)
 - Building damping (dB)
-- Building damping factor
 - Ground reflection factor
 - Field strength at OKA (V/m)
 - Limit (V/m)

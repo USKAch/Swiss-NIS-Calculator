@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.VisualTree;
 using NIS.Desktop.Services;
 using NIS.Desktop.ViewModels;
 
@@ -14,12 +15,29 @@ public partial class ProjectListView : UserControl
 
     private void OnProjectDoubleTapped(object? sender, TappedEventArgs e)
     {
-        if (sender is DataGrid grid && grid.SelectedItem is ProjectListItem project)
+        if (DataContext is ProjectListViewModel vm)
         {
-            if (DataContext is ProjectListViewModel vm)
+            // Get the item from the event source to handle case where selection hasn't updated yet
+            var project = GetDataContextFromSource<ProjectListItem>(e.Source);
+            if (project != null)
             {
                 vm.EditProjectCommand.Execute(project);
             }
         }
+    }
+
+    private static T? GetDataContextFromSource<T>(object? source) where T : class
+    {
+        if (source is Control control)
+        {
+            var current = control;
+            while (current != null)
+            {
+                if (current.DataContext is T item)
+                    return item;
+                current = current.GetVisualParent() as Control;
+            }
+        }
+        return null;
     }
 }

@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
+using NIS.Desktop.Localization;
 using NIS.Desktop.Models;
 
 namespace NIS.Desktop.ViewModels;
@@ -217,9 +220,22 @@ public partial class ProjectOverviewViewModel : ViewModelBase
 
     // Calculation commands
     [RelayCommand]
-    private void CalculateAll()
+    private async Task CalculateAll()
     {
-        StatusMessage = "Navigating to results...";
+        // Validate all configurations before navigating
+        var errors = ResultsViewModel.ValidateAllConfigurations(_projectViewModel.Project);
+        if (errors.Count > 0)
+        {
+            var errorList = string.Join("\n", errors);
+            await MessageBoxManager.GetMessageBoxStandard(
+                Strings.Instance.ConfigurationIncomplete,
+                $"{Strings.Instance.FixErrorsBeforeCalculating}\n\n{errorList}",
+                ButtonEnum.Ok,
+                Icon.Warning).ShowAsync();
+            return;
+        }
+
+        StatusMessage = Strings.Instance.Calculating;
         NavigateToResults?.Invoke();
     }
 

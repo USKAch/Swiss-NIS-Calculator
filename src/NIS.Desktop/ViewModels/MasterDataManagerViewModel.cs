@@ -264,10 +264,23 @@ public partial class MasterDataManagerViewModel : ViewModelBase
         (SelectedAntenna.IsUserData || IsAdminMode);
 
     [RelayCommand]
-    private void DeleteAntenna()
+    private async Task DeleteAntenna()
     {
         if (SelectedAntenna != null && (SelectedAntenna.IsUserData || IsAdminMode))
         {
+            // Check if antenna is used in any configurations
+            var usages = DatabaseService.Instance.GetAntennaUsage(SelectedAntenna.Id);
+            if (usages.Count > 0)
+            {
+                var usageList = string.Join("\n", usages.Select(u => $"  - {u.DisplayName}"));
+                await MessageBoxManager.GetMessageBoxStandard(
+                    Strings.Instance.CannotDelete,
+                    $"{Strings.Instance.ItemInUse}\n\n{usageList}",
+                    ButtonEnum.Ok,
+                    Icon.Warning).ShowAsync();
+                return;
+            }
+
             // Delete from database
             DatabaseService.Instance.DeleteAntenna(SelectedAntenna.Manufacturer, SelectedAntenna.Model);
             AllAntennas.Remove(SelectedAntenna);
@@ -300,10 +313,23 @@ public partial class MasterDataManagerViewModel : ViewModelBase
         (SelectedCable.IsUserData || IsAdminMode);
 
     [RelayCommand]
-    private void DeleteCable()
+    private async Task DeleteCable()
     {
         if (SelectedCable != null && (SelectedCable.IsUserData || IsAdminMode))
         {
+            // Check if cable is used in any configurations
+            var usages = DatabaseService.Instance.GetCableUsage(SelectedCable.Id);
+            if (usages.Count > 0)
+            {
+                var usageList = string.Join("\n", usages.Select(u => $"  - {u.DisplayName}"));
+                await MessageBoxManager.GetMessageBoxStandard(
+                    Strings.Instance.CannotDelete,
+                    $"{Strings.Instance.ItemInUse}\n\n{usageList}",
+                    ButtonEnum.Ok,
+                    Icon.Warning).ShowAsync();
+                return;
+            }
+
             // Delete from database
             DatabaseService.Instance.DeleteCable(SelectedCable.Name);
             AllCables.Remove(SelectedCable);
@@ -336,10 +362,23 @@ public partial class MasterDataManagerViewModel : ViewModelBase
         (SelectedRadio.IsUserData || IsAdminMode);
 
     [RelayCommand]
-    private void DeleteRadio()
+    private async Task DeleteRadio()
     {
         if (SelectedRadio != null && (SelectedRadio.IsUserData || IsAdminMode))
         {
+            // Check if radio is used in any configurations
+            var usages = DatabaseService.Instance.GetRadioUsage(SelectedRadio.Id);
+            if (usages.Count > 0)
+            {
+                var usageList = string.Join("\n", usages.Select(u => $"  - {u.DisplayName}"));
+                await MessageBoxManager.GetMessageBoxStandard(
+                    Strings.Instance.CannotDelete,
+                    $"{Strings.Instance.ItemInUse}\n\n{usageList}",
+                    ButtonEnum.Ok,
+                    Icon.Warning).ShowAsync();
+                return;
+            }
+
             // Delete from database
             DatabaseService.Instance.DeleteRadio(SelectedRadio.Manufacturer, SelectedRadio.Model);
             AllRadios.Remove(SelectedRadio);
@@ -407,10 +446,23 @@ public partial class MasterDataManagerViewModel : ViewModelBase
         (SelectedOka.IsUserData || IsAdminMode);
 
     [RelayCommand]
-    private void DeleteOka()
+    private async Task DeleteOka()
     {
         if (SelectedOka != null && (SelectedOka.IsUserData || IsAdminMode))
         {
+            // Check if OKA is used in any configurations
+            var usages = DatabaseService.Instance.GetOkaUsage(SelectedOka.Id);
+            if (usages.Count > 0)
+            {
+                var usageList = string.Join("\n", usages.Select(u => $"  - {u.DisplayName}"));
+                await MessageBoxManager.GetMessageBoxStandard(
+                    Strings.Instance.CannotDelete,
+                    $"{Strings.Instance.ItemInUse}\n\n{usageList}",
+                    ButtonEnum.Ok,
+                    Icon.Warning).ShowAsync();
+                return;
+            }
+
             DatabaseService.Instance.DeleteOka(SelectedOka.Name);
             AllOkas.Remove(SelectedOka);
             FilteredOkas.Remove(SelectedOka);
@@ -723,11 +775,30 @@ public partial class MasterDataManagerViewModel : ViewModelBase
         FilterRadios();
     }
 
-    public void AddOkaToDatabase(Oka oka)
+    public bool AddOkaToDatabase(Oka oka)
+    {
+        // Check for duplicates
+        if (OkaExists(oka.Name))
+        {
+            return false;
+        }
+
+        Services.DatabaseService.Instance.SaveOka(oka, isAdminMode: IsAdminMode);
+        ResortOkas();
+        FilterOkas();
+        return true;
+    }
+
+    public void UpdateOkaInDatabase(Oka oka)
     {
         Services.DatabaseService.Instance.SaveOka(oka, isAdminMode: IsAdminMode);
         ResortOkas();
         FilterOkas();
+    }
+
+    private bool OkaExists(string name)
+    {
+        return AllOkas.Any(o => o.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
     }
 
     private void ResortOkas()

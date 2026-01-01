@@ -547,12 +547,20 @@ public partial class MainShellViewModel : ViewModelBase
         };
         _antennaMasterEditorViewModel.OnSave = (antenna) =>
         {
-            var success = _masterDataManagerViewModel?.AddAntennaToDatabase(antenna) ?? false;
-            if (!success)
+            if (_antennaMasterEditorViewModel!.IsEditing)
             {
-                // Duplicate exists - show validation message and stay on editor
-                _antennaMasterEditorViewModel!.ValidationMessage = Strings.Instance.DuplicateNameError;
-                return;
+                // Update existing antenna
+                _masterDataManagerViewModel?.UpdateAntennaInDatabase(antenna);
+            }
+            else
+            {
+                // Add new antenna - check for duplicates
+                var success = _masterDataManagerViewModel?.AddAntennaToDatabase(antenna) ?? false;
+                if (!success)
+                {
+                    _antennaMasterEditorViewModel.ValidationMessage = Strings.Instance.DuplicateNameError;
+                    return;
+                }
             }
             if (_masterDataManagerViewModel != null)
             {
@@ -596,12 +604,20 @@ public partial class MainShellViewModel : ViewModelBase
         };
         _cableMasterEditorViewModel.OnSave = (cable) =>
         {
-            var success = _masterDataManagerViewModel?.AddCableToDatabase(cable) ?? false;
-            if (!success)
+            if (_cableMasterEditorViewModel!.IsEditing)
             {
-                // Duplicate exists - show validation message and stay on editor
-                _cableMasterEditorViewModel!.ValidationMessage = Strings.Instance.DuplicateNameError;
-                return;
+                // Update existing cable
+                _masterDataManagerViewModel?.UpdateCableInDatabase(cable);
+            }
+            else
+            {
+                // Add new cable - check for duplicates
+                var success = _masterDataManagerViewModel?.AddCableToDatabase(cable) ?? false;
+                if (!success)
+                {
+                    _cableMasterEditorViewModel.ValidationMessage = Strings.Instance.DuplicateNameError;
+                    return;
+                }
             }
             if (_masterDataManagerViewModel != null)
             {
@@ -645,12 +661,20 @@ public partial class MainShellViewModel : ViewModelBase
         };
         _radioMasterEditorViewModel.OnSave = (radio) =>
         {
-            var success = _masterDataManagerViewModel?.AddRadioToDatabase(radio) ?? false;
-            if (!success)
+            if (_radioMasterEditorViewModel!.IsEditing)
             {
-                // Duplicate exists - show validation message and stay on editor
-                _radioMasterEditorViewModel!.ValidationMessage = Strings.Instance.DuplicateNameError;
-                return;
+                // Update existing radio
+                _masterDataManagerViewModel?.UpdateRadioInDatabase(radio);
+            }
+            else
+            {
+                // Add new radio - check for duplicates
+                var success = _masterDataManagerViewModel?.AddRadioToDatabase(radio) ?? false;
+                if (!success)
+                {
+                    _radioMasterEditorViewModel.ValidationMessage = Strings.Instance.DuplicateNameError;
+                    return;
+                }
             }
             if (_masterDataManagerViewModel != null)
             {
@@ -692,8 +716,21 @@ public partial class MainShellViewModel : ViewModelBase
         };
         _okaMasterEditorViewModel.OnSave = (oka) =>
         {
-            _masterDataManagerViewModel?.AddOkaToDatabase(oka);
-            // Return to existing MasterDataManager on OKA tab
+            if (_okaMasterEditorViewModel!.IsEditing)
+            {
+                // Update existing OKA
+                _masterDataManagerViewModel?.UpdateOkaInDatabase(oka);
+            }
+            else
+            {
+                // Add new OKA - check for duplicates
+                var success = _masterDataManagerViewModel?.AddOkaToDatabase(oka) ?? false;
+                if (!success)
+                {
+                    _okaMasterEditorViewModel.ValidationMessage = Strings.Instance.DuplicateNameError;
+                    return;
+                }
+            }
             if (_masterDataManagerViewModel != null)
             {
                 _masterDataManagerViewModel.SelectedTabIndex = 3; // OKA tab

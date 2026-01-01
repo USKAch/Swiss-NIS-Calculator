@@ -95,10 +95,11 @@
                             <DataGrid.Columns>
                                 <!-- Antenna Group -->
                                 <DataGridTextColumn Header="{Binding Antenna, Source={x:Static loc:Strings.Instance}}" Binding="{Binding AntennaDisplay}" Width="Auto"/>
-                                <DataGridTemplateColumn Header="{Binding Bands, Source={x:Static loc:Strings.Instance}}" Width="Auto">
+                                <DataGridTemplateColumn Header="{Binding Bands, Source={x:Static loc:Strings.Instance}}" Width="120">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding FrequencyDisplay}" FontSize="11" VerticalAlignment="Center" Padding="10,6"/>
+                                            <TextBlock Text="{Binding FrequencyDisplay}" FontSize="11" VerticalAlignment="Center" Padding="10,6"
+                                                       TextWrapping="Wrap" MaxWidth="100"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>

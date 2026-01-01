@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.VisualTree;
 using NIS.Desktop.ViewModels;
 
 namespace NIS.Desktop.Views;
@@ -22,10 +23,29 @@ public partial class ProjectOverviewView : UserControl
 
     private void OnConfigurationDoubleTapped(object? sender, TappedEventArgs e)
     {
-        if (sender is DataGrid grid && grid.SelectedItem is ConfigurationDisplayItem item
-            && DataContext is ProjectOverviewViewModel vm)
+        if (DataContext is ProjectOverviewViewModel vm)
         {
-            vm.EditConfigurationCommand.Execute(item);
+            // Get the item from the event source to handle case where selection hasn't updated yet
+            var item = GetDataContextFromSource<ConfigurationDisplayItem>(e.Source);
+            if (item != null)
+            {
+                vm.EditConfigurationCommand.Execute(item);
+            }
         }
+    }
+
+    private static T? GetDataContextFromSource<T>(object? source) where T : class
+    {
+        if (source is Control control)
+        {
+            var current = control;
+            while (current != null)
+            {
+                if (current.DataContext is T item)
+                    return item;
+                current = current.GetVisualParent() as Control;
+            }
+        }
+        return null;
     }
 }

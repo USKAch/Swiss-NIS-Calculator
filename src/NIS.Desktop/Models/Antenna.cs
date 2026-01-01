@@ -99,6 +99,12 @@ public class AntennaBand
 public class Antenna
 {
     /// <summary>
+    /// Database primary key.
+    /// </summary>
+    [JsonIgnore]
+    public int Id { get; set; }
+
+    /// <summary>
     /// Antenna manufacturer name.
     /// </summary>
     [JsonPropertyName("manufacturer")]

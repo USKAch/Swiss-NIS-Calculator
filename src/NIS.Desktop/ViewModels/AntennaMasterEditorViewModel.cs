@@ -311,6 +311,7 @@ public partial class AntennaMasterEditorViewModel : ViewModelBase
 
         var antenna = new Antenna
         {
+            Id = _originalAntenna?.Id ?? 0,
             Manufacturer = Manufacturer.Trim(),
             Model = Model.Trim(),
             IsHorizontallyPolarized = IsHorizontallyPolarized,

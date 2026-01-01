@@ -46,7 +46,10 @@ public class FieldStrengthCalculator
     {
         ArgumentNullException.ThrowIfNull(input);
 
-        var distance = input.DistanceMeters <= 0 ? 0.001 : input.DistanceMeters;
+        if (input.DistanceMeters <= 0)
+            throw new ArgumentException("Distance must be greater than zero.", nameof(input));
+
+        var distance = input.DistanceMeters;
         var groundReflectionFactor = input.GroundReflectionFactor > 0
             ? input.GroundReflectionFactor
             : DefaultGroundReflectionFactor;

@@ -58,6 +58,24 @@ public class Strings : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DuplicateNameError)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(New)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Delete)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CannotDelete)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ItemInUse)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ConfigurationIncomplete)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FixErrorsBeforeCalculating)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NoConfigurationsToCalculate)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NoAntennaSelected)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NoCableSelected)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NoModulationSelected)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NoOkaSelected)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(OkaDistanceInvalid)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AntennaNotFound)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CableNotFound)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ModulationNotFound)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AntennaNoBands)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Calculating)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalculationComplete)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ConfigurationsAnalyzed)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Error)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Remove)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Back)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Close)));
@@ -167,9 +185,20 @@ public class Strings : INotifyPropertyChanged
 
         // Calculation Report Labels
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcTitlePrefix)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcSubtitle)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcProjectInfo)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcOperator)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcCallsign)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcAddress)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcLocation)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcDate)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcComplianceSummary)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcAllCompliant)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcNonCompliantDetected)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcConfigsAnalyzed)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcDisclaimer)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Compliant)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NonCompliant)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcTransmitter)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcCable)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcAntenna)));
@@ -234,6 +263,7 @@ public class Strings : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainE)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainEigw)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainDs)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainOkaDistance)));
     }
 
     private string Get(string key) =>
@@ -251,6 +281,24 @@ public class Strings : INotifyPropertyChanged
     public string DuplicateNameError => Get("DuplicateNameError");
     public string New => Get("New");
     public string Delete => Get("Delete");
+    public string CannotDelete => Get("CannotDelete");
+    public string ItemInUse => Get("ItemInUse");
+    public string ConfigurationIncomplete => Get("ConfigurationIncomplete");
+    public string FixErrorsBeforeCalculating => Get("FixErrorsBeforeCalculating");
+    public string NoConfigurationsToCalculate => Get("NoConfigurationsToCalculate");
+    public string NoAntennaSelected => Get("NoAntennaSelected");
+    public string NoCableSelected => Get("NoCableSelected");
+    public string NoModulationSelected => Get("NoModulationSelected");
+    public string NoOkaSelected => Get("NoOkaSelected");
+    public string OkaDistanceInvalid => Get("OkaDistanceInvalid");
+    public string AntennaNotFound => Get("AntennaNotFound");
+    public string CableNotFound => Get("CableNotFound");
+    public string ModulationNotFound => Get("ModulationNotFound");
+    public string AntennaNoBands => Get("AntennaNoBands");
+    public string Calculating => Get("Calculating");
+    public string CalculationComplete => Get("CalculationComplete");
+    public string ConfigurationsAnalyzed => Get("ConfigurationsAnalyzed");
+    public string Error => Get("Error");
     public string Actions => Get("Actions");
     public string Modified => Get("Modified");
     public string Remove => Get("Remove");
@@ -458,9 +506,20 @@ public class Strings : INotifyPropertyChanged
 
     // Calculation Report Labels
     public string CalcTitlePrefix => Get("CalcTitlePrefix");
+    public string CalcSubtitle => Get("CalcSubtitle");
+    public string CalcProjectInfo => Get("CalcProjectInfo");
     public string CalcOperator => Get("CalcOperator");
+    public string CalcCallsign => Get("CalcCallsign");
     public string CalcAddress => Get("CalcAddress");
+    public string CalcLocation => Get("CalcLocation");
     public string CalcDate => Get("CalcDate");
+    public string CalcComplianceSummary => Get("CalcComplianceSummary");
+    public string CalcAllCompliant => Get("CalcAllCompliant");
+    public string CalcNonCompliantDetected => Get("CalcNonCompliantDetected");
+    public string CalcConfigsAnalyzed => Get("CalcConfigsAnalyzed");
+    public string CalcDisclaimer => Get("CalcDisclaimer");
+    public string Compliant => Get("Compliant");
+    public string NonCompliant => Get("NonCompliant");
     public string CalcTransmitter => Get("CalcTransmitter");
     public string CalcCable => Get("CalcCable");
     public string CalcAntenna => Get("CalcAntenna");
@@ -525,6 +584,7 @@ public class Strings : INotifyPropertyChanged
     public string CalcExplainE => Get("CalcExplainE");
     public string CalcExplainEigw => Get("CalcExplainEigw");
     public string CalcExplainDs => Get("CalcExplainDs");
+    public string CalcExplainOkaDistance => Get("CalcExplainOkaDistance");
 
     // ============================================================
     // VALIDATION MESSAGES
@@ -643,8 +703,6 @@ public class Strings : INotifyPropertyChanged
         ["Close"] = "Common",
         // Welcome
         ["AppTitle"] = "Welcome",
-        ["AppSubtitle"] = "Welcome",
-        ["SelectLanguage"] = "Welcome",
         ["Theme"] = "Welcome",
         ["ThemeLight"] = "Welcome",
         ["ThemeDark"] = "Welcome",
@@ -664,7 +722,6 @@ public class Strings : INotifyPropertyChanged
         ["LanguageFrench"] = "Settings",
         ["LanguageItalian"] = "Settings",
         ["NewProject"] = "Welcome",
-        ["CurrentProject"] = "Welcome",
         ["OpenProject"] = "Welcome",
         ["MasterData"] = "Welcome",
         ["ImportExport"] = "Welcome",
@@ -672,13 +729,11 @@ public class Strings : INotifyPropertyChanged
         // ProjectInfo
         ["ProjectInfo"] = "ProjectInfo",
         ["ProjectName"] = "ProjectInfo",
-        ["StationInfo"] = "ProjectInfo",
         ["Operator"] = "ProjectInfo",
         ["Callsign"] = "ProjectInfo",
         ["Address"] = "ProjectInfo",
         ["Location"] = "ProjectInfo",
         ["CreateProject"] = "ProjectInfo",
-        ["EditStationInfo"] = "ProjectInfo",
         // ProjectOverview
         ["Configurations"] = "ProjectOverview",
         ["Configuration"] = "ProjectOverview",
@@ -689,7 +744,6 @@ public class Strings : INotifyPropertyChanged
         ["NoConfigurations"] = "ProjectOverview",
         ["SearchProjects"] = "ProjectOverview",
         ["NoSearchResults"] = "ProjectOverview",
-        ["SortBy"] = "ProjectOverview",
         ["SortByName"] = "ProjectOverview",
         ["SortByModified"] = "ProjectOverview",
         // ConfigEditor
@@ -729,17 +783,11 @@ public class Strings : INotifyPropertyChanged
         ["PatternExplanation"] = "AntennaEditor",
         ["AddAtLeastOneBand"] = "AntennaEditor",
         ["AddNewAntenna"] = "AntennaEditor",
-        ["AntennaRepository"] = "AntennaEditor",
         ["SelectAntennaPrompt"] = "AntennaEditor",
         ["TypeToSearch"] = "AntennaEditor",
-        ["HorizontallyRotatable"] = "AntennaEditor",
         ["TypeToSearchDescription"] = "AntennaEditor",
-        ["ManufacturerExample"] = "AntennaEditor",
-        ["ModelExample"] = "AntennaEditor",
-        ["SaveAntenna"] = "AntennaEditor",
         ["AntennaTypeLabel"] = "AntennaEditor",
         ["GenerateFromGain"] = "AntennaEditor",
-        ["GenerateAllPatterns"] = "AntennaEditor",
         // CableEditor
         ["CableName"] = "CableEditor",
         ["AttenuationData"] = "CableEditor",
@@ -762,7 +810,6 @@ public class Strings : INotifyPropertyChanged
         ["Name"] = "MasterData",
         ["AddModulation"] = "MasterData",
         ["Translations"] = "MasterData",
-        ["MasterDataManager"] = "MasterData",
         ["Clear"] = "MasterData",
         ["SearchAntennas"] = "MasterData",
         ["SearchCables"] = "MasterData",
@@ -775,9 +822,6 @@ public class Strings : INotifyPropertyChanged
         ["Database"] = "MasterData",
         ["DatabaseTabInfo"] = "MasterData",
         ["FactorySettings"] = "MasterData",
-        ["ExportDatabase"] = "MasterData",
-        ["ExportDatabaseDesc"] = "MasterData",
-        ["ImportDatabase"] = "MasterData",
         ["ImportDatabaseDesc"] = "MasterData",
         // Results
         ["DistanceAntennaOka"] = "Results",
@@ -796,7 +840,6 @@ public class Strings : INotifyPropertyChanged
     {
         // Common
         ["Save"] = new() { ["de"] = "Speichern", ["fr"] = "Enregistrer", ["it"] = "Salva", ["en"] = "Save" },
-        ["SaveAs"] = new() { ["de"] = "Speichern unter...", ["fr"] = "Enregistrer sous...", ["it"] = "Salva con nome...", ["en"] = "Save As..." },
         ["Cancel"] = new() { ["de"] = "Abbrechen", ["fr"] = "Annuler", ["it"] = "Annulla", ["en"] = "Cancel" },
         ["Edit"] = new() { ["de"] = "Bearbeiten", ["fr"] = "Modifier", ["it"] = "Modifica", ["en"] = "Edit" },
         ["View"] = new() { ["de"] = "Anzeigen", ["fr"] = "Afficher", ["it"] = "Visualizza", ["en"] = "View" },
@@ -804,6 +847,24 @@ public class Strings : INotifyPropertyChanged
         ["DuplicateNameError"] = new() { ["de"] = "Ein Eintrag mit diesem Namen existiert bereits", ["fr"] = "Une entrée avec ce nom existe déjà", ["it"] = "Esiste già una voce con questo nome", ["en"] = "An item with this name already exists" },
         ["New"] = new() { ["de"] = "Neu", ["fr"] = "Nouveau", ["it"] = "Nuovo", ["en"] = "New" },
         ["Delete"] = new() { ["de"] = "Löschen", ["fr"] = "Supprimer", ["it"] = "Elimina", ["en"] = "Delete" },
+        ["CannotDelete"] = new() { ["de"] = "Löschen nicht möglich", ["fr"] = "Suppression impossible", ["it"] = "Impossibile eliminare", ["en"] = "Cannot Delete" },
+        ["ItemInUse"] = new() { ["de"] = "Dieses Element wird in folgenden Konfigurationen verwendet:", ["fr"] = "Cet élément est utilisé dans les configurations suivantes:", ["it"] = "Questo elemento è utilizzato nelle seguenti configurazioni:", ["en"] = "This item is used in the following configurations:" },
+        ["ConfigurationIncomplete"] = new() { ["de"] = "Konfiguration unvollständig", ["fr"] = "Configuration incomplète", ["it"] = "Configurazione incompleta", ["en"] = "Configuration Incomplete" },
+        ["FixErrorsBeforeCalculating"] = new() { ["de"] = "Bitte beheben Sie die folgenden Fehler vor der Berechnung:", ["fr"] = "Veuillez corriger les erreurs suivantes avant le calcul:", ["it"] = "Correggi i seguenti errori prima del calcolo:", ["en"] = "Please fix the following errors before calculating:" },
+        ["NoConfigurationsToCalculate"] = new() { ["de"] = "Keine Konfigurationen zum Berechnen vorhanden", ["fr"] = "Aucune configuration à calculer", ["it"] = "Nessuna configurazione da calcolare", ["en"] = "No configurations to calculate" },
+        ["NoAntennaSelected"] = new() { ["de"] = "Keine Antenne ausgewählt", ["fr"] = "Aucune antenne sélectionnée", ["it"] = "Nessuna antenna selezionata", ["en"] = "No antenna selected" },
+        ["NoCableSelected"] = new() { ["de"] = "Kein Kabel ausgewählt", ["fr"] = "Aucun câble sélectionné", ["it"] = "Nessun cavo selezionato", ["en"] = "No cable selected" },
+        ["NoModulationSelected"] = new() { ["de"] = "Keine Modulation ausgewählt", ["fr"] = "Aucune modulation sélectionnée", ["it"] = "Nessuna modulazione selezionata", ["en"] = "No modulation selected" },
+        ["NoOkaSelected"] = new() { ["de"] = "Kein OKA ausgewählt", ["fr"] = "Aucun OKA sélectionné", ["it"] = "Nessun OKA selezionato", ["en"] = "No OKA selected" },
+        ["OkaDistanceInvalid"] = new() { ["de"] = "OKA-Distanz muss grösser als 0 sein", ["fr"] = "La distance OKA doit être supérieure à 0", ["it"] = "La distanza OKA deve essere maggiore di 0", ["en"] = "OKA distance must be greater than 0" },
+        ["AntennaNotFound"] = new() { ["de"] = "Antenne nicht in Datenbank gefunden", ["fr"] = "Antenne introuvable dans la base de données", ["it"] = "Antenna non trovata nel database", ["en"] = "Antenna not found in database" },
+        ["CableNotFound"] = new() { ["de"] = "Kabel nicht in Datenbank gefunden", ["fr"] = "Câble introuvable dans la base de données", ["it"] = "Cavo non trovato nel database", ["en"] = "Cable not found in database" },
+        ["ModulationNotFound"] = new() { ["de"] = "Modulation nicht in Datenbank gefunden", ["fr"] = "Modulation introuvable dans la base de données", ["it"] = "Modulazione non trovata nel database", ["en"] = "Modulation not found in database" },
+        ["AntennaNoBands"] = new() { ["de"] = "Antenne hat keine Frequenzbänder definiert", ["fr"] = "L'antenne n'a pas de bandes de fréquences définies", ["it"] = "L'antenna non ha bande di frequenza definite", ["en"] = "Antenna has no frequency bands defined" },
+        ["Calculating"] = new() { ["de"] = "Berechne...", ["fr"] = "Calcul en cours...", ["it"] = "Calcolo in corso...", ["en"] = "Calculating..." },
+        ["CalculationComplete"] = new() { ["de"] = "Berechnung abgeschlossen", ["fr"] = "Calcul terminé", ["it"] = "Calcolo completato", ["en"] = "Calculation complete" },
+        ["ConfigurationsAnalyzed"] = new() { ["de"] = "Konfigurationen analysiert", ["fr"] = "configurations analysées", ["it"] = "configurazioni analizzate", ["en"] = "configurations analyzed" },
+        ["Error"] = new() { ["de"] = "Fehler", ["fr"] = "Erreur", ["it"] = "Errore", ["en"] = "Error" },
         ["Actions"] = new() { ["de"] = "Aktionen", ["fr"] = "Actions", ["it"] = "Azioni", ["en"] = "Actions" },
         ["Modified"] = new() { ["de"] = "Geändert", ["fr"] = "Modifié", ["it"] = "Modificato", ["en"] = "Modified" },
         ["Remove"] = new() { ["de"] = "Entfernen", ["fr"] = "Retirer", ["it"] = "Rimuovi", ["en"] = "Remove" },
@@ -812,8 +873,6 @@ public class Strings : INotifyPropertyChanged
 
         // Welcome
         ["AppTitle"] = new() { ["de"] = "Swiss NIS Calculator", ["fr"] = "Swiss NIS Calculator", ["it"] = "Swiss NIS Calculator", ["en"] = "Swiss NIS Calculator" },
-        ["AppSubtitle"] = new() { ["de"] = "Feldstärkerechner für Amateurfunk", ["fr"] = "Calculateur de champ RF pour radioamateurs", ["it"] = "Calcolatore campo RF per radioamatori", ["en"] = "RF Field Strength Calculator for Amateur Radio" },
-        ["SelectLanguage"] = new() { ["de"] = "Sprache wählen", ["fr"] = "Choisir la langue", ["it"] = "Seleziona lingua", ["en"] = "Select Language" },
         ["Theme"] = new() { ["de"] = "Design", ["fr"] = "Thème", ["it"] = "Tema", ["en"] = "Theme" },
         ["ThemeLight"] = new() { ["de"] = "Hell", ["fr"] = "Clair", ["it"] = "Chiaro", ["en"] = "Light" },
         ["ThemeDark"] = new() { ["de"] = "Dunkel", ["fr"] = "Sombre", ["it"] = "Scuro", ["en"] = "Dark" },
@@ -833,16 +892,11 @@ public class Strings : INotifyPropertyChanged
         ["SettingsAboutCredits1"] = new() { ["de"] = "Ursprünglich entwickelt von HB9ZS", ["fr"] = "Développé à l'origine par HB9ZS", ["it"] = "Sviluppato originariamente da HB9ZS", ["en"] = "Originally developed by HB9ZS" },
         ["SettingsAboutCredits2"] = new() { ["de"] = "Neu geschrieben mit Avalonia UI und FluentAvalonia", ["fr"] = "Réécrit avec Avalonia UI et FluentAvalonia", ["it"] = "Riscritto con Avalonia UI e FluentAvalonia", ["en"] = "Rewritten with Avalonia UI and FluentAvalonia" },
         ["NewProject"] = new() { ["de"] = "Neues Projekt", ["fr"] = "Nouveau projet", ["it"] = "Nuovo progetto", ["en"] = "New Project" },
-        ["CurrentProject"] = new() { ["de"] = "Aktuelles Projekt", ["fr"] = "Projet actuel", ["it"] = "Progetto corrente", ["en"] = "Current Project" },
         ["OpenProject"] = new() { ["de"] = "Projekt öffnen...", ["fr"] = "Ouvrir projet...", ["it"] = "Apri progetto...", ["en"] = "Open Project..." },
-        ["Continue"] = new() { ["de"] = "Fortsetzen", ["fr"] = "Continuer", ["it"] = "Continua", ["en"] = "Continue" },
-        ["GetStarted"] = new() { ["de"] = "Projekt", ["fr"] = "Projet", ["it"] = "Progetto", ["en"] = "Project" },
-        ["RecentProjects"] = new() { ["de"] = "Zuletzt geöffnet", ["fr"] = "Projets récents", ["it"] = "Progetti recenti", ["en"] = "Recent Projects" },
         ["MasterData"] = new() { ["de"] = "Stammdaten", ["fr"] = "Données de base", ["it"] = "Dati master", ["en"] = "Master Data" },
         ["NisvCompliance"] = new() { ["de"] = "NISV-Konformitätsrechner für Schweizer Amateurfunkstationen", ["fr"] = "Calculateur de conformité ORNI pour stations radioamateurs suisses", ["it"] = "Calcolatore conformità ORNI per stazioni radioamatoriali svizzere", ["en"] = "NISV Compliance Calculator for Swiss Amateur Radio Stations" },
         ["Home"] = new() { ["de"] = "Start", ["fr"] = "Accueil", ["it"] = "Home", ["en"] = "Home" },
         ["Projects"] = new() { ["de"] = "Projekte", ["fr"] = "Projets", ["it"] = "Progetti", ["en"] = "Projects" },
-        ["File"] = new() { ["de"] = "Datei", ["fr"] = "Fichier", ["it"] = "File", ["en"] = "File" },
         ["Project"] = new() { ["de"] = "Projekt", ["fr"] = "Projet", ["it"] = "Progetto", ["en"] = "Project" },
         ["Settings"] = new() { ["de"] = "Einstellungen", ["fr"] = "Paramètres", ["it"] = "Impostazioni", ["en"] = "Settings" },
         ["ImportExport"] = new() { ["de"] = "Import/Export", ["fr"] = "Import/Export", ["it"] = "Import/Export", ["en"] = "Import/Export" },
@@ -850,12 +904,10 @@ public class Strings : INotifyPropertyChanged
         // Project Info
         ["ProjectInfo"] = new() { ["de"] = "Projektinformationen", ["fr"] = "Informations projet", ["it"] = "Informazioni progetto", ["en"] = "Project Information" },
         ["ProjectName"] = new() { ["de"] = "Projektname", ["fr"] = "Nom du projet", ["it"] = "Nome progetto", ["en"] = "Project Name" },
-        ["StationInfo"] = new() { ["de"] = "Stationsinformationen", ["fr"] = "Informations station", ["it"] = "Informazioni stazione", ["en"] = "Station Information" },
         ["Operator"] = new() { ["de"] = "Betreiber", ["fr"] = "Opérateur", ["it"] = "Operatore", ["en"] = "Operator" },
         ["Address"] = new() { ["de"] = "Adresse", ["fr"] = "Adresse", ["it"] = "Indirizzo", ["en"] = "Address" },
         ["Location"] = new() { ["de"] = "Ort", ["fr"] = "Localité", ["it"] = "Località", ["en"] = "Location" },
         ["CreateProject"] = new() { ["de"] = "Projekt erstellen", ["fr"] = "Créer projet", ["it"] = "Crea progetto", ["en"] = "Create Project" },
-        ["EditStationInfo"] = new() { ["de"] = "Stationsinfo bearbeiten", ["fr"] = "Modifier info station", ["it"] = "Modifica info stazione", ["en"] = "Edit Station Info" },
 
         // Project Overview
         ["Configurations"] = new() { ["de"] = "Konfigurationen", ["fr"] = "Configurations", ["it"] = "Configurazioni", ["en"] = "Configurations" },
@@ -867,7 +919,6 @@ public class Strings : INotifyPropertyChanged
         ["NoConfigurations"] = new() { ["de"] = "Keine Konfigurationen. Klicken Sie auf '+ Konfiguration hinzufügen'.", ["fr"] = "Aucune configuration. Cliquez sur '+ Ajouter configuration'.", ["it"] = "Nessuna configurazione. Clicca su '+ Aggiungi configurazione'.", ["en"] = "No configurations. Click '+ Add Configuration' to get started." },
         ["SearchProjects"] = new() { ["de"] = "Projekte suchen...", ["fr"] = "Rechercher projets...", ["it"] = "Cerca progetti...", ["en"] = "Search projects..." },
         ["NoSearchResults"] = new() { ["de"] = "Keine Projekte gefunden.", ["fr"] = "Aucun projet trouvé.", ["it"] = "Nessun progetto trovato.", ["en"] = "No projects found." },
-        ["SortBy"] = new() { ["de"] = "Sortieren nach", ["fr"] = "Trier par", ["it"] = "Ordina per", ["en"] = "Sort by" },
         ["SortByName"] = new() { ["de"] = "Name", ["fr"] = "Nom", ["it"] = "Nome", ["en"] = "Name" },
         ["SortByModified"] = new() { ["de"] = "Zuletzt geändert", ["fr"] = "Dernière modification", ["it"] = "Ultima modifica", ["en"] = "Last modified" },
 
@@ -929,17 +980,11 @@ public class Strings : INotifyPropertyChanged
         ["PatternExplanation"] = new() { ["de"] = "0° = Horizont (max. Abstrahlung), 90° = Senkrecht nach unten (Richtung OKA). Werte: 0-60 dB Dämpfung.", ["fr"] = "0° = Horizon (rayonnement max), 90° = Verticalement vers le bas (direction LSM). Valeurs: 0-60 dB d'atténuation.", ["it"] = "0° = Orizzonte (radiazione max), 90° = Verticalmente verso il basso (direzione LSBD). Valori: 0-60 dB attenuazione.", ["en"] = "0° = Horizon (max radiation), 90° = Straight down (toward OKA). Values: 0-60 dB attenuation." },
         ["AddAtLeastOneBand"] = new() { ["de"] = "Fügen Sie mindestens ein Frequenzband mit Gewinn und vertikalem Strahlungsdiagramm hinzu.", ["fr"] = "Ajoutez au moins une bande de fréquence avec gain et diagramme de rayonnement vertical.", ["it"] = "Aggiungi almeno una banda di frequenza con guadagno e diagramma di radiazione verticale.", ["en"] = "Add at least one frequency band with gain and vertical radiation pattern." },
         ["AddNewAntenna"] = new() { ["de"] = "Neue Antenne hinzufügen", ["fr"] = "Ajouter nouvelle antenne", ["it"] = "Aggiungi nuova antenna", ["en"] = "Add New Antenna" },
-        ["AntennaRepository"] = new() { ["de"] = "Antennen-Datenbank", ["fr"] = "Base de données antennes", ["it"] = "Database antenne", ["en"] = "Antenna Repository" },
         ["SelectAntennaPrompt"] = new() { ["de"] = "Antenne auswählen", ["fr"] = "Sélectionner antenne", ["it"] = "Seleziona antenna", ["en"] = "Select Antenna" },
         ["TypeToSearch"] = new() { ["de"] = "Eingabe zum Suchen...", ["fr"] = "Tapez pour rechercher...", ["it"] = "Digita per cercare...", ["en"] = "Type to search..." },
-        ["HorizontallyRotatable"] = new() { ["de"] = "Horizontal drehbar", ["fr"] = "Rotatif horizontalement", ["it"] = "Rotabile orizzontalmente", ["en"] = "Horizontally rotatable" },
         ["TypeToSearchDescription"] = new() { ["de"] = "Suche nach Hersteller oder Modell:", ["fr"] = "Rechercher par fabricant ou modèle:", ["it"] = "Cerca per produttore o modello:", ["en"] = "Type to search by manufacturer or model:" },
-        ["ManufacturerExample"] = new() { ["de"] = "z.B. Cushcraft", ["fr"] = "ex. Cushcraft", ["it"] = "es. Cushcraft", ["en"] = "e.g. Cushcraft" },
-        ["ModelExample"] = new() { ["de"] = "z.B. A3S", ["fr"] = "ex. A3S", ["it"] = "es. A3S", ["en"] = "e.g. A3S" },
-        ["SaveAntenna"] = new() { ["de"] = "Antenne speichern", ["fr"] = "Enregistrer antenne", ["it"] = "Salva antenna", ["en"] = "Save Antenna" },
         ["AntennaTypeLabel"] = new() { ["de"] = "Antennentyp", ["fr"] = "Type d'antenne", ["it"] = "Tipo di antenna", ["en"] = "Antenna Type" },
         ["GenerateFromGain"] = new() { ["de"] = "Automatisch berechnen", ["fr"] = "Calculer automatiquement", ["it"] = "Calcola automaticamente", ["en"] = "Auto-calculate" },
-        ["GenerateAllPatterns"] = new() { ["de"] = "Strahlungsdiagramme aus Gewinn berechnen", ["fr"] = "Calculer diagrammes depuis gain", ["it"] = "Calcola diagrammi da guadagno", ["en"] = "Generate Patterns from Gain" },
 
         // Cable Editor
         ["CableName"] = new() { ["de"] = "Kabelname", ["fr"] = "Nom du câble", ["it"] = "Nome cavo", ["en"] = "Cable Name" },
@@ -965,7 +1010,6 @@ public class Strings : INotifyPropertyChanged
         ["Name"] = new() { ["de"] = "Name", ["fr"] = "Nom", ["it"] = "Nome", ["en"] = "Name" },
         ["AddModulation"] = new() { ["de"] = "+ Modulation hinzufügen", ["fr"] = "+ Ajouter modulation", ["it"] = "+ Aggiungi modulazione", ["en"] = "+ Add Modulation" },
         ["Translations"] = new() { ["de"] = "Übersetzungen", ["fr"] = "Traductions", ["it"] = "Traduzioni", ["en"] = "Translations" },
-        ["MasterDataManager"] = new() { ["de"] = "Stammdaten-Verwaltung", ["fr"] = "Gestion des données de base", ["it"] = "Gestione dati master", ["en"] = "Master Data Manager" },
         ["Clear"] = new() { ["de"] = "Löschen", ["fr"] = "Effacer", ["it"] = "Cancella", ["en"] = "Clear" },
         ["SearchAntennas"] = new() { ["de"] = "Hersteller oder Modell suchen...", ["fr"] = "Rechercher fabricant ou modèle...", ["it"] = "Cerca produttore o modello...", ["en"] = "Search by manufacturer or model..." },
         ["SearchCables"] = new() { ["de"] = "Kabelname suchen...", ["fr"] = "Rechercher nom du câble...", ["it"] = "Cerca nome cavo...", ["en"] = "Search by cable name..." },
@@ -980,9 +1024,6 @@ public class Strings : INotifyPropertyChanged
         ["Database"] = new() { ["de"] = "Datenbank", ["fr"] = "Base de données", ["it"] = "Database", ["en"] = "Database" },
         ["DatabaseTabInfo"] = new() { ["de"] = "Änderungen an der Datenbank betreffen alle Benutzer. Nur für Wartung und Updates verwenden.", ["fr"] = "Les modifications de la base de données affectent tous les utilisateurs. Utiliser uniquement pour la maintenance.", ["it"] = "Le modifiche al database influenzano tutti gli utenti. Usare solo per manutenzione.", ["en"] = "Database changes affect all users. Use only for maintenance and updates." },
         ["FactorySettings"] = new() { ["de"] = "Werkseinstellungen", ["fr"] = "Paramètres usine", ["it"] = "Impostazioni di fabbrica", ["en"] = "Factory Settings" },
-        ["ExportDatabase"] = new() { ["de"] = "Datenbank exportieren", ["fr"] = "Exporter la base de données", ["it"] = "Esporta database", ["en"] = "Export Database" },
-        ["ExportDatabaseDesc"] = new() { ["de"] = "Exportiert die Werksdaten in eine JSON-Datei", ["fr"] = "Exporte les données usine dans un fichier JSON", ["it"] = "Esporta i dati di fabbrica in un file JSON", ["en"] = "Export factory data to a JSON file" },
-        ["ImportDatabase"] = new() { ["de"] = "Datenbank importieren", ["fr"] = "Importer la base de données", ["it"] = "Importa database", ["en"] = "Import Database" },
         ["ImportDatabaseDesc"] = new() { ["de"] = "Importiert Werksdaten aus einer JSON-Datei. ACHTUNG: Alle Daten werden gelöscht!", ["fr"] = "Importe les données usine depuis un fichier JSON. ATTENTION: Toutes les données seront supprimées!", ["it"] = "Importa i dati di fabbrica da un file JSON. ATTENZIONE: Tutti i dati saranno eliminati!", ["en"] = "Import factory data from a JSON file. WARNING: All data will be deleted!" },
 
         // Results
@@ -1017,21 +1058,15 @@ public class Strings : INotifyPropertyChanged
         ["ChangesDiscarded"] = new() { ["de"] = "Änderungen verworfen.", ["fr"] = "Modifications annulées.", ["it"] = "Modifiche annullate.", ["en"] = "Changes discarded." },
 
         // Project Management
-        ["LoadDemoProject"] = new() { ["de"] = "Demo-Projekt laden", ["fr"] = "Charger projet démo", ["it"] = "Carica progetto demo", ["en"] = "Load Demo Project" },
-        ["LoadDemoProjectDesc"] = new() { ["de"] = "Lädt ein Beispielprojekt zum Ausprobieren", ["fr"] = "Charge un projet exemple pour essayer", ["it"] = "Carica un progetto di esempio per provare", ["en"] = "Load a sample project to try out" },
         ["NoProjects"] = new() { ["de"] = "Keine Projekte vorhanden", ["fr"] = "Aucun projet disponible", ["it"] = "Nessun progetto disponibile", ["en"] = "No projects available" },
-        ["DeleteProject"] = new() { ["de"] = "Projekt löschen", ["fr"] = "Supprimer projet", ["it"] = "Elimina progetto", ["en"] = "Delete Project" },
         ["DeleteProjectConfirm"] = new() { ["de"] = "Projekt wirklich löschen?", ["fr"] = "Vraiment supprimer le projet?", ["it"] = "Eliminare davvero il progetto?", ["en"] = "Really delete project?" },
         ["DeleteProjectMessage"] = new() { ["de"] = "Das Projekt '{0}' wird unwiderruflich gelöscht.", ["fr"] = "Le projet '{0}' sera supprimé définitivement.", ["it"] = "Il progetto '{0}' verrà eliminato definitivamente.", ["en"] = "The project '{0}' will be permanently deleted." },
         ["ProjectDeleted"] = new() { ["de"] = "Projekt gelöscht", ["fr"] = "Projet supprimé", ["it"] = "Progetto eliminato", ["en"] = "Project deleted" },
-        ["DemoProjectLoaded"] = new() { ["de"] = "Demo-Projekt geladen", ["fr"] = "Projet démo chargé", ["it"] = "Progetto demo caricato", ["en"] = "Demo project loaded" },
         ["Callsign"] = new() { ["de"] = "Rufzeichen", ["fr"] = "Indicatif", ["it"] = "Nominativo", ["en"] = "Callsign" },
 
         // User Data Export/Import
         ["ExportUserData"] = new() { ["de"] = "Benutzerdaten exportieren", ["fr"] = "Exporter données utilisateur", ["it"] = "Esporta dati utente", ["en"] = "Export User Data" },
         ["ImportUserData"] = new() { ["de"] = "Benutzerdaten importieren", ["fr"] = "Importer données utilisateur", ["it"] = "Importa dati utente", ["en"] = "Import User Data" },
-        ["ExportUserDataDesc"] = new() { ["de"] = "Exportiert alle Projekte, OKAs und benutzerdefinierte Stammdaten", ["fr"] = "Exporte tous les projets, LSMs et données de base personnalisées", ["it"] = "Esporta tutti i progetti, LST e dati master personalizzati", ["en"] = "Export all projects, PSSs, and custom master data" },
-        ["ImportUserDataDesc"] = new() { ["de"] = "Importiert Benutzerdaten aus einer Sicherungsdatei", ["fr"] = "Importe les données utilisateur depuis un fichier de sauvegarde", ["it"] = "Importa i dati utente da un file di backup", ["en"] = "Import user data from a backup file" },
         ["ImportConfirmMessage"] = new() { ["de"] = "Dies löscht alle bestehenden Daten und ersetzt sie durch das Backup. Fortfahren?", ["fr"] = "Cela supprime toutes les données existantes et les remplace par la sauvegarde. Continuer?", ["it"] = "Questo elimina tutti i dati esistenti e li sostituisce con il backup. Continuare?", ["en"] = "This deletes all existing data and replaces it with the backup. Continue?" },
         ["ExportSuccess"] = new() { ["de"] = "Export erfolgreich", ["fr"] = "Export réussi", ["it"] = "Esportazione riuscita", ["en"] = "Export successful" },
         ["ExportFailed"] = new() { ["de"] = "Export fehlgeschlagen", ["fr"] = "Échec de l'export", ["it"] = "Esportazione fallita", ["en"] = "Export failed" },
@@ -1041,24 +1076,14 @@ public class Strings : INotifyPropertyChanged
         ["ExportProject"] = new() { ["de"] = "Projekt exportieren", ["fr"] = "Exporter projet", ["it"] = "Esporta progetto", ["en"] = "Export Project" },
         ["SelectProjectToExport"] = new() { ["de"] = "Bitte wählen Sie ein Projekt zum Exportieren", ["fr"] = "Veuillez sélectionner un projet à exporter", ["it"] = "Seleziona un progetto da esportare", ["en"] = "Please select a project to export" },
         ["ProjectImportExportDesc"] = new() { ["de"] = "Projekte als .nisproj-Dateien importieren oder exportieren", ["fr"] = "Importer ou exporter des projets sous forme de fichiers .nisproj", ["it"] = "Importa o esporta progetti come file .nisproj", ["en"] = "Import or export individual projects as .nisproj files" },
-        ["UserData"] = new() { ["de"] = "Benutzerdaten", ["fr"] = "Données utilisateur", ["it"] = "Dati utente", ["en"] = "User Data" },
-        ["FactoryData"] = new() { ["de"] = "Werksdaten", ["fr"] = "Données usine", ["it"] = "Dati di fabbrica", ["en"] = "Factory Data" },
         ["ExportFactoryData"] = new() { ["de"] = "Werksdaten exportieren", ["fr"] = "Exporter données usine", ["it"] = "Esporta dati di fabbrica", ["en"] = "Export Factory Data" },
         ["ImportFactoryData"] = new() { ["de"] = "Werksdaten importieren", ["fr"] = "Importer données usine", ["it"] = "Importa dati di fabbrica", ["en"] = "Import Factory Data" },
         ["ExportFactoryDataDesc"] = new() { ["de"] = "Exportiert alle Projekte, OKAs und Stammdaten (Factory)", ["fr"] = "Exporte tous les projets, LSMs et données de base (usine)", ["it"] = "Esporta tutti i progetti, LST e dati master (fabbrica)", ["en"] = "Export all projects, PSSs, and master data (factory)" },
         ["ImportFactoryConfirmMessage"] = new() { ["de"] = "Dies löscht alle bestehenden Daten und ersetzt sie durch die Werksdaten. Fortfahren?", ["fr"] = "Cela supprime toutes les données existantes et les remplace par les données usine. Continuer?", ["it"] = "Questo elimina tutti i dati esistenti e li sostituisce con i dati di fabbrica. Continuare?", ["en"] = "This deletes all existing data and replaces it with factory data. Continue?" },
         ["ImportProjectConfirmMessage"] = new() { ["de"] = "Ein neues Projekt wird importiert. Fortfahren?", ["fr"] = "Un nouveau projet sera importé. Continuer?", ["it"] = "Verrà importato un nuovo progetto. Continuare?", ["en"] = "A new project will be imported. Continue?" },
-        ["FactoryDevelopment"] = new() { ["de"] = "Werksentwicklung", ["fr"] = "Développement usine", ["it"] = "Sviluppo fabbrica", ["en"] = "Factory Development" },
-        ["FactoryDevelopmentDesc"] = new() { ["de"] = "Tools zum Erstellen und Bearbeiten der mitgelieferten Datenbank", ["fr"] = "Outils pour créer et modifier la base de données livrée", ["it"] = "Strumenti per creare e modificare il database fornito", ["en"] = "Tools for creating and modifying the shipped database" },
-        ["ExportAsDemo"] = new() { ["de"] = "Als Demo exportieren", ["fr"] = "Exporter comme démo", ["it"] = "Esporta come demo", ["en"] = "Export as Demo" },
         ["OpenDataFolder"] = new() { ["de"] = "Datenordner öffnen", ["fr"] = "Ouvrir dossier données", ["it"] = "Apri cartella dati", ["en"] = "Open Data Folder" },
-        ["DemoProjectFailed"] = new() { ["de"] = "Demo-Projekt konnte nicht geladen werden", ["fr"] = "Impossible de charger le projet démo", ["it"] = "Impossibile caricare il progetto demo", ["en"] = "Failed to load demo project" },
-        ["DemoProjectExported"] = new() { ["de"] = "Demo-Projekt exportiert", ["fr"] = "Projet démo exporté", ["it"] = "Progetto demo esportato", ["en"] = "Demo project exported" },
-        ["DemoProject"] = new() { ["de"] = "Demo-Projekt", ["fr"] = "Projet démo", ["it"] = "Progetto demo", ["en"] = "Demo Project" },
-        ["DemoProjectDesc"] = new() { ["de"] = "Demo-Projekt für neue Benutzer erstellen und verwalten", ["fr"] = "Créer et gérer le projet démo pour les nouveaux utilisateurs", ["it"] = "Crea e gestisci il progetto demo per i nuovi utenti", ["en"] = "Create and manage the demo project for new users" },
         ["DataFolder"] = new() { ["de"] = "Datenordner", ["fr"] = "Dossier données", ["it"] = "Cartella dati", ["en"] = "Data Folder" },
         ["DataFolderDesc"] = new() { ["de"] = "Öffnet den Datenordner mit der Datenbank (nisdata.db) für Git-Commits", ["fr"] = "Ouvre le dossier de données avec la base de données (nisdata.db) pour les commits Git", ["it"] = "Apre la cartella dati con il database (nisdata.db) per i commit Git", ["en"] = "Opens the data folder containing the database (nisdata.db) for Git commits" },
-        ["DataFolderOpened"] = new() { ["de"] = "Datenordner geöffnet", ["fr"] = "Dossier données ouvert", ["it"] = "Cartella dati aperta", ["en"] = "Data folder opened" },
         ["Factory"] = new() { ["de"] = "Werksmodus", ["fr"] = "Mode usine", ["it"] = "Modalità fabbrica", ["en"] = "Factory Mode" },
         ["FactoryMode"] = new() { ["de"] = "WERKSMODUS", ["fr"] = "MODE USINE", ["it"] = "MODALITÀ FABBRICA", ["en"] = "FACTORY MODE" },
         ["EnterFactoryPassword"] = new() { ["de"] = "Bitte Werkspasswort eingeben:", ["fr"] = "Veuillez entrer le mot de passe usine:", ["it"] = "Inserisci la password di fabbrica:", ["en"] = "Please enter factory password:" },
@@ -1066,9 +1091,20 @@ public class Strings : INotifyPropertyChanged
 
         // Calculation Report Labels
         ["CalcTitlePrefix"] = new() { ["de"] = "Immissionsberechnung für", ["fr"] = "Calcul d'immission pour", ["it"] = "Calcolo immissione per", ["en"] = "Emission Calculation for" },
+        ["CalcSubtitle"] = new() { ["de"] = "NISV Feldstärkeberechnung", ["fr"] = "Calcul de l'intensité du champ ORNI", ["it"] = "Calcolo intensità campo ORNI", ["en"] = "NISV Field Strength Calculation" },
+        ["CalcProjectInfo"] = new() { ["de"] = "Projektinformationen", ["fr"] = "Informations du projet", ["it"] = "Informazioni progetto", ["en"] = "Project Information" },
         ["CalcOperator"] = new() { ["de"] = "Betreiber", ["fr"] = "Opérateur", ["it"] = "Operatore", ["en"] = "Operator" },
+        ["CalcCallsign"] = new() { ["de"] = "Rufzeichen", ["fr"] = "Indicatif", ["it"] = "Nominativo", ["en"] = "Callsign" },
         ["CalcAddress"] = new() { ["de"] = "Adresse", ["fr"] = "Adresse", ["it"] = "Indirizzo", ["en"] = "Address" },
+        ["CalcLocation"] = new() { ["de"] = "Standort", ["fr"] = "Emplacement", ["it"] = "Posizione", ["en"] = "Location" },
         ["CalcDate"] = new() { ["de"] = "Datum", ["fr"] = "Date", ["it"] = "Data", ["en"] = "Date" },
+        ["CalcComplianceSummary"] = new() { ["de"] = "KONFORMITÄTSZUSAMMENFASSUNG", ["fr"] = "RÉSUMÉ DE CONFORMITÉ", ["it"] = "RIEPILOGO CONFORMITÀ", ["en"] = "COMPLIANCE SUMMARY" },
+        ["CalcAllCompliant"] = new() { ["de"] = "ALLE KONFIGURATIONEN KONFORM", ["fr"] = "TOUTES LES CONFIGURATIONS CONFORMES", ["it"] = "TUTTE LE CONFIGURAZIONI CONFORMI", ["en"] = "ALL CONFIGURATIONS COMPLIANT" },
+        ["CalcNonCompliantDetected"] = new() { ["de"] = "NICHT KONFORME KONFIGURATIONEN ERKANNT", ["fr"] = "CONFIGURATIONS NON CONFORMES DÉTECTÉES", ["it"] = "CONFIGURAZIONI NON CONFORMI RILEVATE", ["en"] = "NON-COMPLIANT CONFIGURATIONS DETECTED" },
+        ["CalcConfigsAnalyzed"] = new() { ["de"] = "{0} Konfiguration(en) analysiert", ["fr"] = "{0} configuration(s) analysée(s)", ["it"] = "{0} configurazione/i analizzata/e", ["en"] = "{0} configuration(s) analyzed" },
+        ["CalcDisclaimer"] = new() { ["de"] = "Diese Berechnung basiert auf der Schweizer NISV (Verordnung über den Schutz vor nichtionisierender Strahlung) und geht von einer Freiraumausbreitung mit einem Bodenreflexionsfaktor von 1.6 aus. Die tatsächliche Feldstärke kann aufgrund von Umweltfaktoren variieren.", ["fr"] = "Ce calcul est basé sur l'ORNI suisse (Ordonnance sur la protection contre le rayonnement non ionisant) et suppose une propagation en espace libre avec un facteur de réflexion au sol de 1.6. L'intensité réelle du champ peut varier en raison de facteurs environnementaux.", ["it"] = "Questo calcolo si basa sull'ORNI svizzera (Ordinanza sulla protezione dalle radiazioni non ionizzanti) e presuppone una propagazione in spazio libero con un fattore di riflessione al suolo di 1.6. L'intensità effettiva del campo può variare a causa di fattori ambientali.", ["en"] = "This calculation is based on the Swiss NISV (Verordnung über den Schutz vor nichtionisierender Strahlung) regulations and assumes free-space propagation with ground reflection factor of 1.6. Actual field strength may vary due to environmental factors." },
+        ["Compliant"] = new() { ["de"] = "KONFORM", ["fr"] = "CONFORME", ["it"] = "CONFORME", ["en"] = "COMPLIANT" },
+        ["NonCompliant"] = new() { ["de"] = "NICHT KONFORM", ["fr"] = "NON CONFORME", ["it"] = "NON CONFORME", ["en"] = "NON-COMPLIANT" },
         ["CalcTransmitter"] = new() { ["de"] = "Sender", ["fr"] = "Émetteur", ["it"] = "Trasmettitore", ["en"] = "Transmitter" },
         ["CalcCable"] = new() { ["de"] = "Kabel", ["fr"] = "Câble", ["it"] = "Cavo", ["en"] = "Cable" },
         ["CalcAntenna"] = new() { ["de"] = "Antenne", ["fr"] = "Antenne", ["it"] = "Antenna", ["en"] = "Antenna" },
@@ -1133,5 +1169,6 @@ public class Strings : INotifyPropertyChanged
         ["CalcExplainE"] = new() { ["de"] = "Berechnete Feldstärke am OKA in V/m", ["fr"] = "Intensité de champ calculée au LSM en V/m", ["it"] = "Intensità di campo calcolata al LSBD in V/m", ["en"] = "Calculated field strength at OKA in V/m" },
         ["CalcExplainEigw"] = new() { ["de"] = "Immissions-Grenzwert gemäss NISV in V/m", ["fr"] = "Valeur limite d'immission selon ORNI en V/m", ["it"] = "Valore limite di immissione secondo ORNI in V/m", ["en"] = "Emission limit per NISV in V/m" },
         ["CalcExplainDs"] = new() { ["de"] = "Minimaler Sicherheitsabstand (Konformität wenn d > ds)", ["fr"] = "Distance de sécurité minimale (conforme si d > ds)", ["it"] = "Distanza di sicurezza minima (conforme se d > ds)", ["en"] = "Minimum safety distance (compliant if d > ds)" },
+        ["CalcExplainOkaDistance"] = new() { ["de"] = "Tatsächlicher Abstand vom OKA zur Antenne in Metern", ["fr"] = "Distance réelle du LSM à l'antenne en mètres", ["it"] = "Distanza effettiva dal LSBD all'antenna in metri", ["en"] = "Actual distance from OKA to antenna in meters" },
     };
 }
