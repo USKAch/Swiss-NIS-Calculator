@@ -34,6 +34,5 @@ bin/
 obj/
 
 # App data (generated)
-src/NIS.Desktop/Data/nisdata.db
 src/NIS.Desktop/Data/translations.json
 src/NIS.Desktop/Export/
