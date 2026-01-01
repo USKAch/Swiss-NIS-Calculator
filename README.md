@@ -80,7 +80,7 @@ dotnet publish src/NIS.Desktop -c Release -r linux-x64 --self-contained
 
 1. **Create a New Project** - Enter station details (callsign, operator, address)
 2. **Add Antenna Configuration** - Select radio, cable, and antenna from master data
-3. **Set Evaluation Point (OKA)** - Define distance and building damping
+3. **Set Evaluation Point** - Define distance and building damping (OKA/LSM/LST/PSS depending on language)
 4. **Calculate** - View field strength results and compliance status
 
 ### Master Data Management
