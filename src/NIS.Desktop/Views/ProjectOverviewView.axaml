@@ -126,7 +126,7 @@
                                 </DataGridTemplateColumn>
                                 <!-- OKA Group -->
                                 <DataGridTextColumn Header="OKA" Binding="{Binding OkaNameDisplay}" Width="Auto"/>
-                                <DataGridTextColumn Header="{Binding Distance, Source={x:Static loc:Strings.Instance}}" Binding="{Binding OkaDistanceDisplay}" Width="Auto"/>
+                                <DataGridTextColumn Header="{Binding OkaDistance, Source={x:Static loc:Strings.Instance}}" Binding="{Binding OkaDistanceDisplay}" Width="Auto"/>
                                 <DataGridTemplateColumn Header="" Width="Auto">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
