@@ -141,30 +141,19 @@ public class AntennaConfiguration
     public double ActivityFactor { get; set; } = 0.5;
 
     /// <summary>
-    /// OKA name/identifier (e.g., "Neighbor's balcony").
+    /// OKA database ID for referencing. Used for all lookups.
+    /// </summary>
+    [JsonPropertyName("okaId")]
+    public int? OkaId { get; set; }
+
+    /// <summary>
+    /// OKA name for display (human-readable).
     /// </summary>
     [JsonPropertyName("okaName")]
     public string OkaName { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Distance to OKA in meters.
-    /// </summary>
-    [JsonPropertyName("okaDistanceMeters")]
-    public double OkaDistanceMeters { get; set; }
-
-    /// <summary>
-    /// Building damping at OKA in dB.
-    /// </summary>
-    [JsonPropertyName("okaBuildingDampingDb")]
-    public double OkaBuildingDampingDb { get; set; }
-
     [JsonIgnore]
     public string ModulationDisplay => Modulation;
-
-    [JsonIgnore]
-    public string OkaSummary => OkaDistanceMeters > 0
-        ? $"{OkaDistanceMeters}m"
-        : "No OKA";
 }
 
 /// <summary>

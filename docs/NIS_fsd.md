@@ -74,6 +74,8 @@ Global navigation available from most screens:
 - **Calculate All** -> Runs calculation for current project (Section 3.7)
 - **Export Report** -> Results view with export options (Section 3.7)
 - **Export PDF** -> Generates PDF report from Results
+- **Import Project** -> Opens file picker to import a .nisproj file (always enabled)
+- **Export Project** -> Opens save dialog to export current project as .nisproj (enabled when project loaded)
 - **Settings** -> Language and Theme (Section 10)
 - **Factory** -> Factory mode access (Section 9)
 
@@ -424,33 +426,68 @@ One table per antenna configuration. Each report contains a configuration summar
 - Polarization and rotation angle
 - OKA name and distance
 
-**Per-band Table Columns:**
-- Frequency (MHz)
-- OKA number (if applicable)
-- Distance to antenna (m)
-- TX power (W)
-- Activity factor
-- Modulation factor
-- Mean power (W)
-- Cable attenuation (dB)
-- Additional losses (dB)
-- Total attenuation (dB)
-- Attenuation factor
-- Antenna gain (dBi)
-- Vertical angle attenuation (dB)
-- Total antenna gain (dB)
-- Gain factor
-- EIRP toward OKA (W)
-- ERP toward OKA (W)
-- Building damping (dB)
-- Ground reflection factor
-- Field strength at OKA (V/m)
-- Limit (V/m)
-- Safety distance (m)
+**Per-band Calculation Table:**
+
+The table follows the legacy VB6 application structure. Bold rows indicate key input/output values.
+
+| Row | Symbol | Label (German) | Unit | Bold |
+|-----|--------|----------------|------|------|
+| 1 | f | Frequenz | [MHz] | **Yes** |
+| 2 | - | Nr. des OKA auf dem Situationsplan | - | **Yes** |
+| 3 | d | Abstand OKA zur Antenne | [m] | **Yes** |
+| 4 | P | Leistung am Senderausgang | [W] | **Yes** |
+| 5 | AF | Aktivitätsfaktor | [ ] | No |
+| 6 | MF | Modulationsfaktor | [ ] | No |
+| 7 | Pm | Mittl. Leistung am Senderausgang | [W] | **Yes** |
+| 8 | a1 | Kabeldämpfung | [dB] | No |
+| 9 | a2 | übrige Dämpfung | [dB] | No |
+| 10 | a | Summe der Dämpfung | [dB] | No |
+| 11 | A | Dämpfungsfaktor | [ ] | No |
+| 12 | g1 | Antennengewinn | [dBi] | No |
+| 13 | g2 | Vertikale Winkeldämpfung | [dB] | No |
+| 14 | g | Totaler Antennengewinn | [dB] | No |
+| 15 | G | Antennengewinnfaktor | [ ] | No |
+| 16 | Ps | Massgebende Sendeleistung (EIRP) | [W] | No |
+| 17 | P's | Massgebende Sendeleistung (ERP) | [W] | **Yes** |
+| 18 | ag | Gebäudedämpfung | [dB] | No |
+| 19 | AG | Gebäudedämpfungsfaktor | [ ] | No |
+| 20 | kr | Bodenreflexionsfaktor | [ ] | No |
+| 21 | E' | Massgebende Feldstärke am OKA | [V/m] | **Yes** |
+| 22 | E IGW | Immissions-Grenzwert | [V/m] | No |
+| 23 | ds | Sicherheitsabstand | [m] | **Yes** |
+| 24 | - | Betriebsart | - | No |
+
+**Note**: Rows are displayed as columns in the exported table (one column per frequency band).
 
 ### 5.2 Column Explanations
 
-A short explanation section follows the table and describes each column label in plain language.
+A short explanation section follows the table and describes each column label in plain language. The explanations are derived from the legacy VB6 application:
+
+| Symbol | Explanation (German) |
+|--------|---------------------|
+| f | Sendefrequenz der Amateurfunkstation |
+| Nr. OKA | Im Situationsplan eingezeichneter Ort für den kurzfristigen Aufenthalt |
+| d | Antenne - Ort für den kurzfristigen Aufenthalt |
+| P | Ausgangsleistung des Senders oder Linears |
+| AF | In der Regel AF = 0.5 |
+| MF | bei SSB: MF=0.2, bei CW: MF=0.4, bei FM/RTTY/PSK31: MF=1.0 |
+| Pm | Ausgangsleistung reduziert um Aktivitäts- und Modulationsfaktor |
+| a1 | Kabeldämpfung bezogen auf Kabellänge |
+| a2 | Stecker, SWR-Brücke, Antennenschalter |
+| a | Kabeldämpfung + übrige Dämpfung |
+| A | In absolute Zahl umgerechnete "Summe der Dämpfungen" |
+| g1 | Maximaler Gewinn der Antenne gemäss Hersteller |
+| g2 | Gewinnverminderung, wegen vertikalem Strahlungsdiagramm der Antenne |
+| g | Antennengewinn - vertikale Winkeldämpfung |
+| G | In absolute Zahl umgerechneter "Antennengewinn" |
+| Ps | Äquivalente abgestrahlte Leistung bezogen auf einen isotropen Strahler |
+| P's | Äquivalente abgestrahlte Leistung bezogen auf einen Dipol |
+| ag | Dämpfung durch Gebäudemauern und Decken |
+| AG | In absolute Zahlen umgerechnete "Gebäudedämpfung" |
+| kr | Faktor welcher zu einer Zunahme der Feldstärke führt |
+| E' | 6-Minuten-Mittelwert der Feldstärke am Ort für den kurzfristigen Aufenthalt |
+| E IGW | Immissions-Grenzwert für die elektrische Feldstärke gemäss NISV |
+| ds | Distanz von der Antenne, wo der Immissions-Grenzwert erreicht wird |
 
 ### 5.3 PDF Report
 
@@ -459,12 +496,22 @@ PDF export structure (one page per configuration):
 **Configuration Pages (1 per config)**:
 - Compact project header (operator, callsign, address, location in 2 rows)
 - Configuration summary (antenna, radio, cable, OKA, modulation)
-- Per-band calculation table with all parameters
+- Per-band calculation table (same structure as Section 5.1)
 - Compliance status indicator
 - Disclaimer
 
+**Per-band Calculation Table** uses the same row structure as the Markdown export (Section 5.1), with bold formatting for key rows:
+- **f** (Frequency)
+- **Nr. des OKA** (OKA number)
+- **d** (Distance to OKA)
+- **P** (TX Power)
+- **Pm** (Mean Power)
+- **P's** (ERP)
+- **E'** (Field strength at OKA)
+- **ds** (Safety distance)
+
 **Last Page - Column Explanations**:
-- Symbol + description table for all calculation parameters
+- Symbol + description table for all calculation parameters (see Section 5.2)
 - Disclaimer
 
 **File naming**: `{ProjectName}_YYYYMMDD.pdf`
@@ -529,13 +576,21 @@ For JSON file formats, see **Appendix B.3**.
 ### 6.2.1 Project Import/Export (.nisproj)
 
 **Export Project**:
-- Writes a .nisproj file containing the project header and configurations.
-- Each configuration includes references to antenna, cable, radio, and evaluation point by name/model (not DB IDs).
- - Linear is optional; when absent, the `linear` field is null. When present, it contains `name` (string) and `powerWatts` (number).
+- Accessed via **Navigation Pane → Export Project** (enabled when a project is loaded)
+- Opens a save file dialog for the user to choose the destination
+- Writes a .nisproj file containing the project header, configurations, and user-specific master data
+- Each configuration includes references to antenna, cable, radio, and evaluation point by name/model (not DB IDs)
+- Linear is optional; when absent, the `linear` field is null. When present, it contains `name` (string) and `powerWatts` (number)
+- Always includes a `masterData` section (even if empty) to show the structure
+- Only user-specific master data (IsUserData=true) is included; factory data is not exported
 
 **Import Project**:
-- Reads a .nisproj file and creates a new project.
-- If referenced master data does not exist, the import should create user master data entries.
+- Accessed via **Navigation Pane → Import Project** (always enabled)
+- Opens a file picker dialog for the user to select a .nisproj file
+- Reads the file and creates a new project in the database
+- If the file contains a `masterData` section, those items are imported first as user data
+- If referenced master data does not exist, placeholder entries are created with default values
+- Displays an error dialog if import fails (e.g., invalid JSON, missing required fields)
 
 ### 6.3 Validation Rules (UI and Import)
 
@@ -1324,12 +1379,20 @@ User and Factory exports share the same JSON structure. Factory import uses the 
       "okaDistanceMeters": 5.4,
       "okaBuildingDampingDb": 0
     }
-  ]
+  ],
+  "masterData": {
+    "antennas": [],
+    "cables": [],
+    "radios": [],
+    "okas": []
+  }
 }
 ```
 
 Notes:
 - `linear` is optional; use `null` when no linear is present. When present, it contains `name` (string) and `powerWatts` (number), e.g., `{ "name": "SPE Expert 1.5K", "powerWatts": 1500 }`.
+- `masterData` is always present (even if arrays are empty) to show the structure for user-specific master data.
+- Only user-specific master data (IsUserData=true) is included in `masterData`; factory data is not exported.
 
 ### B.5 settings.json
 

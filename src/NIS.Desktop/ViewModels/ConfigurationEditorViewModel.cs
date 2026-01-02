@@ -151,26 +151,24 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
     private Modulation? _selectedModulation;
 
     // OKA (single evaluation point per configuration)
+    // Distance and damping come from the OKA master data
     [ObservableProperty]
     private Oka? _selectedOka;
 
-    [ObservableProperty]
-    private string _okaName = string.Empty;
+    /// <summary>
+    /// OKA distance from master data (read-only).
+    /// </summary>
+    public double OkaDistanceMeters => SelectedOka?.DefaultDistanceMeters ?? 0;
 
-    [ObservableProperty]
-    private double _okaDistanceMeters = 10;
-
-    [ObservableProperty]
-    private double _okaBuildingDampingDb;
+    /// <summary>
+    /// OKA building damping from master data (read-only).
+    /// </summary>
+    public double OkaBuildingDampingDb => SelectedOka?.DefaultDampingDb ?? 0;
 
     partial void OnSelectedOkaChanged(Oka? value)
     {
-        if (value != null)
-        {
-            OkaName = value.Name;
-            OkaDistanceMeters = value.DefaultDistanceMeters;
-            OkaBuildingDampingDb = value.DefaultDampingDb;
-        }
+        OnPropertyChanged(nameof(OkaDistanceMeters));
+        OnPropertyChanged(nameof(OkaBuildingDampingDb));
         MarkDirty();
     }
 
@@ -210,9 +208,6 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
     partial void OnIsRotatableChanged(bool value) => MarkDirty();
     partial void OnHorizontalAngleDegreesChanged(double value) => MarkDirty();
     partial void OnActivityFactorChanged(double value) => MarkDirty();
-    partial void OnOkaNameChanged(string value) => MarkDirty();
-    partial void OnOkaDistanceMetersChanged(double value) => MarkDirty();
-    partial void OnOkaBuildingDampingDbChanged(double value) => MarkDirty();
 
     [RelayCommand]
     private void EditOka()
@@ -262,15 +257,15 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
         SelectedModulation = Modulations.FirstOrDefault(m =>
             m.Name.Equals(config.Modulation, StringComparison.OrdinalIgnoreCase));
 
-        // OKA - try to find matching OKA, but don't auto-create if deleted
-        if (!string.IsNullOrWhiteSpace(config.OkaName))
+        // OKA - find by ID first, fall back to name for backward compatibility
+        if (config.OkaId.HasValue)
+        {
+            SelectedOka = Okas.FirstOrDefault(o => o.Id == config.OkaId.Value);
+        }
+        else if (!string.IsNullOrWhiteSpace(config.OkaName))
         {
             SelectedOka = Okas.FirstOrDefault(o => o.Name.Equals(config.OkaName, StringComparison.OrdinalIgnoreCase));
-            // If OKA was deleted, just use the name without selecting from dropdown
         }
-        OkaName = config.OkaName;
-        OkaDistanceMeters = config.OkaDistanceMeters;
-        OkaBuildingDampingDb = config.OkaBuildingDampingDb;
     }
 
     /// <summary>
@@ -309,9 +304,8 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
             },
             Modulation = SelectedModulation?.Name ?? "CW",
             ActivityFactor = ActivityFactor,
-            OkaName = OkaName,
-            OkaDistanceMeters = OkaDistanceMeters,
-            OkaBuildingDampingDb = OkaBuildingDampingDb
+            OkaId = SelectedOka?.Id,
+            OkaName = SelectedOka?.Name ?? string.Empty
         };
     }
 

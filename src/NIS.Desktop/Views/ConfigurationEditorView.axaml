@@ -76,7 +76,7 @@
                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                     <TextBlock Text="{Binding Height, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                                     <NumericUpDown Value="{Binding HeightMeters}" ShowButtonSpinner="False"
-                                                   Minimum="0" Maximum="100" Increment="0.5" Width="80"/>
+                                                   Minimum="0.1" Maximum="100" Increment="0.5" Width="80"/>
                                     <TextBlock Text="m" VerticalAlignment="Center"/>
                                 </StackPanel>
                                 <TextBlock Text="{Binding HeightHint, Source={x:Static loc:Strings.Instance}}"
@@ -133,7 +133,7 @@
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <TextBlock Text="{Binding CableLength, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                                 <NumericUpDown Value="{Binding CableLengthMeters}" ShowButtonSpinner="False"
-                                               Minimum="0" Maximum="1000" Increment="1" Width="80"/>
+                                               Minimum="0.1" Maximum="1000" Increment="1" Width="80"/>
                                 <TextBlock Text="m" VerticalAlignment="Center"/>
                             </StackPanel>
 
@@ -185,22 +185,18 @@
                                 </StackPanel>
                             </StackPanel>
 
-                            <!-- OKA Distance -->
-                            <StackPanel Spacing="2">
-                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <TextBlock Text="{Binding OkaDistance, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                                    <NumericUpDown Value="{Binding OkaDistanceMeters}" ShowButtonSpinner="False"
-                                                   Minimum="0.1" Maximum="100" Increment="0.5" Width="80"/>
-                                </StackPanel>
-                                <TextBlock Text="{Binding OkaDistanceHint, Source={x:Static loc:Strings.Instance}}"
-                                           Opacity="0.6" FontSize="11" FontStyle="Italic" TextWrapping="Wrap"/>
+                            <!-- OKA Distance (from master data, read-only) -->
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="{Binding OkaDistance, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                                <TextBlock Text="{Binding OkaDistanceMeters, StringFormat='{}{0:F1} m'}" VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
                             </StackPanel>
 
-                            <!-- OKA Building Damping -->
+                            <!-- OKA Building Damping (from master data, read-only) -->
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <TextBlock Text="{Binding OkaDamping, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                                <NumericUpDown Value="{Binding OkaBuildingDampingDb}" ShowButtonSpinner="False"
-                                               Minimum="0" Maximum="30" Increment="1" Width="80"/>
+                                <TextBlock Text="{Binding OkaBuildingDampingDb, StringFormat='{}{0:F1} dB'}" VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
                             </StackPanel>
 
                             <TextBlock Text="{Binding OkaExplanation, Source={x:Static loc:Strings.Instance}}"
@@ -274,7 +270,7 @@
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <TextBlock Text="{Binding ActivityFactor, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                                 <NumericUpDown Value="{Binding ActivityFactor}" ShowButtonSpinner="False"
-                                               Minimum="0" Maximum="1" Increment="0.1" Width="80"
+                                               Minimum="0.01" Maximum="1" Increment="0.1" Width="80"
                                                FormatString="0.0"/>
                             </StackPanel>
 

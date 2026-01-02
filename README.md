@@ -23,7 +23,7 @@ Swiss NIS Calculator is a modern desktop application for calculating electromagn
 - **Cable Loss Calculation** - Frequency-dependent attenuation for common cable types
 - **Swiss Limit Compliance** - Automatic verification against NISV limits
 - **Master Data Management** - Full editors for antennas, cables, and radios
-- **Project-Based Workflow** - Save and load station configurations
+- **Project Import/Export** - Share projects via .nisproj files with embedded user master data
 - **PDF Export** - One page per configuration with column explanations
 - **Multi-Language Support** - German, French, Italian, English
 
@@ -83,6 +83,15 @@ dotnet publish src/NIS.Desktop -c Release -r linux-x64 --self-contained
 2. **Add Antenna Configuration** - Select radio, cable, and antenna from master data
 3. **Set Evaluation Point** - Define distance and building damping (OKA/LSM/LST/PSS depending on language)
 4. **Calculate** - View field strength results and compliance status
+
+### Import/Export Projects
+
+Share station configurations with other users via .nisproj files:
+
+- **Export Project** - Save your project to a portable .nisproj file (includes user-specific master data)
+- **Import Project** - Load a project from a .nisproj file (creates missing master data automatically)
+
+Access these features directly from the navigation pane.
 
 ### Master Data Management
 

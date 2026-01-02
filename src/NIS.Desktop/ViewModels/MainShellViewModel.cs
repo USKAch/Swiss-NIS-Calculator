@@ -1,10 +1,14 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NIS.Desktop.Localization;
+using NIS.Desktop.Models;
 using NIS.Desktop.Services;
 
 namespace NIS.Desktop.ViewModels;
@@ -49,7 +53,6 @@ public partial class MainShellViewModel : ViewModelBase
     private RadioMasterEditorViewModel? _radioMasterEditorViewModel;
     private OkaMasterEditorViewModel? _okaMasterEditorViewModel;
     private SettingsViewModel? _settingsViewModel;
-    private ImportExportViewModel? _importExportViewModel;
 
     private Func<string, string, Task<bool>>? _showConfirmDialog;
 
@@ -118,7 +121,7 @@ public partial class MainShellViewModel : ViewModelBase
                 NavigateToProjectInfo(Strings.Instance.Language);
                 break;
             case "OpenProject":
-                _ = OpenProjectFileAsync();
+                _ = ImportProjectFileAsync();
                 break;
             case "SelectProject":
                 NavigateToProjectList();
@@ -150,8 +153,11 @@ public partial class MainShellViewModel : ViewModelBase
             case "MasterData":
                 NavigateToMasterDataManager();
                 break;
-            case "ImportExport":
-                NavigateToImportExport();
+            case "ImportProject":
+                _ = ImportProjectFileAsync();
+                break;
+            case "ExportProject":
+                if (HasProject) _ = ExportProjectFileAsync();
                 break;
             case "Settings":
                 NavigateToSettings();
@@ -441,41 +447,6 @@ public partial class MainShellViewModel : ViewModelBase
         WindowTitle = "Swiss NIS Calculator";
     }
 
-    [RelayCommand]
-    public void NavigateToImportExport()
-    {
-        AutoSaveProjectIfDirty();
-        _importExportViewModel ??= new ImportExportViewModel();
-        _importExportViewModel.StorageProvider = StorageProvider;
-        _importExportViewModel.ShowConfirmDialog = ShowConfirmDialog;
-        _importExportViewModel.NavigateBack = HasProject ? NavigateToProjectOverview : NavigateToProjectList;
-        _importExportViewModel.OnProjectImported = () =>
-        {
-            _welcomeViewModel?.RefreshProjects();
-            _projectListViewModel?.RefreshProjects();
-        };
-        CurrentView = _importExportViewModel;
-        Breadcrumb = Strings.Instance.ImportExport;
-        WindowTitle = "Swiss NIS Calculator";
-    }
-
-    private async Task OpenProjectFileAsync()
-    {
-        if (StorageProvider == null) return;
-
-        _importExportViewModel ??= new ImportExportViewModel();
-        _importExportViewModel.StorageProvider = StorageProvider;
-        _importExportViewModel.ShowConfirmDialog = ShowConfirmDialog;
-        _importExportViewModel.OnProjectImported = () =>
-        {
-            _projectListViewModel?.RefreshProjects();
-        };
-
-        if (_importExportViewModel.ImportProjectCommand is IAsyncRelayCommand importCommand)
-        {
-            await importCommand.ExecuteAsync(null);
-        }
-    }
 
     private async Task ExportPdfDirectly()
     {
@@ -519,6 +490,451 @@ public partial class MainShellViewModel : ViewModelBase
             }
         }
     }
+
+    /// <summary>
+    /// Import a project from a .nisproj file.
+    /// </summary>
+    private async Task ImportProjectFileAsync()
+    {
+        if (StorageProvider == null) return;
+
+        var files = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        {
+            Title = Strings.ImportProject,
+            AllowMultiple = false,
+            FileTypeFilter = new[]
+            {
+                new FilePickerFileType("NIS Project") { Patterns = new[] { "*.nisproj" } },
+                new FilePickerFileType("JSON") { Patterns = new[] { "*.json" } }
+            }
+        });
+
+        if (files.Count > 0)
+        {
+            try
+            {
+                var json = await File.ReadAllTextAsync(files[0].Path.LocalPath);
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    PropertyNameCaseInsensitive = true
+                };
+                var projectFile = JsonSerializer.Deserialize<NisProjectFile>(json, options);
+
+                if (projectFile != null)
+                {
+                    // Import included master data first and get OKA ID mapping
+                    var okaIdMapping = ImportIncludedMasterData(projectFile.MasterData);
+
+                    var project = new Project
+                    {
+                        Name = projectFile.Project.Name,
+                        Operator = projectFile.Project.Operator,
+                        Callsign = projectFile.Project.Callsign,
+                        Address = projectFile.Project.Address,
+                        Location = projectFile.Project.Location
+                    };
+
+                    foreach (var config in projectFile.Configurations)
+                    {
+                        EnsureMasterDataExists(config, projectFile.MasterData);
+
+                        // Map old OKA ID to new ID
+                        int? newOkaId = null;
+                        string okaName = string.Empty;
+                        if (config.Oka.Id > 0 && okaIdMapping.TryGetValue(config.Oka.Id, out var mappedId))
+                        {
+                            newOkaId = mappedId;
+                            var oka = DatabaseService.Instance.GetOkaById(mappedId);
+                            okaName = oka?.Name ?? string.Empty;
+                        }
+
+                        project.AntennaConfigurations.Add(new AntennaConfiguration
+                        {
+                            Name = $"{config.Antenna.Manufacturer} {config.Antenna.Model}".Trim(),
+                            PowerWatts = config.PowerWatts,
+                            Radio = new RadioConfig { Manufacturer = config.Radio.Manufacturer, Model = config.Radio.Model },
+                            Linear = config.Linear == null ? null : new LinearConfig
+                            {
+                                Name = config.Linear.Name,
+                                PowerWatts = config.Linear.PowerWatts
+                            },
+                            Cable = new CableConfig
+                            {
+                                Type = config.Cable.Name,
+                                LengthMeters = config.CableLengthMeters,
+                                AdditionalLossDb = config.AdditionalLossDb,
+                                AdditionalLossDescription = config.AdditionalLossDescription
+                            },
+                            Antenna = new AntennaPlacement
+                            {
+                                Manufacturer = config.Antenna.Manufacturer,
+                                Model = config.Antenna.Model,
+                                HeightMeters = config.HeightMeters,
+                                IsRotatable = config.RotationAngleDegrees == 360,
+                                HorizontalAngleDegrees = config.RotationAngleDegrees
+                            },
+                            Modulation = config.Modulation,
+                            ActivityFactor = config.ActivityFactor,
+                            OkaId = newOkaId,
+                            OkaName = okaName
+                        });
+                    }
+
+                    var projectId = DatabaseService.Instance.CreateProject(project);
+
+                    // Refresh project lists
+                    _welcomeViewModel?.RefreshProjects();
+                    _projectListViewModel?.RefreshProjects();
+
+                    // Load and navigate to the imported project
+                    await LoadProjectFromDatabaseAsync(projectId);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Import failed: {ex.Message}");
+                await MsBox.Avalonia.MessageBoxManager
+                    .GetMessageBoxStandard(
+                        Strings.ImportFailed,
+                        ex.Message,
+                        MsBox.Avalonia.Enums.ButtonEnum.Ok,
+                        MsBox.Avalonia.Enums.Icon.Error)
+                    .ShowAsync();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Export the current project to a .nisproj file.
+    /// </summary>
+    private async Task ExportProjectFileAsync()
+    {
+        if (StorageProvider == null || !HasProject) return;
+
+        var project = ProjectViewModel.Project;
+        var suggestedName = !string.IsNullOrWhiteSpace(project.Name)
+            ? project.Name
+            : !string.IsNullOrWhiteSpace(project.Operator)
+                ? project.Operator
+                : "project";
+
+        var file = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        {
+            Title = Strings.ExportProject,
+            SuggestedFileName = $"{suggestedName}.nisproj",
+            DefaultExtension = ".nisproj",
+            FileTypeChoices = new[]
+            {
+                new FilePickerFileType("NIS Project") { Patterns = new[] { "*.nisproj" } }
+            }
+        });
+
+        if (file != null)
+        {
+            try
+            {
+                var projectFile = new NisProjectFile
+                {
+                    Project = new ProjectFileHeader
+                    {
+                        Name = project.Name,
+                        Operator = project.Operator,
+                        Callsign = project.Callsign,
+                        Address = project.Address,
+                        Location = project.Location
+                    },
+                    Configurations = project.AntennaConfigurations.Select(c =>
+                    {
+                        var antenna = DatabaseService.Instance.GetAntenna(c.Antenna.Manufacturer, c.Antenna.Model);
+                        return new ProjectFileConfiguration
+                        {
+                            Antenna = new ProjectFileReference
+                            {
+                                Manufacturer = c.Antenna.Manufacturer,
+                                Model = c.Antenna.Model
+                            },
+                            HeightMeters = c.Antenna.HeightMeters,
+                            Polarization = antenna?.IsHorizontallyPolarized == false ? "vertical" : "horizontal",
+                            RotationAngleDegrees = c.Antenna.HorizontalAngleDegrees,
+                            Radio = new ProjectFileReference
+                            {
+                                Manufacturer = c.Radio.Manufacturer,
+                                Model = c.Radio.Model
+                            },
+                            Linear = c.Linear == null ? null : new ProjectFileLinearReference
+                            {
+                                Name = c.Linear.Name,
+                                PowerWatts = c.Linear.PowerWatts
+                            },
+                            PowerWatts = c.PowerWatts,
+                            Cable = new ProjectFileCableReference { Name = c.Cable.Type },
+                            CableLengthMeters = c.Cable.LengthMeters,
+                            AdditionalLossDb = c.Cable.AdditionalLossDb,
+                            AdditionalLossDescription = c.Cable.AdditionalLossDescription,
+                            Modulation = c.Modulation,
+                            ActivityFactor = c.ActivityFactor,
+                            Oka = new ProjectFileOkaReference { Id = c.OkaId ?? 0 }
+                            // Distance and damping come from OKA master data
+                        };
+                    }).ToList()
+                };
+
+                // Collect user-specific master data used in configurations
+                var db = DatabaseService.Instance;
+                var masterData = new ProjectFileMasterData();
+                var addedAntennas = new HashSet<string>();
+                var addedCables = new HashSet<string>();
+                var addedRadios = new HashSet<string>();
+                var addedOkas = new HashSet<int>();
+
+                foreach (var config in project.AntennaConfigurations)
+                {
+                    // Antenna
+                    var antennaKey = $"{config.Antenna.Manufacturer}|{config.Antenna.Model}";
+                    if (!addedAntennas.Contains(antennaKey))
+                    {
+                        var antenna = db.GetAntenna(config.Antenna.Manufacturer, config.Antenna.Model);
+                        if (antenna != null && antenna.IsUserData)
+                        {
+                            masterData.Antennas.Add(antenna);
+                            addedAntennas.Add(antennaKey);
+                        }
+                    }
+
+                    // Cable
+                    if (!addedCables.Contains(config.Cable.Type))
+                    {
+                        var cable = db.GetCable(config.Cable.Type);
+                        if (cable != null && cable.IsUserData)
+                        {
+                            masterData.Cables.Add(cable);
+                            addedCables.Add(config.Cable.Type);
+                        }
+                    }
+
+                    // Radio
+                    var radioKey = $"{config.Radio.Manufacturer}|{config.Radio.Model}";
+                    if (!addedRadios.Contains(radioKey))
+                    {
+                        var radio = db.GetRadio(config.Radio.Manufacturer, config.Radio.Model);
+                        if (radio != null && radio.IsUserData)
+                        {
+                            masterData.Radios.Add(radio);
+                            addedRadios.Add(radioKey);
+                        }
+                    }
+
+                    // OKA - use ID for lookup
+                    if (config.OkaId.HasValue && !addedOkas.Contains(config.OkaId.Value))
+                    {
+                        var oka = db.GetOkaById(config.OkaId.Value);
+                        if (oka != null && oka.IsUserData)
+                        {
+                            masterData.Okas.Add(oka);
+                            addedOkas.Add(config.OkaId.Value);
+                        }
+                    }
+                }
+
+                // Always include master data section (empty arrays show the structure)
+                projectFile.MasterData = masterData;
+
+                var options = new JsonSerializerOptions
+                {
+                    WriteIndented = true,
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+                };
+                var json = JsonSerializer.Serialize(projectFile, options);
+                await File.WriteAllTextAsync(file.Path.LocalPath, json);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Export failed: {ex.Message}");
+            }
+        }
+    }
+
+    /// <summary>
+    /// Import master data included in the project file.
+    /// Returns a mapping of old OKA IDs to new OKA IDs.
+    /// </summary>
+    private Dictionary<int, int> ImportIncludedMasterData(ProjectFileMasterData? masterData)
+    {
+        var okaIdMapping = new Dictionary<int, int>();
+        if (masterData == null) return okaIdMapping;
+
+        var db = DatabaseService.Instance;
+
+        // Import antennas with full band/pattern data
+        foreach (var antenna in masterData.Antennas)
+        {
+            if (!db.AntennaExists(antenna.Manufacturer, antenna.Model))
+            {
+                antenna.IsUserData = true;
+                db.SaveAntenna(antenna);
+            }
+        }
+
+        // Import cables with attenuation data
+        foreach (var cable in masterData.Cables)
+        {
+            if (!db.CableExists(cable.Name))
+            {
+                cable.IsUserData = true;
+                db.SaveCable(cable);
+            }
+        }
+
+        // Import radios
+        foreach (var radio in masterData.Radios)
+        {
+            if (!db.RadioExists(radio.Manufacturer, radio.Model))
+            {
+                radio.IsUserData = true;
+                db.SaveRadio(radio);
+            }
+        }
+
+        // Import OKAs and track ID mapping
+        foreach (var oka in masterData.Okas)
+        {
+            int oldId = oka.Id;
+            if (!db.OkaExists(oka.Name))
+            {
+                oka.Id = 0; // Reset ID so database assigns new one
+                oka.IsUserData = true;
+                db.SaveOka(oka);
+            }
+            // Get the new ID (either newly created or existing)
+            var newId = db.GetOkaId(oka.Name);
+            if (newId.HasValue)
+            {
+                okaIdMapping[oldId] = newId.Value;
+            }
+        }
+
+        return okaIdMapping;
+    }
+
+    /// <summary>
+    /// Ensure master data exists for a configuration, creating placeholders if not in included data.
+    /// </summary>
+    private void EnsureMasterDataExists(ProjectFileConfiguration config, ProjectFileMasterData? includedData)
+    {
+        var db = DatabaseService.Instance;
+
+        var modulation = db.GetModulationByName(config.Modulation);
+        if (modulation == null)
+        {
+            throw new InvalidOperationException($"Unknown modulation '{config.Modulation}'.");
+        }
+
+        // Create placeholder if antenna doesn't exist and wasn't in included data
+        if (!db.AntennaExists(config.Antenna.Manufacturer, config.Antenna.Model))
+        {
+            db.SaveAntenna(new Antenna
+            {
+                Manufacturer = config.Antenna.Manufacturer,
+                Model = config.Antenna.Model,
+                AntennaType = AntennaTypes.Other,
+                IsHorizontallyPolarized = config.Polarization.Equals("horizontal", StringComparison.OrdinalIgnoreCase),
+                IsUserData = true
+            });
+        }
+
+        if (!db.CableExists(config.Cable.Name))
+        {
+            db.SaveCable(new Cable
+            {
+                Name = config.Cable.Name,
+                IsUserData = true
+            });
+        }
+
+        if (!db.RadioExists(config.Radio.Manufacturer, config.Radio.Model))
+        {
+            db.SaveRadio(new Radio
+            {
+                Manufacturer = config.Radio.Manufacturer,
+                Model = config.Radio.Model,
+                MaxPowerWatts = config.PowerWatts,
+                IsUserData = true
+            });
+        }
+
+        // OKA is handled by ID mapping in import - no placeholder creation needed
+    }
+
+    #region Project File DTOs
+
+    private class NisProjectFile
+    {
+        public ProjectFileHeader Project { get; set; } = new();
+        public List<ProjectFileConfiguration> Configurations { get; set; } = new();
+        public ProjectFileMasterData? MasterData { get; set; }
+    }
+
+    private class ProjectFileMasterData
+    {
+        public List<Antenna> Antennas { get; set; } = new();
+        public List<Cable> Cables { get; set; } = new();
+        public List<Radio> Radios { get; set; } = new();
+        public List<Oka> Okas { get; set; } = new();
+    }
+
+    private class ProjectFileHeader
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Operator { get; set; } = string.Empty;
+        public string Callsign { get; set; } = string.Empty;
+        public string Address { get; set; } = string.Empty;
+        public string Location { get; set; } = string.Empty;
+    }
+
+    private class ProjectFileConfiguration
+    {
+        public ProjectFileReference Antenna { get; set; } = new();
+        public double HeightMeters { get; set; }
+        public string Polarization { get; set; } = "horizontal";
+        public double RotationAngleDegrees { get; set; } = 360;
+        public ProjectFileReference Radio { get; set; } = new();
+        public ProjectFileLinearReference? Linear { get; set; }
+        public double PowerWatts { get; set; }
+        public ProjectFileCableReference Cable { get; set; } = new();
+        public double CableLengthMeters { get; set; }
+        public double AdditionalLossDb { get; set; }
+        public string AdditionalLossDescription { get; set; } = string.Empty;
+        public string Modulation { get; set; } = "CW";
+        public double ActivityFactor { get; set; } = 0.5;
+        public ProjectFileOkaReference Oka { get; set; } = new();
+        // Distance and damping come from OKA master data
+    }
+
+    private class ProjectFileReference
+    {
+        public string Manufacturer { get; set; } = string.Empty;
+        public string Model { get; set; } = string.Empty;
+    }
+
+    private class ProjectFileLinearReference
+    {
+        public string Name { get; set; } = string.Empty;
+        public double PowerWatts { get; set; }
+    }
+
+    private class ProjectFileCableReference
+    {
+        public string Name { get; set; } = string.Empty;
+    }
+
+    private class ProjectFileOkaReference
+    {
+        public int Id { get; set; }
+    }
+
+    #endregion
 
     public void NavigateToAntennaMasterEditor(NIS.Desktop.Models.Antenna? existing, bool isReadOnly = false)
     {

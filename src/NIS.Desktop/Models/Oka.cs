@@ -12,7 +12,7 @@ namespace NIS.Desktop.Models;
 public class Oka
 {
     /// <summary>
-    /// Unique identifier/number for this OKA.
+    /// Unique identifier for this OKA. Also used as the OKA number on the site plan.
     /// </summary>
     [JsonPropertyName("id")]
     public int Id { get; set; }
@@ -42,10 +42,10 @@ public class Oka
     public bool IsUserData { get; set; } = true;
 
     /// <summary>
-    /// Display name for the OKA (just the name, no ID).
+    /// Display name for the OKA including the number (e.g., "1 - Neighbor's balcony").
     /// </summary>
     [JsonIgnore]
-    public string DisplayName => Name;
+    public string DisplayName => $"{Id} - {Name}";
 
     /// <summary>
     /// Returns DisplayName for text search in ComboBox.

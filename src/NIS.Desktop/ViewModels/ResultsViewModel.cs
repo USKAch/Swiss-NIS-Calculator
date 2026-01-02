@@ -220,7 +220,12 @@ public partial class ResultsViewModel : ViewModelBase
         var antenna = DatabaseService.Instance.GetAntenna(config.Antenna.Manufacturer, config.Antenna.Model);
         var cable = DatabaseService.Instance.GetCable(config.Cable.Type);
         var modulation = DatabaseService.Instance.GetModulationByName(config.Modulation);
+        var oka = config.OkaId.HasValue ? DatabaseService.Instance.GetOkaById(config.OkaId.Value) : null;
         var constants = MasterDataStore.Load().Constants;
+
+        // Get OKA distance and damping from master data
+        double okaDistance = oka?.DefaultDistanceMeters ?? 0;
+        double okaDamping = oka?.DefaultDampingDb ?? 0;
 
         // Use linear power if set, otherwise use radio power
         double effectivePower = (config.Linear != null && config.Linear.PowerWatts > 0)
@@ -236,10 +241,10 @@ public partial class ResultsViewModel : ViewModelBase
             RadioPowerWatts = config.PowerWatts,
             LinearPowerWatts = config.Linear?.PowerWatts ?? 0,
             Modulation = config.ModulationDisplay,
-            OkaDistance = config.OkaDistanceMeters,
+            OkaDistance = okaDistance,
             AntennaHeight = config.Antenna.HeightMeters,
             OkaName = config.OkaName,
-            BuildingDampingDb = config.OkaBuildingDampingDb,
+            BuildingDampingDb = okaDamping,
             CableDescription = $"{config.Cable.LengthMeters:F1}m {config.Cable.Type}",
             LinearName = config.Linear?.Name ?? "",
             IsRotatable = config.Antenna.IsRotatable,
@@ -252,7 +257,7 @@ public partial class ResultsViewModel : ViewModelBase
 
         foreach (var band in bands)
         {
-            var bandResult = CalculateBand(config, band, cable, modulation, constants.GroundReflectionFactor);
+            var bandResult = CalculateBand(config, band, cable, modulation, constants.GroundReflectionFactor, okaDistance, okaDamping);
             result.BandResults.Add(bandResult);
         }
 
@@ -331,13 +336,19 @@ public partial class ResultsViewModel : ViewModelBase
             return $"{configName}: {Strings.Instance.ModulationNotFound} ({config.Modulation})";
         }
 
-        // Check OKA is configured
-        if (string.IsNullOrWhiteSpace(config.OkaName))
+        // Check OKA is configured (must have valid ID)
+        if (!config.OkaId.HasValue)
         {
             return $"{configName}: {Strings.Instance.NoOkaSelected}";
         }
 
-        if (config.OkaDistanceMeters <= 0)
+        var oka = DatabaseService.Instance.GetOkaById(config.OkaId.Value);
+        if (oka == null)
+        {
+            return $"{configName}: {Strings.Instance.OkaNotFound} ({config.OkaName})";
+        }
+
+        if (oka.DefaultDistanceMeters <= 0)
         {
             return $"{configName}: {Strings.Instance.OkaDistanceInvalid}";
         }
@@ -345,9 +356,9 @@ public partial class ResultsViewModel : ViewModelBase
         return null;
     }
 
-    private BandResult CalculateBand(AntennaConfiguration config, AntennaBand band, Cable? cable, Modulation? modulation, double groundReflectionFactor)
+    private BandResult CalculateBand(AntennaConfiguration config, AntennaBand band, Cable? cable, Modulation? modulation, double groundReflectionFactor, double okaDistance, double okaDamping)
     {
-        double horizontalDistance = Math.Max(config.OkaDistanceMeters, 0.001); // Guard against division by zero
+        double horizontalDistance = Math.Max(okaDistance, 0.001); // Guard against division by zero
         double antennaHeight = config.Antenna.HeightMeters;
         double frequencyMHz = band.FrequencyMHz;
 
@@ -381,7 +392,7 @@ public partial class ResultsViewModel : ViewModelBase
             AngleAttenuationDb = verticalAttenuation,
             TotalCableLossDb = cableLossDb,
             AdditionalLossDb = config.Cable.AdditionalLossDb,
-            BuildingDampingDb = config.OkaBuildingDampingDb,
+            BuildingDampingDb = okaDamping,
             GroundReflectionFactor = groundReflectionFactor
         };
 
@@ -404,13 +415,13 @@ public partial class ResultsViewModel : ViewModelBase
             GainFactor = result.AntennaGainFactor,
             Eirp = result.EirpWatts,
             Erp = result.ErpWatts,
-            BuildingDampingDb = config.OkaBuildingDampingDb,
+            BuildingDampingDb = okaDamping,
             BuildingDampingFactor = result.BuildingDampingFactor,
             GroundReflectionFactor = groundReflectionFactor,
             FieldStrength = result.FieldStrengthVm,
             Limit = result.NisLimitVm,
             SafetyDistance = result.SafetyDistanceMeters,
-            OkaDistance = config.OkaDistanceMeters
+            OkaDistance = okaDistance
         };
     }
 

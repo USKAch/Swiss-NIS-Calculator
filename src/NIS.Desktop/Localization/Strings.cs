@@ -67,6 +67,7 @@ public class Strings : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NoCableSelected)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NoModulationSelected)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NoOkaSelected)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(OkaNotFound)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(OkaDistanceInvalid)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AntennaNotFound)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CableNotFound)));
@@ -293,6 +294,7 @@ public class Strings : INotifyPropertyChanged
     public string NoCableSelected => Get("NoCableSelected");
     public string NoModulationSelected => Get("NoModulationSelected");
     public string NoOkaSelected => Get("NoOkaSelected");
+    public string OkaNotFound => Get("OkaNotFound");
     public string OkaDistanceInvalid => Get("OkaDistanceInvalid");
     public string AntennaNotFound => Get("AntennaNotFound");
     public string CableNotFound => Get("CableNotFound");
@@ -862,6 +864,7 @@ public class Strings : INotifyPropertyChanged
         ["NoCableSelected"] = new() { ["de"] = "Kein Kabel ausgewählt", ["fr"] = "Aucun câble sélectionné", ["it"] = "Nessun cavo selezionato", ["en"] = "No cable selected" },
         ["NoModulationSelected"] = new() { ["de"] = "Keine Modulation ausgewählt", ["fr"] = "Aucune modulation sélectionnée", ["it"] = "Nessuna modulazione selezionata", ["en"] = "No modulation selected" },
         ["NoOkaSelected"] = new() { ["de"] = "Kein OKA ausgewählt", ["fr"] = "Aucun OKA sélectionné", ["it"] = "Nessun OKA selezionato", ["en"] = "No OKA selected" },
+        ["OkaNotFound"] = new() { ["de"] = "OKA nicht in Datenbank gefunden", ["fr"] = "OKA introuvable dans la base de données", ["it"] = "OKA non trovato nel database", ["en"] = "OKA not found in database" },
         ["OkaDistanceInvalid"] = new() { ["de"] = "OKA-Distanz muss grösser als 0 sein", ["fr"] = "La distance OKA doit être supérieure à 0", ["it"] = "La distanza OKA deve essere maggiore di 0", ["en"] = "OKA distance must be greater than 0" },
         ["AntennaNotFound"] = new() { ["de"] = "Antenne nicht in Datenbank gefunden", ["fr"] = "Antenne introuvable dans la base de données", ["it"] = "Antenna non trovata nel database", ["en"] = "Antenna not found in database" },
         ["CableNotFound"] = new() { ["de"] = "Kabel nicht in Datenbank gefunden", ["fr"] = "Câble introuvable dans la base de données", ["it"] = "Cavo non trovato nel database", ["en"] = "Cable not found in database" },

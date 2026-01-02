@@ -60,6 +60,18 @@
                     <ui:SymbolIconSource Symbol="Document"/>
                 </ui:NavigationViewItem.IconSource>
             </ui:NavigationViewItem>
+
+            <ui:NavigationViewItem Content="{Binding ImportProject, Source={x:Static loc:Strings.Instance}}" Tag="ImportProject">
+                <ui:NavigationViewItem.IconSource>
+                    <ui:SymbolIconSource Symbol="OpenFolder"/>
+                </ui:NavigationViewItem.IconSource>
+            </ui:NavigationViewItem>
+
+            <ui:NavigationViewItem Content="{Binding ExportProject, Source={x:Static loc:Strings.Instance}}" Tag="ExportProject" IsEnabled="{Binding HasProject}">
+                <ui:NavigationViewItem.IconSource>
+                    <ui:SymbolIconSource Symbol="Save"/>
+                </ui:NavigationViewItem.IconSource>
+            </ui:NavigationViewItem>
         </ui:NavigationView.MenuItems>
 
         <ui:NavigationView.FooterMenuItems>

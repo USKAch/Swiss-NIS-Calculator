@@ -45,7 +45,16 @@ public class ConfigurationDisplayItem
         }
     }
     public string OkaNameDisplay => Configuration.OkaName ?? "";
-    public string OkaDistanceDisplay => Configuration.OkaDistanceMeters > 0 ? $"{Configuration.OkaDistanceMeters}m" : "";
+    public string OkaDistanceDisplay
+    {
+        get
+        {
+            if (!Configuration.OkaId.HasValue)
+                return "";
+            var oka = Services.DatabaseService.Instance.GetOkaById(Configuration.OkaId.Value);
+            return oka != null ? $"{oka.DefaultDistanceMeters}m" : "";
+        }
+    }
 
     private string GetFrequencies()
     {
@@ -161,7 +170,9 @@ public partial class ProjectOverviewViewModel : ViewModelBase
 
     // State
     public bool HasConfigurations => Configurations.Count > 0;
-    public bool CanCalculate => HasConfigurations && Configurations.Any(c => c.OkaDistanceMeters > 0);
+    public bool CanCalculate => HasConfigurations && Configurations.Any(c =>
+        c.OkaId.HasValue &&
+        Services.DatabaseService.Instance.GetOkaById(c.OkaId.Value) != null);
 
     [ObservableProperty]
     private bool _hasResults;

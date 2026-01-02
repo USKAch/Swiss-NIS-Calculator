@@ -964,6 +964,11 @@ public class DatabaseService : IDisposable
         var modulationId = GetModulationId(config.Modulation);
         var okaId = EnsureOkaForConfig(config);
 
+        // Get OKA distance/damping from master data
+        var oka = okaId.HasValue ? GetOkaById(okaId.Value) : null;
+        var okaDistance = oka?.DefaultDistanceMeters ?? 10;
+        var okaDamping = oka?.DefaultDampingDb ?? 0;
+
         _connection.Execute(@"
             INSERT INTO Configurations (
                 ProjectId, ConfigNumber, Name, PowerWatts,
@@ -1000,8 +1005,8 @@ public class DatabaseService : IDisposable
                 ModulationId = modulationId,
                 config.ActivityFactor,
                 OkaId = okaId,
-                config.OkaDistanceMeters,
-                config.OkaBuildingDampingDb,
+                OkaDistanceMeters = okaDistance,
+                OkaBuildingDampingDb = okaDamping,
             },
             transaction);
     }
@@ -1019,11 +1024,12 @@ public class DatabaseService : IDisposable
             return okaId;
         }
 
+        // Create OKA with default values (user must edit OKA master data to set correct values)
         SaveOka(new Oka
         {
             Name = config.OkaName,
-            DefaultDistanceMeters = config.OkaDistanceMeters,
-            DefaultDampingDb = config.OkaBuildingDampingDb
+            DefaultDistanceMeters = 10, // Default distance
+            DefaultDampingDb = 0 // Default no damping
         });
 
         return GetOkaId(config.OkaName);
@@ -1076,9 +1082,8 @@ public class DatabaseService : IDisposable
             },
             Modulation = modulation?.Name ?? "CW",
             ActivityFactor = row.ActivityFactor,
-            OkaName = oka?.Name ?? "",
-            OkaDistanceMeters = row.OkaDistanceMeters,
-            OkaBuildingDampingDb = row.OkaBuildingDampingDb
+            OkaId = row.OkaId,
+            OkaName = oka?.Name ?? ""
         };
     }
 
