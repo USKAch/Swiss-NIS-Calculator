@@ -45,11 +45,6 @@ public static class AppPaths
     public static string MasterDataFile => Path.Combine(DataFolder, "masterdata.json");
 
     /// <summary>
-    /// Default folder for projects.
-    /// </summary>
-    public static string ProjectsFolder => Path.Combine(DataFolder, "Projects");
-
-    /// <summary>
     /// Default folder for exported files (PDFs, etc.).
     /// </summary>
     public static string ExportFolder => Path.Combine(DataFolder, "Export");
@@ -61,7 +56,6 @@ public static class AppPaths
     public static void EnsureFoldersExist()
     {
         Directory.CreateDirectory(DataFolder);
-        Directory.CreateDirectory(ProjectsFolder);
         Directory.CreateDirectory(ExportFolder);
     }
 }

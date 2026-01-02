@@ -32,8 +32,8 @@
     <AvaloniaResource Include="Styles\**" />
   </ItemGroup>
 
-  <!-- Copy Data folder to output (seed database and assets) -->
+  <!-- Copy only the database to output (all data is in SQLite) -->
   <ItemGroup>
-    <None Include="Data\**" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Data\nisdata.db" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>
