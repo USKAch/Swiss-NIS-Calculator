@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NIS.Desktop.Localization;
 using NIS.Desktop.Services;
+using NIS.Desktop.Services.Repositories;
 
 namespace NIS.Desktop.ViewModels;
 

@@ -6,31 +6,19 @@ using System.Text.Json;
 using Dapper;
 using Microsoft.Data.Sqlite;
 using NIS.Desktop.Models;
+using NIS.Desktop.Services.Repositories;
 
 namespace NIS.Desktop.Services;
 
 /// <summary>
-/// Project list item for display in project selection UI.
-/// </summary>
-public class ProjectListItem
-{
-    public int Id { get; set; }
-    public string Name { get; set; } = "";
-    public string? Operator { get; set; }
-    public string? Address { get; set; }
-    public string? Location { get; set; }
-    public int ConfigCount { get; set; }
-    public string ModifiedAt { get; set; } = "";
-
-    public string DisplayName => string.IsNullOrEmpty(Operator) ? Name : $"{Operator} - {Name}";
-}
-
-/// <summary>
-/// SQLite database service - single source of truth for all master data.
+/// SQLite database service - facade over repositories.
+/// Provides singleton access and handles schema initialization.
 /// </summary>
 public class DatabaseService : IDisposable
 {
     private readonly SqliteConnection _connection;
+    private readonly MasterDataRepository _masterData;
+    private readonly ProjectRepository _projects;
     private static DatabaseService? _instance;
     private static readonly object _lock = new();
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
@@ -83,11 +71,16 @@ public class DatabaseService : IDisposable
         }
 
         InitializeDatabase();
+
+        // Initialize repositories after schema is ready
+        _masterData = new MasterDataRepository(_connection);
+        _projects = new ProjectRepository(_connection, _masterData);
     }
+
+    #region Schema Management
 
     private bool IsSchemaCompatible()
     {
-        // Required tables must exist with required columns
         if (!TableExists("Antennas") || !HasColumn("Antennas", "IsUserData")) return false;
         if (!TableExists("Cables") || !HasColumn("Cables", "IsUserData")) return false;
         if (!TableExists("Radios") || !HasColumn("Radios", "IsUserData")) return false;
@@ -95,7 +88,6 @@ public class DatabaseService : IDisposable
         if (!TableExists("Modulations")) return false;
         if (!TableExists("Projects") || !HasColumn("Projects", "Callsign")) return false;
         if (!TableExists("Configurations")) return false;
-        // Required indexes must exist (ensures CHECK constraints and RESTRICT FKs are in place)
         if (!IndexExists("IX_Configurations_ProjectId_ConfigNumber")) return false;
         return true;
     }
@@ -144,8 +136,6 @@ public class DatabaseService : IDisposable
                 Model TEXT NOT NULL,
                 AntennaType TEXT NOT NULL DEFAULT 'other',
                 IsHorizontallyPolarized INTEGER NOT NULL DEFAULT 1,
-                
-                
                 IsUserData INTEGER NOT NULL DEFAULT 0,
                 BandsJson TEXT NOT NULL DEFAULT '[]',
                 UNIQUE(Manufacturer, Model)
@@ -223,15 +213,12 @@ public class DatabaseService : IDisposable
                 FOREIGN KEY (OkaId) REFERENCES Okas(Id) ON DELETE RESTRICT
             );
 
-            -- Indexes for foreign keys (improves JOIN and CASCADE performance)
             CREATE INDEX IF NOT EXISTS IX_Configurations_ProjectId ON Configurations(ProjectId);
             CREATE INDEX IF NOT EXISTS IX_Configurations_RadioId ON Configurations(RadioId);
             CREATE INDEX IF NOT EXISTS IX_Configurations_CableId ON Configurations(CableId);
             CREATE INDEX IF NOT EXISTS IX_Configurations_AntennaId ON Configurations(AntennaId);
             CREATE INDEX IF NOT EXISTS IX_Configurations_ModulationId ON Configurations(ModulationId);
             CREATE INDEX IF NOT EXISTS IX_Configurations_OkaId ON Configurations(OkaId);
-
-            -- Unique constraint: each project can only have one config per number
             CREATE UNIQUE INDEX IF NOT EXISTS IX_Configurations_ProjectId_ConfigNumber
                 ON Configurations(ProjectId, ConfigNumber);
         ");
@@ -248,704 +235,93 @@ public class DatabaseService : IDisposable
     private void EnsureDefaultModulations()
     {
         var existing = GetAllModulations();
-        if (existing.Count > 0)
-        {
-            return;
-        }
+        if (existing.Count > 0) return;
 
-        InsertModulation(new Modulation { Name = "SSB", Factor = 0.2, IsUserData = false });
-        InsertModulation(new Modulation { Name = "CW", Factor = 0.4, IsUserData = false });
-        InsertModulation(new Modulation { Name = "FM", Factor = 1.0, IsUserData = false });
-    }
-
-    private void ImportFactoryDataFromBundled()
-    {
-        var folderPath = AppPaths.DataFolder;
-        if (!Directory.Exists(folderPath))
-        {
-            return;
-        }
-
-        ImportFactoryDataFromFolder(folderPath);
-    }
-
-    #region Antenna Operations
-
-    public List<Antenna> GetAllAntennas()
-    {
-        var rows = _connection.Query<AntennaRow>(
-            "SELECT * FROM Antennas ORDER BY Manufacturer, Model").ToList();
-        return rows.Select(ToAntenna).ToList();
-    }
-
-    public Antenna? GetAntenna(string manufacturer, string model)
-    {
-        var row = _connection.QueryFirstOrDefault<AntennaRow>(
-            "SELECT * FROM Antennas WHERE Manufacturer = @Manufacturer AND Model = @Model",
-            new { Manufacturer = manufacturer, Model = model });
-        return row != null ? ToAntenna(row) : null;
-    }
-
-    public void SaveAntenna(Antenna antenna, bool isAdminMode = false)
-    {
-        // Use Id to determine insert vs update
-        if (antenna.Id > 0)
-        {
-            // Update existing - preserve IsUserData
-            var existing = GetAntennaById(antenna.Id);
-            var isUserData = existing?.IsUserData ?? !isAdminMode;
-            UpdateAntenna(antenna, isUserData);
-        }
-        else
-        {
-            // Insert new
-            var isUserData = !isAdminMode;
-            InsertAntenna(antenna, isUserData);
-        }
-    }
-
-    private void InsertAntenna(Antenna antenna, bool isUserData)
-    {
-        var bandsJson = JsonSerializer.Serialize(antenna.Bands.Select(b => new BandData
-        {
-            FrequencyMHz = b.FrequencyMHz,
-            GainDbi = b.GainDbi,
-            Pattern = b.Pattern
-        }), JsonOptions);
-
-        _connection.Execute(
-            @"INSERT INTO Antennas (Manufacturer, Model, AntennaType, IsHorizontallyPolarized, IsUserData, BandsJson)
-              VALUES (@Manufacturer, @Model, @AntennaType, @IsHorizontallyPolarized, @IsUserData, @BandsJson)",
-            new
-            {
-                antenna.Manufacturer,
-                antenna.Model,
-                antenna.AntennaType,
-                IsHorizontallyPolarized = antenna.IsHorizontallyPolarized ? 1 : 0,
-                
-                
-                IsUserData = isUserData ? 1 : 0,
-                BandsJson = bandsJson
-            });
-    }
-
-    private void UpdateAntenna(Antenna antenna, bool isUserData)
-    {
-        var bandsJson = JsonSerializer.Serialize(antenna.Bands.Select(b => new BandData
-        {
-            FrequencyMHz = b.FrequencyMHz,
-            GainDbi = b.GainDbi,
-            Pattern = b.Pattern
-        }), JsonOptions);
-
-        _connection.Execute(@"
-            UPDATE Antennas SET
-                Manufacturer = @Manufacturer,
-                Model = @Model,
-                AntennaType = @AntennaType,
-                IsHorizontallyPolarized = @IsHorizontallyPolarized,
-                IsUserData = @IsUserData,
-                BandsJson = @BandsJson
-            WHERE Id = @Id",
-            new
-            {
-                antenna.Id,
-                antenna.Manufacturer,
-                antenna.Model,
-                antenna.AntennaType,
-                IsHorizontallyPolarized = antenna.IsHorizontallyPolarized ? 1 : 0,
-                IsUserData = isUserData ? 1 : 0,
-                BandsJson = bandsJson
-            });
-    }
-
-    public void DeleteAntenna(int id)
-    {
-        _connection.Execute("DELETE FROM Antennas WHERE Id = @Id", new { Id = id });
-    }
-
-    public bool AntennaExists(string manufacturer, string model)
-    {
-        return _connection.ExecuteScalar<int>(
-            "SELECT COUNT(*) FROM Antennas WHERE Manufacturer = @Manufacturer AND Model = @Model",
-            new { Manufacturer = manufacturer, Model = model }) > 0;
-    }
-
-    public int? GetAntennaId(string manufacturer, string model)
-    {
-        return _connection.QueryFirstOrDefault<int?>(
-            "SELECT Id FROM Antennas WHERE Manufacturer = @Manufacturer AND Model = @Model",
-            new { Manufacturer = manufacturer, Model = model });
-    }
-
-    public Antenna? GetAntennaById(int id)
-    {
-        var row = _connection.QueryFirstOrDefault<AntennaRow>(
-            "SELECT * FROM Antennas WHERE Id = @Id", new { Id = id });
-        return row != null ? ToAntenna(row) : null;
-    }
-
-    private Antenna ToAntenna(AntennaRow row)
-    {
-        var bands = JsonSerializer.Deserialize<List<BandData>>(row.BandsJson, JsonOptions) ?? new List<BandData>();
-        return new Antenna
-        {
-            Id = row.Id,
-            Manufacturer = row.Manufacturer,
-            Model = row.Model,
-            AntennaType = row.AntennaType,
-            IsHorizontallyPolarized = row.IsHorizontallyPolarized == 1,
-            IsUserData = row.IsUserData == 1,
-            Bands = bands.Select(b => new AntennaBand
-            {
-                FrequencyMHz = b.FrequencyMHz,
-                GainDbi = b.GainDbi,
-                Pattern = b.Pattern ?? new double[10]
-            }).ToList()
-        };
-    }
-
-    /// <summary>
-    /// Gets list of projects/configurations that use this antenna.
-    /// </summary>
-    public List<EntityUsage> GetAntennaUsage(int antennaId)
-    {
-        return _connection.Query<EntityUsage>(@"
-            SELECT p.Name as ProjectName, c.Name as ConfigurationName, c.ConfigNumber
-            FROM Configurations c
-            JOIN Projects p ON c.ProjectId = p.Id
-            WHERE c.AntennaId = @AntennaId
-            ORDER BY p.Name, c.ConfigNumber",
-            new { AntennaId = antennaId }).ToList();
+        _masterData?.InsertModulation(new Modulation { Name = "SSB", Factor = 0.2, IsUserData = false });
+        _masterData?.InsertModulation(new Modulation { Name = "CW", Factor = 0.4, IsUserData = false });
+        _masterData?.InsertModulation(new Modulation { Name = "FM", Factor = 1.0, IsUserData = false });
     }
 
     #endregion
 
-    #region Cable Operations
+    #region Antenna Operations (delegates to MasterDataRepository)
 
-    public List<Cable> GetAllCables()
-    {
-        var rows = _connection.Query<CableRow>(
-            "SELECT * FROM Cables ORDER BY Name").ToList();
-        return rows.Select(ToCable).ToList();
-    }
-
-    public Cable? GetCable(string name)
-    {
-        var row = _connection.QueryFirstOrDefault<CableRow>(
-            "SELECT * FROM Cables WHERE Name = @Name", new { Name = name });
-        return row != null ? ToCable(row) : null;
-    }
-
-    public void SaveCable(Cable cable, bool isAdminMode = false)
-    {
-        // Use Id to determine insert vs update
-        if (cable.Id > 0)
-        {
-            // Update existing - preserve IsUserData
-            var existing = GetCableById(cable.Id);
-            var isUserData = existing?.IsUserData ?? !isAdminMode;
-            UpdateCable(cable, isUserData);
-        }
-        else
-        {
-            // Insert new
-            var isUserData = !isAdminMode;
-            InsertCable(cable, isUserData);
-        }
-    }
-
-    private void InsertCable(Cable cable, bool isUserData)
-    {
-        var attenuationsJson = JsonSerializer.Serialize(cable.AttenuationPer100m, JsonOptions);
-
-        _connection.Execute(
-            @"INSERT INTO Cables (Name, IsUserData, AttenuationsJson)
-              VALUES (@Name, @IsUserData, @AttenuationsJson)",
-            new
-            {
-                cable.Name,
-                IsUserData = isUserData ? 1 : 0,
-                AttenuationsJson = attenuationsJson
-            });
-    }
-
-    private void UpdateCable(Cable cable, bool isUserData)
-    {
-        var attenuationsJson = JsonSerializer.Serialize(cable.AttenuationPer100m, JsonOptions);
-
-        _connection.Execute(@"
-            UPDATE Cables SET
-                Name = @Name,
-                IsUserData = @IsUserData,
-                AttenuationsJson = @AttenuationsJson
-            WHERE Id = @Id",
-            new
-            {
-                cable.Id,
-                cable.Name,
-                IsUserData = isUserData ? 1 : 0,
-                AttenuationsJson = attenuationsJson
-            });
-    }
-
-    public void DeleteCable(int id)
-    {
-        _connection.Execute("DELETE FROM Cables WHERE Id = @Id", new { Id = id });
-    }
-
-    public bool CableExists(string name)
-    {
-        return _connection.ExecuteScalar<int>(
-            "SELECT COUNT(*) FROM Cables WHERE Name = @Name", new { Name = name }) > 0;
-    }
-
-    public int? GetCableId(string name)
-    {
-        return _connection.QueryFirstOrDefault<int?>(
-            "SELECT Id FROM Cables WHERE Name = @Name", new { Name = name });
-    }
-
-    public Cable? GetCableById(int id)
-    {
-        var row = _connection.QueryFirstOrDefault<CableRow>(
-            "SELECT * FROM Cables WHERE Id = @Id", new { Id = id });
-        return row != null ? ToCable(row) : null;
-    }
-
-    private Cable ToCable(CableRow row)
-    {
-        var attenuations = JsonSerializer.Deserialize<Dictionary<string, double>>(row.AttenuationsJson, JsonOptions)
-            ?? new Dictionary<string, double>();
-        return new Cable
-        {
-            Id = row.Id,
-            Name = row.Name,
-            IsUserData = row.IsUserData == 1,
-            AttenuationPer100m = attenuations
-        };
-    }
-
-    /// <summary>
-    /// Gets list of projects/configurations that use this cable.
-    /// </summary>
-    public List<EntityUsage> GetCableUsage(int cableId)
-    {
-        return _connection.Query<EntityUsage>(@"
-            SELECT p.Name as ProjectName, c.Name as ConfigurationName, c.ConfigNumber
-            FROM Configurations c
-            JOIN Projects p ON c.ProjectId = p.Id
-            WHERE c.CableId = @CableId
-            ORDER BY p.Name, c.ConfigNumber",
-            new { CableId = cableId }).ToList();
-    }
+    public List<Antenna> GetAllAntennas() => _masterData.GetAllAntennas();
+    public Antenna? GetAntenna(string manufacturer, string model) => _masterData.GetAntenna(manufacturer, model);
+    public Antenna? GetAntennaById(int id) => _masterData.GetAntennaById(id);
+    public int? GetAntennaId(string manufacturer, string model) => _masterData.GetAntennaId(manufacturer, model);
+    public bool AntennaExists(string manufacturer, string model) => _masterData.AntennaExists(manufacturer, model);
+    public void SaveAntenna(Antenna antenna, bool isAdminMode = false) => _masterData.SaveAntenna(antenna, isAdminMode);
+    public void DeleteAntenna(int id) => _masterData.DeleteAntenna(id);
+    public List<EntityUsage> GetAntennaUsage(int antennaId) => _masterData.GetAntennaUsage(antennaId);
 
     #endregion
 
-    #region Radio Operations
+    #region Cable Operations (delegates to MasterDataRepository)
 
-    public List<Radio> GetAllRadios()
-    {
-        var rows = _connection.Query<RadioRow>(
-            "SELECT * FROM Radios ORDER BY Manufacturer, Model").ToList();
-        return rows.Select(ToRadio).ToList();
-    }
-
-    public Radio? GetRadio(string manufacturer, string model)
-    {
-        var row = _connection.QueryFirstOrDefault<RadioRow>(
-            "SELECT * FROM Radios WHERE Manufacturer = @Manufacturer AND Model = @Model",
-            new { Manufacturer = manufacturer, Model = model });
-        return row != null ? ToRadio(row) : null;
-    }
-
-    public void SaveRadio(Radio radio, bool isAdminMode = false)
-    {
-        // Use Id to determine insert vs update
-        if (radio.Id > 0)
-        {
-            // Update existing - preserve IsUserData
-            var existing = GetRadioById(radio.Id);
-            var isUserData = existing?.IsUserData ?? !isAdminMode;
-            UpdateRadio(radio, isUserData);
-        }
-        else
-        {
-            // Insert new
-            var isUserData = !isAdminMode;
-            InsertRadio(radio, isUserData);
-        }
-    }
-
-    private void InsertRadio(Radio radio, bool isUserData)
-    {
-        _connection.Execute(
-            @"INSERT INTO Radios (Manufacturer, Model, MaxPowerWatts, IsUserData)
-              VALUES (@Manufacturer, @Model, @MaxPowerWatts, @IsUserData)",
-            new
-            {
-                radio.Manufacturer,
-                radio.Model,
-                radio.MaxPowerWatts,
-                IsUserData = isUserData ? 1 : 0
-            });
-    }
-
-    private void UpdateRadio(Radio radio, bool isUserData)
-    {
-        _connection.Execute(@"
-            UPDATE Radios SET
-                Manufacturer = @Manufacturer,
-                Model = @Model,
-                MaxPowerWatts = @MaxPowerWatts,
-                IsUserData = @IsUserData
-            WHERE Id = @Id",
-            new
-            {
-                radio.Id,
-                radio.Manufacturer,
-                radio.Model,
-                radio.MaxPowerWatts,
-                IsUserData = isUserData ? 1 : 0
-            });
-    }
-
-    public void DeleteRadio(int id)
-    {
-        _connection.Execute("DELETE FROM Radios WHERE Id = @Id", new { Id = id });
-    }
-
-    public bool RadioExists(string manufacturer, string model)
-    {
-        return _connection.ExecuteScalar<int>(
-            "SELECT COUNT(*) FROM Radios WHERE Manufacturer = @Manufacturer AND Model = @Model",
-            new { Manufacturer = manufacturer, Model = model }) > 0;
-    }
-
-    public int? GetRadioId(string manufacturer, string model)
-    {
-        return _connection.QueryFirstOrDefault<int?>(
-            "SELECT Id FROM Radios WHERE Manufacturer = @Manufacturer AND Model = @Model",
-            new { Manufacturer = manufacturer, Model = model });
-    }
-
-    public Radio? GetRadioById(int id)
-    {
-        var row = _connection.QueryFirstOrDefault<RadioRow>(
-            "SELECT * FROM Radios WHERE Id = @Id", new { Id = id });
-        return row != null ? ToRadio(row) : null;
-    }
-
-    private Radio ToRadio(RadioRow row)
-    {
-        return new Radio
-        {
-            Id = row.Id,
-            Manufacturer = row.Manufacturer,
-            Model = row.Model,
-            MaxPowerWatts = row.MaxPowerWatts,
-            IsUserData = row.IsUserData == 1
-        };
-    }
-
-    /// <summary>
-    /// Gets list of projects/configurations that use this radio.
-    /// </summary>
-    public List<EntityUsage> GetRadioUsage(int radioId)
-    {
-        return _connection.Query<EntityUsage>(@"
-            SELECT p.Name as ProjectName, c.Name as ConfigurationName, c.ConfigNumber
-            FROM Configurations c
-            JOIN Projects p ON c.ProjectId = p.Id
-            WHERE c.RadioId = @RadioId
-            ORDER BY p.Name, c.ConfigNumber",
-            new { RadioId = radioId }).ToList();
-    }
+    public List<Cable> GetAllCables() => _masterData.GetAllCables();
+    public Cable? GetCable(string name) => _masterData.GetCable(name);
+    public Cable? GetCableById(int id) => _masterData.GetCableById(id);
+    public int? GetCableId(string name) => _masterData.GetCableId(name);
+    public bool CableExists(string name) => _masterData.CableExists(name);
+    public void SaveCable(Cable cable, bool isAdminMode = false) => _masterData.SaveCable(cable, isAdminMode);
+    public void DeleteCable(int id) => _masterData.DeleteCable(id);
+    public List<EntityUsage> GetCableUsage(int cableId) => _masterData.GetCableUsage(cableId);
 
     #endregion
 
-    #region OKA Operations
+    #region Radio Operations (delegates to MasterDataRepository)
 
-    public List<Oka> GetAllOkas()
-    {
-        return _connection.Query<Oka>(
-            "SELECT Id, Name, DefaultDistanceMeters, DefaultDampingDb, IsUserData FROM Okas ORDER BY Name").ToList();
-    }
-
-    public Oka? GetOka(string name)
-    {
-        return _connection.QueryFirstOrDefault<Oka>(
-            "SELECT Id, Name, DefaultDistanceMeters, DefaultDampingDb, IsUserData FROM Okas WHERE Name = @Name",
-            new { Name = name });
-    }
-
-    public Oka? GetOkaById(int id)
-    {
-        return _connection.QueryFirstOrDefault<Oka>(
-            "SELECT Id, Name, DefaultDistanceMeters, DefaultDampingDb, IsUserData FROM Okas WHERE Id = @Id",
-            new { Id = id });
-    }
-
-    public int? GetOkaId(string name)
-    {
-        return _connection.QueryFirstOrDefault<int?>(
-            "SELECT Id FROM Okas WHERE Name = @Name", new { Name = name });
-    }
-
-    public void SaveOka(Oka oka, bool isAdminMode = false)
-    {
-        // If Id > 0, this is an update - look up by Id to allow name changes
-        if (oka.Id > 0)
-        {
-            var existing = GetOkaById(oka.Id);
-            var isUserData = existing?.IsUserData ?? oka.IsUserData;
-            _connection.Execute(@"
-                UPDATE Okas SET
-                    Name = @Name,
-                    DefaultDistanceMeters = @DefaultDistanceMeters,
-                    DefaultDampingDb = @DefaultDampingDb,
-                    IsUserData = @IsUserData
-                WHERE Id = @Id",
-                new { oka.Id, oka.Name, oka.DefaultDistanceMeters, oka.DefaultDampingDb, IsUserData = isUserData ? 1 : 0 });
-        }
-        else
-        {
-            // New OKA - insert
-            var isUserData = !isAdminMode;
-            _connection.Execute(@"
-                INSERT INTO Okas (Name, DefaultDistanceMeters, DefaultDampingDb, IsUserData)
-                VALUES (@Name, @DefaultDistanceMeters, @DefaultDampingDb, @IsUserData)",
-                new { oka.Name, oka.DefaultDistanceMeters, oka.DefaultDampingDb, IsUserData = isUserData ? 1 : 0 });
-        }
-    }
-
-    public void DeleteOka(string name)
-    {
-        _connection.Execute("DELETE FROM Okas WHERE Name = @Name", new { Name = name });
-    }
-
-    public bool OkaExists(string name)
-    {
-        return _connection.ExecuteScalar<int>(
-            "SELECT COUNT(*) FROM Okas WHERE Name = @Name", new { Name = name }) > 0;
-    }
-
-    /// <summary>
-    /// Gets list of projects/configurations that use this OKA.
-    /// </summary>
-    public List<EntityUsage> GetOkaUsage(int okaId)
-    {
-        return _connection.Query<EntityUsage>(@"
-            SELECT p.Name as ProjectName, c.Name as ConfigurationName, c.ConfigNumber
-            FROM Configurations c
-            JOIN Projects p ON c.ProjectId = p.Id
-            WHERE c.OkaId = @OkaId
-            ORDER BY p.Name, c.ConfigNumber",
-            new { OkaId = okaId }).ToList();
-    }
+    public List<Radio> GetAllRadios() => _masterData.GetAllRadios();
+    public Radio? GetRadio(string manufacturer, string model) => _masterData.GetRadio(manufacturer, model);
+    public Radio? GetRadioById(int id) => _masterData.GetRadioById(id);
+    public int? GetRadioId(string manufacturer, string model) => _masterData.GetRadioId(manufacturer, model);
+    public bool RadioExists(string manufacturer, string model) => _masterData.RadioExists(manufacturer, model);
+    public void SaveRadio(Radio radio, bool isAdminMode = false) => _masterData.SaveRadio(radio, isAdminMode);
+    public void DeleteRadio(int id) => _masterData.DeleteRadio(id);
+    public List<EntityUsage> GetRadioUsage(int radioId) => _masterData.GetRadioUsage(radioId);
 
     #endregion
 
-    #region Modulation Operations
+    #region OKA Operations (delegates to MasterDataRepository)
 
-    public List<Modulation> GetAllModulations()
-    {
-        return _connection.Query<Modulation>(
-            "SELECT Id, Name, Factor, IsUserData FROM Modulations ORDER BY Name").ToList();
-    }
-
-    public Modulation? GetModulationById(int id)
-    {
-        return _connection.QueryFirstOrDefault<Modulation>(
-            "SELECT Id, Name, Factor, IsUserData FROM Modulations WHERE Id = @Id",
-            new { Id = id });
-    }
-
-    public Modulation? GetModulationByName(string name)
-    {
-        return _connection.QueryFirstOrDefault<Modulation>(
-            "SELECT Id, Name, Factor, IsUserData FROM Modulations WHERE Name = @Name",
-            new { Name = name });
-    }
-
-    public int? GetModulationId(string name)
-    {
-        return _connection.QueryFirstOrDefault<int?>(
-            "SELECT Id FROM Modulations WHERE Name = @Name", new { Name = name });
-    }
-
-    public void SaveModulation(Modulation modulation, bool isAdminMode = false)
-    {
-        var existing = GetModulationByName(modulation.Name);
-        var isUserData = existing?.IsUserData ?? !isAdminMode;
-
-        if (existing != null)
-        {
-            _connection.Execute(@"
-                UPDATE Modulations SET
-                    Factor = @Factor,
-                    IsUserData = @IsUserData
-                WHERE Name = @Name",
-                new
-                {
-                    modulation.Name,
-                    modulation.Factor,
-                    IsUserData = isUserData ? 1 : 0
-                });
-        }
-        else
-        {
-            InsertModulation(new Modulation
-            {
-                Name = modulation.Name,
-                Factor = modulation.Factor,
-                IsUserData = isUserData
-            });
-        }
-    }
-
-    private void InsertModulation(Modulation modulation)
-    {
-        _connection.Execute(@"
-            INSERT INTO Modulations (Name, Factor, IsUserData)
-            VALUES (@Name, @Factor, @IsUserData)",
-            new
-            {
-                modulation.Name,
-                modulation.Factor,
-                IsUserData = modulation.IsUserData ? 1 : 0
-            });
-    }
-
-    public void DeleteModulation(string name)
-    {
-        _connection.Execute("DELETE FROM Modulations WHERE Name = @Name", new { Name = name });
-    }
+    public List<Oka> GetAllOkas() => _masterData.GetAllOkas();
+    public Oka? GetOka(string name) => _masterData.GetOka(name);
+    public Oka? GetOkaById(int id) => _masterData.GetOkaById(id);
+    public int? GetOkaId(string name) => _masterData.GetOkaId(name);
+    public bool OkaExists(string name) => _masterData.OkaExists(name);
+    public void SaveOka(Oka oka, bool isAdminMode = false) => _masterData.SaveOka(oka, isAdminMode);
+    public void DeleteOka(string name) => _masterData.DeleteOka(name);
+    public List<EntityUsage> GetOkaUsage(int okaId) => _masterData.GetOkaUsage(okaId);
 
     #endregion
 
-    #region Project Operations
+    #region Modulation Operations (delegates to MasterDataRepository)
 
-    public int CreateProject(Project project)
-    {
-        using var transaction = _connection.BeginTransaction();
-        try
-        {
-            var now = DateTime.UtcNow.ToString("o");
-            var id = _connection.ExecuteScalar<int>(@"
-                INSERT INTO Projects (Name, OperatorName, Callsign, Address, Location, CreatedAt, ModifiedAt)
-                VALUES (@Name, @OperatorName, @Callsign, @Address, @Location, @CreatedAt, @ModifiedAt);
-                SELECT last_insert_rowid();",
-                new
-                {
-                    Name = string.IsNullOrWhiteSpace(project.Name) ? "New Project" : project.Name,
-                    OperatorName = project.Operator,
-                    project.Callsign,
-                    project.Address,
-                    project.Location,
-                    CreatedAt = now,
-                    ModifiedAt = now
-                },
-                transaction);
+    public List<Modulation> GetAllModulations() => _masterData.GetAllModulations();
+    public Modulation? GetModulationById(int id) => _masterData.GetModulationById(id);
+    public Modulation? GetModulationByName(string name) => _masterData.GetModulationByName(name);
+    public int? GetModulationId(string name) => _masterData.GetModulationId(name);
+    public void SaveModulation(Modulation modulation, bool isAdminMode = false) => _masterData.SaveModulation(modulation, isAdminMode);
+    public void DeleteModulation(string name) => _masterData.DeleteModulation(name);
 
-            // Save configurations
-            int configNum = 1;
-            foreach (var config in project.AntennaConfigurations)
-            {
-                SaveConfiguration(id, config, configNum++, transaction);
-            }
+    #endregion
 
-            transaction.Commit();
-            return id;
-        }
-        catch
-        {
-            transaction.Rollback();
-            throw;
-        }
-    }
+    #region Project Operations (delegates to ProjectRepository)
 
-    public void UpdateProject(int projectId, Project project)
-    {
-        using var transaction = _connection.BeginTransaction();
-        try
-        {
-            var now = DateTime.UtcNow.ToString("o");
-            _connection.Execute(@"
-                UPDATE Projects SET
-                    Name = @Name,
-                    OperatorName = @OperatorName,
-                    Callsign = @Callsign,
-                    Address = @Address,
-                    Location = @Location,
-                    ModifiedAt = @ModifiedAt
-                WHERE Id = @Id",
-                new
-                {
-                    Id = projectId,
-                    Name = string.IsNullOrWhiteSpace(project.Name) ? "Project" : project.Name,
-                    OperatorName = project.Operator,
-                    project.Callsign,
-                    project.Address,
-                    project.Location,
-                    ModifiedAt = now
-                },
-                transaction);
+    public int CreateProject(Project project) => _projects.CreateProject(project);
+    public void UpdateProject(int projectId, Project project) => _projects.UpdateProject(projectId, project);
+    public Project? GetProject(int projectId) => _projects.GetProject(projectId);
+    public List<Project> GetAllProjects() => _projects.GetAllProjects();
+    public void DeleteProject(int projectId) => _projects.DeleteProject(projectId);
+    public void ClearAllProjects() => _projects.ClearAllProjects();
+    public List<ProjectListItem> GetProjectList() => _projects.GetProjectList();
+    public List<(int Id, string Name, DateTime ModifiedAt)> GetRecentProjects(int limit = 5) => _projects.GetRecentProjects(limit);
+    public List<string> ValidateConfigurationIntegrity() => _projects.ValidateConfigurationIntegrity();
 
-            // Delete and recreate configurations
-            _connection.Execute("DELETE FROM Configurations WHERE ProjectId = @ProjectId",
-                new { ProjectId = projectId }, transaction);
+    #endregion
 
-            int configNum = 1;
-            foreach (var config in project.AntennaConfigurations)
-            {
-                SaveConfiguration(projectId, config, configNum++, transaction);
-            }
-
-            transaction.Commit();
-        }
-        catch
-        {
-            transaction.Rollback();
-            throw;
-        }
-    }
-    public Project? GetProject(int projectId)
-    {
-        var row = _connection.QueryFirstOrDefault<ProjectRow>(
-            "SELECT * FROM Projects WHERE Id = @Id", new { Id = projectId });
-        if (row == null) return null;
-
-        var project = new Project
-        {
-            Name = row.Name,
-            Operator = row.OperatorName ?? "",
-            Callsign = row.Callsign ?? "",
-            Address = row.Address ?? "",
-            Location = row.Location ?? ""
-        };
-
-        // Load configurations
-        var configRows = _connection.Query<ConfigurationRow>(
-            "SELECT * FROM Configurations WHERE ProjectId = @ProjectId ORDER BY ConfigNumber", new { ProjectId = projectId });
-        project.AntennaConfigurations = configRows.Select(ToConfiguration).ToList();
-
-        return project;
-    }
-    public void DeleteProject(int projectId)
-    {
-        // Configurations are deleted automatically due to ON DELETE CASCADE
-        _connection.Execute("DELETE FROM Projects WHERE Id = @Id", new { Id = projectId });
-    }
-
-    /// <summary>
-    /// Deletes all projects from the database.
-    /// </summary>
-    public void ClearAllProjects()
-    {
-        _connection.Execute("DELETE FROM Configurations");
-        _connection.Execute("DELETE FROM Projects");
-    }
+    #region Data Management
 
     public void ClearAllData()
     {
@@ -958,209 +334,9 @@ public class DatabaseService : IDisposable
         _connection.Execute("DELETE FROM Modulations");
     }
 
-    /// <summary>
-    /// Validates FK integrity for all configurations and returns a list of issues.
-    /// Each issue describes a missing master data reference.
-    /// </summary>
-    public List<string> ValidateConfigurationIntegrity()
-    {
-        var issues = new List<string>();
-
-        var configs = _connection.Query<ConfigurationRow>(
-            @"SELECT c.*, p.Name as ProjectName FROM Configurations c
-              JOIN Projects p ON c.ProjectId = p.Id");
-
-        foreach (var config in configs)
-        {
-            var configName = !string.IsNullOrEmpty(config.Name) ? config.Name : $"Config {config.ConfigNumber}";
-            var projectName = config.ProjectName ?? $"Project {config.ProjectId}";
-            var prefix = $"{projectName} / {configName}";
-
-            if (config.RadioId.HasValue && GetRadioById(config.RadioId.Value) == null)
-                issues.Add($"{prefix}: Radio ID {config.RadioId} not found");
-
-            if (config.CableId.HasValue && GetCableById(config.CableId.Value) == null)
-                issues.Add($"{prefix}: Cable ID {config.CableId} not found");
-
-            if (config.AntennaId.HasValue && GetAntennaById(config.AntennaId.Value) == null)
-                issues.Add($"{prefix}: Antenna ID {config.AntennaId} not found");
-
-            if (config.ModulationId.HasValue && GetModulationById(config.ModulationId.Value) == null)
-                issues.Add($"{prefix}: Modulation ID {config.ModulationId} not found");
-
-            if (config.OkaId.HasValue && GetOkaById(config.OkaId.Value) == null)
-                issues.Add($"{prefix}: OKA ID {config.OkaId} not found");
-        }
-
-        return issues;
-    }
-
-    /// <summary>
-    /// Gets a list of all projects with basic info (for project list display).
-    /// </summary>
-    public List<ProjectListItem> GetProjectList()
-    {
-        return _connection.Query<ProjectListItem>(@"
-            SELECT p.Id, p.Name, p.OperatorName as Operator, p.Address, p.Location,
-                   strftime('%d.%m.%Y %H:%M', p.ModifiedAt) as ModifiedAt,
-                   (SELECT COUNT(*) FROM Configurations WHERE ProjectId = p.Id) as ConfigCount
-            FROM Projects p
-            ORDER BY p.ModifiedAt DESC").ToList();
-    }
-
-    public List<(int Id, string Name, DateTime ModifiedAt)> GetRecentProjects(int limit = 5)
-    {
-        return _connection.Query<(int Id, string Name, string ModifiedAt)>(
-            "SELECT Id, Name, ModifiedAt FROM Projects ORDER BY ModifiedAt DESC LIMIT @Limit",
-            new { Limit = limit })
-            .Select(r => (r.Id, r.Name, DateTime.Parse(r.ModifiedAt)))
-            .ToList();
-    }
-
     #endregion
 
-    #region Configuration Operations
-
-    private void SaveConfiguration(int projectId, AntennaConfiguration config, int configNumber, System.Data.IDbTransaction? transaction = null)
-    {
-        // Use IDs directly - configurations must have IDs set before saving
-        var radioId = config.RadioId;
-        var cableId = config.CableId;
-        var antennaId = config.AntennaId;
-        var modulationId = config.ModulationId;
-        var okaId = config.OkaId;
-
-        // Get OKA distance/damping from master data
-        var oka = okaId.HasValue ? GetOkaById(okaId.Value) : null;
-        var okaDistance = oka?.DefaultDistanceMeters ?? 10;
-        var okaDamping = oka?.DefaultDampingDb ?? 0;
-
-        _connection.Execute(@"
-            INSERT INTO Configurations (
-                ProjectId, ConfigNumber, Name, PowerWatts,
-                RadioId, LinearName, LinearPowerWatts,
-                CableId, CableLengthMeters, AdditionalLossDb, AdditionalLossDescription,
-                AntennaId, HeightMeters, IsRotatable, HorizontalAngleDegrees,
-                ModulationId, ActivityFactor,
-                OkaId, OkaDistanceMeters, OkaBuildingDampingDb
-            ) VALUES (
-                @ProjectId, @ConfigNumber, @Name, @PowerWatts,
-                @RadioId, @LinearName, @LinearPowerWatts,
-                @CableId, @CableLengthMeters, @AdditionalLossDb, @AdditionalLossDescription,
-                @AntennaId, @HeightMeters, @IsRotatable, @HorizontalAngleDegrees,
-                @ModulationId, @ActivityFactor,
-                @OkaId, @OkaDistanceMeters, @OkaBuildingDampingDb
-            )",
-            new
-            {
-                ProjectId = projectId,
-                ConfigNumber = configNumber,
-                config.Name,
-                config.PowerWatts,
-                RadioId = radioId,
-                LinearName = config.Linear?.Name,
-                LinearPowerWatts = config.Linear?.PowerWatts ?? 0,
-                CableId = cableId,
-                CableLengthMeters = config.Cable.LengthMeters,
-                AdditionalLossDb = config.Cable.AdditionalLossDb,
-                AdditionalLossDescription = config.Cable.AdditionalLossDescription,
-                AntennaId = antennaId,
-                HeightMeters = config.Antenna.HeightMeters,
-                IsRotatable = config.Antenna.IsRotatable ? 1 : 0,
-                HorizontalAngleDegrees = config.Antenna.HorizontalAngleDegrees,
-                ModulationId = modulationId,
-                config.ActivityFactor,
-                OkaId = okaId,
-                OkaDistanceMeters = okaDistance,
-                OkaBuildingDampingDb = okaDamping,
-            },
-            transaction);
-    }
-
-    private int? EnsureOkaForConfig(AntennaConfiguration config)
-    {
-        if (string.IsNullOrWhiteSpace(config.OkaName))
-        {
-            return null;
-        }
-
-        var okaId = GetOkaId(config.OkaName);
-        if (okaId.HasValue)
-        {
-            return okaId;
-        }
-
-        // Create OKA with default values (user must edit OKA master data to set correct values)
-        SaveOka(new Oka
-        {
-            Name = config.OkaName,
-            DefaultDistanceMeters = 10, // Default distance
-            DefaultDampingDb = 0 // Default no damping
-        });
-
-        return GetOkaId(config.OkaName);
-    }
-
-    private AntennaConfiguration ToConfiguration(ConfigurationRow row)
-    {
-        // Look up entities by ID
-        var radio = row.RadioId.HasValue ? GetRadioById(row.RadioId.Value) : null;
-        var cable = row.CableId.HasValue ? GetCableById(row.CableId.Value) : null;
-        var antenna = row.AntennaId.HasValue ? GetAntennaById(row.AntennaId.Value) : null;
-        var modulation = row.ModulationId.HasValue ? GetModulationById(row.ModulationId.Value) : null;
-        var oka = row.OkaId.HasValue ? GetOkaById(row.OkaId.Value) : null;
-
-        // Build Linear config if LinearName or LinearPowerWatts is set
-        LinearConfig? linearConfig = null;
-        if (!string.IsNullOrEmpty(row.LinearName) || row.LinearPowerWatts > 0)
-        {
-            linearConfig = new LinearConfig
-            {
-                Name = row.LinearName ?? "",
-                PowerWatts = row.LinearPowerWatts
-            };
-        }
-
-        return new AntennaConfiguration
-        {
-            Name = row.Name ?? "",
-            PowerWatts = row.PowerWatts,
-            // Set all IDs for master data references
-            RadioId = row.RadioId,
-            Radio = new RadioConfig
-            {
-                Manufacturer = radio?.Manufacturer ?? "",
-                Model = radio?.Model ?? ""
-            },
-            Linear = linearConfig,
-            CableId = row.CableId,
-            Cable = new CableConfig
-            {
-                Type = cable?.Name ?? "",
-                LengthMeters = row.CableLengthMeters,
-                AdditionalLossDb = row.AdditionalLossDb,
-                AdditionalLossDescription = row.AdditionalLossDescription ?? ""
-            },
-            AntennaId = row.AntennaId,
-            Antenna = new AntennaPlacement
-            {
-                Manufacturer = antenna?.Manufacturer ?? "",
-                Model = antenna?.Model ?? "",
-                HeightMeters = row.HeightMeters,
-                IsRotatable = row.IsRotatable == 1,
-                HorizontalAngleDegrees = row.HorizontalAngleDegrees
-            },
-            ModulationId = row.ModulationId,
-            Modulation = modulation?.Name ?? "CW",
-            ActivityFactor = row.ActivityFactor,
-            OkaId = row.OkaId,
-            OkaName = oka?.Name ?? ""
-        };
-    }
-
-    #endregion
-
-    #region Export/Import Database (Factory Mode)
+    #region Export/Import Factory Data
 
     public void ExportFactoryData(string filePath)
     {
@@ -1211,6 +387,14 @@ public class DatabaseService : IDisposable
         }
     }
 
+    private void ImportFactoryDataFromBundled()
+    {
+        var folderPath = AppPaths.DataFolder;
+        if (!Directory.Exists(folderPath)) return;
+
+        ImportFactoryDataFromFolder(folderPath);
+    }
+
     private void ImportFactoryDataFromFolder(string folderPath)
     {
         var options = new JsonSerializerOptions
@@ -1237,9 +421,7 @@ public class DatabaseService : IDisposable
                         Manufacturer = first.Manufacturer,
                         Model = first.Model,
                         AntennaType = first.AntennaType,
-                        
                         IsHorizontallyPolarized = first.IsHorizontallyPolarized,
-                        
                         IsUserData = false
                     };
                     foreach (var ant in g)
@@ -1251,7 +433,7 @@ public class DatabaseService : IDisposable
 
             foreach (var antenna in consolidated)
             {
-                InsertAntenna(antenna, isUserData: false);
+                _masterData.InsertAntenna(antenna, isUserData: false);
             }
         }
 
@@ -1265,7 +447,7 @@ public class DatabaseService : IDisposable
             foreach (var cable in cables)
             {
                 cable.IsUserData = false;
-                InsertCable(cable, isUserData: false);
+                _masterData.InsertCable(cable, isUserData: false);
             }
         }
 
@@ -1279,7 +461,7 @@ public class DatabaseService : IDisposable
             foreach (var radio in radios)
             {
                 radio.IsUserData = false;
-                InsertRadio(radio, isUserData: false);
+                _masterData.InsertRadio(radio, isUserData: false);
             }
         }
     }
@@ -1292,9 +474,6 @@ public class DatabaseService : IDisposable
 
     #region Export/Import User Data
 
-    /// <summary>
-    /// Export all user data (projects, OKAs, user-specific master data) to a JSON file.
-    /// </summary>
     public void ExportUserData(string filePath)
     {
         var options = new JsonSerializerOptions
@@ -1317,9 +496,6 @@ public class DatabaseService : IDisposable
         File.WriteAllText(filePath, json);
     }
 
-    /// <summary>
-    /// Import user data from a JSON file.
-    /// </summary>
     public void ImportUserData(string filePath)
     {
         var options = new JsonSerializerOptions
@@ -1365,7 +541,7 @@ public class DatabaseService : IDisposable
             antenna.IsUserData = forceIsUserData;
             if (!AntennaExists(antenna.Manufacturer, antenna.Model))
             {
-                InsertAntenna(antenna, isUserData: forceIsUserData);
+                _masterData.InsertAntenna(antenna, isUserData: forceIsUserData);
             }
         }
 
@@ -1374,7 +550,7 @@ public class DatabaseService : IDisposable
             cable.IsUserData = forceIsUserData;
             if (!CableExists(cable.Name))
             {
-                InsertCable(cable, isUserData: forceIsUserData);
+                _masterData.InsertCable(cable, isUserData: forceIsUserData);
             }
         }
 
@@ -1383,7 +559,7 @@ public class DatabaseService : IDisposable
             radio.IsUserData = forceIsUserData;
             if (!RadioExists(radio.Manufacturer, radio.Model))
             {
-                InsertRadio(radio, isUserData: forceIsUserData);
+                _masterData.InsertRadio(radio, isUserData: forceIsUserData);
             }
         }
 
@@ -1392,35 +568,6 @@ public class DatabaseService : IDisposable
         {
             CreateProject(project);
         }
-    }
-
-    /// <summary>
-    /// Get all projects from the database.
-    /// </summary>
-    public List<Project> GetAllProjects()
-    {
-        var projectRows = _connection.Query<ProjectRow>(
-            "SELECT * FROM Projects ORDER BY ModifiedAt DESC").ToList();
-
-        return projectRows.Select(row =>
-        {
-            var project = new Project
-            {
-                Name = row.Name,
-                Operator = row.OperatorName ?? "",
-                Callsign = row.Callsign ?? "",
-                Address = row.Address ?? "",
-                Location = row.Location ?? ""
-            };
-
-            // Load configurations
-            var configRows = _connection.Query<ConfigurationRow>(
-                "SELECT * FROM Configurations WHERE ProjectId = @ProjectId ORDER BY ConfigNumber",
-                new { ProjectId = row.Id });
-            project.AntennaConfigurations = configRows.Select(ToConfiguration).ToList();
-
-            return project;
-        }).ToList();
     }
 
     private class UserDataExport
@@ -1439,84 +586,6 @@ public class DatabaseService : IDisposable
     {
         _connection?.Dispose();
     }
-
-    #region Row Classes (for Dapper mapping)
-
-    private class AntennaRow
-    {
-        public int Id { get; set; }
-        public string Manufacturer { get; set; } = "";
-        public string Model { get; set; } = "";
-        public string AntennaType { get; set; } = "other";
-        public int IsHorizontallyPolarized { get; set; }
-        public int IsUserData { get; set; }
-        public string BandsJson { get; set; } = "[]";
-    }
-
-    private class BandData
-    {
-        public double FrequencyMHz { get; set; }
-        public double GainDbi { get; set; }
-        public double[]? Pattern { get; set; }
-    }
-
-    private class CableRow
-    {
-        public int Id { get; set; }
-        public string Name { get; set; } = "";
-        public int IsUserData { get; set; }
-        public string AttenuationsJson { get; set; } = "{}";
-    }
-
-    private class RadioRow
-    {
-        public int Id { get; set; }
-        public string Manufacturer { get; set; } = "";
-        public string Model { get; set; } = "";
-        public double MaxPowerWatts { get; set; }
-        public int IsUserData { get; set; }
-    }
-
-    private class ProjectRow
-    {
-        public int Id { get; set; }
-        public string Name { get; set; } = "";
-        public string? OperatorName { get; set; }
-        public string? Callsign { get; set; }
-        public string? Address { get; set; }
-        public string? Location { get; set; }
-        public string CreatedAt { get; set; } = "";
-        public string ModifiedAt { get; set; } = "";
-    }
-
-    private class ConfigurationRow
-    {
-        public int Id { get; set; }
-        public int ProjectId { get; set; }
-        public int ConfigNumber { get; set; }
-        public string? Name { get; set; }
-        public double PowerWatts { get; set; }
-        public int? RadioId { get; set; }
-        public string? LinearName { get; set; }
-        public double LinearPowerWatts { get; set; }
-        public int? CableId { get; set; }
-        public double CableLengthMeters { get; set; }
-        public double AdditionalLossDb { get; set; }
-        public string? AdditionalLossDescription { get; set; }
-        public int? AntennaId { get; set; }
-        public double HeightMeters { get; set; }
-        public int IsRotatable { get; set; }
-        public double HorizontalAngleDegrees { get; set; }
-        public int? ModulationId { get; set; }
-        public double ActivityFactor { get; set; }
-        public int? OkaId { get; set; }
-        public double OkaDistanceMeters { get; set; }
-        public double OkaBuildingDampingDb { get; set; }
-        // For join queries
-        public string? ProjectName { get; set; }
-    }
-
-    #endregion
 }
 
 /// <summary>

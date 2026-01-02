@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.VisualTree;
 using NIS.Desktop.Services;
+using NIS.Desktop.Services.Repositories;
 using NIS.Desktop.ViewModels;
 
 namespace NIS.Desktop.Views;
