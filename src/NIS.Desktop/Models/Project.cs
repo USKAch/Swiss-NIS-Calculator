@@ -143,6 +143,18 @@ public class AntennaConfiguration
     [JsonPropertyName("okaName")]
     public string OkaName { get; set; } = string.Empty;
 
+    /// <summary>
+    /// Distance to evaluation point in meters. Initialized from OKA defaults, editable per configuration.
+    /// </summary>
+    [JsonPropertyName("okaDistanceMeters")]
+    public double OkaDistanceMeters { get; set; } = 10;
+
+    /// <summary>
+    /// Building damping in dB. Initialized from OKA defaults, editable per configuration.
+    /// </summary>
+    [JsonPropertyName("okaBuildingDampingDb")]
+    public double OkaBuildingDampingDb { get; set; }
+
     [JsonIgnore]
     public string ModulationDisplay => Modulation;
 }

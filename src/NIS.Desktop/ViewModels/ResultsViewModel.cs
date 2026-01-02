@@ -129,7 +129,12 @@ public partial class ResultsViewModel : ViewModelBase
     private bool _isCalculating;
 
     [ObservableProperty]
-    private string _statusMessage = "Ready";
+    private string _statusMessage = "";
+
+    public ResultsViewModel()
+    {
+        _statusMessage = Strings.Instance.StatusReady;
+    }
 
     public bool HasResults => Results.Count > 0;
 
@@ -137,12 +142,8 @@ public partial class ResultsViewModel : ViewModelBase
         System.Linq.Enumerable.All(Results, r => r.IsCompliant);
 
     public string ComplianceSummary => AllCompliant
-        ? "All configurations comply with NISV limits"
-        : "Some configurations exceed NISV limits";
-
-    public ResultsViewModel()
-    {
-    }
+        ? Strings.Instance.CalcAllCompliant
+        : Strings.Instance.CalcNonCompliantDetected;
 
     /// <summary>
     /// Calculate results for all configurations in the project.
@@ -232,9 +233,9 @@ public partial class ResultsViewModel : ViewModelBase
             : null;
         var constants = MasterDataStore.Load().Constants;
 
-        // Get OKA distance and damping from master data
-        double okaDistance = oka?.DefaultDistanceMeters ?? 0;
-        double okaDamping = oka?.DefaultDampingDb ?? 0;
+        // Use per-configuration OKA values (editable, initialized from OKA defaults)
+        double okaDistance = config.OkaDistanceMeters;
+        double okaDamping = config.OkaBuildingDampingDb;
 
         // Use linear power if set, otherwise use radio power
         double effectivePower = (config.Linear != null && config.Linear.PowerWatts > 0)
@@ -440,7 +441,7 @@ public partial class ResultsViewModel : ViewModelBase
     {
         if (StorageProvider == null || _project == null)
         {
-            StatusMessage = "Cannot export. Please save the project first.";
+            StatusMessage = Strings.Instance.CannotExportNoProject;
             return;
         }
 
@@ -450,7 +451,7 @@ public partial class ResultsViewModel : ViewModelBase
             : _project?.Operator ?? "Project";
         var file = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Title = "Export Results as Markdown",
+            Title = Strings.Instance.ExportMarkdownTitle,
             SuggestedStartLocation = startFolder,
             SuggestedFileName = $"{reportLabel}_NIS_Report.md",
             DefaultExtension = ".md",
@@ -464,7 +465,7 @@ public partial class ResultsViewModel : ViewModelBase
         {
             var markdown = GenerateMarkdown();
             await File.WriteAllTextAsync(file.Path.LocalPath, markdown);
-            StatusMessage = $"Exported to {file.Name}";
+            StatusMessage = string.Format(Strings.Instance.ExportedToFile, file.Name);
         }
     }
 
@@ -473,7 +474,7 @@ public partial class ResultsViewModel : ViewModelBase
     {
         if (StorageProvider == null || _project == null)
         {
-            StatusMessage = "Cannot export. Please save the project first.";
+            StatusMessage = Strings.Instance.CannotExportNoProject;
             return;
         }
 
@@ -483,7 +484,7 @@ public partial class ResultsViewModel : ViewModelBase
             : _project?.Operator ?? "Project";
         var file = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Title = "Export Results as PDF",
+            Title = Strings.Instance.ExportPdfTitle,
             SuggestedStartLocation = startFolder,
             SuggestedFileName = $"{reportLabel}_{DateTime.Now:yyyyMMdd}.pdf",
             DefaultExtension = ".pdf",
@@ -499,11 +500,11 @@ public partial class ResultsViewModel : ViewModelBase
             {
                 var pdfGenerator = new PdfReportGenerator();
                 pdfGenerator.GenerateReport(_project, Results.ToList(), file.Path.LocalPath);
-                StatusMessage = $"PDF exported to {file.Name}";
+                StatusMessage = string.Format(Strings.Instance.ExportedToFile, file.Name);
             }
             catch (Exception ex)
             {
-                StatusMessage = $"PDF export failed: {ex.Message}";
+                StatusMessage = string.Format(Strings.Instance.PdfExportError, ex.Message);
             }
         }
     }
@@ -589,7 +590,7 @@ public partial class ResultsViewModel : ViewModelBase
             AppendRow(sb, s.CalcGroundReflection, "kr", "-", result.BandResults, b => b.GroundReflectionFactor, "F2");
             AppendRow(sb, "**" + s.CalcFieldStrength + "**", "E'", "V/m", result.BandResults, b => b.FieldStrength, "F2");
             AppendRow(sb, "**" + s.CalcLimit + "**", "EIGW", "V/m", result.BandResults, b => b.Limit, "F1");
-            AppendRow(sb, "**" + s.CalcMinSafetyDistance + "**", "ds", "m", result.BandResults, b => b.SafetyDistance, "F2");
+            AppendRow(sb, "**" + s.CalcMinSafeDistance + "**", "ds", "m", result.BandResults, b => b.SafetyDistance, "F2");
             AppendRow(sb, "**" + s.CalcOkaDistance + "**", "d(OKA)", "m", result.BandResults, _ => result.OkaDistance, "F1");
 
             sb.AppendLine();

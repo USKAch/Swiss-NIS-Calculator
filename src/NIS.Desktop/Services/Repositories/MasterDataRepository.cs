@@ -456,9 +456,9 @@ public class MasterDataRepository
         }
     }
 
-    public void DeleteOka(string name)
+    public void DeleteOka(int id)
     {
-        _connection.Execute("DELETE FROM Okas WHERE Name = @Name", new { Name = name });
+        _connection.Execute("DELETE FROM Okas WHERE Id = @Id", new { Id = id });
     }
 
     public List<EntityUsage> GetOkaUsage(int okaId)
@@ -545,9 +545,9 @@ public class MasterDataRepository
             });
     }
 
-    public void DeleteModulation(string name)
+    public void DeleteModulation(int id)
     {
-        _connection.Execute("DELETE FROM Modulations WHERE Name = @Name", new { Name = name });
+        _connection.Execute("DELETE FROM Modulations WHERE Id = @Id", new { Id = id });
     }
 
     #endregion

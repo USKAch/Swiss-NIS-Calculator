@@ -52,10 +52,8 @@ public class DatabaseService : IDisposable
             // Show warning - user data will be lost
             var result = MsBox.Avalonia.MessageBoxManager
                 .GetMessageBoxStandard(
-                    "Database Reset Required",
-                    "The database schema is incompatible and needs to be reset.\n\n" +
-                    "WARNING: All projects and configurations will be deleted!\n\n" +
-                    "Click Yes to reset the database, or No to exit the application.",
+                    Localization.Strings.Instance.DatabaseResetRequired,
+                    Localization.Strings.Instance.DatabaseResetMessage,
                     MsBox.Avalonia.Enums.ButtonEnum.YesNo,
                     MsBox.Avalonia.Enums.Icon.Warning)
                 .ShowAsync()
@@ -291,7 +289,7 @@ public class DatabaseService : IDisposable
     public int? GetOkaId(string name) => _masterData.GetOkaId(name);
     public bool OkaExists(string name) => _masterData.OkaExists(name);
     public void SaveOka(Oka oka, bool isAdminMode = false) => _masterData.SaveOka(oka, isAdminMode);
-    public void DeleteOka(string name) => _masterData.DeleteOka(name);
+    public void DeleteOka(int id) => _masterData.DeleteOka(id);
     public List<EntityUsage> GetOkaUsage(int okaId) => _masterData.GetOkaUsage(okaId);
 
     #endregion
@@ -303,7 +301,7 @@ public class DatabaseService : IDisposable
     public Modulation? GetModulationByName(string name) => _masterData.GetModulationByName(name);
     public int? GetModulationId(string name) => _masterData.GetModulationId(name);
     public void SaveModulation(Modulation modulation, bool isAdminMode = false) => _masterData.SaveModulation(modulation, isAdminMode);
-    public void DeleteModulation(string name) => _masterData.DeleteModulation(name);
+    public void DeleteModulation(int id) => _masterData.DeleteModulation(id);
 
     #endregion
 

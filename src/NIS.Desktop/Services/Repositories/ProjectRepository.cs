@@ -233,10 +233,7 @@ public class ProjectRepository
         var modulationId = config.ModulationId;
         var okaId = config.OkaId;
 
-        // Get OKA distance/damping from master data
-        var oka = okaId.HasValue ? _masterData.GetOkaById(okaId.Value) : null;
-        var okaDistance = oka?.DefaultDistanceMeters ?? 10;
-        var okaDamping = oka?.DefaultDampingDb ?? 0;
+        // Use per-configuration OKA values (already set from OKA defaults when selected in editor)
 
         _connection.Execute(@"
             INSERT INTO Configurations (
@@ -274,8 +271,8 @@ public class ProjectRepository
                 ModulationId = modulationId,
                 config.ActivityFactor,
                 OkaId = okaId,
-                OkaDistanceMeters = okaDistance,
-                OkaBuildingDampingDb = okaDamping,
+                config.OkaDistanceMeters,
+                config.OkaBuildingDampingDb,
             },
             transaction);
     }
@@ -330,7 +327,9 @@ public class ProjectRepository
             Modulation = modulation?.Name ?? "CW",
             ActivityFactor = row.ActivityFactor,
             OkaId = row.OkaId,
-            OkaName = oka?.Name ?? ""
+            OkaName = oka?.Name ?? "",
+            OkaDistanceMeters = row.OkaDistanceMeters,
+            OkaBuildingDampingDb = row.OkaBuildingDampingDb
         };
     }
 

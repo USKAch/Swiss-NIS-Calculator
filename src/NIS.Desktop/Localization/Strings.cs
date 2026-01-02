@@ -240,7 +240,7 @@ public class Strings : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcGroundReflection)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcFieldStrength)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcLimit)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcMinSafetyDistance)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcMinSafeDistance)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcOkaDistance)));
 
         // Column Explanations
@@ -565,7 +565,7 @@ public class Strings : INotifyPropertyChanged
     public string CalcGroundReflection => Get("CalcGroundReflection");
     public string CalcFieldStrength => Get("CalcFieldStrength");
     public string CalcLimit => Get("CalcLimit");
-    public string CalcMinSafetyDistance => Get("CalcMinSafetyDistance");
+    public string CalcMinSafeDistance => Get("CalcMinSafeDistance");
     public string CalcOkaDistance => Get("CalcOkaDistance");
 
     // Column Explanations
@@ -635,10 +635,28 @@ public class Strings : INotifyPropertyChanged
     public string ProjectImportExportDesc => Get("ProjectImportExportDesc");
     public string ExportSuccess => Get("ExportSuccess");
     public string ExportFailed => Get("ExportFailed");
+    public string StatusReady => Get("StatusReady");
+    public string CannotExportNoProject => Get("CannotExportNoProject");
+    public string ExportedToFile => Get("ExportedToFile");
+    public string PdfExportError => Get("PdfExportError");
+    public string ExportMarkdownTitle => Get("ExportMarkdownTitle");
+    public string ExportPdfTitle => Get("ExportPdfTitle");
     public string ImportSuccess => Get("ImportSuccess");
     public string ImportFailed => Get("ImportFailed");
     public string ImportWarning => Get("ImportWarning");
     public string MissingMasterData => Get("MissingMasterData");
+    public string ConfirmImport => Get("ConfirmImport");
+    public string ReplaceMasterDataConfirm => Get("ReplaceMasterDataConfirm");
+    public string ExportComplete => Get("ExportComplete");
+    public string ImportComplete => Get("ImportComplete");
+    public string FactoryDataExportedTo => Get("FactoryDataExportedTo");
+    public string FactoryDataImportedFrom => Get("FactoryDataImportedFrom");
+    public string OperationFailed => Get("OperationFailed");
+    public string Export => Get("Export");
+    public string Import => Get("Import");
+    public string FailedToOpenDataFolder => Get("FailedToOpenDataFolder");
+    public string DatabaseResetRequired => Get("DatabaseResetRequired");
+    public string DatabaseResetMessage => Get("DatabaseResetMessage");
     public string ImportUserData => Get("ImportUserData");
     public string ExportUserData => Get("ExportUserData");
     public string ImportConfirmMessage => Get("ImportConfirmMessage");
@@ -1084,6 +1102,12 @@ public class Strings : INotifyPropertyChanged
         ["ImportConfirmMessage"] = new() { ["de"] = "Dies löscht alle bestehenden Daten und ersetzt sie durch das Backup. Fortfahren?", ["fr"] = "Cela supprime toutes les données existantes et les remplace par la sauvegarde. Continuer?", ["it"] = "Questo elimina tutti i dati esistenti e li sostituisce con il backup. Continuare?", ["en"] = "This deletes all existing data and replaces it with the backup. Continue?" },
         ["ExportSuccess"] = new() { ["de"] = "Export erfolgreich", ["fr"] = "Export réussi", ["it"] = "Esportazione riuscita", ["en"] = "Export successful" },
         ["ExportFailed"] = new() { ["de"] = "Export fehlgeschlagen", ["fr"] = "Échec de l'export", ["it"] = "Esportazione fallita", ["en"] = "Export failed" },
+        ["StatusReady"] = new() { ["de"] = "Bereit", ["fr"] = "Prêt", ["it"] = "Pronto", ["en"] = "Ready" },
+        ["CannotExportNoProject"] = new() { ["de"] = "Export nicht möglich. Bitte speichern Sie zuerst das Projekt.", ["fr"] = "Export impossible. Veuillez d'abord enregistrer le projet.", ["it"] = "Impossibile esportare. Salvare prima il progetto.", ["en"] = "Cannot export. Please save the project first." },
+        ["ExportedToFile"] = new() { ["de"] = "Exportiert nach {0}", ["fr"] = "Exporté vers {0}", ["it"] = "Esportato in {0}", ["en"] = "Exported to {0}" },
+        ["PdfExportError"] = new() { ["de"] = "PDF-Export fehlgeschlagen: {0}", ["fr"] = "Échec de l'export PDF: {0}", ["it"] = "Esportazione PDF fallita: {0}", ["en"] = "PDF export failed: {0}" },
+        ["ExportMarkdownTitle"] = new() { ["de"] = "Ergebnisse als Markdown exportieren", ["fr"] = "Exporter les résultats en Markdown", ["it"] = "Esporta risultati come Markdown", ["en"] = "Export Results as Markdown" },
+        ["ExportPdfTitle"] = new() { ["de"] = "Ergebnisse als PDF exportieren", ["fr"] = "Exporter les résultats en PDF", ["it"] = "Esporta risultati come PDF", ["en"] = "Export Results as PDF" },
         ["ImportSuccess"] = new() { ["de"] = "Import erfolgreich", ["fr"] = "Import réussi", ["it"] = "Importazione riuscita", ["en"] = "Import successful" },
         ["ImportFailed"] = new() { ["de"] = "Import fehlgeschlagen", ["fr"] = "Échec de l'import", ["it"] = "Importazione fallita", ["en"] = "Import failed" },
         ["ImportWarning"] = new() { ["de"] = "Import-Warnung", ["fr"] = "Avertissement d'import", ["it"] = "Avviso di importazione", ["en"] = "Import Warning" },
@@ -1097,6 +1121,19 @@ public class Strings : INotifyPropertyChanged
         ["ExportFactoryDataDesc"] = new() { ["de"] = "Exportiert alle Projekte, OKAs und Stammdaten (Factory)", ["fr"] = "Exporte tous les projets, LSMs et données de base (usine)", ["it"] = "Esporta tutti i progetti, LST e dati master (fabbrica)", ["en"] = "Export all projects, PSSs, and master data (factory)" },
         ["ImportFactoryConfirmMessage"] = new() { ["de"] = "Dies löscht alle bestehenden Daten und ersetzt sie durch die Werksdaten. Fortfahren?", ["fr"] = "Cela supprime toutes les données existantes et les remplace par les données usine. Continuer?", ["it"] = "Questo elimina tutti i dati esistenti e li sostituisce con i dati di fabbrica. Continuare?", ["en"] = "This deletes all existing data and replaces it with factory data. Continue?" },
         ["ImportProjectConfirmMessage"] = new() { ["de"] = "Ein neues Projekt wird importiert. Fortfahren?", ["fr"] = "Un nouveau projet sera importé. Continuer?", ["it"] = "Verrà importato un nuovo progetto. Continuare?", ["en"] = "A new project will be imported. Continue?" },
+        ["ConfirmImport"] = new() { ["de"] = "Import bestätigen", ["fr"] = "Confirmer l'import", ["it"] = "Conferma importazione", ["en"] = "Confirm Import" },
+        ["ReplaceMasterDataConfirm"] = new() { ["de"] = "Dies ersetzt ALLE bestehenden Stammdaten. Fortfahren?", ["fr"] = "Cela remplacera TOUTES les données de base existantes. Continuer?", ["it"] = "Questo sostituirà TUTTI i dati master esistenti. Continuare?", ["en"] = "This will replace ALL existing master data. Continue?" },
+        ["ExportComplete"] = new() { ["de"] = "Export abgeschlossen", ["fr"] = "Export terminé", ["it"] = "Esportazione completata", ["en"] = "Export Complete" },
+        ["ImportComplete"] = new() { ["de"] = "Import abgeschlossen", ["fr"] = "Import terminé", ["it"] = "Importazione completata", ["en"] = "Import Complete" },
+        ["FactoryDataExportedTo"] = new() { ["de"] = "Werksdaten exportiert nach:\n{0}", ["fr"] = "Données usine exportées vers:\n{0}", ["it"] = "Dati di fabbrica esportati in:\n{0}", ["en"] = "Factory data exported to:\n{0}" },
+        ["FactoryDataImportedFrom"] = new() { ["de"] = "Werksdaten importiert von:\n{0}", ["fr"] = "Données usine importées depuis:\n{0}", ["it"] = "Dati di fabbrica importati da:\n{0}", ["en"] = "Factory data imported from:\n{0}" },
+        ["OperationFailed"] = new() { ["de"] = "{0} fehlgeschlagen: {1}", ["fr"] = "{0} a échoué: {1}", ["it"] = "{0} fallito: {1}", ["en"] = "{0} failed: {1}" },
+        ["Error"] = new() { ["de"] = "Fehler", ["fr"] = "Erreur", ["it"] = "Errore", ["en"] = "Error" },
+        ["Export"] = new() { ["de"] = "Export", ["fr"] = "Export", ["it"] = "Esportazione", ["en"] = "Export" },
+        ["Import"] = new() { ["de"] = "Import", ["fr"] = "Import", ["it"] = "Importazione", ["en"] = "Import" },
+        ["FailedToOpenDataFolder"] = new() { ["de"] = "Datenordner konnte nicht geöffnet werden: {0}", ["fr"] = "Impossible d'ouvrir le dossier de données: {0}", ["it"] = "Impossibile aprire la cartella dati: {0}", ["en"] = "Failed to open data folder: {0}" },
+        ["DatabaseResetRequired"] = new() { ["de"] = "Datenbank-Reset erforderlich", ["fr"] = "Réinitialisation de la base de données requise", ["it"] = "Reset del database richiesto", ["en"] = "Database Reset Required" },
+        ["DatabaseResetMessage"] = new() { ["de"] = "Das Datenbankschema ist inkompatibel und muss zurückgesetzt werden.\n\nACHTUNG: Alle Projekte und Konfigurationen werden gelöscht!\n\nKlicken Sie Ja zum Zurücksetzen oder Nein zum Beenden.", ["fr"] = "Le schéma de la base de données est incompatible et doit être réinitialisé.\n\nATTENTION: Tous les projets et configurations seront supprimés!\n\nCliquez Oui pour réinitialiser ou Non pour quitter.", ["it"] = "Lo schema del database è incompatibile e deve essere reimpostato.\n\nATTENZIONE: Tutti i progetti e le configurazioni verranno eliminati!\n\nClicca Sì per reimpostare o No per uscire.", ["en"] = "The database schema is incompatible and needs to be reset.\n\nWARNING: All projects and configurations will be deleted!\n\nClick Yes to reset the database, or No to exit the application." },
         ["OpenDataFolder"] = new() { ["de"] = "Datenordner öffnen", ["fr"] = "Ouvrir dossier données", ["it"] = "Apri cartella dati", ["en"] = "Open Data Folder" },
         ["DataFolder"] = new() { ["de"] = "Datenordner", ["fr"] = "Dossier données", ["it"] = "Cartella dati", ["en"] = "Data Folder" },
         ["DataFolderDesc"] = new() { ["de"] = "Öffnet den Datenordner mit der Datenbank (nisdata.db) für Git-Commits", ["fr"] = "Ouvre le dossier de données avec la base de données (nisdata.db) pour les commits Git", ["it"] = "Apre la cartella dati con il database (nisdata.db) per i commit Git", ["en"] = "Opens the data folder containing the database (nisdata.db) for Git commits" },
@@ -1158,7 +1195,7 @@ public class Strings : INotifyPropertyChanged
         ["CalcGroundReflection"] = new() { ["de"] = "Bodenreflexionsfaktor", ["fr"] = "Facteur réflexion sol", ["it"] = "Fattore riflessione suolo", ["en"] = "Ground reflection factor" },
         ["CalcFieldStrength"] = new() { ["de"] = "Feldstärke am OKA", ["fr"] = "Champ au LSM", ["it"] = "Campo al LSBD", ["en"] = "Field strength at OKA" },
         ["CalcLimit"] = new() { ["de"] = "Grenzwert", ["fr"] = "Limite", ["it"] = "Limite", ["en"] = "Limit" },
-        ["CalcMinSafetyDistance"] = new() { ["de"] = "Min. Sicherheitsabstand", ["fr"] = "Dist. sécurité min.", ["it"] = "Dist. sicurezza min.", ["en"] = "Min. safety distance" },
+        ["CalcMinSafeDistance"] = new() { ["de"] = "Min. Sicherheitsabstand", ["fr"] = "Dist. sécurité min.", ["it"] = "Dist. sicurezza min.", ["en"] = "Min. safe distance" },
         ["CalcOkaDistance"] = new() { ["de"] = "OKA Abstand", ["fr"] = "Distance LSM", ["it"] = "Distanza LSBD", ["en"] = "OKA distance" },
 
         // Column Explanations
@@ -1184,7 +1221,7 @@ public class Strings : INotifyPropertyChanged
         ["CalcExplainKr"] = new() { ["de"] = "Bodenreflexionsfaktor (1.6 gemäss NISV Anhang 2)", ["fr"] = "Facteur de réflexion au sol (1.6 selon ORNI Annexe 2)", ["it"] = "Fattore di riflessione al suolo (1.6 secondo ORNI Allegato 2)", ["en"] = "Ground reflection factor (1.6 per NISV Annex 2)" },
         ["CalcExplainE"] = new() { ["de"] = "Berechnete Feldstärke am OKA in V/m", ["fr"] = "Intensité de champ calculée au LSM en V/m", ["it"] = "Intensità di campo calcolata al LSBD in V/m", ["en"] = "Calculated field strength at OKA in V/m" },
         ["CalcExplainEigw"] = new() { ["de"] = "Immissions-Grenzwert gemäss NISV in V/m", ["fr"] = "Valeur limite d'immission selon ORNI en V/m", ["it"] = "Valore limite di immissione secondo ORNI in V/m", ["en"] = "Emission limit per NISV in V/m" },
-        ["CalcExplainDs"] = new() { ["de"] = "Minimaler Sicherheitsabstand (Konformität wenn d > ds)", ["fr"] = "Distance de sécurité minimale (conforme si d > ds)", ["it"] = "Distanza di sicurezza minima (conforme se d > ds)", ["en"] = "Minimum safety distance (compliant if d > ds)" },
+        ["CalcExplainDs"] = new() { ["de"] = "Minimaler Sicherheitsabstand (Konformität wenn d > ds)", ["fr"] = "Distance de sécurité minimale (conforme si d > ds)", ["it"] = "Distanza di sicurezza minima (conforme se d > ds)", ["en"] = "Minimum safe distance (compliant if d > ds)" },
         ["CalcExplainOkaDistance"] = new() { ["de"] = "Tatsächlicher Abstand vom OKA zur Antenne in Metern", ["fr"] = "Distance réelle du LSM à l'antenne en mètres", ["it"] = "Distanza effettiva dal LSBD all'antenna in metri", ["en"] = "Actual distance from OKA to antenna in meters" },
     };
 }

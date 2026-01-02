@@ -255,7 +255,7 @@ public class PdfReportGenerator
                     AddDataRow(table, s.CalcGroundReflection, "kr", "-", result.BandResults, b => b.GroundReflectionFactor, "F2", false);
                     AddDataRow(table, s.CalcFieldStrength, "E'", "V/m", result.BandResults, b => b.FieldStrength, "F2", true);
                     AddDataRow(table, s.CalcLimit, "EIGW", "V/m", result.BandResults, b => b.Limit, "F1", true);
-                    AddDataRow(table, s.CalcMinSafetyDistance, "ds", "m", result.BandResults, b => b.SafetyDistance, "F2", true);
+                    AddDataRow(table, s.CalcMinSafeDistance, "ds", "m", result.BandResults, b => b.SafetyDistance, "F2", true);
                     AddDataRow(table, s.CalcOkaDistance, "d(OKA)", "m", result.BandResults, _ => result.OkaDistance, "F1", true);
                 });
 

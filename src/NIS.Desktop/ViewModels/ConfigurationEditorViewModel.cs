@@ -151,26 +151,34 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
     private Modulation? _selectedModulation;
 
     // OKA (single evaluation point per configuration)
-    // Distance and damping come from the OKA master data
     [ObservableProperty]
     private Oka? _selectedOka;
 
     /// <summary>
-    /// OKA distance from master data (read-only).
+    /// Distance to evaluation point in meters. Editable per configuration.
     /// </summary>
-    public double OkaDistanceMeters => SelectedOka?.DefaultDistanceMeters ?? 0;
+    [ObservableProperty]
+    private double _okaDistanceMeters = 10;
 
     /// <summary>
-    /// OKA building damping from master data (read-only).
+    /// Building damping in dB. Editable per configuration.
     /// </summary>
-    public double OkaBuildingDampingDb => SelectedOka?.DefaultDampingDb ?? 0;
+    [ObservableProperty]
+    private double _okaBuildingDampingDb;
 
     partial void OnSelectedOkaChanged(Oka? value)
     {
-        OnPropertyChanged(nameof(OkaDistanceMeters));
-        OnPropertyChanged(nameof(OkaBuildingDampingDb));
+        // Initialize from OKA defaults when selected
+        if (value != null)
+        {
+            OkaDistanceMeters = value.DefaultDistanceMeters;
+            OkaBuildingDampingDb = value.DefaultDampingDb;
+        }
         MarkDirty();
     }
+
+    partial void OnOkaDistanceMetersChanged(double value) => MarkDirty();
+    partial void OnOkaBuildingDampingDbChanged(double value) => MarkDirty();
 
     partial void OnSelectedAntennaChanged(Antenna? value) => MarkDirty();
     partial void OnSelectedRadioChanged(Radio? value)
@@ -264,10 +272,14 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
             ? Modulations.FirstOrDefault(m => m.Id == config.ModulationId.Value)
             : null;
 
-        // OKA
+        // OKA - select first, then restore per-configuration values
+        // (selecting OKA initializes from defaults, but we want loaded values)
         SelectedOka = config.OkaId.HasValue
             ? Okas.FirstOrDefault(o => o.Id == config.OkaId.Value)
             : null;
+        // Override with saved per-configuration values
+        OkaDistanceMeters = config.OkaDistanceMeters;
+        OkaBuildingDampingDb = config.OkaBuildingDampingDb;
     }
 
     /// <summary>
@@ -315,9 +327,11 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
             ModulationId = SelectedModulation?.Id,
             Modulation = SelectedModulation?.Name ?? "CW",
             ActivityFactor = ActivityFactor,
-            // OKA: ID for reference, name for display
+            // OKA: ID for reference, per-config distance/damping
             OkaId = SelectedOka?.Id,
-            OkaName = SelectedOka?.Name ?? string.Empty
+            OkaName = SelectedOka?.Name ?? string.Empty,
+            OkaDistanceMeters = OkaDistanceMeters,
+            OkaBuildingDampingDb = OkaBuildingDampingDb
         };
     }
 

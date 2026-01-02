@@ -463,7 +463,7 @@ public partial class MasterDataManagerViewModel : ViewModelBase
                 return;
             }
 
-            DatabaseService.Instance.DeleteOka(SelectedOka.Name);
+            DatabaseService.Instance.DeleteOka(SelectedOka.Id);
             AllOkas.Remove(SelectedOka);
             FilteredOkas.Remove(SelectedOka);
             SelectedOka = null;
@@ -487,7 +487,7 @@ public partial class MasterDataManagerViewModel : ViewModelBase
     private void DeleteModulation()
     {
         if (!IsAdminMode || SelectedModulation == null) return;
-        DatabaseService.Instance.DeleteModulation(SelectedModulation.Name);
+        DatabaseService.Instance.DeleteModulation(SelectedModulation.Id);
         Modulations.Remove(SelectedModulation);
         SelectedModulation = null;
     }
@@ -568,8 +568,8 @@ public partial class MasterDataManagerViewModel : ViewModelBase
             DatabaseService.Instance.ExportFactoryData(filePath);
             await MessageBoxManager
                 .GetMessageBoxStandard(
-                    "Export Complete",
-                    $"Factory data exported to:\n{filePath}",
+                    Strings.Instance.ExportComplete,
+                    string.Format(Strings.Instance.FactoryDataExportedTo, filePath),
                     ButtonEnum.Ok, Icon.Success)
                 .ShowAsync();
         }
@@ -577,8 +577,8 @@ public partial class MasterDataManagerViewModel : ViewModelBase
         {
             await MessageBoxManager
                 .GetMessageBoxStandard(
-                    "Export Failed",
-                    $"Export failed: {ex.Message}",
+                    Strings.Instance.ExportFailed,
+                    string.Format(Strings.Instance.OperationFailed, Strings.Instance.Export, ex.Message),
                     ButtonEnum.Ok, Icon.Error)
                 .ShowAsync();
         }
@@ -595,8 +595,8 @@ public partial class MasterDataManagerViewModel : ViewModelBase
         // Confirm replacement
         var confirm = await MessageBoxManager
             .GetMessageBoxStandard(
-                "Confirm Import",
-                "This will replace ALL existing master data. Continue?",
+                Strings.Instance.ConfirmImport,
+                Strings.Instance.ReplaceMasterDataConfirm,
                 ButtonEnum.YesNo, Icon.Warning)
             .ShowAsync();
 
@@ -626,8 +626,8 @@ public partial class MasterDataManagerViewModel : ViewModelBase
 
             await MessageBoxManager
                 .GetMessageBoxStandard(
-                    "Import Complete",
-                    $"Factory data imported from:\n{filePath}",
+                    Strings.Instance.ImportComplete,
+                    string.Format(Strings.Instance.FactoryDataImportedFrom, filePath),
                     ButtonEnum.Ok, Icon.Success)
                 .ShowAsync();
         }
@@ -635,8 +635,8 @@ public partial class MasterDataManagerViewModel : ViewModelBase
         {
             await MessageBoxManager
                 .GetMessageBoxStandard(
-                    "Import Failed",
-                    $"Import failed: {ex.Message}",
+                    Strings.Instance.ImportFailed,
+                    string.Format(Strings.Instance.OperationFailed, Strings.Instance.Import, ex.Message),
                     ButtonEnum.Ok, Icon.Error)
                 .ShowAsync();
         }
@@ -663,8 +663,8 @@ public partial class MasterDataManagerViewModel : ViewModelBase
         {
             MessageBoxManager
                 .GetMessageBoxStandard(
-                    "Error",
-                    $"Failed to open data folder: {ex.Message}",
+                    Strings.Instance.Error,
+                    string.Format(Strings.Instance.FailedToOpenDataFolder, ex.Message),
                     ButtonEnum.Ok, Icon.Error)
                 .ShowAsync();
         }
