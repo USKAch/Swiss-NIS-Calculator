@@ -24,6 +24,7 @@ Swiss NIS Calculator is a modern desktop application for calculating electromagn
 - **Swiss Limit Compliance** - Automatic verification against NISV limits
 - **Master Data Management** - Full editors for antennas, cables, and radios
 - **Project-Based Workflow** - Save and load station configurations
+- **PDF Export** - One page per configuration with column explanations
 - **Multi-Language Support** - German, French, Italian, English
 
 ## Screenshots

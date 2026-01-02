@@ -454,10 +454,18 @@ A short explanation section follows the table and describes each column label in
 
 ### 5.3 PDF Report
 
-PDF export contains:
-- Project header (project name, operator, address, location)
-- Per-configuration summary and per-band calculation table
-- Date and signature lines
+PDF export structure (one page per configuration):
+
+**Configuration Pages (1 per config)**:
+- Compact project header (operator, callsign, address, location in 2 rows)
+- Configuration summary (antenna, radio, cable, OKA, modulation)
+- Per-band calculation table with all parameters
+- Compliance status indicator
+- Disclaimer
+
+**Last Page - Column Explanations**:
+- Symbol + description table for all calculation parameters
+- Disclaimer
 
 **File naming**: `{ProjectName}_YYYYMMDD.pdf`
 

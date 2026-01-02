@@ -20,40 +20,47 @@ public class PdfReportGenerator
 
     public void GenerateReport(Project project, List<ConfigurationResult> results, string filePath)
     {
-        var document = Document.Create(container =>
-        {
-            container.Page(page =>
-            {
-                page.Size(PageSizes.A4);
-                page.Margin(2, Unit.Centimetre);
-                page.DefaultTextStyle(x => x.FontSize(10));
-
-                page.Header().Element(c => ComposeHeader(c, project));
-                page.Content().Element(c => ComposeContent(c, project, results));
-                page.Footer().Element(ComposeFooter);
-            });
-        });
-
+        var document = CreateDocument(project, results);
         document.GeneratePdf(filePath);
     }
 
     public byte[] GenerateReportBytes(Project project, List<ConfigurationResult> results)
     {
-        var document = Document.Create(container =>
+        var document = CreateDocument(project, results);
+        return document.GeneratePdf();
+    }
+
+    private Document CreateDocument(Project project, List<ConfigurationResult> results)
+    {
+        return Document.Create(container =>
         {
+            // One page per configuration
+            foreach (var result in results)
+            {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4);
+                    page.Margin(1.5f, Unit.Centimetre);
+                    page.DefaultTextStyle(x => x.FontSize(10));
+
+                    page.Header().Element(c => ComposeHeader(c, project));
+                    page.Content().Element(c => ComposeConfigurationPage(c, project, result));
+                    page.Footer().Element(ComposeFooter);
+                });
+            }
+
+            // Last page: Explanations
             container.Page(page =>
             {
                 page.Size(PageSizes.A4);
-                page.Margin(2, Unit.Centimetre);
+                page.Margin(1.5f, Unit.Centimetre);
                 page.DefaultTextStyle(x => x.FontSize(10));
 
                 page.Header().Element(c => ComposeHeader(c, project));
-                page.Content().Element(c => ComposeContent(c, project, results));
+                page.Content().Element(ComposeExplanationsPage);
                 page.Footer().Element(ComposeFooter);
             });
         });
-
-        return document.GeneratePdf();
     }
 
     private void ComposeHeader(IContainer container, Project project)
@@ -75,68 +82,71 @@ public class PdfReportGenerator
         });
     }
 
-    private void ComposeContent(IContainer container, Project project, List<ConfigurationResult> results)
+    private void ComposeConfigurationPage(IContainer container, Project project, ConfigurationResult result)
     {
         var s = Strings.Instance;
-        container.PaddingVertical(10).Column(column =>
+        container.PaddingVertical(5).Column(column =>
         {
-            column.Spacing(12);
+            column.Spacing(8);
 
-            // Project Information
-            column.Item().Element(c => ComposeSection(c, s.CalcProjectInfo, section =>
+            // Project Information (compact)
+            column.Item().Table(table =>
             {
-                section.Item().Table(table =>
+                table.ColumnsDefinition(columns =>
                 {
-                    table.ColumnsDefinition(columns =>
-                    {
-                        columns.RelativeColumn(1);
-                        columns.RelativeColumn(2);
-                    });
-
-                    if (!string.IsNullOrEmpty(project.Operator))
-                        AddInfoRow(table, s.CalcOperator, project.Operator);
-                    if (!string.IsNullOrEmpty(project.Callsign))
-                        AddInfoRow(table, s.CalcCallsign, project.Callsign);
-                    if (!string.IsNullOrEmpty(project.Address))
-                        AddInfoRow(table, s.CalcAddress, project.Address);
-                    if (!string.IsNullOrEmpty(project.Location))
-                        AddInfoRow(table, s.CalcLocation, project.Location);
+                    columns.RelativeColumn(1);
+                    columns.RelativeColumn(2);
+                    columns.RelativeColumn(1);
+                    columns.RelativeColumn(2);
                 });
-            }));
 
-            // Overall Compliance Summary
-            var allCompliant = results.TrueForAll(r => r.IsCompliant);
-            column.Item().Element(c => ComposeComplianceSummary(c, allCompliant, results.Count));
+                // Row 1: Operator + Callsign
+                if (!string.IsNullOrEmpty(project.Operator))
+                {
+                    table.Cell().Padding(2).Text(s.CalcOperator + ":").FontSize(9).Bold();
+                    table.Cell().Padding(2).Text(project.Operator).FontSize(9);
+                }
+                else
+                {
+                    table.Cell(); table.Cell();
+                }
+                if (!string.IsNullOrEmpty(project.Callsign))
+                {
+                    table.Cell().Padding(2).Text(s.CalcCallsign + ":").FontSize(9).Bold();
+                    table.Cell().Padding(2).Text(project.Callsign).FontSize(9);
+                }
+                else
+                {
+                    table.Cell(); table.Cell();
+                }
 
-            // Configuration Results
-            foreach (var result in results)
-            {
-                column.Item().Element(c => ComposeConfigurationResult(c, result));
-            }
+                // Row 2: Address + Location
+                if (!string.IsNullOrEmpty(project.Address))
+                {
+                    table.Cell().Padding(2).Text(s.CalcAddress + ":").FontSize(9).Bold();
+                    table.Cell().Padding(2).Text(project.Address).FontSize(9);
+                }
+                else
+                {
+                    table.Cell(); table.Cell();
+                }
+                if (!string.IsNullOrEmpty(project.Location))
+                {
+                    table.Cell().Padding(2).Text(s.CalcLocation + ":").FontSize(9).Bold();
+                    table.Cell().Padding(2).Text(project.Location).FontSize(9);
+                }
+                else
+                {
+                    table.Cell(); table.Cell();
+                }
+            });
 
-            // Disclaimer
-            column.Item().PaddingTop(15).Text(s.CalcDisclaimer)
-                .FontSize(8).FontColor(Colors.Grey.Medium).Italic();
-        });
-    }
+            // Configuration content
+            column.Item().Element(c => ComposeConfigurationResult(c, result));
 
-    private void ComposeComplianceSummary(IContainer container, bool allCompliant, int configCount)
-    {
-        var s = Strings.Instance;
-        var bgColor = allCompliant ? Colors.Green.Lighten4 : Colors.Red.Lighten4;
-        var textColor = allCompliant ? Colors.Green.Darken2 : Colors.Red.Darken2;
-
-        container.Background(bgColor).Padding(12).Column(column =>
-        {
-            column.Item().AlignCenter().Text(s.CalcComplianceSummary)
-                .FontSize(11).Bold().FontColor(textColor);
-
-            column.Item().AlignCenter().PaddingVertical(8)
-                .Text(allCompliant ? s.CalcAllCompliant : s.CalcNonCompliantDetected)
-                .FontSize(14).Bold().FontColor(textColor);
-
-            column.Item().AlignCenter().Text(string.Format(s.CalcConfigsAnalyzed, configCount))
-                .FontSize(10).FontColor(textColor);
+            // Disclaimer at bottom
+            column.Item().PaddingTop(10).Text(s.CalcDisclaimer)
+                .FontSize(7).FontColor(Colors.Grey.Medium).Italic();
         });
     }
 
@@ -293,6 +303,67 @@ public class PdfReportGenerator
     {
         table.Cell().Padding(2).Text(label + ":").FontSize(9).Bold();
         table.Cell().Padding(2).Text(value).FontSize(9);
+    }
+
+    private void ComposeExplanationsPage(IContainer container)
+    {
+        var s = Strings.Instance;
+        container.PaddingVertical(5).Column(column =>
+        {
+            column.Spacing(4);
+
+            // Title
+            column.Item().Text(s.CalcColumnExplanations.Replace("## ", ""))
+                .FontSize(14).Bold().FontColor(Colors.Blue.Medium);
+
+            column.Item().PaddingTop(8).Table(table =>
+            {
+                table.ColumnsDefinition(columns =>
+                {
+                    columns.ConstantColumn(60);  // Symbol
+                    columns.RelativeColumn();    // Explanation
+                });
+
+                var explanations = new (string symbol, string explanation)[]
+                {
+                    ("f", s.CalcExplainF),
+                    ("d", s.CalcExplainD),
+                    ("P", s.CalcExplainP),
+                    ("AF", s.CalcExplainAF),
+                    ("MF", s.CalcExplainMF),
+                    ("Pm", s.CalcExplainPm),
+                    ("a1", s.CalcExplainA1),
+                    ("a2", s.CalcExplainA2),
+                    ("a", s.CalcExplainA),
+                    ("A", s.CalcExplainAFactor),
+                    ("g1", s.CalcExplainG1),
+                    ("g2", s.CalcExplainG2),
+                    ("g", s.CalcExplainG),
+                    ("G", s.CalcExplainGFactor),
+                    ("Ps", s.CalcExplainPs),
+                    ("P's", s.CalcExplainPsPrime),
+                    ("ag", s.CalcExplainAg),
+                    ("AG", s.CalcExplainAG),
+                    ("kr", s.CalcExplainKr),
+                    ("E'", s.CalcExplainE),
+                    ("EIGW", s.CalcExplainEigw),
+                    ("ds", s.CalcExplainDs),
+                    ("d(OKA)", s.CalcExplainOkaDistance),
+                };
+
+                foreach (var (symbol, explanation) in explanations)
+                {
+                    table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(3)
+                        .Text(symbol).FontSize(9).Bold();
+                    table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(3)
+                        .Text(explanation).FontSize(9);
+                }
+            });
+
+            // Disclaimer at bottom
+            column.Item().PaddingTop(15).Text(s.CalcDisclaimer)
+                .FontSize(7).FontColor(Colors.Grey.Medium).Italic();
+        });
     }
 
     private void ComposeFooter(IContainer container)
