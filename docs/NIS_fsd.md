@@ -1125,11 +1125,10 @@ Triggered by:
 | Job | Platforms | Description |
 |-----|-----------|-------------|
 | build | Windows, macOS, Linux | Restore, build, test, publish as single-file self-contained executable |
-| sign-windows | Windows | Signs the Windows executable with SignPath (tags only) |
 | release | - | Creates GitHub Release with platform archives (tags only) |
 
 **Artifacts produced:**
-- `SwissNISCalculator-Windows.zip` (signed)
+- `SwissNISCalculator-Windows.zip`
 - `SwissNISCalculator-macOS.zip`
 - `SwissNISCalculator-Linux.tar.gz`
 

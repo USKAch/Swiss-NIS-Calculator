@@ -50,9 +50,9 @@ jobs:
         name: ${{ matrix.artifact }}
         path: publish/
 
-  sign-windows:
+  release:
     needs: build
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
 
     steps:
@@ -60,36 +60,6 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: SwissNISCalculator-Windows
-        path: unsigned
-
-    - name: Sign with SignPath
-      uses: signpath/github-action-submit-signing-request@v1
-      with:
-        api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
-        organization-id: '${{ secrets.SIGNPATH_ORGANIZATION_ID }}'
-        project-slug: 'swiss-nis-calculator'
-        signing-policy-slug: 'release-signing'
-        artifact-configuration-slug: 'windows-exe'
-        github-artifact-id: 'SwissNISCalculator-Windows'
-        wait-for-completion: true
-        output-artifact-directory: signed
-
-    - name: Upload signed artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: SwissNISCalculator-Windows-Signed
-        path: signed/
-
-  release:
-    needs: [build, sign-windows]
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
-
-    steps:
-    - name: Download signed Windows artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: SwissNISCalculator-Windows-Signed
         path: windows
 
     - name: Download macOS artifact
