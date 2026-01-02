@@ -14,55 +14,59 @@ namespace NIS.Desktop.ViewModels;
 
 /// <summary>
 /// Wrapper for displaying antenna configuration with index and computed properties.
+/// All lookups use pre-computed dictionaries for performance.
 /// </summary>
 public class ConfigurationDisplayItem
 {
     public int Index { get; }
     public AntennaConfiguration Configuration { get; }
-    public IEnumerable<Antenna> ProjectAntennas { get; }
 
-    public ConfigurationDisplayItem(int index, AntennaConfiguration config, IEnumerable<Antenna> projectAntennas)
+    // Pre-computed display values
+    public string NumberDisplay { get; }
+    public string AntennaDisplay { get; }
+    public string FrequencyDisplay { get; }
+    public string HeightDisplay { get; }
+    public string CableDisplay { get; }
+    public string PowerDisplay { get; }
+    public string OkaNameDisplay { get; }
+    public string OkaDistanceDisplay { get; }
+
+    public ConfigurationDisplayItem(
+        int index,
+        AntennaConfiguration config,
+        IReadOnlyDictionary<int, Antenna> antennaLookup,
+        IReadOnlyDictionary<int, Oka> okaLookup)
     {
         Index = index;
         Configuration = config;
-        ProjectAntennas = projectAntennas;
+
+        // Pre-compute all display values
+        NumberDisplay = $"{index}.";
+        AntennaDisplay = config.Antenna.DisplayName;
+        HeightDisplay = $"{config.Antenna.HeightMeters}m";
+        CableDisplay = config.Cable.Type;
+        OkaNameDisplay = config.OkaName ?? "";
+
+        // Compute power display
+        var effectivePower = (config.Linear != null && config.Linear.PowerWatts > 0)
+            ? config.Linear.PowerWatts
+            : config.PowerWatts;
+        PowerDisplay = $"{effectivePower}W/{config.Modulation}";
+
+        // Compute OKA distance from lookup
+        OkaDistanceDisplay = config.OkaId.HasValue && okaLookup.TryGetValue(config.OkaId.Value, out var oka)
+            ? $"{oka.DefaultDistanceMeters}m"
+            : "";
+
+        // Compute frequency display from antenna bands
+        FrequencyDisplay = ComputeFrequencies(config, antennaLookup);
     }
 
-    public string NumberDisplay => $"{Index}.";
-    public string AntennaDisplay => Configuration.Antenna.DisplayName;
-    public string FrequencyDisplay => GetFrequencies();
-    public string HeightDisplay => $"{Configuration.Antenna.HeightMeters}m";
-    public string CableDisplay => Configuration.Cable.Type;
-    public string PowerDisplay
+    private static string ComputeFrequencies(AntennaConfiguration config, IReadOnlyDictionary<int, Antenna> antennaLookup)
     {
-        get
-        {
-            var effectivePower = (Configuration.Linear != null && Configuration.Linear.PowerWatts > 0)
-                ? Configuration.Linear.PowerWatts
-                : Configuration.PowerWatts;
-            return $"{effectivePower}W/{Configuration.Modulation}";
-        }
-    }
-    public string OkaNameDisplay => Configuration.OkaName ?? "";
-    public string OkaDistanceDisplay
-    {
-        get
-        {
-            if (!Configuration.OkaId.HasValue)
-                return "";
-            var oka = Services.DatabaseService.Instance.GetOkaById(Configuration.OkaId.Value);
-            return oka != null ? $"{oka.DefaultDistanceMeters}m" : "";
-        }
-    }
-
-    private string GetFrequencies()
-    {
-        // Use ID only
-        var antenna = Configuration.AntennaId.HasValue
-            ? ProjectAntennas.FirstOrDefault(a => a.Id == Configuration.AntennaId.Value)
-            : null;
-
-        if (antenna == null || antenna.Bands.Count == 0)
+        if (!config.AntennaId.HasValue || !antennaLookup.TryGetValue(config.AntennaId.Value, out var antenna))
+            return "";
+        if (antenna.Bands.Count == 0)
             return "";
 
         var freqs = antenna.Bands.Select(b => FormatFrequency(b.FrequencyMHz));
@@ -150,18 +154,27 @@ public partial class ProjectOverviewViewModel : ViewModelBase
 
     /// <summary>
     /// Wrapped configurations with index and computed display properties.
+    /// Uses cached lookups for performance.
     /// </summary>
-    public IEnumerable<ConfigurationDisplayItem> ConfigurationItems =>
-        Configurations.Select((c, i) => new ConfigurationDisplayItem(
-            i + 1,
-            c,
-            Services.DatabaseService.Instance.GetAllAntennas()));
+    public IEnumerable<ConfigurationDisplayItem> ConfigurationItems
+    {
+        get
+        {
+            // Cache lookups once per property access
+            var antennaLookup = Services.DatabaseService.Instance.GetAllAntennas()
+                .ToDictionary(a => a.Id);
+            var okaLookup = Services.DatabaseService.Instance.GetAllOkas()
+                .ToDictionary(o => o.Id);
+
+            return Configurations.Select((c, i) => new ConfigurationDisplayItem(
+                i + 1, c, antennaLookup, okaLookup));
+        }
+    }
 
     // State
     public bool HasConfigurations => Configurations.Count > 0;
     public bool CanCalculate => HasConfigurations && Configurations.Any(c =>
-        c.OkaId.HasValue &&
-        Services.DatabaseService.Instance.GetOkaById(c.OkaId.Value) != null);
+        c.OkaId.HasValue && Services.DatabaseService.Instance.GetOkaById(c.OkaId.Value) != null);
 
     // Station info commands
     [RelayCommand]

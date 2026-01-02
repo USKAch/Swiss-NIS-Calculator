@@ -110,6 +110,42 @@ public partial class MainShellViewModel : ViewModelBase
         return Strings.Instance.Project;
     }
 
+    /// <summary>
+    /// Helper to set the current view with breadcrumb and window title.
+    /// </summary>
+    private void SetView(ViewModelBase viewModel, string breadcrumb, string windowTitle)
+    {
+        CurrentView = viewModel;
+        Breadcrumb = breadcrumb;
+        WindowTitle = windowTitle;
+    }
+
+    /// <summary>
+    /// Helper to navigate back to master data manager on a specific tab.
+    /// </summary>
+    private void ReturnToMasterDataManager(int tabIndex)
+    {
+        if (_masterDataManagerViewModel != null)
+        {
+            _masterDataManagerViewModel.SelectedTabIndex = tabIndex;
+            var title = _masterDataManagerViewModel.IsAdminMode
+                ? "Swiss NIS Calculator - Master Data (Admin)"
+                : "Swiss NIS Calculator - Master Data";
+            SetView(_masterDataManagerViewModel, Strings.Instance.MasterData, title);
+        }
+    }
+
+    /// <summary>
+    /// Helper to get master data editor window title.
+    /// </summary>
+    private static string GetEditorTitle(string entityName, object? existing, bool isReadOnly)
+    {
+        if (isReadOnly) return $"Swiss NIS Calculator - View {entityName}";
+        return existing != null
+            ? $"Swiss NIS Calculator - Edit {entityName}"
+            : $"Swiss NIS Calculator - Add {entityName}";
+    }
+
     public void NavigateByTag(string tag)
     {
         switch (tag)
@@ -175,16 +211,13 @@ public partial class MainShellViewModel : ViewModelBase
         _projectListViewModel.NavigateToEditProject = async (id) => await LoadProjectFromDatabaseAsync(id);
         _projectListViewModel.ShowConfirmDialog = ShowConfirmDialog;
         _projectListViewModel.RefreshProjects();
-        CurrentView = _projectListViewModel;
-        Breadcrumb = Strings.Instance.Home;
-        WindowTitle = "Swiss NIS Calculator";
+        SetView(_projectListViewModel, Strings.Instance.Home, "Swiss NIS Calculator");
         HasProject = false;
     }
 
     [RelayCommand]
     public void NavigateToWelcome()
     {
-        var isFirstLoad = _welcomeViewModel == null;
         _welcomeViewModel ??= new WelcomeViewModel();
         _welcomeViewModel.NavigateToProjectInfo = NavigateToProjectInfo;
         _welcomeViewModel.NavigateToProjectOverview = NavigateToProjectOverviewAfterOpen;
@@ -193,15 +226,7 @@ public partial class MainShellViewModel : ViewModelBase
         _welcomeViewModel.ProjectViewModel = ProjectViewModel;
         _welcomeViewModel.ShowConfirmDialog = ShowConfirmDialog;
         _welcomeViewModel.RefreshProjects();
-        CurrentView = _welcomeViewModel;
-        Breadcrumb = Strings.Instance.Home;
-        WindowTitle = "Swiss NIS Calculator";
-
-        // Load last project on first navigation to welcome
-        if (isFirstLoad)
-        {
-            // Database is source of truth, no last project loading
-        }
+        SetView(_welcomeViewModel, Strings.Instance.Home, "Swiss NIS Calculator");
     }
 
     // LoadLastProjectAsync removed - database is source of truth
@@ -212,9 +237,7 @@ public partial class MainShellViewModel : ViewModelBase
         _projectInfoViewModel.NavigateBack = NavigateToProjectList;
         _projectInfoViewModel.NavigateToProjectOverview = NavigateToProjectOverviewAfterCreate;
         _projectInfoViewModel.ShowConfirmDialog = ShowConfirmDialog;
-        CurrentView = _projectInfoViewModel;
-        Breadcrumb = $"{Strings.Instance.Home} > {Strings.Instance.CreateProject}";
-        WindowTitle = "Swiss NIS Calculator";
+        SetView(_projectInfoViewModel, $"{Strings.Instance.Home} > {Strings.Instance.CreateProject}", "Swiss NIS Calculator");
     }
 
     private void NavigateToProjectOverviewAfterCreate(ProjectInfoViewModel vm)
@@ -252,10 +275,8 @@ public partial class MainShellViewModel : ViewModelBase
         _projectOverviewViewModel.NavigateToResults = NavigateToResults;
         _projectOverviewViewModel.NavigateToProjectInfo = NavigateToEditProjectInfo;
         _projectOverviewViewModel.NavigateBack = NavigateToProjectList;
-        CurrentView = _projectOverviewViewModel;
         var projectName = GetProjectDisplayName();
-        Breadcrumb = $"{Strings.Instance.Project} > {projectName}";
-        WindowTitle = $"Swiss NIS Calculator - {projectName}";
+        SetView(_projectOverviewViewModel, $"{Strings.Instance.Project} > {projectName}", $"Swiss NIS Calculator - {projectName}");
     }
 
     private void NavigateToEditProjectInfo()
@@ -282,10 +303,8 @@ public partial class MainShellViewModel : ViewModelBase
             ProjectViewModel.MarkDirty();
             NavigateToProjectOverview();
         };
-        CurrentView = _projectInfoViewModel;
         var projectName = GetProjectDisplayName();
-        Breadcrumb = $"{Strings.Instance.Project} > {projectName} > {Strings.Instance.ProjectInfo}";
-        WindowTitle = $"Swiss NIS Calculator - {projectName}";
+        SetView(_projectInfoViewModel, $"{Strings.Instance.Project} > {projectName} > {Strings.Instance.ProjectInfo}", $"Swiss NIS Calculator - {projectName}");
     }
 
     public void NavigateToConfigurationEditor(NIS.Desktop.Models.AntennaConfiguration? existing = null)
@@ -330,63 +349,39 @@ public partial class MainShellViewModel : ViewModelBase
             }
             NavigateToProjectOverview();
         };
-        CurrentView = _configurationEditorViewModel;
         var projectName = GetProjectDisplayName();
-        Breadcrumb = $"{Strings.Instance.Project} > {projectName} > {Strings.Instance.Configuration} {_configurationEditorViewModel.ConfigurationNumber}";
-        WindowTitle = $"Swiss NIS Calculator - {projectName}";
+        SetView(_configurationEditorViewModel, $"{Strings.Instance.Project} > {projectName} > {Strings.Instance.Configuration} {_configurationEditorViewModel.ConfigurationNumber}", $"Swiss NIS Calculator - {projectName}");
     }
 
     public void NavigateToAntennaSelector()
     {
         _antennaEditorViewModel = new AntennaEditorViewModel();
-        // All antennas come from DatabaseService (single source of truth)
         _antennaEditorViewModel.RefreshAntennaList();
-        _antennaEditorViewModel.NavigateBack = () =>
-        {
-            // Go back to configuration editor without selecting
-            CurrentView = _configurationEditorViewModel;
-        };
+        _antennaEditorViewModel.NavigateBack = () => CurrentView = _configurationEditorViewModel;
         _antennaEditorViewModel.OnSelect = (antenna) =>
         {
             if (_configurationEditorViewModel != null)
-            {
                 _configurationEditorViewModel.SelectedAntenna = antenna;
-            }
             CurrentView = _configurationEditorViewModel;
         };
-        _antennaEditorViewModel.NavigateToAddNew = () =>
-        {
-            // Navigate to antenna master editor for creating new antenna
-            NavigateToAntennaEditorForProject();
-        };
-        CurrentView = _antennaEditorViewModel;
+        _antennaEditorViewModel.NavigateToAddNew = NavigateToAntennaEditorForProject;
         var projectName = GetProjectDisplayName();
-        Breadcrumb = $"{Strings.Instance.Project} > {projectName} > {Strings.Instance.SelectAntennaPrompt}";
-        WindowTitle = "Swiss NIS Calculator - Select Antenna";
+        SetView(_antennaEditorViewModel, $"{Strings.Instance.Project} > {projectName} > {Strings.Instance.SelectAntennaPrompt}", "Swiss NIS Calculator - Select Antenna");
     }
 
     private void NavigateToAntennaEditorForProject()
     {
         var editorVm = new AntennaMasterEditorViewModel();
         editorVm.InitializeNew();
-        editorVm.NavigateBack = () =>
-        {
-            // Go back to antenna selector
-            NavigateToAntennaSelector();
-        };
+        editorVm.NavigateBack = NavigateToAntennaSelector;
         editorVm.OnSave = (antenna) =>
         {
-            // Save to database
             Services.DatabaseService.Instance.SaveAntenna(antenna);
-
-            // Go back to selector and select the new antenna
             _antennaEditorViewModel?.AddAntennaToList(antenna);
             _antennaEditorViewModel?.OnSelect?.Invoke(antenna);
         };
-        CurrentView = editorVm;
         var projectName = GetProjectDisplayName();
-        Breadcrumb = $"{Strings.Instance.Project} > {projectName} > {Strings.Instance.AntennaDetails}";
-        WindowTitle = "Swiss NIS Calculator - Add New Antenna";
+        SetView(editorVm, $"{Strings.Instance.Project} > {projectName} > {Strings.Instance.AntennaDetails}", "Swiss NIS Calculator - Add New Antenna");
     }
 
     public void NavigateToResults()
@@ -394,10 +389,8 @@ public partial class MainShellViewModel : ViewModelBase
         _resultsViewModel = new ResultsViewModel();
         _resultsViewModel.NavigateBack = NavigateToProjectOverview;
         _ = _resultsViewModel.CalculateAsync(ProjectViewModel.Project);
-        CurrentView = _resultsViewModel;
         var projectName = GetProjectDisplayName();
-        Breadcrumb = $"{Strings.Instance.Project} > {projectName} > {Strings.Instance.CalculationResults}";
-        WindowTitle = $"Swiss NIS Calculator - {projectName}";
+        SetView(_resultsViewModel, $"{Strings.Instance.Project} > {projectName} > {Strings.Instance.CalculationResults}", $"Swiss NIS Calculator - {projectName}");
     }
 
     [RelayCommand]
@@ -422,18 +415,13 @@ public partial class MainShellViewModel : ViewModelBase
         _masterDataManagerViewModel.NavigateToOkaEditor = NavigateToOkaMasterEditor;
         _masterDataManagerViewModel.SelectExportFile = SelectFileForFactoryExport;
         _masterDataManagerViewModel.SelectImportFile = SelectFileForFactoryImport;
-        CurrentView = _masterDataManagerViewModel;
-        Breadcrumb = Strings.Instance.MasterData;
-        WindowTitle = "Swiss NIS Calculator";
+        SetView(_masterDataManagerViewModel, Strings.Instance.MasterData, "Swiss NIS Calculator");
     }
 
     [RelayCommand]
     public void NavigateToProject()
     {
-        if (HasProject)
-        {
-            NavigateToProjectOverview();
-        }
+        if (HasProject) NavigateToProjectOverview();
     }
 
     [RelayCommand]
@@ -441,9 +429,7 @@ public partial class MainShellViewModel : ViewModelBase
     {
         AutoSaveProjectIfDirty();
         _settingsViewModel ??= new SettingsViewModel();
-        CurrentView = _settingsViewModel;
-        Breadcrumb = Strings.Instance.Settings;
-        WindowTitle = "Swiss NIS Calculator";
+        SetView(_settingsViewModel, Strings.Instance.Settings, "Swiss NIS Calculator");
     }
 
 
@@ -1056,27 +1042,13 @@ public partial class MainShellViewModel : ViewModelBase
             _antennaMasterEditorViewModel.InitializeNew();
         }
         _antennaMasterEditorViewModel.IsReadOnly = isReadOnly;
-        _antennaMasterEditorViewModel.NavigateBack = () =>
-        {
-            if (_masterDataManagerViewModel != null)
-            {
-                _masterDataManagerViewModel.SelectedTabIndex = 0; // Antennas tab
-                CurrentView = _masterDataManagerViewModel;
-                WindowTitle = _masterDataManagerViewModel.IsAdminMode
-                    ? "Swiss NIS Calculator - Master Data (Admin)"
-                    : "Swiss NIS Calculator - Master Data";
-            }
-        };
+        _antennaMasterEditorViewModel.NavigateBack = () => ReturnToMasterDataManager(0);
         _antennaMasterEditorViewModel.OnSave = (antenna) =>
         {
             if (_antennaMasterEditorViewModel!.IsEditing)
-            {
-                // Update existing antenna
                 _masterDataManagerViewModel?.UpdateAntennaInDatabase(antenna);
-            }
             else
             {
-                // Add new antenna - check for duplicates
                 var success = _masterDataManagerViewModel?.AddAntennaToDatabase(antenna) ?? false;
                 if (!success)
                 {
@@ -1084,19 +1056,9 @@ public partial class MainShellViewModel : ViewModelBase
                     return;
                 }
             }
-            if (_masterDataManagerViewModel != null)
-            {
-                _masterDataManagerViewModel.SelectedTabIndex = 0; // Antennas tab
-                CurrentView = _masterDataManagerViewModel;
-                WindowTitle = _masterDataManagerViewModel.IsAdminMode
-                    ? "Swiss NIS Calculator - Master Data (Admin)"
-                    : "Swiss NIS Calculator - Master Data";
-            }
+            ReturnToMasterDataManager(0);
         };
-        CurrentView = _antennaMasterEditorViewModel;
-        Breadcrumb = $"{Strings.Instance.MasterData} > {Strings.Instance.AntennaDetails}";
-        WindowTitle = isReadOnly ? "Swiss NIS Calculator - View Antenna"
-            : (existing != null ? "Swiss NIS Calculator - Edit Antenna" : "Swiss NIS Calculator - Add Antenna");
+        SetView(_antennaMasterEditorViewModel, $"{Strings.Instance.MasterData} > {Strings.Instance.AntennaDetails}", GetEditorTitle("Antenna", existing, isReadOnly));
     }
 
     public void NavigateToCableMasterEditor(NIS.Desktop.Models.Cable? existing, bool isReadOnly = false)
@@ -1113,27 +1075,13 @@ public partial class MainShellViewModel : ViewModelBase
             _cableMasterEditorViewModel.InitializeNew();
         }
         _cableMasterEditorViewModel.IsReadOnly = isReadOnly;
-        _cableMasterEditorViewModel.NavigateBack = () =>
-        {
-            if (_masterDataManagerViewModel != null)
-            {
-                _masterDataManagerViewModel.SelectedTabIndex = 1; // Cables tab
-                CurrentView = _masterDataManagerViewModel;
-                WindowTitle = _masterDataManagerViewModel.IsAdminMode
-                    ? "Swiss NIS Calculator - Master Data (Admin)"
-                    : "Swiss NIS Calculator - Master Data";
-            }
-        };
+        _cableMasterEditorViewModel.NavigateBack = () => ReturnToMasterDataManager(1);
         _cableMasterEditorViewModel.OnSave = (cable) =>
         {
             if (_cableMasterEditorViewModel!.IsEditing)
-            {
-                // Update existing cable
                 _masterDataManagerViewModel?.UpdateCableInDatabase(cable);
-            }
             else
             {
-                // Add new cable - check for duplicates
                 var success = _masterDataManagerViewModel?.AddCableToDatabase(cable) ?? false;
                 if (!success)
                 {
@@ -1141,19 +1089,9 @@ public partial class MainShellViewModel : ViewModelBase
                     return;
                 }
             }
-            if (_masterDataManagerViewModel != null)
-            {
-                _masterDataManagerViewModel.SelectedTabIndex = 1; // Cables tab
-                CurrentView = _masterDataManagerViewModel;
-                WindowTitle = _masterDataManagerViewModel.IsAdminMode
-                    ? "Swiss NIS Calculator - Master Data (Admin)"
-                    : "Swiss NIS Calculator - Master Data";
-            }
+            ReturnToMasterDataManager(1);
         };
-        CurrentView = _cableMasterEditorViewModel;
-        Breadcrumb = $"{Strings.Instance.MasterData} > {Strings.Instance.Cable}";
-        WindowTitle = isReadOnly ? "Swiss NIS Calculator - View Cable"
-            : (existing != null ? "Swiss NIS Calculator - Edit Cable" : "Swiss NIS Calculator - Add Cable");
+        SetView(_cableMasterEditorViewModel, $"{Strings.Instance.MasterData} > {Strings.Instance.Cable}", GetEditorTitle("Cable", existing, isReadOnly));
     }
 
     public void NavigateToRadioMasterEditor(NIS.Desktop.Models.Radio? existing, bool isReadOnly = false)
@@ -1170,27 +1108,13 @@ public partial class MainShellViewModel : ViewModelBase
             _radioMasterEditorViewModel.InitializeNew();
         }
         _radioMasterEditorViewModel.IsReadOnly = isReadOnly;
-        _radioMasterEditorViewModel.NavigateBack = () =>
-        {
-            if (_masterDataManagerViewModel != null)
-            {
-                _masterDataManagerViewModel.SelectedTabIndex = 2; // Radios tab
-                CurrentView = _masterDataManagerViewModel;
-                WindowTitle = _masterDataManagerViewModel.IsAdminMode
-                    ? "Swiss NIS Calculator - Master Data (Admin)"
-                    : "Swiss NIS Calculator - Master Data";
-            }
-        };
+        _radioMasterEditorViewModel.NavigateBack = () => ReturnToMasterDataManager(2);
         _radioMasterEditorViewModel.OnSave = (radio) =>
         {
             if (_radioMasterEditorViewModel!.IsEditing)
-            {
-                // Update existing radio
                 _masterDataManagerViewModel?.UpdateRadioInDatabase(radio);
-            }
             else
             {
-                // Add new radio - check for duplicates
                 var success = _masterDataManagerViewModel?.AddRadioToDatabase(radio) ?? false;
                 if (!success)
                 {
@@ -1198,19 +1122,9 @@ public partial class MainShellViewModel : ViewModelBase
                     return;
                 }
             }
-            if (_masterDataManagerViewModel != null)
-            {
-                _masterDataManagerViewModel.SelectedTabIndex = 2; // Radios tab
-                CurrentView = _masterDataManagerViewModel;
-                WindowTitle = _masterDataManagerViewModel.IsAdminMode
-                    ? "Swiss NIS Calculator - Master Data (Admin)"
-                    : "Swiss NIS Calculator - Master Data";
-            }
+            ReturnToMasterDataManager(2);
         };
-        CurrentView = _radioMasterEditorViewModel;
-        Breadcrumb = $"{Strings.Instance.MasterData} > {Strings.Instance.RadioDetails}";
-        WindowTitle = isReadOnly ? "Swiss NIS Calculator - View Radio"
-            : (existing != null ? "Swiss NIS Calculator - Edit Radio" : "Swiss NIS Calculator - Add Radio");
+        SetView(_radioMasterEditorViewModel, $"{Strings.Instance.MasterData} > {Strings.Instance.RadioDetails}", GetEditorTitle("Radio", existing, isReadOnly));
     }
 
     public void NavigateToOkaMasterEditor(NIS.Desktop.Models.Oka? existing)
@@ -1226,26 +1140,13 @@ public partial class MainShellViewModel : ViewModelBase
         {
             _okaMasterEditorViewModel.InitializeNew();
         }
-        _okaMasterEditorViewModel.NavigateBack = () =>
-        {
-            // Return to existing MasterDataManager on OKA tab
-            if (_masterDataManagerViewModel != null)
-            {
-                _masterDataManagerViewModel.SelectedTabIndex = 3; // OKA tab
-                CurrentView = _masterDataManagerViewModel;
-                WindowTitle = "Swiss NIS Calculator - Master Data";
-            }
-        };
+        _okaMasterEditorViewModel.NavigateBack = () => ReturnToMasterDataManager(3);
         _okaMasterEditorViewModel.OnSave = (oka) =>
         {
             if (_okaMasterEditorViewModel!.IsEditing)
-            {
-                // Update existing OKA
                 _masterDataManagerViewModel?.UpdateOkaInDatabase(oka);
-            }
             else
             {
-                // Add new OKA - check for duplicates
                 var success = _masterDataManagerViewModel?.AddOkaToDatabase(oka) ?? false;
                 if (!success)
                 {
@@ -1253,20 +1154,28 @@ public partial class MainShellViewModel : ViewModelBase
                     return;
                 }
             }
-            if (_masterDataManagerViewModel != null)
-            {
-                _masterDataManagerViewModel.SelectedTabIndex = 3; // OKA tab
-                CurrentView = _masterDataManagerViewModel;
-                WindowTitle = "Swiss NIS Calculator - Master Data";
-            }
+            ReturnToMasterDataManager(3);
         };
-        CurrentView = _okaMasterEditorViewModel;
-        Breadcrumb = $"{Strings.Instance.MasterData} > {Strings.Instance.OkaDetails}";
-        WindowTitle = existing != null ? "Swiss NIS Calculator - Edit OKA" : "Swiss NIS Calculator - Add OKA";
+        SetView(_okaMasterEditorViewModel, $"{Strings.Instance.MasterData} > {Strings.Instance.OkaDetails}", GetEditorTitle("OKA", existing, false));
     }
 
     // Navigation from Configuration Editor to Master Editors
     // These return to the Configuration Editor after save
+
+    /// <summary>
+    /// Refresh a collection from database and select an item by predicate.
+    /// </summary>
+    private void RefreshAndSelect<T>(
+        System.Collections.ObjectModel.ObservableCollection<T> collection,
+        Func<IEnumerable<T>> getAll,
+        Func<T, bool> predicate,
+        Action<T?> setSelected) where T : class
+    {
+        collection.Clear();
+        foreach (var item in getAll())
+            collection.Add(item);
+        setSelected(collection.FirstOrDefault(predicate));
+    }
 
     private void NavigateToAntennaEditorFromConfig(NIS.Desktop.Models.Antenna? existing)
     {
@@ -1274,7 +1183,6 @@ public partial class MainShellViewModel : ViewModelBase
         if (existing != null)
         {
             _antennaMasterEditorViewModel.InitializeEdit(existing);
-            // Shipped master data items are read-only in configuration editor
             _antennaMasterEditorViewModel.IsReadOnly = !existing.IsUserData;
         }
         else
@@ -1284,26 +1192,20 @@ public partial class MainShellViewModel : ViewModelBase
         _antennaMasterEditorViewModel.NavigateBack = () => CurrentView = _configurationEditorViewModel;
         _antennaMasterEditorViewModel.OnSave = (antenna) =>
         {
-            // Save to database
             Services.DatabaseService.Instance.SaveAntenna(antenna);
-
             if (_configurationEditorViewModel != null)
             {
-                // Refresh list from database and select the antenna
-                _configurationEditorViewModel.Antennas.Clear();
-                foreach (var a in Services.DatabaseService.Instance.GetAllAntennas())
-                    _configurationEditorViewModel.Antennas.Add(a);
-
-                _configurationEditorViewModel.SelectedAntenna = _configurationEditorViewModel.Antennas
-                    .FirstOrDefault(a => a.Manufacturer.Equals(antenna.Manufacturer, StringComparison.OrdinalIgnoreCase) &&
-                                         a.Model.Equals(antenna.Model, StringComparison.OrdinalIgnoreCase));
+                RefreshAndSelect(
+                    _configurationEditorViewModel.Antennas,
+                    Services.DatabaseService.Instance.GetAllAntennas,
+                    a => a.Manufacturer.Equals(antenna.Manufacturer, StringComparison.OrdinalIgnoreCase) &&
+                         a.Model.Equals(antenna.Model, StringComparison.OrdinalIgnoreCase),
+                    a => _configurationEditorViewModel.SelectedAntenna = a);
             }
             CurrentView = _configurationEditorViewModel;
         };
-        CurrentView = _antennaMasterEditorViewModel;
         var projectName = GetProjectDisplayName();
-        Breadcrumb = $"{Strings.Instance.Project} > {projectName} > {Strings.Instance.AntennaDetails}";
-        WindowTitle = existing != null ? "Swiss NIS Calculator - Edit Antenna" : "Swiss NIS Calculator - Add Antenna";
+        SetView(_antennaMasterEditorViewModel, $"{Strings.Instance.Project} > {projectName} > {Strings.Instance.AntennaDetails}", GetEditorTitle("Antenna", existing, false));
     }
 
     private void NavigateToCableEditorFromConfig(NIS.Desktop.Models.Cable? existing)
@@ -1312,7 +1214,6 @@ public partial class MainShellViewModel : ViewModelBase
         if (existing != null)
         {
             _cableMasterEditorViewModel.InitializeEdit(existing);
-            // Shipped master data items are read-only in configuration editor
             _cableMasterEditorViewModel.IsReadOnly = !existing.IsUserData;
         }
         else
@@ -1322,25 +1223,19 @@ public partial class MainShellViewModel : ViewModelBase
         _cableMasterEditorViewModel.NavigateBack = () => CurrentView = _configurationEditorViewModel;
         _cableMasterEditorViewModel.OnSave = (cable) =>
         {
-            // Save to database
             Services.DatabaseService.Instance.SaveCable(cable);
-
             if (_configurationEditorViewModel != null)
             {
-                // Refresh list from database and select the cable
-                _configurationEditorViewModel.Cables.Clear();
-                foreach (var c in Services.DatabaseService.Instance.GetAllCables())
-                    _configurationEditorViewModel.Cables.Add(c);
-
-                _configurationEditorViewModel.SelectedCable = _configurationEditorViewModel.Cables
-                    .FirstOrDefault(c => c.Name.Equals(cable.Name, StringComparison.OrdinalIgnoreCase));
+                RefreshAndSelect(
+                    _configurationEditorViewModel.Cables,
+                    Services.DatabaseService.Instance.GetAllCables,
+                    c => c.Name.Equals(cable.Name, StringComparison.OrdinalIgnoreCase),
+                    c => _configurationEditorViewModel.SelectedCable = c);
             }
             CurrentView = _configurationEditorViewModel;
         };
-        CurrentView = _cableMasterEditorViewModel;
         var projectName = GetProjectDisplayName();
-        Breadcrumb = $"{Strings.Instance.Project} > {projectName} > {Strings.Instance.Cable}";
-        WindowTitle = existing != null ? "Swiss NIS Calculator - Edit Cable" : "Swiss NIS Calculator - Add Cable";
+        SetView(_cableMasterEditorViewModel, $"{Strings.Instance.Project} > {projectName} > {Strings.Instance.Cable}", GetEditorTitle("Cable", existing, false));
     }
 
     private void NavigateToRadioEditorFromConfig(NIS.Desktop.Models.Radio? existing)
@@ -1349,7 +1244,6 @@ public partial class MainShellViewModel : ViewModelBase
         if (existing != null)
         {
             _radioMasterEditorViewModel.InitializeEdit(existing);
-            // Shipped master data items are read-only in configuration editor
             _radioMasterEditorViewModel.IsReadOnly = !existing.IsUserData;
         }
         else
@@ -1359,60 +1253,45 @@ public partial class MainShellViewModel : ViewModelBase
         _radioMasterEditorViewModel.NavigateBack = () => CurrentView = _configurationEditorViewModel;
         _radioMasterEditorViewModel.OnSave = (radio) =>
         {
-            // Save to database
             Services.DatabaseService.Instance.SaveRadio(radio);
-
             if (_configurationEditorViewModel != null)
             {
-                // Refresh list from database and select the radio
-                _configurationEditorViewModel.Radios.Clear();
-                foreach (var r in Services.DatabaseService.Instance.GetAllRadios())
-                    _configurationEditorViewModel.Radios.Add(r);
-
-                _configurationEditorViewModel.SelectedRadio = _configurationEditorViewModel.Radios
-                    .FirstOrDefault(r => r.Manufacturer.Equals(radio.Manufacturer, StringComparison.OrdinalIgnoreCase) &&
-                                         r.Model.Equals(radio.Model, StringComparison.OrdinalIgnoreCase));
+                RefreshAndSelect(
+                    _configurationEditorViewModel.Radios,
+                    Services.DatabaseService.Instance.GetAllRadios,
+                    r => r.Manufacturer.Equals(radio.Manufacturer, StringComparison.OrdinalIgnoreCase) &&
+                         r.Model.Equals(radio.Model, StringComparison.OrdinalIgnoreCase),
+                    r => _configurationEditorViewModel.SelectedRadio = r);
             }
             CurrentView = _configurationEditorViewModel;
         };
-        CurrentView = _radioMasterEditorViewModel;
         var projectName = GetProjectDisplayName();
-        Breadcrumb = $"{Strings.Instance.Project} > {projectName} > {Strings.Instance.RadioDetails}";
-        WindowTitle = existing != null ? "Swiss NIS Calculator - Edit Radio" : "Swiss NIS Calculator - Add Radio";
+        SetView(_radioMasterEditorViewModel, $"{Strings.Instance.Project} > {projectName} > {Strings.Instance.RadioDetails}", GetEditorTitle("Radio", existing, false));
     }
 
     private void NavigateToOkaEditorFromConfig(NIS.Desktop.Models.Oka? existing)
     {
         _okaMasterEditorViewModel = new OkaMasterEditorViewModel();
         if (existing != null)
-        {
             _okaMasterEditorViewModel.InitializeEdit(existing);
-        }
         else
-        {
             _okaMasterEditorViewModel.InitializeNew();
-        }
         _okaMasterEditorViewModel.NavigateBack = () => CurrentView = _configurationEditorViewModel;
         _okaMasterEditorViewModel.OnSave = (oka) =>
         {
             Services.DatabaseService.Instance.SaveOka(oka);
-            // Refresh OKA list from database and select the new/updated entry
             if (_configurationEditorViewModel != null)
             {
-                _configurationEditorViewModel.Okas.Clear();
-                foreach (var dbOka in Services.DatabaseService.Instance.GetAllOkas())
-                {
-                    _configurationEditorViewModel.Okas.Add(dbOka);
-                }
-                _configurationEditorViewModel.SelectedOka = _configurationEditorViewModel.Okas
-                    .FirstOrDefault(o => o.Name.Equals(oka.Name, StringComparison.OrdinalIgnoreCase));
+                RefreshAndSelect(
+                    _configurationEditorViewModel.Okas,
+                    Services.DatabaseService.Instance.GetAllOkas,
+                    o => o.Name.Equals(oka.Name, StringComparison.OrdinalIgnoreCase),
+                    o => _configurationEditorViewModel.SelectedOka = o);
             }
             CurrentView = _configurationEditorViewModel;
         };
-        CurrentView = _okaMasterEditorViewModel;
         var projectName = GetProjectDisplayName();
-        Breadcrumb = $"{Strings.Instance.Project} > {projectName} > {Strings.Instance.OkaDetails}";
-        WindowTitle = existing != null ? "Swiss NIS Calculator - Edit OKA" : "Swiss NIS Calculator - Add OKA";
+        SetView(_okaMasterEditorViewModel, $"{Strings.Instance.Project} > {projectName} > {Strings.Instance.OkaDetails}", GetEditorTitle("OKA", existing, false));
     }
 
     // Global Save command (Ctrl+S) - saves to database immediately
