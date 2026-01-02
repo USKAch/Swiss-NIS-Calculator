@@ -52,11 +52,6 @@ public partial class ProjectInfoViewModel : ViewModelBase
     {
     }
 
-    public ProjectInfoViewModel(string language)
-    {
-        // Language parameter is kept for compatibility but we use Strings.Instance.Language
-    }
-
     // Track dirty state for all fields
     partial void OnProjectNameChanged(string value) => MarkDirty();
     partial void OnOperatorNameChanged(string value) => MarkDirty();

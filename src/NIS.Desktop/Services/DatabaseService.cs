@@ -56,6 +56,9 @@ public class DatabaseService : IDisposable
         _connection = new SqliteConnection(connectionString);
         _connection.Open();
 
+        // Enable foreign key enforcement
+        _connection.Execute("PRAGMA foreign_keys = ON");
+
         if (!IsSchemaCompatible())
         {
             // Show warning - user data will be lost
@@ -84,18 +87,25 @@ public class DatabaseService : IDisposable
 
     private bool IsSchemaCompatible()
     {
-        if (TableExists("Antennas") && !HasColumn("Antennas", "IsUserData")) return false;
-        if (TableExists("Cables") && !HasColumn("Cables", "IsUserData")) return false;
-        if (TableExists("Radios") && !HasColumn("Radios", "IsUserData")) return false;
-        if (TableExists("Okas") && !HasColumn("Okas", "IsUserData")) return false;
-        if (TableExists("Projects") && !HasColumn("Projects", "Callsign")) return false;
-        if (TableExists("Configurations") && !HasColumn("Configurations", "ModulationId")) return false;
-        if (TableExists("Configurations") && !HasColumn("Configurations", "LinearName")) return false;
-        if (TableExists("Configurations") && !HasColumn("Configurations", "IsRotatable")) return false;
-        // Legacy columns that should NOT exist in clean schema
-        if (TableExists("Configurations") && HasColumn("Configurations", "HasLinear")) return false;
-        if (TableExists("Configurations") && HasColumn("Configurations", "LinearId")) return false;
+        // Required tables must exist with required columns
+        if (!TableExists("Antennas") || !HasColumn("Antennas", "IsUserData")) return false;
+        if (!TableExists("Cables") || !HasColumn("Cables", "IsUserData")) return false;
+        if (!TableExists("Radios") || !HasColumn("Radios", "IsUserData")) return false;
+        if (!TableExists("Okas") || !HasColumn("Okas", "IsUserData")) return false;
+        if (!TableExists("Modulations")) return false;
+        if (!TableExists("Projects") || !HasColumn("Projects", "Callsign")) return false;
+        if (!TableExists("Configurations")) return false;
+        // Required indexes must exist (ensures CHECK constraints and RESTRICT FKs are in place)
+        if (!IndexExists("IX_Configurations_ProjectId_ConfigNumber")) return false;
         return true;
+    }
+
+    private bool IndexExists(string indexName)
+    {
+        var result = _connection.ExecuteScalar<string>(
+            "SELECT name FROM sqlite_master WHERE type='index' AND name=@Name",
+            new { Name = indexName });
+        return !string.IsNullOrEmpty(result);
     }
 
     private bool TableExists(string tableName)
@@ -152,7 +162,7 @@ public class DatabaseService : IDisposable
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
                 Manufacturer TEXT NOT NULL,
                 Model TEXT NOT NULL,
-                MaxPowerWatts REAL NOT NULL DEFAULT 100,
+                MaxPowerWatts REAL NOT NULL DEFAULT 100 CHECK (MaxPowerWatts > 0),
                 IsUserData INTEGER NOT NULL DEFAULT 0,
                 UNIQUE(Manufacturer, Model)
             );
@@ -160,15 +170,15 @@ public class DatabaseService : IDisposable
             CREATE TABLE IF NOT EXISTS Okas (
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
                 Name TEXT NOT NULL UNIQUE,
-                DefaultDistanceMeters REAL NOT NULL DEFAULT 10,
-                DefaultDampingDb REAL NOT NULL DEFAULT 0,
+                DefaultDistanceMeters REAL NOT NULL DEFAULT 10 CHECK (DefaultDistanceMeters > 0),
+                DefaultDampingDb REAL NOT NULL DEFAULT 0 CHECK (DefaultDampingDb >= 0),
                 IsUserData INTEGER NOT NULL DEFAULT 1
             );
 
             CREATE TABLE IF NOT EXISTS Modulations (
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
                 Name TEXT NOT NULL UNIQUE,
-                Factor REAL NOT NULL,
+                Factor REAL NOT NULL CHECK (Factor > 0 AND Factor <= 1),
                 IsUserData INTEGER NOT NULL DEFAULT 0
             );
 
@@ -186,32 +196,44 @@ public class DatabaseService : IDisposable
             CREATE TABLE IF NOT EXISTS Configurations (
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
                 ProjectId INTEGER NOT NULL,
-                ConfigNumber INTEGER NOT NULL,
+                ConfigNumber INTEGER NOT NULL CHECK (ConfigNumber > 0),
                 Name TEXT,
-                PowerWatts REAL NOT NULL DEFAULT 100,
+                PowerWatts REAL NOT NULL DEFAULT 100 CHECK (PowerWatts > 0),
                 RadioId INTEGER,
                 LinearName TEXT,
-                LinearPowerWatts REAL NOT NULL DEFAULT 0,
+                LinearPowerWatts REAL NOT NULL DEFAULT 0 CHECK (LinearPowerWatts >= 0),
                 CableId INTEGER,
-                CableLengthMeters REAL NOT NULL DEFAULT 10,
-                AdditionalLossDb REAL NOT NULL DEFAULT 0,
+                CableLengthMeters REAL NOT NULL DEFAULT 10 CHECK (CableLengthMeters >= 0),
+                AdditionalLossDb REAL NOT NULL DEFAULT 0 CHECK (AdditionalLossDb >= 0),
                 AdditionalLossDescription TEXT,
                 AntennaId INTEGER,
-                HeightMeters REAL NOT NULL DEFAULT 10,
+                HeightMeters REAL NOT NULL DEFAULT 10 CHECK (HeightMeters > 0),
                 IsRotatable INTEGER NOT NULL DEFAULT 0,
-                HorizontalAngleDegrees REAL NOT NULL DEFAULT 360,
+                HorizontalAngleDegrees REAL NOT NULL DEFAULT 360 CHECK (HorizontalAngleDegrees >= 0 AND HorizontalAngleDegrees <= 360),
                 ModulationId INTEGER,
-                ActivityFactor REAL NOT NULL DEFAULT 0.5,
+                ActivityFactor REAL NOT NULL DEFAULT 0.5 CHECK (ActivityFactor > 0 AND ActivityFactor <= 1),
                 OkaId INTEGER,
-                OkaDistanceMeters REAL NOT NULL DEFAULT 10,
-                OkaBuildingDampingDb REAL NOT NULL DEFAULT 0,
+                OkaDistanceMeters REAL NOT NULL DEFAULT 10 CHECK (OkaDistanceMeters > 0),
+                OkaBuildingDampingDb REAL NOT NULL DEFAULT 0 CHECK (OkaBuildingDampingDb >= 0),
                 FOREIGN KEY (ProjectId) REFERENCES Projects(Id) ON DELETE CASCADE,
-                FOREIGN KEY (RadioId) REFERENCES Radios(Id) ON DELETE SET NULL,
-                FOREIGN KEY (CableId) REFERENCES Cables(Id) ON DELETE SET NULL,
-                FOREIGN KEY (AntennaId) REFERENCES Antennas(Id) ON DELETE SET NULL,
-                FOREIGN KEY (ModulationId) REFERENCES Modulations(Id) ON DELETE SET NULL,
-                FOREIGN KEY (OkaId) REFERENCES Okas(Id) ON DELETE SET NULL
+                FOREIGN KEY (RadioId) REFERENCES Radios(Id) ON DELETE RESTRICT,
+                FOREIGN KEY (CableId) REFERENCES Cables(Id) ON DELETE RESTRICT,
+                FOREIGN KEY (AntennaId) REFERENCES Antennas(Id) ON DELETE RESTRICT,
+                FOREIGN KEY (ModulationId) REFERENCES Modulations(Id) ON DELETE RESTRICT,
+                FOREIGN KEY (OkaId) REFERENCES Okas(Id) ON DELETE RESTRICT
             );
+
+            -- Indexes for foreign keys (improves JOIN and CASCADE performance)
+            CREATE INDEX IF NOT EXISTS IX_Configurations_ProjectId ON Configurations(ProjectId);
+            CREATE INDEX IF NOT EXISTS IX_Configurations_RadioId ON Configurations(RadioId);
+            CREATE INDEX IF NOT EXISTS IX_Configurations_CableId ON Configurations(CableId);
+            CREATE INDEX IF NOT EXISTS IX_Configurations_AntennaId ON Configurations(AntennaId);
+            CREATE INDEX IF NOT EXISTS IX_Configurations_ModulationId ON Configurations(ModulationId);
+            CREATE INDEX IF NOT EXISTS IX_Configurations_OkaId ON Configurations(OkaId);
+
+            -- Unique constraint: each project can only have one config per number
+            CREATE UNIQUE INDEX IF NOT EXISTS IX_Configurations_ProjectId_ConfigNumber
+                ON Configurations(ProjectId, ConfigNumber);
         ");
 
         EnsureDefaultModulations();
@@ -337,11 +359,9 @@ public class DatabaseService : IDisposable
             });
     }
 
-    public void DeleteAntenna(string manufacturer, string model)
+    public void DeleteAntenna(int id)
     {
-        _connection.Execute(
-            "DELETE FROM Antennas WHERE Manufacturer = @Manufacturer AND Model = @Model",
-            new { Manufacturer = manufacturer, Model = model });
+        _connection.Execute("DELETE FROM Antennas WHERE Id = @Id", new { Id = id });
     }
 
     public bool AntennaExists(string manufacturer, string model)
@@ -469,9 +489,9 @@ public class DatabaseService : IDisposable
             });
     }
 
-    public void DeleteCable(string name)
+    public void DeleteCable(int id)
     {
-        _connection.Execute("DELETE FROM Cables WHERE Name = @Name", new { Name = name });
+        _connection.Execute("DELETE FROM Cables WHERE Id = @Id", new { Id = id });
     }
 
     public bool CableExists(string name)
@@ -590,11 +610,9 @@ public class DatabaseService : IDisposable
             });
     }
 
-    public void DeleteRadio(string manufacturer, string model)
+    public void DeleteRadio(int id)
     {
-        _connection.Execute(
-            "DELETE FROM Radios WHERE Manufacturer = @Manufacturer AND Model = @Model",
-            new { Manufacturer = manufacturer, Model = model });
+        _connection.Execute("DELETE FROM Radios WHERE Id = @Id", new { Id = id });
     }
 
     public bool RadioExists(string manufacturer, string model)
@@ -810,30 +828,41 @@ public class DatabaseService : IDisposable
 
     public int CreateProject(Project project)
     {
-        var now = DateTime.UtcNow.ToString("o");
-        var id = _connection.ExecuteScalar<int>(@"
-            INSERT INTO Projects (Name, OperatorName, Callsign, Address, Location, CreatedAt, ModifiedAt)
-            VALUES (@Name, @OperatorName, @Callsign, @Address, @Location, @CreatedAt, @ModifiedAt);
-            SELECT last_insert_rowid();",
-            new
-            {
-                Name = string.IsNullOrWhiteSpace(project.Name) ? "New Project" : project.Name,
-                OperatorName = project.Operator,
-                project.Callsign,
-                project.Address,
-                project.Location,
-                CreatedAt = now,
-                ModifiedAt = now
-            });
-
-        // Save configurations
-        int configNum = 1;
-        foreach (var config in project.AntennaConfigurations)
+        using var transaction = _connection.BeginTransaction();
+        try
         {
-            SaveConfiguration(id, config, configNum++);
-        }
+            var now = DateTime.UtcNow.ToString("o");
+            var id = _connection.ExecuteScalar<int>(@"
+                INSERT INTO Projects (Name, OperatorName, Callsign, Address, Location, CreatedAt, ModifiedAt)
+                VALUES (@Name, @OperatorName, @Callsign, @Address, @Location, @CreatedAt, @ModifiedAt);
+                SELECT last_insert_rowid();",
+                new
+                {
+                    Name = string.IsNullOrWhiteSpace(project.Name) ? "New Project" : project.Name,
+                    OperatorName = project.Operator,
+                    project.Callsign,
+                    project.Address,
+                    project.Location,
+                    CreatedAt = now,
+                    ModifiedAt = now
+                },
+                transaction);
 
-        return id;
+            // Save configurations
+            int configNum = 1;
+            foreach (var config in project.AntennaConfigurations)
+            {
+                SaveConfiguration(id, config, configNum++, transaction);
+            }
+
+            transaction.Commit();
+            return id;
+        }
+        catch
+        {
+            transaction.Rollback();
+            throw;
+        }
     }
 
     public void UpdateProject(int projectId, Project project)
@@ -930,6 +959,43 @@ public class DatabaseService : IDisposable
     }
 
     /// <summary>
+    /// Validates FK integrity for all configurations and returns a list of issues.
+    /// Each issue describes a missing master data reference.
+    /// </summary>
+    public List<string> ValidateConfigurationIntegrity()
+    {
+        var issues = new List<string>();
+
+        var configs = _connection.Query<ConfigurationRow>(
+            @"SELECT c.*, p.Name as ProjectName FROM Configurations c
+              JOIN Projects p ON c.ProjectId = p.Id");
+
+        foreach (var config in configs)
+        {
+            var configName = !string.IsNullOrEmpty(config.Name) ? config.Name : $"Config {config.ConfigNumber}";
+            var projectName = config.ProjectName ?? $"Project {config.ProjectId}";
+            var prefix = $"{projectName} / {configName}";
+
+            if (config.RadioId.HasValue && GetRadioById(config.RadioId.Value) == null)
+                issues.Add($"{prefix}: Radio ID {config.RadioId} not found");
+
+            if (config.CableId.HasValue && GetCableById(config.CableId.Value) == null)
+                issues.Add($"{prefix}: Cable ID {config.CableId} not found");
+
+            if (config.AntennaId.HasValue && GetAntennaById(config.AntennaId.Value) == null)
+                issues.Add($"{prefix}: Antenna ID {config.AntennaId} not found");
+
+            if (config.ModulationId.HasValue && GetModulationById(config.ModulationId.Value) == null)
+                issues.Add($"{prefix}: Modulation ID {config.ModulationId} not found");
+
+            if (config.OkaId.HasValue && GetOkaById(config.OkaId.Value) == null)
+                issues.Add($"{prefix}: OKA ID {config.OkaId} not found");
+        }
+
+        return issues;
+    }
+
+    /// <summary>
     /// Gets a list of all projects with basic info (for project list display).
     /// </summary>
     public List<ProjectListItem> GetProjectList()
@@ -957,12 +1023,12 @@ public class DatabaseService : IDisposable
 
     private void SaveConfiguration(int projectId, AntennaConfiguration config, int configNumber, System.Data.IDbTransaction? transaction = null)
     {
-        // Look up IDs from names
-        var radioId = GetRadioId(config.Radio.Manufacturer, config.Radio.Model);
-        var cableId = GetCableId(config.Cable.Type);
-        var antennaId = GetAntennaId(config.Antenna.Manufacturer, config.Antenna.Model);
-        var modulationId = GetModulationId(config.Modulation);
-        var okaId = EnsureOkaForConfig(config);
+        // Use IDs directly - configurations must have IDs set before saving
+        var radioId = config.RadioId;
+        var cableId = config.CableId;
+        var antennaId = config.AntennaId;
+        var modulationId = config.ModulationId;
+        var okaId = config.OkaId;
 
         // Get OKA distance/damping from master data
         var oka = okaId.HasValue ? GetOkaById(okaId.Value) : null;
@@ -1059,12 +1125,15 @@ public class DatabaseService : IDisposable
         {
             Name = row.Name ?? "",
             PowerWatts = row.PowerWatts,
+            // Set all IDs for master data references
+            RadioId = row.RadioId,
             Radio = new RadioConfig
             {
                 Manufacturer = radio?.Manufacturer ?? "",
                 Model = radio?.Model ?? ""
             },
             Linear = linearConfig,
+            CableId = row.CableId,
             Cable = new CableConfig
             {
                 Type = cable?.Name ?? "",
@@ -1072,6 +1141,7 @@ public class DatabaseService : IDisposable
                 AdditionalLossDb = row.AdditionalLossDb,
                 AdditionalLossDescription = row.AdditionalLossDescription ?? ""
             },
+            AntennaId = row.AntennaId,
             Antenna = new AntennaPlacement
             {
                 Manufacturer = antenna?.Manufacturer ?? "",
@@ -1080,6 +1150,7 @@ public class DatabaseService : IDisposable
                 IsRotatable = row.IsRotatable == 1,
                 HorizontalAngleDegrees = row.HorizontalAngleDegrees
             },
+            ModulationId = row.ModulationId,
             Modulation = modulation?.Name ?? "CW",
             ActivityFactor = row.ActivityFactor,
             OkaId = row.OkaId,
@@ -1125,10 +1196,19 @@ public class DatabaseService : IDisposable
         var import = JsonSerializer.Deserialize<UserDataExport>(json, options);
         if (import == null) return;
 
-        ClearAllData();
-        EnsureDefaultModulations();
-
-        ImportUserDataInternal(import, forceIsUserData: false);
+        using var transaction = _connection.BeginTransaction();
+        try
+        {
+            ClearAllData();
+            EnsureDefaultModulations();
+            ImportUserDataInternal(import, forceIsUserData: false);
+            transaction.Commit();
+        }
+        catch
+        {
+            transaction.Rollback();
+            throw;
+        }
     }
 
     private void ImportFactoryDataFromFolder(string folderPath)
@@ -1252,9 +1332,19 @@ public class DatabaseService : IDisposable
         var import = JsonSerializer.Deserialize<UserDataExport>(json, options);
         if (import == null) return;
 
-        ClearAllData();
-        EnsureDefaultModulations();
-        ImportUserDataInternal(import, forceIsUserData: true);
+        using var transaction = _connection.BeginTransaction();
+        try
+        {
+            ClearAllData();
+            EnsureDefaultModulations();
+            ImportUserDataInternal(import, forceIsUserData: true);
+            transaction.Commit();
+        }
+        catch
+        {
+            transaction.Rollback();
+            throw;
+        }
     }
 
     private void ImportUserDataInternal(UserDataExport import, bool forceIsUserData)
@@ -1422,6 +1512,8 @@ public class DatabaseService : IDisposable
         public int? OkaId { get; set; }
         public double OkaDistanceMeters { get; set; }
         public double OkaBuildingDampingDb { get; set; }
+        // For join queries
+        public string? ProjectName { get; set; }
     }
 
     #endregion

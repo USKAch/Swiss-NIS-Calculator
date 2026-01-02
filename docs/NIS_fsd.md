@@ -664,7 +664,44 @@ On first launch:
 - Create default `settings.json` if missing (language=de, theme=system).
 - Load embedded translations, then merge `translations.json` if present.
 
-### 6.6 Database Schema Compatibility
+### 6.6 Database Handling
+
+This section defines the expected database rules for a robust implementation.
+
+**General Rules:**
+- SQLite is the single source of truth for application data (see Section 7.1 for locations).
+- All master data and project records use integer Id primary keys.
+- All references in configurations use Ids, not names (names are display-only).
+- Schema changes do not use migrations; incompatible schemas trigger the reset flow in Section 6.7.
+
+**Foreign Key Enforcement:**
+- Foreign keys are enforced on connection open (`PRAGMA foreign_keys = ON`).
+- `ProjectId` uses `ON DELETE CASCADE` (deleting a project deletes its configurations).
+- Master data FKs (RadioId, CableId, AntennaId, ModulationId, OkaId) use `ON DELETE RESTRICT`:
+  - Prevents deletion of master data that is referenced by any configuration.
+  - UI checks usage before delete; DB provides a safety net.
+  - FK columns remain nullable to allow saving incomplete configurations.
+
+**Indexes:**
+- Indexes exist for all FK columns in Configurations table (ProjectId, RadioId, CableId, AntennaId, ModulationId, OkaId).
+- Unique index on (ProjectId, ConfigNumber) prevents duplicate config numbers per project.
+
+**Constraints:**
+- Required fields use NOT NULL.
+- Numeric inputs use CHECK constraints:
+  - Positive: PowerWatts, HeightMeters, OkaDistanceMeters, ConfigNumber, MaxPowerWatts, DefaultDistanceMeters
+  - Non-negative: LinearPowerWatts, CableLengthMeters, AdditionalLossDb, OkaBuildingDampingDb, DefaultDampingDb
+  - Range: ActivityFactor (0–1], HorizontalAngleDegrees [0–360], Modulation Factor (0–1]
+
+**Transactions:**
+- Multi-step writes (CreateProject, UpdateProject, ImportFactoryData, ImportUserData) run inside a transaction.
+- On failure, transaction rolls back to maintain consistency.
+
+**Import Validation:**
+- After import, `ValidateConfigurationIntegrity()` checks that all FK references resolve.
+- Missing references are reported to the user as warnings.
+
+### 6.7 Database Schema Compatibility
 
 When the application detects an incompatible database schema (e.g., after an update that changes the table structure), it displays a warning dialog before resetting the database:
 
@@ -1214,48 +1251,51 @@ Generated patterns follow the formulas in Section 8.4.
 ### B.1 Database Schema
 
 ```sql
+-- Enable foreign key enforcement (run on every connection)
+PRAGMA foreign_keys = ON;
+
 -- MASTER DATA TABLES (IsUserData: false=factory, true=user)
 
 CREATE TABLE Antennas (
     Id INTEGER PRIMARY KEY AUTOINCREMENT,
     Manufacturer TEXT NOT NULL,
     Model TEXT NOT NULL,
-    AntennaType TEXT DEFAULT 'other',
-    IsHorizontallyPolarized INTEGER DEFAULT 1,
-    IsUserData INTEGER DEFAULT 0,
-    BandsJson TEXT DEFAULT '[]',
+    AntennaType TEXT NOT NULL DEFAULT 'other',
+    IsHorizontallyPolarized INTEGER NOT NULL DEFAULT 1,
+    IsUserData INTEGER NOT NULL DEFAULT 0,
+    BandsJson TEXT NOT NULL DEFAULT '[]',
     UNIQUE(Manufacturer, Model)
 );
 
 CREATE TABLE Cables (
     Id INTEGER PRIMARY KEY AUTOINCREMENT,
     Name TEXT NOT NULL UNIQUE,
-    IsUserData INTEGER DEFAULT 0,
-    AttenuationsJson TEXT DEFAULT '{}'
+    IsUserData INTEGER NOT NULL DEFAULT 0,
+    AttenuationsJson TEXT NOT NULL DEFAULT '{}'
 );
 
 CREATE TABLE Radios (
     Id INTEGER PRIMARY KEY AUTOINCREMENT,
     Manufacturer TEXT NOT NULL,
     Model TEXT NOT NULL,
-    MaxPowerWatts REAL DEFAULT 100,
-    IsUserData INTEGER DEFAULT 0,
+    MaxPowerWatts REAL NOT NULL DEFAULT 100 CHECK (MaxPowerWatts > 0),
+    IsUserData INTEGER NOT NULL DEFAULT 0,
     UNIQUE(Manufacturer, Model)
 );
 
 CREATE TABLE Okas (
     Id INTEGER PRIMARY KEY AUTOINCREMENT,
     Name TEXT NOT NULL UNIQUE,
-    DefaultDistanceMeters REAL DEFAULT 10,
-    DefaultDampingDb REAL DEFAULT 0,
-    IsUserData INTEGER DEFAULT 1
+    DefaultDistanceMeters REAL NOT NULL DEFAULT 10 CHECK (DefaultDistanceMeters > 0),
+    DefaultDampingDb REAL NOT NULL DEFAULT 0 CHECK (DefaultDampingDb >= 0),
+    IsUserData INTEGER NOT NULL DEFAULT 1
 );
 
 CREATE TABLE Modulations (
     Id INTEGER PRIMARY KEY AUTOINCREMENT,
     Name TEXT NOT NULL UNIQUE,
-    Factor REAL NOT NULL,
-    IsUserData INTEGER DEFAULT 0
+    Factor REAL NOT NULL CHECK (Factor > 0 AND Factor <= 1),
+    IsUserData INTEGER NOT NULL DEFAULT 0
 );
 -- Factory data: SSB (0.2), CW (0.4), FM (1.0)
 
@@ -1275,32 +1315,43 @@ CREATE TABLE Projects (
 CREATE TABLE Configurations (
     Id INTEGER PRIMARY KEY AUTOINCREMENT,
     ProjectId INTEGER NOT NULL,
-    ConfigNumber INTEGER NOT NULL,
+    ConfigNumber INTEGER NOT NULL CHECK (ConfigNumber > 0),
     Name TEXT,
-    PowerWatts REAL DEFAULT 100,
+    PowerWatts REAL NOT NULL DEFAULT 100 CHECK (PowerWatts > 0),
     RadioId INTEGER,
     LinearName TEXT,
-    LinearPowerWatts REAL DEFAULT 0,
+    LinearPowerWatts REAL NOT NULL DEFAULT 0 CHECK (LinearPowerWatts >= 0),
     CableId INTEGER,
-    CableLengthMeters REAL DEFAULT 10,
-    AdditionalLossDb REAL DEFAULT 0,
+    CableLengthMeters REAL NOT NULL DEFAULT 10 CHECK (CableLengthMeters >= 0),
+    AdditionalLossDb REAL NOT NULL DEFAULT 0 CHECK (AdditionalLossDb >= 0),
     AdditionalLossDescription TEXT,
     AntennaId INTEGER,
-    HeightMeters REAL DEFAULT 10,
-    IsRotatable INTEGER DEFAULT 0,
-    HorizontalAngleDegrees REAL DEFAULT 360,
+    HeightMeters REAL NOT NULL DEFAULT 10 CHECK (HeightMeters > 0),
+    IsRotatable INTEGER NOT NULL DEFAULT 0,
+    HorizontalAngleDegrees REAL NOT NULL DEFAULT 360 CHECK (HorizontalAngleDegrees >= 0 AND HorizontalAngleDegrees <= 360),
     ModulationId INTEGER,
-    ActivityFactor REAL DEFAULT 0.5,
+    ActivityFactor REAL NOT NULL DEFAULT 0.5 CHECK (ActivityFactor > 0 AND ActivityFactor <= 1),
     OkaId INTEGER,
-    OkaDistanceMeters REAL DEFAULT 10,
-    OkaBuildingDampingDb REAL DEFAULT 0,
+    OkaDistanceMeters REAL NOT NULL DEFAULT 10 CHECK (OkaDistanceMeters > 0),
+    OkaBuildingDampingDb REAL NOT NULL DEFAULT 0 CHECK (OkaBuildingDampingDb >= 0),
     FOREIGN KEY (ProjectId) REFERENCES Projects(Id) ON DELETE CASCADE,
-    FOREIGN KEY (RadioId) REFERENCES Radios(Id) ON DELETE SET NULL,
-    FOREIGN KEY (CableId) REFERENCES Cables(Id) ON DELETE SET NULL,
-    FOREIGN KEY (AntennaId) REFERENCES Antennas(Id) ON DELETE SET NULL,
-    FOREIGN KEY (ModulationId) REFERENCES Modulations(Id) ON DELETE SET NULL,
-    FOREIGN KEY (OkaId) REFERENCES Okas(Id) ON DELETE SET NULL
+    FOREIGN KEY (RadioId) REFERENCES Radios(Id) ON DELETE RESTRICT,
+    FOREIGN KEY (CableId) REFERENCES Cables(Id) ON DELETE RESTRICT,
+    FOREIGN KEY (AntennaId) REFERENCES Antennas(Id) ON DELETE RESTRICT,
+    FOREIGN KEY (ModulationId) REFERENCES Modulations(Id) ON DELETE RESTRICT,
+    FOREIGN KEY (OkaId) REFERENCES Okas(Id) ON DELETE RESTRICT
 );
+
+-- Indexes for foreign keys (improves JOIN and DELETE performance)
+CREATE INDEX IX_Configurations_ProjectId ON Configurations(ProjectId);
+CREATE INDEX IX_Configurations_RadioId ON Configurations(RadioId);
+CREATE INDEX IX_Configurations_CableId ON Configurations(CableId);
+CREATE INDEX IX_Configurations_AntennaId ON Configurations(AntennaId);
+CREATE INDEX IX_Configurations_ModulationId ON Configurations(ModulationId);
+CREATE INDEX IX_Configurations_OkaId ON Configurations(OkaId);
+
+-- Unique constraint: each project can only have one config per number
+CREATE UNIQUE INDEX IX_Configurations_ProjectId_ConfigNumber ON Configurations(ProjectId, ConfigNumber);
 ```
 
 ### B.2 JSON Column Formats

@@ -217,10 +217,19 @@ public partial class ResultsViewModel : ViewModelBase
 
     private ConfigurationResult CalculateConfiguration(AntennaConfiguration config)
     {
-        var antenna = DatabaseService.Instance.GetAntenna(config.Antenna.Manufacturer, config.Antenna.Model);
-        var cable = DatabaseService.Instance.GetCable(config.Cable.Type);
-        var modulation = DatabaseService.Instance.GetModulationByName(config.Modulation);
-        var oka = config.OkaId.HasValue ? DatabaseService.Instance.GetOkaById(config.OkaId.Value) : null;
+        // All lookups use IDs only
+        var antenna = config.AntennaId.HasValue
+            ? DatabaseService.Instance.GetAntennaById(config.AntennaId.Value)
+            : null;
+        var cable = config.CableId.HasValue
+            ? DatabaseService.Instance.GetCableById(config.CableId.Value)
+            : null;
+        var modulation = config.ModulationId.HasValue
+            ? DatabaseService.Instance.GetModulationById(config.ModulationId.Value)
+            : null;
+        var oka = config.OkaId.HasValue
+            ? DatabaseService.Instance.GetOkaById(config.OkaId.Value)
+            : null;
         var constants = MasterDataStore.Load().Constants;
 
         // Get OKA distance and damping from master data
@@ -290,18 +299,19 @@ public partial class ResultsViewModel : ViewModelBase
 
     /// <summary>
     /// Validates a configuration and returns an error message if invalid, or null if valid.
+    /// All lookups use IDs only.
     /// </summary>
     public static string? ValidateConfiguration(AntennaConfiguration config)
     {
         var configName = !string.IsNullOrEmpty(config.Name) ? config.Name : config.Antenna.DisplayName;
 
         // Check antenna is selected
-        if (string.IsNullOrWhiteSpace(config.Antenna.Manufacturer) || string.IsNullOrWhiteSpace(config.Antenna.Model))
+        if (!config.AntennaId.HasValue)
         {
             return $"{configName}: {Strings.Instance.NoAntennaSelected}";
         }
 
-        var antenna = DatabaseService.Instance.GetAntenna(config.Antenna.Manufacturer, config.Antenna.Model);
+        var antenna = DatabaseService.Instance.GetAntennaById(config.AntennaId.Value);
         if (antenna == null)
         {
             return $"{configName}: {Strings.Instance.AntennaNotFound} ({config.Antenna.DisplayName})";
@@ -313,30 +323,30 @@ public partial class ResultsViewModel : ViewModelBase
         }
 
         // Check cable is selected
-        if (string.IsNullOrWhiteSpace(config.Cable.Type))
+        if (!config.CableId.HasValue)
         {
             return $"{configName}: {Strings.Instance.NoCableSelected}";
         }
 
-        var cable = DatabaseService.Instance.GetCable(config.Cable.Type);
+        var cable = DatabaseService.Instance.GetCableById(config.CableId.Value);
         if (cable == null)
         {
             return $"{configName}: {Strings.Instance.CableNotFound} ({config.Cable.Type})";
         }
 
         // Check modulation is selected
-        if (string.IsNullOrWhiteSpace(config.Modulation))
+        if (!config.ModulationId.HasValue)
         {
             return $"{configName}: {Strings.Instance.NoModulationSelected}";
         }
 
-        var modulation = DatabaseService.Instance.GetModulationByName(config.Modulation);
+        var modulation = DatabaseService.Instance.GetModulationById(config.ModulationId.Value);
         if (modulation == null)
         {
             return $"{configName}: {Strings.Instance.ModulationNotFound} ({config.Modulation})";
         }
 
-        // Check OKA is configured (must have valid ID)
+        // Check OKA is configured
         if (!config.OkaId.HasValue)
         {
             return $"{configName}: {Strings.Instance.NoOkaSelected}";

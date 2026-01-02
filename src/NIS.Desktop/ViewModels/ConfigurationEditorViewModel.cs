@@ -223,6 +223,7 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
 
     /// <summary>
     /// Load from existing configuration for editing.
+    /// All lookups use IDs only.
     /// </summary>
     public void LoadFromConfiguration(AntennaConfiguration config)
     {
@@ -230,9 +231,9 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
         PowerWatts = config.PowerWatts;
 
         // Radio
-        SelectedRadio = Radios.FirstOrDefault(r =>
-            r.Manufacturer == config.Radio.Manufacturer &&
-            r.Model == config.Radio.Model);
+        SelectedRadio = config.RadioId.HasValue
+            ? Radios.FirstOrDefault(r => r.Id == config.RadioId.Value)
+            : null;
 
         // Linear
         UseLinear = config.Linear != null;
@@ -240,36 +241,38 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
         LinearPowerWatts = config.Linear?.PowerWatts ?? 0;
 
         // Cable
-        SelectedCable = Cables.FirstOrDefault(c => c.Name == config.Cable.Type);
+        SelectedCable = config.CableId.HasValue
+            ? Cables.FirstOrDefault(c => c.Id == config.CableId.Value)
+            : null;
         CableLengthMeters = config.Cable.LengthMeters;
         AdditionalLossDb = config.Cable.AdditionalLossDb;
         AdditionalLossDescription = config.Cable.AdditionalLossDescription;
 
-        // Antenna - use case-insensitive comparison
-        SelectedAntenna = Antennas.FirstOrDefault(a =>
-            a.Manufacturer.Equals(config.Antenna.Manufacturer, StringComparison.OrdinalIgnoreCase) &&
-            a.Model.Equals(config.Antenna.Model, StringComparison.OrdinalIgnoreCase));
+        // Antenna
+        SelectedAntenna = config.AntennaId.HasValue
+            ? Antennas.FirstOrDefault(a => a.Id == config.AntennaId.Value)
+            : null;
         HeightMeters = config.Antenna.HeightMeters;
         IsRotatable = config.Antenna.IsRotatable;
         HorizontalAngleDegrees = config.Antenna.HorizontalAngleDegrees;
+
         // Operating parameters
         ActivityFactor = config.ActivityFactor;
-        SelectedModulation = Modulations.FirstOrDefault(m =>
-            m.Name.Equals(config.Modulation, StringComparison.OrdinalIgnoreCase));
 
-        // OKA - find by ID first, fall back to name for backward compatibility
-        if (config.OkaId.HasValue)
-        {
-            SelectedOka = Okas.FirstOrDefault(o => o.Id == config.OkaId.Value);
-        }
-        else if (!string.IsNullOrWhiteSpace(config.OkaName))
-        {
-            SelectedOka = Okas.FirstOrDefault(o => o.Name.Equals(config.OkaName, StringComparison.OrdinalIgnoreCase));
-        }
+        // Modulation
+        SelectedModulation = config.ModulationId.HasValue
+            ? Modulations.FirstOrDefault(m => m.Id == config.ModulationId.Value)
+            : null;
+
+        // OKA
+        SelectedOka = config.OkaId.HasValue
+            ? Okas.FirstOrDefault(o => o.Id == config.OkaId.Value)
+            : null;
     }
 
     /// <summary>
     /// Create AntennaConfiguration from current values.
+    /// All master data uses IDs for references; names/config for display.
     /// </summary>
     public AntennaConfiguration ToConfiguration()
     {
@@ -277,6 +280,8 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
         {
             Name = Name,
             PowerWatts = PowerWatts,
+            // Radio: ID for reference, config for display
+            RadioId = SelectedRadio?.Id,
             Radio = new RadioConfig
             {
                 Manufacturer = SelectedRadio?.Manufacturer ?? "",
@@ -287,6 +292,8 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
                 Name = LinearName.Trim(),
                 PowerWatts = LinearPowerWatts
             },
+            // Cable: ID for reference, config for settings
+            CableId = SelectedCable?.Id,
             Cable = new CableConfig
             {
                 Type = SelectedCable?.Name ?? "",
@@ -294,6 +301,8 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
                 AdditionalLossDb = AdditionalLossDb,
                 AdditionalLossDescription = AdditionalLossDescription
             },
+            // Antenna: ID for reference, placement for settings
+            AntennaId = SelectedAntenna?.Id,
             Antenna = new AntennaPlacement
             {
                 Manufacturer = SelectedAntenna?.Manufacturer ?? "",
@@ -302,8 +311,11 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
                 IsRotatable = IsRotatable,
                 HorizontalAngleDegrees = HorizontalAngleDegrees
             },
+            // Modulation: ID for reference, name for display
+            ModulationId = SelectedModulation?.Id,
             Modulation = SelectedModulation?.Name ?? "CW",
             ActivityFactor = ActivityFactor,
+            // OKA: ID for reference, name for display
             OkaId = SelectedOka?.Id,
             OkaName = SelectedOka?.Name ?? string.Empty
         };

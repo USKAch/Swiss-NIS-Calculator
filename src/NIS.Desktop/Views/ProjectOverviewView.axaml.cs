@@ -10,15 +10,6 @@ public partial class ProjectOverviewView : UserControl
     public ProjectOverviewView()
     {
         InitializeComponent();
-
-        // Wire up StorageProvider when attached to visual tree
-        AttachedToVisualTree += (_, _) =>
-        {
-            if (DataContext is ProjectOverviewViewModel vm && TopLevel.GetTopLevel(this) is { } topLevel)
-            {
-                vm.StorageProvider = topLevel.StorageProvider;
-            }
-        };
     }
 
     private void OnConfigurationDoubleTapped(object? sender, TappedEventArgs e)

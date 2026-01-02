@@ -637,6 +637,8 @@ public class Strings : INotifyPropertyChanged
     public string ExportFailed => Get("ExportFailed");
     public string ImportSuccess => Get("ImportSuccess");
     public string ImportFailed => Get("ImportFailed");
+    public string ImportWarning => Get("ImportWarning");
+    public string MissingMasterData => Get("MissingMasterData");
     public string ImportUserData => Get("ImportUserData");
     public string ExportUserData => Get("ExportUserData");
     public string ImportConfirmMessage => Get("ImportConfirmMessage");
@@ -1084,6 +1086,8 @@ public class Strings : INotifyPropertyChanged
         ["ExportFailed"] = new() { ["de"] = "Export fehlgeschlagen", ["fr"] = "Échec de l'export", ["it"] = "Esportazione fallita", ["en"] = "Export failed" },
         ["ImportSuccess"] = new() { ["de"] = "Import erfolgreich", ["fr"] = "Import réussi", ["it"] = "Importazione riuscita", ["en"] = "Import successful" },
         ["ImportFailed"] = new() { ["de"] = "Import fehlgeschlagen", ["fr"] = "Échec de l'import", ["it"] = "Importazione fallita", ["en"] = "Import failed" },
+        ["ImportWarning"] = new() { ["de"] = "Import-Warnung", ["fr"] = "Avertissement d'import", ["it"] = "Avviso di importazione", ["en"] = "Import Warning" },
+        ["MissingMasterData"] = new() { ["de"] = "Einige Stammdaten-Referenzen konnten nicht aufgelöst werden:", ["fr"] = "Certaines références de données de base n'ont pas pu être résolues:", ["it"] = "Alcuni riferimenti ai dati master non sono stati risolti:", ["en"] = "Some master data references could not be resolved:" },
         ["ImportProject"] = new() { ["de"] = "Projekt importieren", ["fr"] = "Importer projet", ["it"] = "Importa progetto", ["en"] = "Import Project" },
         ["ExportProject"] = new() { ["de"] = "Projekt exportieren", ["fr"] = "Exporter projet", ["it"] = "Esporta progetto", ["en"] = "Export Project" },
         ["SelectProjectToExport"] = new() { ["de"] = "Bitte wählen Sie ein Projekt zum Exportieren", ["fr"] = "Veuillez sélectionner un projet à exporter", ["it"] = "Seleziona un progetto da esportare", ["en"] = "Please select a project to export" },

@@ -208,8 +208,7 @@ public partial class MainShellViewModel : ViewModelBase
 
     public void NavigateToProjectInfo(string _)
     {
-        // Use the global language from Strings.Instance (set by WelcomeViewModel)
-        _projectInfoViewModel = new ProjectInfoViewModel(Strings.Instance.Language);
+        _projectInfoViewModel = new ProjectInfoViewModel();
         _projectInfoViewModel.NavigateBack = NavigateToProjectList;
         _projectInfoViewModel.NavigateToProjectOverview = NavigateToProjectOverviewAfterCreate;
         _projectInfoViewModel.ShowConfirmDialog = ShowConfirmDialog;
@@ -523,8 +522,8 @@ public partial class MainShellViewModel : ViewModelBase
 
                 if (projectFile != null)
                 {
-                    // Import included master data first and get OKA ID mapping
-                    var okaIdMapping = ImportIncludedMasterData(projectFile.MasterData);
+                    // Import included master data first and get ID mappings (file ID -> database ID)
+                    var mapping = ImportIncludedMasterData(projectFile.MasterData);
 
                     var project = new Project
                     {
@@ -537,28 +536,67 @@ public partial class MainShellViewModel : ViewModelBase
 
                     foreach (var config in projectFile.Configurations)
                     {
-                        EnsureMasterDataExists(config, projectFile.MasterData);
+                        // Ensure any missing master data is created as placeholders
+                        EnsureMasterDataExists(config);
 
-                        // Map old OKA ID to new ID
-                        int? newOkaId = null;
-                        string okaName = string.Empty;
-                        if (config.Oka.Id > 0 && okaIdMapping.TryGetValue(config.Oka.Id, out var mappedId))
+                        // Map file IDs to database IDs using the mapping
+                        // For user data: use ID mapping from imported master data
+                        // For factory data: look up by name (factory data has same names everywhere)
+                        int? antennaId = null;
+                        if (config.AntennaId > 0 && mapping.Antennas.TryGetValue(config.AntennaId, out var mappedAntennaId))
                         {
-                            newOkaId = mappedId;
-                            var oka = DatabaseService.Instance.GetOkaById(mappedId);
+                            antennaId = mappedAntennaId;
+                        }
+                        else
+                        {
+                            antennaId = DatabaseService.Instance.GetAntennaId(config.Antenna.Manufacturer, config.Antenna.Model);
+                        }
+
+                        int? cableId = null;
+                        if (config.CableId > 0 && mapping.Cables.TryGetValue(config.CableId, out var mappedCableId))
+                        {
+                            cableId = mappedCableId;
+                        }
+                        else
+                        {
+                            cableId = DatabaseService.Instance.GetCableId(config.Cable.Name);
+                        }
+
+                        int? radioId = null;
+                        if (config.RadioId > 0 && mapping.Radios.TryGetValue(config.RadioId, out var mappedRadioId))
+                        {
+                            radioId = mappedRadioId;
+                        }
+                        else
+                        {
+                            radioId = DatabaseService.Instance.GetRadioId(config.Radio.Manufacturer, config.Radio.Model);
+                        }
+
+                        int? okaId = null;
+                        string okaName = string.Empty;
+                        if (config.Oka.Id > 0 && mapping.Okas.TryGetValue(config.Oka.Id, out var mappedOkaId))
+                        {
+                            okaId = mappedOkaId;
+                            var oka = DatabaseService.Instance.GetOkaById(mappedOkaId);
                             okaName = oka?.Name ?? string.Empty;
                         }
+
+                        // Modulation is factory data only - look up by name
+                        var modulation = DatabaseService.Instance.GetModulationByName(config.Modulation);
 
                         project.AntennaConfigurations.Add(new AntennaConfiguration
                         {
                             Name = $"{config.Antenna.Manufacturer} {config.Antenna.Model}".Trim(),
                             PowerWatts = config.PowerWatts,
+                            // Set all IDs for master data references
+                            RadioId = radioId,
                             Radio = new RadioConfig { Manufacturer = config.Radio.Manufacturer, Model = config.Radio.Model },
                             Linear = config.Linear == null ? null : new LinearConfig
                             {
                                 Name = config.Linear.Name,
                                 PowerWatts = config.Linear.PowerWatts
                             },
+                            CableId = cableId,
                             Cable = new CableConfig
                             {
                                 Type = config.Cable.Name,
@@ -566,6 +604,7 @@ public partial class MainShellViewModel : ViewModelBase
                                 AdditionalLossDb = config.AdditionalLossDb,
                                 AdditionalLossDescription = config.AdditionalLossDescription
                             },
+                            AntennaId = antennaId,
                             Antenna = new AntennaPlacement
                             {
                                 Manufacturer = config.Antenna.Manufacturer,
@@ -574,14 +613,32 @@ public partial class MainShellViewModel : ViewModelBase
                                 IsRotatable = config.RotationAngleDegrees == 360,
                                 HorizontalAngleDegrees = config.RotationAngleDegrees
                             },
+                            ModulationId = modulation?.Id,
                             Modulation = config.Modulation,
                             ActivityFactor = config.ActivityFactor,
-                            OkaId = newOkaId,
+                            OkaId = okaId,
                             OkaName = okaName
                         });
                     }
 
                     var projectId = DatabaseService.Instance.CreateProject(project);
+
+                    // Validate FK integrity after import
+                    var integrityIssues = DatabaseService.Instance.ValidateConfigurationIntegrity();
+                    if (integrityIssues.Count > 0)
+                    {
+                        var issueList = string.Join("\n", integrityIssues.Take(10));
+                        if (integrityIssues.Count > 10)
+                            issueList += $"\n... and {integrityIssues.Count - 10} more";
+
+                        await MsBox.Avalonia.MessageBoxManager
+                            .GetMessageBoxStandard(
+                                Strings.Instance.ImportWarning,
+                                $"{Strings.Instance.MissingMasterData}\n\n{issueList}",
+                                MsBox.Avalonia.Enums.ButtonEnum.Ok,
+                                MsBox.Avalonia.Enums.Icon.Warning)
+                            .ShowAsync();
+                    }
 
                     // Refresh project lists
                     _welcomeViewModel?.RefreshProjects();
@@ -646,9 +703,18 @@ public partial class MainShellViewModel : ViewModelBase
                     },
                     Configurations = project.AntennaConfigurations.Select(c =>
                     {
-                        var antenna = DatabaseService.Instance.GetAntenna(c.Antenna.Manufacturer, c.Antenna.Model);
+                        // Use ID-first lookups
+                        var antenna = c.AntennaId.HasValue
+                            ? DatabaseService.Instance.GetAntennaById(c.AntennaId.Value)
+                            : null;
                         return new ProjectFileConfiguration
                         {
+                            // Include source IDs for import mapping
+                            AntennaId = c.AntennaId ?? 0,
+                            RadioId = c.RadioId ?? 0,
+                            CableId = c.CableId ?? 0,
+                            ModulationId = c.ModulationId ?? 0,
+                            // Include names for cross-system compatibility
                             Antenna = new ProjectFileReference
                             {
                                 Manufacturer = c.Antenna.Manufacturer,
@@ -680,52 +746,50 @@ public partial class MainShellViewModel : ViewModelBase
                     }).ToList()
                 };
 
-                // Collect user-specific master data used in configurations
+                // Collect user-specific master data used in configurations (ID-only lookups)
                 var db = DatabaseService.Instance;
                 var masterData = new ProjectFileMasterData();
-                var addedAntennas = new HashSet<string>();
-                var addedCables = new HashSet<string>();
-                var addedRadios = new HashSet<string>();
+                var addedAntennas = new HashSet<int>();
+                var addedCables = new HashSet<int>();
+                var addedRadios = new HashSet<int>();
                 var addedOkas = new HashSet<int>();
 
                 foreach (var config in project.AntennaConfigurations)
                 {
-                    // Antenna
-                    var antennaKey = $"{config.Antenna.Manufacturer}|{config.Antenna.Model}";
-                    if (!addedAntennas.Contains(antennaKey))
+                    // Antenna - ID only
+                    if (config.AntennaId.HasValue && !addedAntennas.Contains(config.AntennaId.Value))
                     {
-                        var antenna = db.GetAntenna(config.Antenna.Manufacturer, config.Antenna.Model);
+                        var antenna = db.GetAntennaById(config.AntennaId.Value);
                         if (antenna != null && antenna.IsUserData)
                         {
                             masterData.Antennas.Add(antenna);
-                            addedAntennas.Add(antennaKey);
+                            addedAntennas.Add(antenna.Id);
                         }
                     }
 
-                    // Cable
-                    if (!addedCables.Contains(config.Cable.Type))
+                    // Cable - ID only
+                    if (config.CableId.HasValue && !addedCables.Contains(config.CableId.Value))
                     {
-                        var cable = db.GetCable(config.Cable.Type);
+                        var cable = db.GetCableById(config.CableId.Value);
                         if (cable != null && cable.IsUserData)
                         {
                             masterData.Cables.Add(cable);
-                            addedCables.Add(config.Cable.Type);
+                            addedCables.Add(cable.Id);
                         }
                     }
 
-                    // Radio
-                    var radioKey = $"{config.Radio.Manufacturer}|{config.Radio.Model}";
-                    if (!addedRadios.Contains(radioKey))
+                    // Radio - ID only
+                    if (config.RadioId.HasValue && !addedRadios.Contains(config.RadioId.Value))
                     {
-                        var radio = db.GetRadio(config.Radio.Manufacturer, config.Radio.Model);
+                        var radio = db.GetRadioById(config.RadioId.Value);
                         if (radio != null && radio.IsUserData)
                         {
                             masterData.Radios.Add(radio);
-                            addedRadios.Add(radioKey);
+                            addedRadios.Add(radio.Id);
                         }
                     }
 
-                    // OKA - use ID for lookup
+                    // OKA - ID only
                     if (config.OkaId.HasValue && !addedOkas.Contains(config.OkaId.Value))
                     {
                         var oka = db.GetOkaById(config.OkaId.Value);
@@ -757,43 +821,75 @@ public partial class MainShellViewModel : ViewModelBase
     }
 
     /// <summary>
-    /// Import master data included in the project file.
-    /// Returns a mapping of old OKA IDs to new OKA IDs.
+    /// Holds ID mappings from old (file) IDs to new (database) IDs for all entity types.
     /// </summary>
-    private Dictionary<int, int> ImportIncludedMasterData(ProjectFileMasterData? masterData)
+    private class MasterDataIdMapping
     {
-        var okaIdMapping = new Dictionary<int, int>();
-        if (masterData == null) return okaIdMapping;
+        public Dictionary<int, int> Antennas { get; } = new();
+        public Dictionary<int, int> Cables { get; } = new();
+        public Dictionary<int, int> Radios { get; } = new();
+        public Dictionary<int, int> Okas { get; } = new();
+    }
+
+    /// <summary>
+    /// Import master data included in the project file.
+    /// Returns mappings of old IDs to new IDs for all entity types.
+    /// </summary>
+    private MasterDataIdMapping ImportIncludedMasterData(ProjectFileMasterData? masterData)
+    {
+        var mapping = new MasterDataIdMapping();
+        if (masterData == null) return mapping;
 
         var db = DatabaseService.Instance;
 
-        // Import antennas with full band/pattern data
+        // Import antennas and track ID mapping
         foreach (var antenna in masterData.Antennas)
         {
+            int oldId = antenna.Id;
             if (!db.AntennaExists(antenna.Manufacturer, antenna.Model))
             {
+                antenna.Id = 0;
                 antenna.IsUserData = true;
                 db.SaveAntenna(antenna);
             }
-        }
-
-        // Import cables with attenuation data
-        foreach (var cable in masterData.Cables)
-        {
-            if (!db.CableExists(cable.Name))
+            var newId = db.GetAntennaId(antenna.Manufacturer, antenna.Model);
+            if (newId.HasValue)
             {
-                cable.IsUserData = true;
-                db.SaveCable(cable);
+                mapping.Antennas[oldId] = newId.Value;
             }
         }
 
-        // Import radios
+        // Import cables and track ID mapping
+        foreach (var cable in masterData.Cables)
+        {
+            int oldId = cable.Id;
+            if (!db.CableExists(cable.Name))
+            {
+                cable.Id = 0;
+                cable.IsUserData = true;
+                db.SaveCable(cable);
+            }
+            var newId = db.GetCableId(cable.Name);
+            if (newId.HasValue)
+            {
+                mapping.Cables[oldId] = newId.Value;
+            }
+        }
+
+        // Import radios and track ID mapping
         foreach (var radio in masterData.Radios)
         {
+            int oldId = radio.Id;
             if (!db.RadioExists(radio.Manufacturer, radio.Model))
             {
+                radio.Id = 0;
                 radio.IsUserData = true;
                 db.SaveRadio(radio);
+            }
+            var newId = db.GetRadioId(radio.Manufacturer, radio.Model);
+            if (newId.HasValue)
+            {
+                mapping.Radios[oldId] = newId.Value;
             }
         }
 
@@ -803,35 +899,36 @@ public partial class MainShellViewModel : ViewModelBase
             int oldId = oka.Id;
             if (!db.OkaExists(oka.Name))
             {
-                oka.Id = 0; // Reset ID so database assigns new one
+                oka.Id = 0;
                 oka.IsUserData = true;
                 db.SaveOka(oka);
             }
-            // Get the new ID (either newly created or existing)
             var newId = db.GetOkaId(oka.Name);
             if (newId.HasValue)
             {
-                okaIdMapping[oldId] = newId.Value;
+                mapping.Okas[oldId] = newId.Value;
             }
         }
 
-        return okaIdMapping;
+        return mapping;
     }
 
     /// <summary>
-    /// Ensure master data exists for a configuration, creating placeholders if not in included data.
+    /// Ensure master data exists for a configuration, creating placeholders if missing.
+    /// Called after ImportIncludedMasterData has already imported user data with ID mappings.
     /// </summary>
-    private void EnsureMasterDataExists(ProjectFileConfiguration config, ProjectFileMasterData? includedData)
+    private void EnsureMasterDataExists(ProjectFileConfiguration config)
     {
         var db = DatabaseService.Instance;
 
+        // Validate modulation exists (factory data only)
         var modulation = db.GetModulationByName(config.Modulation);
         if (modulation == null)
         {
             throw new InvalidOperationException($"Unknown modulation '{config.Modulation}'.");
         }
 
-        // Create placeholder if antenna doesn't exist and wasn't in included data
+        // Create placeholder if antenna doesn't exist
         if (!db.AntennaExists(config.Antenna.Manufacturer, config.Antenna.Model))
         {
             db.SaveAntenna(new Antenna
@@ -844,6 +941,7 @@ public partial class MainShellViewModel : ViewModelBase
             });
         }
 
+        // Create placeholder if cable doesn't exist
         if (!db.CableExists(config.Cable.Name))
         {
             db.SaveCable(new Cable
@@ -853,6 +951,7 @@ public partial class MainShellViewModel : ViewModelBase
             });
         }
 
+        // Create placeholder if radio doesn't exist
         if (!db.RadioExists(config.Radio.Manufacturer, config.Radio.Model))
         {
             db.SaveRadio(new Radio
@@ -864,7 +963,8 @@ public partial class MainShellViewModel : ViewModelBase
             });
         }
 
-        // OKA is handled by ID mapping in import - no placeholder creation needed
+        // OKA is handled by ID mapping - no placeholder creation
+        // OKA must exist in the file's included master data or import will have null OkaId
     }
 
     #region Project File DTOs
@@ -895,6 +995,12 @@ public partial class MainShellViewModel : ViewModelBase
 
     private class ProjectFileConfiguration
     {
+        // Master data IDs (for import mapping)
+        public int AntennaId { get; set; }
+        public int RadioId { get; set; }
+        public int CableId { get; set; }
+        public int ModulationId { get; set; }
+
         public ProjectFileReference Antenna { get; set; } = new();
         public double HeightMeters { get; set; }
         public string Polarization { get; set; } = "horizontal";
@@ -1324,29 +1430,6 @@ public partial class MainShellViewModel : ViewModelBase
     private void SaveAs()
     {
         Save();
-    }
-    /// <summary>
-    /// Shows project selection dialog and loads the selected project.
-    /// </summary>
-    private async Task ShowProjectSelectionAsync()
-    {
-        var projects = Services.DatabaseService.Instance.GetProjectList();
-        if (projects.Count == 0)
-        {
-            // No projects, navigate to new project
-            NavigateToProjectInfo(Strings.Instance.Language);
-            return;
-        }
-
-        if (projects.Count == 1)
-        {
-            // Only one project, load it directly
-            await LoadProjectFromDatabaseAsync(projects[0].Id);
-            return;
-        }
-
-        // Multiple projects - navigate to welcome where user can select
-        NavigateToWelcome();
     }
 
     /// <summary>

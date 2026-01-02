@@ -281,8 +281,8 @@ public partial class MasterDataManagerViewModel : ViewModelBase
                 return;
             }
 
-            // Delete from database
-            DatabaseService.Instance.DeleteAntenna(SelectedAntenna.Manufacturer, SelectedAntenna.Model);
+            // Delete from database by ID
+            DatabaseService.Instance.DeleteAntenna(SelectedAntenna.Id);
             AllAntennas.Remove(SelectedAntenna);
             FilteredAntennas.Remove(SelectedAntenna);
             SelectedAntenna = null;
@@ -330,8 +330,8 @@ public partial class MasterDataManagerViewModel : ViewModelBase
                 return;
             }
 
-            // Delete from database
-            DatabaseService.Instance.DeleteCable(SelectedCable.Name);
+            // Delete from database by ID
+            DatabaseService.Instance.DeleteCable(SelectedCable.Id);
             AllCables.Remove(SelectedCable);
             FilteredCables.Remove(SelectedCable);
             SelectedCable = null;
@@ -379,8 +379,8 @@ public partial class MasterDataManagerViewModel : ViewModelBase
                 return;
             }
 
-            // Delete from database
-            DatabaseService.Instance.DeleteRadio(SelectedRadio.Manufacturer, SelectedRadio.Model);
+            // Delete from database by ID
+            DatabaseService.Instance.DeleteRadio(SelectedRadio.Id);
             AllRadios.Remove(SelectedRadio);
             FilteredRadios.Remove(SelectedRadio);
             SelectedRadio = null;

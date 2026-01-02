@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MsBox.Avalonia;
@@ -58,9 +57,10 @@ public class ConfigurationDisplayItem
 
     private string GetFrequencies()
     {
-        var antenna = ProjectAntennas.FirstOrDefault(a =>
-            a.Manufacturer.Equals(Configuration.Antenna.Manufacturer, StringComparison.OrdinalIgnoreCase) &&
-            a.Model.Equals(Configuration.Antenna.Model, StringComparison.OrdinalIgnoreCase));
+        // Use ID only
+        var antenna = Configuration.AntennaId.HasValue
+            ? ProjectAntennas.FirstOrDefault(a => a.Id == Configuration.AntennaId.Value)
+            : null;
 
         if (antenna == null || antenna.Bands.Count == 0)
             return "";
@@ -97,9 +97,6 @@ public partial class ProjectOverviewViewModel : ViewModelBase
 {
     private readonly ProjectViewModel _projectViewModel;
 
-    // Storage provider for file dialogs (set by view)
-    public IStorageProvider? StorageProvider { get; set; }
-
     // Navigation callbacks
     public Action<AntennaConfiguration?>? NavigateToConfigurationEditor { get; set; }
     public Action? NavigateToResults { get; set; }
@@ -129,12 +126,10 @@ public partial class ProjectOverviewViewModel : ViewModelBase
             OnPropertyChanged(nameof(Callsign));
             OnPropertyChanged(nameof(Address));
             OnPropertyChanged(nameof(Location));
-            OnPropertyChanged(nameof(StationSummary));
             OnPropertyChanged(nameof(Configurations));
             OnPropertyChanged(nameof(ConfigurationItems));
             OnPropertyChanged(nameof(HasConfigurations));
             OnPropertyChanged(nameof(CanCalculate));
-            OnPropertyChanged(nameof(LanguageDisplay));
         };
     }
 
@@ -149,12 +144,6 @@ public partial class ProjectOverviewViewModel : ViewModelBase
     public string Callsign => _projectViewModel.Project.Callsign;
     public string Address => _projectViewModel.Project.Address;
     public string Location => _projectViewModel.Project.Location;
-    public string StationSummary => !string.IsNullOrEmpty(Callsign)
-        ? Callsign
-        : string.IsNullOrEmpty(OperatorName) ? "No station info" : OperatorName;
-
-    // Language (shows current UI language)
-    public string LanguageDisplay => Localization.Strings.Instance.GetLanguageName(Localization.Strings.Instance.Language);
 
     // Collections
     public ObservableCollection<AntennaConfiguration> Configurations => _projectViewModel.Configurations;
@@ -173,31 +162,6 @@ public partial class ProjectOverviewViewModel : ViewModelBase
     public bool CanCalculate => HasConfigurations && Configurations.Any(c =>
         c.OkaId.HasValue &&
         Services.DatabaseService.Instance.GetOkaById(c.OkaId.Value) != null);
-
-    [ObservableProperty]
-    private bool _hasResults;
-
-    [ObservableProperty]
-    private string _statusMessage = "Ready";
-
-    // Database saves are automatic - these methods kept for compatibility
-    [RelayCommand]
-    private void SaveProject()
-    {
-        OnPropertyChanged(nameof(StatusMessage));
-        StatusMessage = "Project saved to database";
-    }
-
-    [RelayCommand]
-    private void SaveProjectAs()
-    {
-        SaveProject();
-    }
-    [RelayCommand]
-    private void Export()
-    {
-        StatusMessage = "Export not implemented yet";
-    }
 
     // Station info commands
     [RelayCommand]
@@ -226,7 +190,6 @@ public partial class ProjectOverviewViewModel : ViewModelBase
         OnPropertyChanged(nameof(HasConfigurations));
         OnPropertyChanged(nameof(ConfigurationItems));
         OnPropertyChanged(nameof(CanCalculate));
-        StatusMessage = $"Deleted configuration: {item.Configuration.Name}";
     }
 
     // Calculation commands
@@ -246,7 +209,6 @@ public partial class ProjectOverviewViewModel : ViewModelBase
             return;
         }
 
-        StatusMessage = Strings.Instance.Calculating;
         NavigateToResults?.Invoke();
     }
 

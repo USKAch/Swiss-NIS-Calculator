@@ -111,20 +111,10 @@ public class Antenna
     public string Manufacturer { get; set; } = string.Empty;
 
     /// <summary>
-    /// Antenna model/type name. Accepts both "model" and "type" from JSON.
+    /// Antenna model name.
     /// </summary>
     [JsonPropertyName("model")]
     public string Model { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Alias for Model - used in legacy JSON format.
-    /// </summary>
-    [JsonPropertyName("type")]
-    public string? Type
-    {
-        get => null;
-        set { if (!string.IsNullOrEmpty(value)) Model = value; }
-    }
 
     /// <summary>
     /// Antenna type classification. See <see cref="AntennaTypes"/> for valid values.
@@ -144,38 +134,6 @@ public class Antenna
     /// </summary>
     [JsonPropertyName("bands")]
     public List<AntennaBand> Bands { get; set; } = new();
-
-    // Legacy single-band format support
-    [JsonPropertyName("frequencyMHz")]
-    public double? LegacyFrequencyMHz
-    {
-        get => null;
-        set
-        {
-            if (value.HasValue && Bands.Count == 0)
-            {
-                Bands.Add(new AntennaBand { FrequencyMHz = value.Value });
-            }
-            else if (value.HasValue && Bands.Count > 0)
-            {
-                Bands[0].FrequencyMHz = value.Value;
-            }
-        }
-    }
-
-    [JsonPropertyName("gainDbi")]
-    public double? LegacyGainDbi
-    {
-        get => null;
-        set
-        {
-            if (value.HasValue)
-            {
-                if (Bands.Count == 0) Bands.Add(new AntennaBand());
-                Bands[0].GainDbi = value.Value;
-            }
-        }
-    }
 
     /// <summary>
     /// Indicates whether this antenna is user data (editable) or factory data (read-only).

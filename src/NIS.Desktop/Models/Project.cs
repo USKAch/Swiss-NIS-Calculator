@@ -6,24 +6,6 @@ using System.Text.Json.Serialization;
 namespace NIS.Desktop.Models;
 
 /// <summary>
-/// Station information for the project.
-/// </summary>
-public class StationInfo
-{
-    [JsonPropertyName("operator")]
-    public string Operator { get; set; } = string.Empty;
-
-    [JsonPropertyName("callsign")]
-    public string Callsign { get; set; } = string.Empty;
-
-    [JsonPropertyName("address")]
-    public string Address { get; set; } = string.Empty;
-
-    [JsonPropertyName("location")]
-    public string Location { get; set; } = string.Empty;
-}
-
-/// <summary>
 /// Radio configuration within an antenna configuration.
 /// </summary>
 public class RadioConfig
@@ -104,11 +86,16 @@ public class AntennaPlacement
 
 /// <summary>
 /// Complete antenna configuration (radio -> cable -> antenna signal path).
+/// All master data references use IDs for lookups; names are for display only.
 /// </summary>
 public class AntennaConfiguration
 {
     [JsonPropertyName("name")]
     public string Name { get; set; } = string.Empty;
+
+    // Radio reference (ID for lookup, config for display)
+    [JsonPropertyName("radioId")]
+    public int? RadioId { get; set; }
 
     [JsonPropertyName("radio")]
     public RadioConfig Radio { get; set; } = new();
@@ -122,15 +109,24 @@ public class AntennaConfiguration
     [JsonPropertyName("powerWatts")]
     public double PowerWatts { get; set; }
 
+    // Cable reference (ID for lookup, config for display/settings)
+    [JsonPropertyName("cableId")]
+    public int? CableId { get; set; }
+
     [JsonPropertyName("cable")]
     public CableConfig Cable { get; set; } = new();
+
+    // Antenna reference (ID for lookup, placement for display/settings)
+    [JsonPropertyName("antennaId")]
+    public int? AntennaId { get; set; }
 
     [JsonPropertyName("antenna")]
     public AntennaPlacement Antenna { get; set; } = new();
 
-    /// <summary>
-    /// Modulation name for this configuration (e.g., SSB, CW, FM).
-    /// </summary>
+    // Modulation reference (ID for lookup, name for display)
+    [JsonPropertyName("modulationId")]
+    public int? ModulationId { get; set; }
+
     [JsonPropertyName("modulation")]
     public string Modulation { get; set; } = "CW";
 
@@ -140,15 +136,10 @@ public class AntennaConfiguration
     [JsonPropertyName("activityFactor")]
     public double ActivityFactor { get; set; } = 0.5;
 
-    /// <summary>
-    /// OKA database ID for referencing. Used for all lookups.
-    /// </summary>
+    // OKA reference (ID for lookup, name for display)
     [JsonPropertyName("okaId")]
     public int? OkaId { get; set; }
 
-    /// <summary>
-    /// OKA name for display (human-readable).
-    /// </summary>
     [JsonPropertyName("okaName")]
     public string OkaName { get; set; } = string.Empty;
 
@@ -157,30 +148,9 @@ public class AntennaConfiguration
 }
 
 /// <summary>
-/// Evaluation point (OKA - Ort des kurzfristigen Aufenthalts).
-/// Now belongs to an AntennaConfiguration with a single distance.
-/// </summary>
-public class EvaluationPoint
-{
-    [JsonPropertyName("id")]
-    public string Id { get; set; } = string.Empty;
-
-    [JsonPropertyName("name")]
-    public string Name { get; set; } = string.Empty;
-
-    [JsonPropertyName("distanceMeters")]
-    public double DistanceMeters { get; set; }
-
-    [JsonPropertyName("buildingDampingDb")]
-    public double BuildingDampingDb { get; set; }
-
-    [JsonIgnore]
-    public string Summary => $"{Id}: {DistanceMeters}m, {BuildingDampingDb}dB";
-}
-
-/// <summary>
 /// NIS calculation project file (.nisproj).
 /// Project fields: Name, Operator (callsign), Address, Location.
+/// All master data is referenced by ID, with names stored for display purposes.
 /// </summary>
 public class Project
 {
@@ -200,46 +170,6 @@ public class Project
     [JsonPropertyName("location")]
     public string Location { get; set; } = string.Empty;
 
-    // Legacy: for backward compatibility with old JSON files
-    [JsonPropertyName("station")]
-    public StationInfo? Station
-    {
-        get => null; // Don't serialize
-        set
-        {
-            // Import from old format
-            if (value != null)
-            {
-                if (!string.IsNullOrWhiteSpace(value.Operator))
-                {
-                    Operator = value.Operator;
-                }
-                if (!string.IsNullOrWhiteSpace(value.Callsign))
-                {
-                    Callsign = value.Callsign;
-                }
-                Address = value.Address;
-                Location = value.Location;
-            }
-        }
-    }
-
     [JsonPropertyName("configurations")]
     public List<AntennaConfiguration> AntennaConfigurations { get; set; } = new();
-
-    // Legacy: for backward compatibility with old JSON files
-    [JsonPropertyName("antennaConfigurations")]
-    public List<AntennaConfiguration>? LegacyAntennaConfigurations
-    {
-        get => null;
-        set
-        {
-            if (value != null && value.Count > 0)
-            {
-                AntennaConfigurations = value;
-            }
-        }
-    }
-
-    // Master data is stored globally in the database; projects reference it by name/model.
 }
