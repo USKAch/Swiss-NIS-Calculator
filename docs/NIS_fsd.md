@@ -1119,8 +1119,7 @@ dotnet publish -c Release -r win-x64 -p:PublishSingleFile=true -p:IncludeNativeL
 #### GitHub Actions Workflow (`.github/workflows/build.yml`)
 
 Triggered by:
-- Push to `main` branch (build + test only)
-- Version tag `v*` (build + test + release)
+- Manual dispatch (Actions → "Run workflow" → enter version tag)
 
 | Job | Platforms | Description |
 |-----|-----------|-------------|
@@ -1144,8 +1143,8 @@ Complete workflow for updating shipped master data (see also Section 9.4):
 2. **Modify Data** (Section 9.2): Edit master data (antennas, cables, radios, modulations, constants, bands)
 3. **Update Demo Project** (Section 9.3): Create or modify the demo project
 4. **Commit**: Push `src/NIS.Desktop/Data/nisdata.db` to GitHub
-5. **Tag Release**: Create version tag (`git tag v1.x.x && git push origin v1.x.x`)
-6. **Distribute**: GitHub Actions builds and publishes the release automatically
+5. **Run Release**: Go to Actions → "Build and Release" → "Run workflow" → enter version (e.g., v1.0.1)
+6. **Distribute**: GitHub Actions builds and publishes the release
 
 **Note**: No upgrade path exists. Each version ships a complete fresh database. Users start over with each new version.
 
