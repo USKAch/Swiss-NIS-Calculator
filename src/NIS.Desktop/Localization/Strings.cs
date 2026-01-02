@@ -138,6 +138,7 @@ public class Strings : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(EvaluationPoint)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectAntenna)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Height)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HeightShort)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FrequencyBands)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectRadio)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Linear)));
@@ -149,6 +150,8 @@ public class Strings : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Modulation)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ActivityFactor)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(OkaDistance)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(OkaDistanceShort)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(OkaShort)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(OkaDamping)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(OkaExplanation)));
 
@@ -375,6 +378,7 @@ public class Strings : INotifyPropertyChanged
     // Antenna section
     public string SelectAntenna => Get("SelectAntenna");
     public string Height => Get("Height");
+    public string HeightShort => Get("HeightShort");
     public string FrequencyBands => Get("FrequencyBands");
     public string Bands => Get("Bands");
 
@@ -396,6 +400,8 @@ public class Strings : INotifyPropertyChanged
 
     // OKA section
     public string OkaDistance => Get("OkaDistance");
+    public string OkaDistanceShort => Get("OkaDistanceShort");
+    public string OkaShort => Get("OkaShort");
     public string OkaDamping => Get("OkaDamping");
     public string OkaExplanation => Get("OkaExplanation");
 
@@ -931,6 +937,7 @@ public class Strings : INotifyPropertyChanged
 
         ["SelectAntenna"] = new() { ["de"] = "-- Antenne wählen --", ["fr"] = "-- Sélectionner antenne --", ["it"] = "-- Seleziona antenna --", ["en"] = "-- Select Antenna --" },
         ["Height"] = new() { ["de"] = "Höhe", ["fr"] = "Hauteur", ["it"] = "Altezza", ["en"] = "Height" },
+        ["HeightShort"] = new() { ["de"] = "Höhe", ["fr"] = "Haut.", ["it"] = "Alt.", ["en"] = "Height" },
         ["FrequencyBands"] = new() { ["de"] = "Frequenzbänder", ["fr"] = "Bandes de fréquence", ["it"] = "Bande di frequenza", ["en"] = "Frequency Bands" },
         ["Bands"] = new() { ["de"] = "Bänder", ["fr"] = "Bandes", ["it"] = "Bande", ["en"] = "Bands" },
 
@@ -948,6 +955,8 @@ public class Strings : INotifyPropertyChanged
         ["ParametersApplyToAllBands"] = new() { ["de"] = "Diese Parameter gelten für alle Bänder der gewählten Antenne.", ["fr"] = "Ces paramètres s'appliquent à toutes les bandes de l'antenne sélectionnée.", ["it"] = "Questi parametri si applicano a tutte le bande dell'antenna selezionata.", ["en"] = "These parameters apply to all bands of the selected antenna." },
 
         ["OkaDistance"] = new() { ["de"] = "Distanz (m)", ["fr"] = "Distance (m)", ["it"] = "Distanza (m)", ["en"] = "Distance (m)" },
+        ["OkaDistanceShort"] = new() { ["de"] = "Dist.", ["fr"] = "Dist.", ["it"] = "Dist.", ["en"] = "Dist." },
+        ["OkaShort"] = new() { ["de"] = "OKA", ["fr"] = "LSM", ["it"] = "LST", ["en"] = "PSS" },
         ["OkaDamping"] = new() { ["de"] = "Gebäudedämpfung (dB)", ["fr"] = "Atténuation bâtiment (dB)", ["it"] = "Attenuazione edificio (dB)", ["en"] = "Building Damping (dB)" },
         ["OkaExplanation"] = new() { ["de"] = "OKA = Ort für kurzfristigen Aufenthalt", ["fr"] = "LSM = Lieu de séjour momentané", ["it"] = "LST = Luogo di soggiorno temporaneo", ["en"] = "PSS = Place of Short-Term Stay" },
 

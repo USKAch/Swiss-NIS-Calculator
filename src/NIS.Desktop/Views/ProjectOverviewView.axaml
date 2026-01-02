@@ -82,64 +82,102 @@
                                   HorizontalAlignment="Left"
                                   MaxHeight="400"
                                   DoubleTapped="OnConfigurationDoubleTapped">
+                            <!--
+                                Padding Concept:
+                                - First column: no left padding (aligns with view content)
+                                - Inter-column spacing: 8px gap between columns
+                                - Vertical padding: 4px top/bottom
+                                - Group separators: 2px right border
+
+                                Column widths: Antenna=200, Bands=280, Height=70, Cable=120, Power=100, OKA=120, Dist=70, Actions=210
+                            -->
                             <DataGrid.Styles>
                                 <Style Selector="DataGridColumnHeader">
                                     <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}"/>
                                     <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
-                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="FontSize" Value="13"/>
                                     <Setter Property="FontWeight" Value="SemiBold"/>
-                                    <Setter Property="Padding" Value="10,6"/>
-                                    <Setter Property="MinHeight" Value="36"/>
+                                    <Setter Property="Padding" Value="0,6"/>
+                                    <Setter Property="MinHeight" Value="32"/>
+                                </Style>
+                                <Style Selector="DataGridCell">
+                                    <Setter Property="Padding" Value="0,4"/>
                                 </Style>
                             </DataGrid.Styles>
                             <DataGrid.Columns>
-                                <!-- Antenna Group -->
-                                <DataGridTextColumn Header="{Binding Antenna, Source={x:Static loc:Strings.Instance}}" Binding="{Binding AntennaDisplay}" Width="Auto"/>
-                                <DataGridTemplateColumn Header="{Binding Bands, Source={x:Static loc:Strings.Instance}}" Width="120">
+                                <!-- Col 1: Antenna (200px) - no left padding -->
+                                <DataGridTemplateColumn Header="{Binding Antenna, Source={x:Static loc:Strings.Instance}}" Width="200">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding FrequencyDisplay}" FontSize="11" VerticalAlignment="Center" Padding="10,6"
-                                                       TextWrapping="Wrap" MaxWidth="100"/>
+                                            <TextBlock Text="{Binding AntennaDisplay}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                <!-- Height with right border as group separator -->
-                                <DataGridTemplateColumn Header="{Binding Height, Source={x:Static loc:Strings.Instance}}" Width="Auto">
+                                <!-- Col 2: Bands (280px, wrapping) -->
+                                <DataGridTemplateColumn Header="{Binding Bands, Source={x:Static loc:Strings.Instance}}" Width="280">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Border BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}" BorderThickness="0,0,2,0" Padding="10,6,12,6">
+                                            <TextBlock Text="{Binding FrequencyDisplay}" FontSize="11" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <!-- Col 3: Height (70px) + group separator -->
+                                <DataGridTemplateColumn Header="{Binding HeightShort, Source={x:Static loc:Strings.Instance}}" Width="70">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Border BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}" BorderThickness="0,0,2,0" Margin="0,0,8,0">
                                                 <TextBlock Text="{Binding HeightDisplay}" VerticalAlignment="Center"/>
                                             </Border>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                <!-- Transmitter/Cable Group -->
-                                <DataGridTextColumn Header="{Binding Cable, Source={x:Static loc:Strings.Instance}}" Binding="{Binding CableDisplay}" Width="Auto"/>
-                                <!-- Power with right border as group separator -->
-                                <DataGridTemplateColumn Header="{Binding Power, Source={x:Static loc:Strings.Instance}}" Width="Auto">
+                                <!-- Col 4: Cable (120px) -->
+                                <DataGridTemplateColumn Header="{Binding Cable, Source={x:Static loc:Strings.Instance}}" Width="120">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Border BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}" BorderThickness="0,0,2,0" Padding="10,6,20,6">
+                                            <TextBlock Text="{Binding CableDisplay}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <!-- Col 5: Power (100px) + group separator -->
+                                <DataGridTemplateColumn Header="{Binding Power, Source={x:Static loc:Strings.Instance}}" Width="100">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Border BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}" BorderThickness="0,0,2,0" Margin="0,0,8,0">
                                                 <TextBlock Text="{Binding PowerDisplay}" VerticalAlignment="Center"/>
                                             </Border>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                <!-- OKA Group -->
-                                <DataGridTextColumn Header="OKA" Binding="{Binding OkaNameDisplay}" Width="Auto"/>
-                                <DataGridTextColumn Header="{Binding OkaDistance, Source={x:Static loc:Strings.Instance}}" Binding="{Binding OkaDistanceDisplay}" Width="Auto"/>
-                                <DataGridTemplateColumn Header="" Width="Auto">
+                                <!-- Col 6: OKA name (120px) -->
+                                <DataGridTemplateColumn Header="{Binding OkaShort, Source={x:Static loc:Strings.Instance}}" Width="120">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" Margin="5,0">
+                                            <TextBlock Text="{Binding OkaNameDisplay}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <!-- Col 7: OKA distance (70px) -->
+                                <DataGridTemplateColumn Header="{Binding OkaDistanceShort, Source={x:Static loc:Strings.Instance}}" Width="70">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding OkaDistanceDisplay}" VerticalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <!-- Col 8: Actions (210px) -->
+                                <DataGridTemplateColumn Header="" Width="210">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
                                                 <Button Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}"
                                                         Command="{Binding $parent[DataGrid].((vm:ProjectOverviewViewModel)DataContext).EditConfigurationCommand}"
                                                         CommandParameter="{Binding}"
-                                                        Padding="8,3"/>
+                                                        Padding="6,2"/>
                                                 <Button Content="{Binding Delete, Source={x:Static loc:Strings.Instance}}"
                                                         Command="{Binding $parent[DataGrid].((vm:ProjectOverviewViewModel)DataContext).DeleteConfigurationCommand}"
                                                         CommandParameter="{Binding}"
-                                                        Padding="8,3" Foreground="{DynamicResource DangerButtonBrush}"/>
+                                                        Padding="6,2" Foreground="{DynamicResource DangerButtonBrush}"/>
                                             </StackPanel>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>

@@ -90,16 +90,27 @@ Primary workspace after project is loaded/created. Users can edit and add config
 - Address: Musterstrasse 1, 8000 Zürich
 - Click "Edit" → Navigates to Project Info screen to modify
 
-**Configurations List**:
-Each configuration card shows:
-- **Primary line**: Antenna name (bold, as primary identifier)
-- **Secondary line**: Radio Power | Cable type
+**Configurations List** (DataGrid):
 
-Example:
-| Antenna (bold) | Details | Evaluation Point | Actions |
-|----------------|---------|-----|---------|
-| Opti-Beam OB9-5 | Yaesu FT-1000 100W \| EcoFlex10 | 5.4m | Edit / Delete |
-| Wimo ZX6-2 | Yaesu FT-991 100W \| Aircom-plus | 7.4m | Edit / Delete |
+Window default width: 1500px → Available DataGrid width: 1200px
+
+| Column | Width | Content |
+|--------|-------|---------|
+| Antenna | 200px | Antenna name (primary identifier) |
+| Bands | 280px | Frequency bands (text wrapping enabled) |
+| Height | 70px | Antenna height + group separator |
+| Cable | 120px | Cable type name |
+| Power | 100px | Transmitter power + group separator |
+| OKA* | 120px | Evaluation point name |
+| Dist. | 70px | Distance to evaluation point |
+| Actions | 210px | Edit / Delete buttons |
+
+*OKA column header is localized: OKA (de), LSM (fr), LST (it), PSS (en)
+
+Layout concept:
+- No horizontal cell padding (first column aligns with view content)
+- Vertical padding: 4px
+- Group separators: 2px right border after Height and Power columns
 
 - Configurations are identified by their antenna (no user-defined name)
 - "+ Add Configuration" button → Navigates to Configuration Editor (Section 3.5)
