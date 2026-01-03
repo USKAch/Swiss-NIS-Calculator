@@ -531,7 +531,7 @@ public partial class ResultsViewModel : ViewModelBase
         {
             var result = Results[i];
             var configName = !string.IsNullOrWhiteSpace(result.ConfigurationName)
-                ? $"{result.ConfigurationName} (#{i + 1})"
+                ? result.ConfigurationName
                 : $"{s.Configuration} #{i + 1}";
 
             // Configuration summary table (config name as header)

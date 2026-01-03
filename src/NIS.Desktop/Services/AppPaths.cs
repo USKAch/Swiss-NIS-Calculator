@@ -10,8 +10,7 @@ namespace NIS.Desktop.Services;
 /// </summary>
 public static class AppPaths
 {
-    private static readonly string _appRoot = Path.GetDirectoryName(
-        System.Reflection.Assembly.GetExecutingAssembly().Location) ?? ".";
+    private static readonly string _appRoot = AppContext.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar);
 
     /// <summary>
     /// Application root folder (where the executable is located).

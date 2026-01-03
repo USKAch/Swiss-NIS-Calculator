@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Avalonia.Data.Converters;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
 using NIS.Desktop.Localization;
 using NIS.Desktop.Models;
 using NIS.Desktop.Services;
@@ -377,6 +379,94 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
     private void AddRadio()
     {
         NavigateToRadioEditor?.Invoke(null);
+    }
+
+    [RelayCommand]
+    private async Task DeleteAntenna()
+    {
+        if (SelectedAntenna == null || !SelectedAntenna.IsUserData) return;
+
+        var usages = DatabaseService.Instance.GetAntennaUsage(SelectedAntenna.Id);
+        if (usages.Count > 0)
+        {
+            var usageList = string.Join("\n", usages.Select(u => $"  - {u.DisplayName}"));
+            await MessageBoxManager.GetMessageBoxStandard(
+                Strings.Instance.CannotDelete,
+                $"{Strings.Instance.ItemInUse}\n\n{usageList}",
+                ButtonEnum.Ok,
+                Icon.Warning).ShowAsync();
+            return;
+        }
+
+        DatabaseService.Instance.DeleteAntenna(SelectedAntenna.Id);
+        Antennas.Remove(SelectedAntenna);
+        SelectedAntenna = null;
+    }
+
+    [RelayCommand]
+    private async Task DeleteCable()
+    {
+        if (SelectedCable == null || !SelectedCable.IsUserData) return;
+
+        var usages = DatabaseService.Instance.GetCableUsage(SelectedCable.Id);
+        if (usages.Count > 0)
+        {
+            var usageList = string.Join("\n", usages.Select(u => $"  - {u.DisplayName}"));
+            await MessageBoxManager.GetMessageBoxStandard(
+                Strings.Instance.CannotDelete,
+                $"{Strings.Instance.ItemInUse}\n\n{usageList}",
+                ButtonEnum.Ok,
+                Icon.Warning).ShowAsync();
+            return;
+        }
+
+        DatabaseService.Instance.DeleteCable(SelectedCable.Id);
+        Cables.Remove(SelectedCable);
+        SelectedCable = null;
+    }
+
+    [RelayCommand]
+    private async Task DeleteRadio()
+    {
+        if (SelectedRadio == null || !SelectedRadio.IsUserData) return;
+
+        var usages = DatabaseService.Instance.GetRadioUsage(SelectedRadio.Id);
+        if (usages.Count > 0)
+        {
+            var usageList = string.Join("\n", usages.Select(u => $"  - {u.DisplayName}"));
+            await MessageBoxManager.GetMessageBoxStandard(
+                Strings.Instance.CannotDelete,
+                $"{Strings.Instance.ItemInUse}\n\n{usageList}",
+                ButtonEnum.Ok,
+                Icon.Warning).ShowAsync();
+            return;
+        }
+
+        DatabaseService.Instance.DeleteRadio(SelectedRadio.Id);
+        Radios.Remove(SelectedRadio);
+        SelectedRadio = null;
+    }
+
+    [RelayCommand]
+    private async Task DeleteOka()
+    {
+        if (SelectedOka == null || !SelectedOka.IsUserData) return;
+
+        var usages = DatabaseService.Instance.GetOkaUsage(SelectedOka.Id);
+        if (usages.Count > 0)
+        {
+            var usageList = string.Join("\n", usages.Select(u => $"  - {u.DisplayName}"));
+            await MessageBoxManager.GetMessageBoxStandard(
+                Strings.Instance.CannotDelete,
+                $"{Strings.Instance.ItemInUse}\n\n{usageList}",
+                ButtonEnum.Ok,
+                Icon.Warning).ShowAsync();
+            return;
+        }
+
+        DatabaseService.Instance.DeleteOka(SelectedOka.Id);
+        Okas.Remove(SelectedOka);
+        SelectedOka = null;
     }
 
 }

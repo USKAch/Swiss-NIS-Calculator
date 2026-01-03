@@ -17,6 +17,14 @@
         <ScrollViewer Grid.Row="0" Padding="20" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled">
             <StackPanel Spacing="20" Margin="0,0,0,20">
 
+                <!-- Configuration Name -->
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <TextBlock Text="{Binding ConfigurationName, Source={x:Static loc:Strings.Instance}}"
+                               VerticalAlignment="Center" FontWeight="SemiBold" Width="150"/>
+                    <TextBox Text="{Binding Name}" Width="300"
+                             Watermark="{Binding ConfigurationNameHint, Source={x:Static loc:Strings.Instance}}"/>
+                </StackPanel>
+
                 <!-- Top Row: Antenna | Cable | OKA -->
                 <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="15">
                     <Grid ColumnDefinitions="1.3*,Auto,1.2*,Auto,*">
@@ -48,6 +56,11 @@
                                             IsEnabled="{Binding SelectedAntenna, Converter={x:Static ObjectConverters.IsNotNull}}"
                                             IsVisible="{Binding !SelectedAntenna.IsUserData}"
                                             Content="{Binding View, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
+                                    <!-- Delete button for user-created items -->
+                                    <Button Command="{Binding DeleteAntennaCommand}"
+                                            IsVisible="{Binding SelectedAntenna.IsUserData}"
+                                            Foreground="{DynamicResource DangerButtonBrush}"
+                                            Content="{Binding Delete, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
                                     <Button Content="{Binding New, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddAntennaCommand}"
                                             Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="8,4"/>
                                 </StackPanel>
@@ -124,6 +137,11 @@
                                             IsEnabled="{Binding SelectedCable, Converter={x:Static ObjectConverters.IsNotNull}}"
                                             IsVisible="{Binding !SelectedCable.IsUserData}"
                                             Content="{Binding View, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
+                                    <!-- Delete button for user-created items -->
+                                    <Button Command="{Binding DeleteCableCommand}"
+                                            IsVisible="{Binding SelectedCable.IsUserData}"
+                                            Foreground="{DynamicResource DangerButtonBrush}"
+                                            Content="{Binding Delete, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
                                     <Button Content="{Binding New, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddCableCommand}"
                                             Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="8,4"/>
                                 </StackPanel>
@@ -180,6 +198,11 @@
                                             IsEnabled="{Binding SelectedOka, Converter={x:Static ObjectConverters.IsNotNull}}"
                                             IsVisible="{Binding !SelectedOka.IsUserData}"
                                             Content="{Binding View, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
+                                    <!-- Delete button for user-created items -->
+                                    <Button Command="{Binding DeleteOkaCommand}"
+                                            IsVisible="{Binding SelectedOka.IsUserData}"
+                                            Foreground="{DynamicResource DangerButtonBrush}"
+                                            Content="{Binding Delete, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
                                     <Button Content="{Binding New, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddOkaCommand}"
                                             Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="8,4"/>
                                 </StackPanel>
@@ -229,6 +252,11 @@
                                         IsEnabled="{Binding SelectedRadio, Converter={x:Static ObjectConverters.IsNotNull}}"
                                         IsVisible="{Binding !SelectedRadio.IsUserData}"
                                         Content="{Binding View, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
+                                <!-- Delete button for user-created items -->
+                                <Button Command="{Binding DeleteRadioCommand}"
+                                        IsVisible="{Binding SelectedRadio.IsUserData}"
+                                        Foreground="{DynamicResource DangerButtonBrush}"
+                                        Content="{Binding Delete, Source={x:Static loc:Strings.Instance}}" Padding="8,4"/>
                                 <Button Content="{Binding New, Source={x:Static loc:Strings.Instance}}" Command="{Binding AddRadioCommand}"
                                         Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="8,4"/>
                             </StackPanel>

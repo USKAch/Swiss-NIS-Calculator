@@ -75,7 +75,7 @@ public partial class MainWindow : Window
                 }
 
                 // Clear selection for actions so they can be clicked repeatedly
-                if (tag is "Home" or "OpenProject")
+                if (tag is "Home" or "NewProject" or "Calculate" or "ExportPdf" or "ImportProject" or "ExportProject")
                 {
                     if (sender is NavigationView navView)
                     {

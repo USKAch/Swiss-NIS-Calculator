@@ -650,6 +650,8 @@ public class Strings : INotifyPropertyChanged
     public string PatternPrefix => Get("PatternPrefix");
     public string NoPattern => Get("NoPattern");
     public string ConfigurationNumber => Get("ConfigurationNumber");
+    public string ConfigurationName => Get("ConfigurationName");
+    public string ConfigurationNameHint => Get("ConfigurationNameHint");
 
     // ============================================================
     // UNITS (not translated, but centralized)
@@ -1112,6 +1114,8 @@ public class Strings : INotifyPropertyChanged
         ["PatternPrefix"] = new() { ["de"] = "Muster:", ["fr"] = "Diagramme:", ["it"] = "Pattern:", ["en"] = "Pattern:" },
         ["NoPattern"] = new() { ["de"] = "Kein Muster", ["fr"] = "Pas de diagramme", ["it"] = "Nessun pattern", ["en"] = "No pattern" },
         ["ConfigurationNumber"] = new() { ["de"] = "Konfiguration {0}", ["fr"] = "Configuration {0}", ["it"] = "Configurazione {0}", ["en"] = "Configuration {0}" },
+        ["ConfigurationName"] = new() { ["de"] = "Bezeichnung", ["fr"] = "Désignation", ["it"] = "Designazione", ["en"] = "Name" },
+        ["ConfigurationNameHint"] = new() { ["de"] = "z.B. HF Yagi, VHF Vertikal", ["fr"] = "p.ex. Yagi HF, Verticale VHF", ["it"] = "es. Yagi HF, Verticale VHF", ["en"] = "e.g. HF Yagi, VHF Vertical" },
         ["OpenDataFolder"] = new() { ["de"] = "Datenordner öffnen", ["fr"] = "Ouvrir dossier données", ["it"] = "Apri cartella dati", ["en"] = "Open Data Folder" },
         ["DataFolder"] = new() { ["de"] = "Datenordner", ["fr"] = "Dossier données", ["it"] = "Cartella dati", ["en"] = "Data Folder" },
         ["DataFolderDesc"] = new() { ["de"] = "Öffnet den Datenordner mit der Datenbank (nisdata.db) für Git-Commits", ["fr"] = "Ouvre le dossier de données avec la base de données (nisdata.db) pour les commits Git", ["it"] = "Apre la cartella dati con il database (nisdata.db) per i commit Git", ["en"] = "Opens the data folder containing the database (nisdata.db) for Git commits" },

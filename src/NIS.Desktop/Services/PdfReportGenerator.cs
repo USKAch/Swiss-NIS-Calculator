@@ -161,9 +161,9 @@ public class PdfReportGenerator
         {
             column.Spacing(8);
 
-            // Configuration Header with number
+            // Configuration Header
             var configName = !string.IsNullOrWhiteSpace(result.ConfigurationName)
-                ? $"{result.ConfigurationName} (#{configNumber})"
+                ? result.ConfigurationName
                 : $"{s.Configuration} #{configNumber}";
             column.Item().Row(row =>
             {
