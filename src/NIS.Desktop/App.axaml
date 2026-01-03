@@ -24,5 +24,10 @@
     <Application.Styles>
         <sty:FluentAvaloniaTheme PreferSystemTheme="True"/>
         <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+
+        <!-- Disable inline validation error display on NumericUpDown - errors shown in footer per FSD -->
+        <Style Selector="NumericUpDown /template/ DataValidationErrors">
+            <Setter Property="IsVisible" Value="False"/>
+        </Style>
     </Application.Styles>
 </Application>

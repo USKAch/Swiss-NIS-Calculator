@@ -1,10 +1,14 @@
+using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Data;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Input;
+using Avalonia.Logging;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
 using Avalonia.Threading;
@@ -22,6 +26,9 @@ public partial class App : Application
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
+
+        // Debug: Log binding errors to console
+        Logger.Sink = new DebugLogSink();
     }
 
     public override void OnFrameworkInitializationCompleted()
@@ -86,5 +93,24 @@ public partial class App : Application
         {
             BindingPlugins.DataValidators.Remove(plugin);
         }
+    }
+}
+
+/// <summary>
+/// Debug log sink to trace binding errors.
+/// </summary>
+internal class DebugLogSink : ILogSink
+{
+    public bool IsEnabled(LogEventLevel level, string area) => level >= LogEventLevel.Warning;
+
+    public void Log(LogEventLevel level, string area, object? source, string messageTemplate)
+    {
+        Debug.WriteLine($"[{level}] {area}: {messageTemplate}");
+    }
+
+    public void Log(LogEventLevel level, string area, object? source, string messageTemplate, params object?[] propertyValues)
+    {
+        var message = string.Format(messageTemplate.Replace("{", "{{").Replace("}", "}}"), propertyValues);
+        Debug.WriteLine($"[{level}] {area}: {message} (Source: {source?.GetType().Name})");
     }
 }

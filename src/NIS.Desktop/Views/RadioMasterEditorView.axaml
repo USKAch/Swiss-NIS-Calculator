@@ -39,8 +39,8 @@
 
                             <TextBlock Grid.Row="2" Text="{Binding MaxPower, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Spacing="10">
-                                <NumericUpDown Value="{Binding MaxPowerWatts}" ShowButtonSpinner="False"
-                                               Minimum="1" Maximum="10000" Increment="10"
+                                <NumericUpDown Value="{Binding MaxPowerWatts, UpdateSourceTrigger=LostFocus, TargetNullValue=100, FallbackValue=100}"
+                                               ShowButtonSpinner="False" Minimum="1" Maximum="10000" Increment="10"
                                                FormatString="F0" Width="100" IsEnabled="{Binding CanEdit}"/>
                                 <TextBlock Text="{Binding MaxPowerHint, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" Opacity="0.6"/>
                             </StackPanel>

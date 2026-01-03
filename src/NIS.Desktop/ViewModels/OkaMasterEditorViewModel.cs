@@ -28,10 +28,10 @@ public partial class OkaMasterEditorViewModel : ViewModelBase
     private string _name = string.Empty;
 
     [ObservableProperty]
-    private double? _defaultDampingDb = 0;
+    private double _defaultDampingDb = 0;
 
     [ObservableProperty]
-    private double? _defaultDistanceMeters = 10;
+    private double _defaultDistanceMeters = 10;
 
     [ObservableProperty]
     private string _validationMessage = string.Empty;
@@ -40,8 +40,8 @@ public partial class OkaMasterEditorViewModel : ViewModelBase
 
     // Track dirty state for all editable properties
     partial void OnNameChanged(string value) => MarkDirty();
-    partial void OnDefaultDampingDbChanged(double? value) => MarkDirty();
-    partial void OnDefaultDistanceMetersChanged(double? value) => MarkDirty();
+    partial void OnDefaultDampingDbChanged(double value) => MarkDirty();
+    partial void OnDefaultDistanceMetersChanged(double value) => MarkDirty();
 
     /// <summary>
     /// Initialize for creating a new OKA.
@@ -109,8 +109,8 @@ public partial class OkaMasterEditorViewModel : ViewModelBase
         {
             Id = Id,
             Name = Name.Trim(),
-            DefaultDampingDb = DefaultDampingDb ?? 0,
-            DefaultDistanceMeters = DefaultDistanceMeters ?? 10,
+            DefaultDampingDb = DefaultDampingDb,
+            DefaultDistanceMeters = DefaultDistanceMeters,
             IsUserData = true
         };
 

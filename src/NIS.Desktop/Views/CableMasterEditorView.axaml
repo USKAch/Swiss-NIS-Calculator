@@ -26,6 +26,7 @@
         <Border DockPanel.Dock="Bottom" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Padding="20,15">
             <Grid ColumnDefinitions="*,Auto">
                 <TextBlock Text="{Binding ValidationMessage}" Foreground="{DynamicResource DangerButtonBrush}" VerticalAlignment="Center"
+                           TextWrapping="Wrap" MaxWidth="500"
                            IsVisible="{Binding ValidationMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
                 <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
                     <Button Content="{Binding Cancel, Source={x:Static loc:Strings.Instance}}" Command="{Binding CancelCommand}" Padding="20,10"/>

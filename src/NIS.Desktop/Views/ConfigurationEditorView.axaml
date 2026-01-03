@@ -88,8 +88,8 @@
                             <StackPanel Spacing="2">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                     <TextBlock Text="{Binding Height, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                                    <NumericUpDown Value="{Binding HeightMeters}" ShowButtonSpinner="False"
-                                                   Minimum="0.1" Maximum="100" Increment="0.5" Width="80"/>
+                                    <NumericUpDown Value="{Binding HeightMeters, UpdateSourceTrigger=LostFocus, TargetNullValue=10, FallbackValue=10}"
+                                                   ShowButtonSpinner="False" Minimum="0.1" Maximum="100" Increment="0.5" Width="80"/>
                                     <TextBlock Text="m" VerticalAlignment="Center"/>
                                 </StackPanel>
                                 <TextBlock Text="{Binding HeightHint, Source={x:Static loc:Strings.Instance}}"
@@ -99,8 +99,8 @@
                             <!-- Rotatable -->
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <CheckBox IsChecked="{Binding IsRotatable}" Content="{Binding Rotatable, Source={x:Static loc:Strings.Instance}}"/>
-                                <NumericUpDown Value="{Binding HorizontalAngleDegrees}" ShowButtonSpinner="False"
-                                               Minimum="0" Maximum="360" Increment="10" Width="80"
+                                <NumericUpDown Value="{Binding HorizontalAngleDegrees, UpdateSourceTrigger=LostFocus, TargetNullValue=360, FallbackValue=360}"
+                                               ShowButtonSpinner="False" Minimum="0" Maximum="360" Increment="10" Width="80"
                                                IsVisible="{Binding IsRotatable}"/>
                                 <TextBlock Text="°" VerticalAlignment="Center" IsVisible="{Binding IsRotatable}"/>
                             </StackPanel>
@@ -150,16 +150,16 @@
                             <!-- Cable Length -->
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <TextBlock Text="{Binding CableLength, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                                <NumericUpDown Value="{Binding CableLengthMeters}" ShowButtonSpinner="False"
-                                               Minimum="0.1" Maximum="1000" Increment="1" Width="80"/>
+                                <NumericUpDown Value="{Binding CableLengthMeters, UpdateSourceTrigger=LostFocus, TargetNullValue=10, FallbackValue=10}"
+                                               ShowButtonSpinner="False" Minimum="0.1" Maximum="1000" Increment="1" Width="80"/>
                                 <TextBlock Text="m" VerticalAlignment="Center"/>
                             </StackPanel>
 
                             <!-- Additional Loss -->
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <TextBlock Text="{Binding AdditionalLoss, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                                <NumericUpDown Value="{Binding AdditionalLossDb}" ShowButtonSpinner="False"
-                                               Minimum="0" Maximum="20" Increment="0.5" Width="80"/>
+                                <NumericUpDown Value="{Binding AdditionalLossDb, UpdateSourceTrigger=LostFocus, TargetNullValue=0, FallbackValue=0}"
+                                               ShowButtonSpinner="False" Minimum="0" Maximum="20" Increment="0.5" Width="80"/>
                                 <TextBlock Text="dB" VerticalAlignment="Center"/>
                             </StackPanel>
 
@@ -264,8 +264,8 @@
                             <!-- Radio Power -->
                             <StackPanel Orientation="Horizontal" Spacing="8" IsEnabled="{Binding !HasLinearPower}">
                                 <TextBlock Text="{Binding Power, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                                <NumericUpDown Value="{Binding PowerWatts}" ShowButtonSpinner="False"
-                                               Minimum="1" Maximum="10000" Increment="10" Width="80"/>
+                                <NumericUpDown Value="{Binding PowerWatts, UpdateSourceTrigger=LostFocus, TargetNullValue=100, FallbackValue=100}"
+                                               ShowButtonSpinner="False" Minimum="1" Maximum="10000" Increment="10" Width="80"/>
                                 <TextBlock Text="W" VerticalAlignment="Center"/>
                             </StackPanel>
 
@@ -273,8 +273,8 @@
                             <CheckBox IsChecked="{Binding UseLinear}" Content="{Binding Linear, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold"/>
                             <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding UseLinear}" Margin="24,0,0,0">
                                 <TextBox Text="{Binding LinearName}" Width="150"/>
-                                <NumericUpDown Value="{Binding LinearPowerWatts}" ShowButtonSpinner="False"
-                                               Minimum="0" Maximum="10000" Increment="100" Width="80"/>
+                                <NumericUpDown Value="{Binding LinearPowerWatts, UpdateSourceTrigger=LostFocus, TargetNullValue=0, FallbackValue=0}"
+                                               ShowButtonSpinner="False" Minimum="0" Maximum="10000" Increment="100" Width="80"/>
                                 <TextBlock Text="W" VerticalAlignment="Center"/>
                             </StackPanel>
                         </StackPanel>
@@ -297,8 +297,8 @@
                             <!-- Activity Factor -->
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <TextBlock Text="{Binding ActivityFactor, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                                <NumericUpDown Value="{Binding ActivityFactor}" ShowButtonSpinner="False"
-                                               Minimum="0.01" Maximum="1" Increment="0.1" Width="80"
+                                <NumericUpDown Value="{Binding ActivityFactor, UpdateSourceTrigger=LostFocus, TargetNullValue=0.5, FallbackValue=0.5}"
+                                               ShowButtonSpinner="False" Minimum="0.01" Maximum="1" Increment="0.1" Width="80"
                                                FormatString="0.0"/>
                             </StackPanel>
 

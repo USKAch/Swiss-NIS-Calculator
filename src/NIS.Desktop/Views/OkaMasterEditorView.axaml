@@ -39,8 +39,8 @@
                         <!-- Horizontal Distance -->
                         <Grid ColumnDefinitions="150,Auto,*" ColumnSpacing="10">
                             <TextBlock Text="{Binding OkaDistance, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                            <NumericUpDown Grid.Column="1" Value="{Binding DefaultDistanceMeters}" ShowButtonSpinner="False"
-                                           Minimum="0.1" Maximum="100" Increment="0.5" Width="100"/>
+                            <NumericUpDown Grid.Column="1" Value="{Binding DefaultDistanceMeters, UpdateSourceTrigger=LostFocus, TargetNullValue=10, FallbackValue=10}"
+                                           ShowButtonSpinner="False" Minimum="0.1" Maximum="100" Increment="0.5" Width="100"/>
                             <TextBlock Grid.Column="2" Text="{Binding OkaDistanceHint, Source={x:Static loc:Strings.Instance}}"
                                        Opacity="0.6" FontSize="12" VerticalAlignment="Center"/>
                         </Grid>
@@ -48,8 +48,8 @@
                         <!-- Building Damping -->
                         <Grid ColumnDefinitions="150,Auto,*" ColumnSpacing="10">
                             <TextBlock Text="{Binding OkaDamping, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                            <NumericUpDown Grid.Column="1" Value="{Binding DefaultDampingDb}" ShowButtonSpinner="False"
-                                           Minimum="0" Maximum="30" Increment="1" Width="100"/>
+                            <NumericUpDown Grid.Column="1" Value="{Binding DefaultDampingDb, UpdateSourceTrigger=LostFocus, TargetNullValue=0, FallbackValue=0}"
+                                           ShowButtonSpinner="False" Minimum="0" Maximum="30" Increment="1" Width="100"/>
                             <TextBlock Grid.Column="2" Text="{Binding OkaDampingHint, Source={x:Static loc:Strings.Instance}}"
                                        Opacity="0.6" FontSize="12" VerticalAlignment="Center"/>
                         </Grid>

@@ -538,7 +538,7 @@ PDF export structure (one page per configuration):
 - **Configuration Editor**: [Edit] and [+ Add] buttons next to each dropdown
 
 **Common UI behavior:**
-- All editors use full-width layout with validation errors in footer bar
+- All editors use validation errors shown inline (near the field)
 - [Save] validates and returns; [Cancel] discards and returns
 - Navigating away with unsaved changes triggers the warning described in Section 6.4.
 
@@ -632,6 +632,19 @@ Validation should be enforced both during manual editing and when importing JSON
 - Errors are shown inline in the editor footer and prevent Save.
 - Import/calculation errors are shown as modal dialogs with a short reason.
 - Messages should be concise and action-oriented (e.g., "Power must be greater than 0 W.").
+
+### 6.3.2 NumericUpDown Binding Pattern
+
+NumericUpDown controls use specific binding settings to prevent transient validation errors during editing (see [Avalonia issue #19471](https://github.com/AvaloniaUI/Avalonia/issues/19471)):
+
+```xml
+<NumericUpDown Value="{Binding HeightMeters, UpdateSourceTrigger=LostFocus, TargetNullValue=10, FallbackValue=10}"
+               ShowButtonSpinner="False" Minimum="0.1" Maximum="100" Increment="0.5"/>
+```
+
+- **UpdateSourceTrigger=LostFocus**: Only update the ViewModel when focus leaves the field, preventing errors during typing
+- **TargetNullValue**: Default value when the source is null (used when field is cleared)
+- **FallbackValue**: Default value when binding fails
 
 ### 6.4 Unsaved Changes and Navigation Warnings
 
