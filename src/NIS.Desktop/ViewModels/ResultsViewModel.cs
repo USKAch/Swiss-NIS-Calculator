@@ -555,11 +555,11 @@ public partial class ResultsViewModel : ViewModelBase
             sb.AppendLine($"| **{s.CalcBuildingDamping}:** | {result.BuildingDampingDb:F2} dB |");
             sb.AppendLine();
 
-            // Band results table - markdown format
+            // Band results table - markdown format (frequencies shown in first data row)
             sb.Append("| Parameter | Sym | Unit |");
-            foreach (var band in result.BandResults)
+            foreach (var _ in result.BandResults)
             {
-                sb.Append($" {band.FrequencyMHz:F0} |");
+                sb.Append(" |");
             }
             sb.AppendLine();
 

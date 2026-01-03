@@ -221,7 +221,7 @@ public class PdfReportGenerator
                         }
                     });
 
-                    // Header row with frequency values
+                    // Header row (frequencies shown in first data row)
                     table.Header(header =>
                     {
                         var headerStyle = TextStyle.Default.FontSize(8).Bold();
@@ -229,10 +229,9 @@ public class PdfReportGenerator
                         header.Cell().Background(headerBg).Padding(3).Text("Parameter").Style(headerStyle);
                         header.Cell().Background(headerBg).Padding(3).Text("Sym").Style(headerStyle);
                         header.Cell().Background(headerBg).Padding(3).Text("Unit").Style(headerStyle);
-                        foreach (var band in result.BandResults)
+                        foreach (var _ in result.BandResults)
                         {
-                            header.Cell().Background(headerBg).Padding(3).AlignRight()
-                                .Text($"{band.FrequencyMHz:F0}").Style(headerStyle);
+                            header.Cell().Background(headerBg).Padding(3);
                         }
                     });
 

@@ -42,7 +42,7 @@ public static class CalculationTableDefinition
     public static IReadOnlyList<CalculationRowDefinition> Rows { get; } = new CalculationRowDefinition[]
     {
         new() { LabelKey = "CalcFrequency", Symbol = "f", Unit = "MHz", Format = "F0", IsBold = true, BandValueGetter = b => b.FrequencyMHz },
-        new() { LabelKey = "CalcDistanceToAntenna", Symbol = "d", Unit = "m", Format = "F1", IsBold = true, ConfigValueGetter = c => c.OkaDistance },
+        new() { LabelKey = "CalcDistanceToAntenna", Symbol = "d", Unit = "m", Format = "F1", IsBold = true, ConfigValueGetter = c => c.RealDistance },
         new() { LabelKey = "CalcTxPower", Symbol = "P", Unit = "W", Format = "F2", IsBold = true, BandValueGetter = b => b.TxPowerW },
         new() { LabelKey = "CalcActivityFactor", Symbol = "AF", Unit = "-", Format = "F2", IsBold = false, BandValueGetter = b => b.ActivityFactor },
         new() { LabelKey = "CalcModulationFactor", Symbol = "MF", Unit = "-", Format = "F2", IsBold = false, BandValueGetter = b => b.ModulationFactor },

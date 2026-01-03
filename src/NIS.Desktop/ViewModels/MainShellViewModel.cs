@@ -897,16 +897,26 @@ public partial class MainShellViewModel : ViewModelBase
         foreach (var oka in masterData.Okas)
         {
             int oldId = oka.Id;
-            if (!db.OkaExists(oka.Name))
+            var existingId = db.GetOkaId(oka.Name);
+            if (existingId.HasValue)
             {
+                // Update existing OKA with imported values (distance, damping)
+                oka.Id = existingId.Value;
+                oka.IsUserData = true;
+                db.SaveOka(oka);
+                mapping.Okas[oldId] = existingId.Value;
+            }
+            else
+            {
+                // Create new OKA
                 oka.Id = 0;
                 oka.IsUserData = true;
                 db.SaveOka(oka);
-            }
-            var newId = db.GetOkaId(oka.Name);
-            if (newId.HasValue)
-            {
-                mapping.Okas[oldId] = newId.Value;
+                var newId = db.GetOkaId(oka.Name);
+                if (newId.HasValue)
+                {
+                    mapping.Okas[oldId] = newId.Value;
+                }
             }
         }
 
