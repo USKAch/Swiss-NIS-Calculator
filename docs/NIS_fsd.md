@@ -431,7 +431,7 @@ One table per antenna configuration. Each report contains a configuration summar
 
 **Per-band Calculation Table:**
 
-The table follows the legacy VB6 application structure. Bold rows indicate key input/output values.
+The table follows the legacy VB6 application structure. Bold rows indicate key input/output values. The table header contains only "Parameter", "Sym", and "Unit" columns—frequency values are not duplicated in the header since they appear in the first data row (f).
 
 | Row | Symbol | Label (German) | Unit | Bold |
 |-----|--------|----------------|------|------|
@@ -502,7 +502,7 @@ PDF export structure (one page per configuration):
 - Compliance status indicator
 - Disclaimer
 
-**Per-band Calculation Table** uses the same row structure as the Markdown export (Section 5.1), with bold formatting for key rows:
+**Per-band Calculation Table** uses the same row structure as the Markdown export (Section 5.1), with bold formatting for key rows. The table header contains only "Parameter", "Sym", and "Unit"—band columns have empty headers since frequencies appear in the first data row:
 - **f** (Frequency)
 - **Nr. des OKA** (OKA number)
 - **d** (Distance to OKA)
@@ -591,6 +591,7 @@ For JSON file formats, see **Appendix B.3**.
 - Opens a file picker dialog for the user to select a .nisproj file
 - Reads the file and creates a new project in the database
 - If the file contains a `masterData` section, those items are imported first as user data
+- For OKAs: if an OKA with the same name exists, its distance and damping values are updated from the import file
 - If referenced master data does not exist, placeholder entries are created with default values
 - Displays an error dialog if import fails (e.g., invalid JSON, missing required fields)
 
@@ -1260,8 +1261,11 @@ Triggered by:
 
 | Job | Platforms | Description |
 |-----|-----------|-------------|
+| cleanup | - | Deletes existing release and tag with the same version (if any) |
 | build | Windows, macOS, Linux | Restore, build, test, publish as single-file self-contained executable |
-| release | - | Creates GitHub Release with platform archives (tags only) |
+| release | - | Creates GitHub Release with platform archives |
+
+The workflow can be re-run with the same version tag to rebuild a release—it automatically cleans up the previous release first.
 
 **Artifacts produced:**
 - `SwissNISCalculator-Windows.zip`
