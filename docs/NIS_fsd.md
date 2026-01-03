@@ -396,7 +396,7 @@ Note: EIRP (Equivalent Isotropic Radiated Power) and ERP (Effective Radiated Pow
 |-----------|-------------|
 | 1.8 MHz | 64.7 |
 | 3.5 MHz | 46.5 |
-| 7 MHz | 32.4 |
+| 7 MHz | 32.9 |
 | 10-28 MHz | 28 |
 | 50 MHz | 28 |
 | 144 MHz | 28 |

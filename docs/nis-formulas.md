@@ -8,7 +8,7 @@ field-strength formulas currently implemented from the VB6 legacy code.
 ![Immissionsgrenzwerte fuer Feldgroessen (Annex 2, Ziff. 11)](Immissionsgrenzwerte.png)
 
 - 0.15-1 MHz: E_{G,f} = 87
-- 1-10 MHz: E_{G,f} = 87 / f
+- 1-10 MHz: E_{G,f} = 87 / √f
 - 10-400 MHz: E_{G,f} = 28
 - 400-2000 MHz: E_{G,f} = 1.375 * sqrt(f)
 - 2-10 GHz: E_{G,f} = 61
@@ -26,9 +26,9 @@ Comparison for the standard amateur bands used by the legacy code.
 
 | Frequency (MHz) | VB6 Limit (V/m) | Law E_{G,f} (V/m) | Law Formula     | Match |
 | --------------: | --------------: | ----------------: | --------------- | ----- |
-|             1.8 |            64.7 |             48.33 | 87 / f          | FAIL  |
-|             3.5 |            46.5 |             24.86 | 87 / f          | FAIL  |
-|             7.0 |            32.4 |             12.43 | 87 / f          | FAIL  |
+|             1.8 |            64.7 |             64.85 | 87 / √f         | OK    |
+|             3.5 |            46.5 |             46.50 | 87 / √f         | OK    |
+|             7.0 |            32.9 |             32.87 | 87 / √f         | OK    |
 |            10.0 |              28 |                28 | 28              | OK    |
 |            14.0 |              28 |                28 | 28              | OK    |
 |            18.0 |              28 |                28 | 28              | OK    |

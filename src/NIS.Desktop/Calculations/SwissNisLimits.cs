@@ -17,7 +17,7 @@ public static class SwissNisLimits
     {
         { 1.8, 64.7 },   // 160m band
         { 3.5, 46.5 },   // 80m band
-        { 7.0, 32.4 },   // 40m band
+        { 7.0, 32.9 },   // 40m band (87/√7 = 32.87)
         { 10.0, 28 },    // 30m band
         { 14.0, 28 },    // 20m band
         { 18.0, 28 },    // 17m band
@@ -46,7 +46,7 @@ public static class SwissNisLimits
         {
             < 2.5 => 64.7,    // 1.8 MHz (160m)
             < 5 => 46.5,      // 3.5 MHz (80m)
-            < 9 => 32.4,      // 7 MHz (40m)
+            < 9 => 32.9,      // 7 MHz (40m) - 87/√7
             < 40 => 28,       // 10-28 MHz (30m-10m)
             < 100 => 28,      // 50 MHz (6m)
             < 300 => 28,      // 144 MHz (2m)

@@ -233,7 +233,7 @@ public class FieldStrengthCalculatorTests
     [Theory]
     [InlineData(1.8, 64.7)]    // 160m band
     [InlineData(3.5, 46.5)]    // 80m band
-    [InlineData(7.0, 32.4)]    // 40m band
+    [InlineData(7.0, 32.9)]    // 40m band (87/√7 = 32.87)
     [InlineData(14.0, 28)]     // 20m band
     [InlineData(144.0, 28)]    // 2m band
     [InlineData(432.0, 28.6)]  // 70cm band
@@ -311,7 +311,7 @@ public class FieldStrengthCalculatorTests
 
         // Assert - VB6 calculated 28.45 V/m, allow 1% tolerance
         Assert.InRange(result.FieldStrengthVm, 28.45 * 0.99, 28.45 * 1.01);
-        Assert.Equal(32.4, result.NisLimitVm); // 7 MHz limit (40m band)
+        Assert.Equal(32.9, result.NisLimitVm); // 7 MHz limit (87/√7 = 32.87)
     }
 
     /// <summary>
