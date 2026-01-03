@@ -11,7 +11,7 @@ public class CalculationInput
     /// <summary>
     /// Operator name.
     /// </summary>
-    public string OperatorName { get; set; } = string.Empty;
+    public string Operator { get; set; } = string.Empty;
 
     /// <summary>
     /// Distance to the exposure point in meters.

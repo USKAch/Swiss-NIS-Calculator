@@ -6,6 +6,8 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
 using CommunityToolkit.Mvvm.Input;
 using NIS.Desktop.Localization;
 using NIS.Desktop.Models;
@@ -245,7 +247,7 @@ public partial class MainShellViewModel : ViewModelBase
         // Create new project (use global language setting)
         ProjectViewModel.NewProject();
         ProjectViewModel.Project.Name = vm.ProjectName;
-        ProjectViewModel.Project.Operator = vm.OperatorName;
+        ProjectViewModel.Project.Operator = vm.Operator;
         ProjectViewModel.Project.Callsign = vm.Callsign;
         ProjectViewModel.Project.Address = vm.Address;
         ProjectViewModel.Project.Location = vm.Location;
@@ -286,7 +288,7 @@ public partial class MainShellViewModel : ViewModelBase
             IsEditMode = true
         };
         _projectInfoViewModel.ProjectName = ProjectViewModel.Project.Name;
-        _projectInfoViewModel.OperatorName = ProjectViewModel.Project.Operator;
+        _projectInfoViewModel.Operator = ProjectViewModel.Project.Operator;
         _projectInfoViewModel.Callsign = ProjectViewModel.Project.Callsign;
         _projectInfoViewModel.Address = ProjectViewModel.Project.Address;
         _projectInfoViewModel.Location = ProjectViewModel.Project.Location;
@@ -296,7 +298,7 @@ public partial class MainShellViewModel : ViewModelBase
         _projectInfoViewModel.NavigateToProjectOverview = (vm) =>
         {
             ProjectViewModel.Project.Name = vm.ProjectName;
-            ProjectViewModel.Project.Operator = vm.OperatorName;
+            ProjectViewModel.Project.Operator = vm.Operator;
             ProjectViewModel.Project.Callsign = vm.Callsign;
             ProjectViewModel.Project.Address = vm.Address;
             ProjectViewModel.Project.Location = vm.Location;
@@ -496,6 +498,16 @@ public partial class MainShellViewModel : ViewModelBase
 
         if (files.Count > 0)
         {
+            // Show confirmation dialog
+            var result = await MessageBoxManager.GetMessageBoxStandard(
+                Strings.ConfirmImport,
+                Strings.ImportProjectConfirmMessage,
+                ButtonEnum.YesNo,
+                Icon.Question).ShowAsync();
+
+            if (result != ButtonResult.Yes)
+                return;
+
             try
             {
                 var json = await File.ReadAllTextAsync(files[0].Path.LocalPath);
@@ -572,7 +584,9 @@ public partial class MainShellViewModel : ViewModelBase
 
                         project.AntennaConfigurations.Add(new AntennaConfiguration
                         {
-                            Name = $"{config.Antenna.Manufacturer} {config.Antenna.Model}".Trim(),
+                            Name = !string.IsNullOrWhiteSpace(config.Name)
+                                ? config.Name
+                                : $"{config.Antenna.Manufacturer} {config.Antenna.Model}".Trim(),
                             PowerWatts = config.PowerWatts,
                             // Set all IDs for master data references
                             RadioId = radioId,
@@ -695,6 +709,7 @@ public partial class MainShellViewModel : ViewModelBase
                             : null;
                         return new ProjectFileConfiguration
                         {
+                            Name = c.Name,
                             // Include source IDs for import mapping
                             AntennaId = c.AntennaId ?? 0,
                             RadioId = c.RadioId ?? 0,
@@ -727,7 +742,6 @@ public partial class MainShellViewModel : ViewModelBase
                             Modulation = c.Modulation,
                             ActivityFactor = c.ActivityFactor,
                             Oka = new ProjectFileOkaReference { Id = c.OkaId ?? 0 }
-                            // Distance and damping come from OKA master data
                         };
                     }).ToList()
                 };
@@ -981,6 +995,9 @@ public partial class MainShellViewModel : ViewModelBase
 
     private class ProjectFileConfiguration
     {
+        // Configuration name
+        public string Name { get; set; } = string.Empty;
+
         // Master data IDs (for import mapping)
         public int AntennaId { get; set; }
         public int RadioId { get; set; }
@@ -1001,7 +1018,6 @@ public partial class MainShellViewModel : ViewModelBase
         public string Modulation { get; set; } = "CW";
         public double ActivityFactor { get; set; } = 0.5;
         public ProjectFileOkaReference Oka { get; set; } = new();
-        // Distance and damping come from OKA master data
     }
 
     private class ProjectFileReference

@@ -30,13 +30,13 @@ public class ProjectRepository
         {
             var now = DateTime.UtcNow.ToString("o");
             var id = _connection.ExecuteScalar<int>(@"
-                INSERT INTO Projects (Name, OperatorName, Callsign, Address, Location, CreatedAt, ModifiedAt)
-                VALUES (@Name, @OperatorName, @Callsign, @Address, @Location, @CreatedAt, @ModifiedAt);
+                INSERT INTO Projects (Name, Operator, Callsign, Address, Location, CreatedAt, ModifiedAt)
+                VALUES (@Name, @Operator, @Callsign, @Address, @Location, @CreatedAt, @ModifiedAt);
                 SELECT last_insert_rowid();",
                 new
                 {
                     Name = string.IsNullOrWhiteSpace(project.Name) ? "New Project" : project.Name,
-                    OperatorName = project.Operator,
+                    project.Operator,
                     project.Callsign,
                     project.Address,
                     project.Location,
@@ -70,7 +70,7 @@ public class ProjectRepository
             _connection.Execute(@"
                 UPDATE Projects SET
                     Name = @Name,
-                    OperatorName = @OperatorName,
+                    Operator = @Operator,
                     Callsign = @Callsign,
                     Address = @Address,
                     Location = @Location,
@@ -80,7 +80,7 @@ public class ProjectRepository
                 {
                     Id = projectId,
                     Name = string.IsNullOrWhiteSpace(project.Name) ? "Project" : project.Name,
-                    OperatorName = project.Operator,
+                    project.Operator,
                     project.Callsign,
                     project.Address,
                     project.Location,
@@ -116,7 +116,7 @@ public class ProjectRepository
         var project = new Project
         {
             Name = row.Name,
-            Operator = row.OperatorName ?? "",
+            Operator = row.Operator ?? "",
             Callsign = row.Callsign ?? "",
             Address = row.Address ?? "",
             Location = row.Location ?? ""
@@ -139,7 +139,7 @@ public class ProjectRepository
             var project = new Project
             {
                 Name = row.Name,
-                Operator = row.OperatorName ?? "",
+                Operator = row.Operator ?? "",
                 Callsign = row.Callsign ?? "",
                 Address = row.Address ?? "",
                 Location = row.Location ?? ""
@@ -169,7 +169,7 @@ public class ProjectRepository
     public List<ProjectListItem> GetProjectList()
     {
         return _connection.Query<ProjectListItem>(@"
-            SELECT p.Id, p.Name, p.OperatorName as Operator, p.Address, p.Location,
+            SELECT p.Id, p.Name, p.Operator, p.Address, p.Location,
                    strftime('%d.%m.%Y %H:%M', p.ModifiedAt) as ModifiedAt,
                    (SELECT COUNT(*) FROM Configurations WHERE ProjectId = p.Id) as ConfigCount
             FROM Projects p
@@ -233,23 +233,19 @@ public class ProjectRepository
         var modulationId = config.ModulationId;
         var okaId = config.OkaId;
 
-        // Use per-configuration OKA values (already set from OKA defaults when selected in editor)
-
         _connection.Execute(@"
             INSERT INTO Configurations (
                 ProjectId, ConfigNumber, Name, PowerWatts,
                 RadioId, LinearName, LinearPowerWatts,
                 CableId, CableLengthMeters, AdditionalLossDb, AdditionalLossDescription,
                 AntennaId, HeightMeters, IsRotatable, HorizontalAngleDegrees,
-                ModulationId, ActivityFactor,
-                OkaId, OkaDistanceMeters, OkaBuildingDampingDb
+                ModulationId, ActivityFactor, OkaId
             ) VALUES (
                 @ProjectId, @ConfigNumber, @Name, @PowerWatts,
                 @RadioId, @LinearName, @LinearPowerWatts,
                 @CableId, @CableLengthMeters, @AdditionalLossDb, @AdditionalLossDescription,
                 @AntennaId, @HeightMeters, @IsRotatable, @HorizontalAngleDegrees,
-                @ModulationId, @ActivityFactor,
-                @OkaId, @OkaDistanceMeters, @OkaBuildingDampingDb
+                @ModulationId, @ActivityFactor, @OkaId
             )",
             new
             {
@@ -270,9 +266,7 @@ public class ProjectRepository
                 HorizontalAngleDegrees = config.Antenna.HorizontalAngleDegrees,
                 ModulationId = modulationId,
                 config.ActivityFactor,
-                OkaId = okaId,
-                config.OkaDistanceMeters,
-                config.OkaBuildingDampingDb,
+                OkaId = okaId
             },
             transaction);
     }
@@ -327,9 +321,7 @@ public class ProjectRepository
             Modulation = modulation?.Name ?? "CW",
             ActivityFactor = row.ActivityFactor,
             OkaId = row.OkaId,
-            OkaName = oka?.Name ?? "",
-            OkaDistanceMeters = row.OkaDistanceMeters,
-            OkaBuildingDampingDb = row.OkaBuildingDampingDb
+            OkaName = oka?.Name ?? ""
         };
     }
 
@@ -341,7 +333,7 @@ public class ProjectRepository
     {
         public int Id { get; set; }
         public string Name { get; set; } = "";
-        public string? OperatorName { get; set; }
+        public string? Operator { get; set; }
         public string? Callsign { get; set; }
         public string? Address { get; set; }
         public string? Location { get; set; }
@@ -370,8 +362,6 @@ public class ProjectRepository
         public int? ModulationId { get; set; }
         public double ActivityFactor { get; set; }
         public int? OkaId { get; set; }
-        public double OkaDistanceMeters { get; set; }
-        public double OkaBuildingDampingDb { get; set; }
         // For join queries
         public string? ProjectName { get; set; }
     }

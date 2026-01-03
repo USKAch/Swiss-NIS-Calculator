@@ -68,11 +68,11 @@ public class DatabaseService : IDisposable
             ResetDatabaseSchema();
         }
 
-        InitializeDatabase();
-
-        // Initialize repositories after schema is ready
+        // Initialize repositories before InitializeDatabase (which needs them)
         _masterData = new MasterDataRepository(_connection);
         _projects = new ProjectRepository(_connection, _masterData);
+
+        InitializeDatabase();
     }
 
     #region Schema Management
@@ -173,7 +173,7 @@ public class DatabaseService : IDisposable
             CREATE TABLE IF NOT EXISTS Projects (
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
                 Name TEXT NOT NULL,
-                OperatorName TEXT,
+                Operator TEXT,
                 Callsign TEXT,
                 Address TEXT,
                 Location TEXT,
@@ -201,8 +201,6 @@ public class DatabaseService : IDisposable
                 ModulationId INTEGER,
                 ActivityFactor REAL NOT NULL DEFAULT 0.5 CHECK (ActivityFactor > 0 AND ActivityFactor <= 1),
                 OkaId INTEGER,
-                OkaDistanceMeters REAL NOT NULL DEFAULT 10 CHECK (OkaDistanceMeters > 0),
-                OkaBuildingDampingDb REAL NOT NULL DEFAULT 0 CHECK (OkaBuildingDampingDb >= 0),
                 FOREIGN KEY (ProjectId) REFERENCES Projects(Id) ON DELETE CASCADE,
                 FOREIGN KEY (RadioId) REFERENCES Radios(Id) ON DELETE RESTRICT,
                 FOREIGN KEY (CableId) REFERENCES Cables(Id) ON DELETE RESTRICT,

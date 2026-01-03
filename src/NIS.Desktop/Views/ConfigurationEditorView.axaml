@@ -185,19 +185,17 @@
                                 </StackPanel>
                             </StackPanel>
 
-                            <!-- OKA Distance (editable per configuration) -->
+                            <!-- OKA Distance (from OKA master data) -->
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <TextBlock Text="{Binding OkaDistance, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold" Width="120"/>
-                                <NumericUpDown Value="{Binding OkaDistanceMeters}" Minimum="0.1" Maximum="1000" Increment="0.5"
-                                               FormatString="F1" Width="100" IsEnabled="{Binding SelectedOka, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                                <TextBlock Text="{Binding OkaDistanceMeters, StringFormat={}{0:F1}}" VerticalAlignment="Center" Width="100"/>
                                 <TextBlock Text="m" VerticalAlignment="Center"/>
                             </StackPanel>
 
-                            <!-- OKA Building Damping (editable per configuration) -->
+                            <!-- OKA Building Damping (from OKA master data) -->
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <TextBlock Text="{Binding OkaDamping, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold" Width="120"/>
-                                <NumericUpDown Value="{Binding OkaBuildingDampingDb}" Minimum="0" Maximum="50" Increment="1"
-                                               FormatString="F1" Width="100" IsEnabled="{Binding SelectedOka, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                                <TextBlock Text="{Binding OkaBuildingDampingDb, StringFormat={}{0:F1}}" VerticalAlignment="Center" Width="100"/>
                                 <TextBlock Text="dB" VerticalAlignment="Center"/>
                             </StackPanel>
 

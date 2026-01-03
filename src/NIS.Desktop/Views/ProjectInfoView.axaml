@@ -25,7 +25,7 @@
                 <!-- Operator -->
                 <StackPanel Spacing="5">
                     <TextBlock Text="{Binding OperatorLabel}" FontWeight="SemiBold"/>
-                    <TextBox Text="{Binding OperatorName, Mode=TwoWay}"/>
+                    <TextBox Text="{Binding Operator, Mode=TwoWay}"/>
                 </StackPanel>
 
                 <!-- Callsign -->

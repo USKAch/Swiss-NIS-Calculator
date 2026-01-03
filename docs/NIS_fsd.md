@@ -45,6 +45,7 @@ Project Overview
        -> [Edit/Add Antenna] -> Antenna Editor -> Configuration Editor
        -> [Edit/Add Cable] -> Cable Editor -> Configuration Editor
        -> [Edit/Add Radio] -> Radio Editor -> Configuration Editor
+       -> [Edit/Add Evaluation Point] -> PSS Editor -> Configuration Editor
     -> [Calculate All] -> Results -> Project Overview
 ```
 
@@ -117,7 +118,7 @@ Layout concept:
 - Configurations are identified by their antenna (no user-defined name)
 - "+ Add Configuration" button → Navigates to Configuration Editor (Section 3.5)
 - Edit button → Navigates to Configuration Editor with existing data
-- Each configuration has its own evaluation point (OKA/LSM/LST/PSS) with distance and damping
+- Each configuration references an evaluation point (OKA/LSM/LST/PSS) from master data (distance and damping are stored in OKA master data)
 
 **Action Buttons**:
 - "Back" → Returns to project list
@@ -185,12 +186,13 @@ Screen for creating or editing one antenna configuration. Header shows "Configur
 These apply to all bands of the selected antenna. Bands (frequency, gain, pattern) are defined by the antenna master data.
 
 **Section 5: Evaluation Point (OKA)**
-- Name: [text] (e.g., "Neighbor's balcony")
-- Distance: [number] m
-  - Hint: "Horizontal distance from OKA to antenna mast" (translated)
-- Building Damping: [number] dB
+- Evaluation Point: [dropdown from master data] [Edit] [+ Add]
+  - Edit → Navigates to PSS Editor with selected evaluation point
+  - Add → Navigates to PSS Editor for new evaluation point
+- Distance: [read-only display] m (from OKA master data)
+- Building Damping: [read-only display] dB (from OKA master data)
 
-Note: Each configuration has exactly one evaluation point (OKA/LSM/LST/PSS), selected from master data shared across projects. See Section 1.1 for terminology. The real 3D distance used in calculations is computed as √(horizontal² + height²).
+Note: Each configuration references exactly one evaluation point (OKA/LSM/LST/PSS) from master data via foreign key. Distance and damping values are stored in OKA master data (single source of truth). To use different values, create a new OKA entry. See Section 1.1 for terminology. The real 3D distance used in calculations is computed as √(horizontal² + height²).
 
 **Actions**:
 - Save → Returns to Project Overview
@@ -409,7 +411,8 @@ Note: EIRP (Equivalent Isotropic Radiated Power) and ERP (Effective Radiated Pow
 
 ### 4.7 Edge Cases
 
-- If distance <= 0, clamp to 0.001 m for calculation.
+- If both horizontal distance and antenna height are 0, show a validation error and block save.
+- If only one of them is 0, allow and compute the real distance as √(d_h² + h²).
 - If power <= 0, all derived power and field strength values are 0.
 - If activity or modulation factor is 0, mean power is 0.
 
@@ -455,7 +458,6 @@ The table follows the legacy VB6 application structure. Bold rows indicate key i
 | 21 | E' | Massgebende Feldstärke am OKA | [V/m] | **Yes** |
 | 22 | E IGW | Immissions-Grenzwert | [V/m] | No |
 | 23 | ds | Sicherheitsabstand | [m] | **Yes** |
-| 24 | - | Betriebsart | - | No |
 
 **Note**: Rows are displayed as columns in the exported table (one column per frequency band).
 
@@ -620,9 +622,9 @@ Validation should be enforced both during manual editing and when importing JSON
 
 **Project / Configuration (user data):**
 - Project Name is required (non-empty, trimmed).
-- Configuration references must resolve to existing master data.
-- PowerWatts, HeightMeters, CableLengthMeters, OkaDistanceMeters must be > 0.
-- AdditionalLossDb and BuildingDampingDb must be >= 0.
+- Configuration references must resolve to existing master data (antenna, cable, radio, modulation, evaluation point).
+- PowerWatts, HeightMeters, CableLengthMeters must be > 0.
+- AdditionalLossDb must be >= 0.
 
 ### 6.3.1 Validation and Error Messages
 
@@ -689,8 +691,8 @@ This section defines the expected database rules for a robust implementation.
 **Constraints:**
 - Required fields use NOT NULL.
 - Numeric inputs use CHECK constraints:
-  - Positive: PowerWatts, HeightMeters, OkaDistanceMeters, ConfigNumber, MaxPowerWatts, DefaultDistanceMeters
-  - Non-negative: LinearPowerWatts, CableLengthMeters, AdditionalLossDb, OkaBuildingDampingDb, DefaultDampingDb
+  - Positive: PowerWatts, HeightMeters, ConfigNumber, MaxPowerWatts, DefaultDistanceMeters
+  - Non-negative: LinearPowerWatts, CableLengthMeters, AdditionalLossDb, DefaultDampingDb
   - Range: ActivityFactor (0–1], HorizontalAngleDegrees [0–360], Modulation Factor (0–1]
 
 **Transactions:**
@@ -711,6 +713,50 @@ When the application detects an incompatible database schema (e.g., after an upd
   - **No**: Exit application (user can manually backup or migrate the database)
 
 This ensures users are never surprised by data loss due to schema changes.
+
+### 6.8 Manual Database Migration
+
+For schema changes that can preserve existing data, a Python migration script is provided in `scripts/migrate_db.py`. This script safely updates the database schema while preserving all user data.
+
+**When to use manual migration:**
+- After updating to a new version with schema changes
+- When the application shows a schema incompatibility warning
+- Before the warning dialog forces a database reset
+
+**Migration process:**
+
+1. **Close the application** before running migration
+2. **Run the migration script:**
+   ```bash
+   python scripts/migrate_db.py
+   ```
+3. The script automatically:
+   - Creates a timestamped backup (e.g., `nisdata.db.backup_20250115_143022`)
+   - Detects which migrations are needed
+   - Applies migrations in order
+   - Reports success or restores from backup on failure
+
+**Example output:**
+```
+NIS Calculator Database Migration v0.5
+=============================================
+Database: src/NIS.Desktop/Data/nisdata.db
+
+Creating backup: nisdata.db.backup_20250115_143022
+Removing OkaDistanceMeters and OkaBuildingDampingDb columns...
+(These values now come from OKA master data)
+Columns removed successfully!
+
+Migration complete!
+```
+
+**Migration script location:**
+- Development: `scripts/migrate_db.py` in the repository
+- The script targets `src/NIS.Desktop/Data/nisdata.db` by default
+
+**Recovery from failed migration:**
+- If migration fails, the script automatically restores from the backup
+- Manual recovery: copy the `.backup_*` file back to `nisdata.db`
 
 ## 7. Data Model
 
@@ -790,9 +836,8 @@ Installation (nisdata.db)
         │   ├── Name (text)
         │   └── Power (W)
         │
-        ├── Evaluation Point → (reference to Master Data)
-        │   ├── Distance (m)
-        │   └── BuildingDamping (dB)
+        ├── Evaluation Point → (reference to Master Data by ID)
+        │   └── Distance and BuildingDamping from OKA master data
         │
         └── Operating Conditions → (reference to Master Data)
             ├── Modulation (SSB, CW, FM)
@@ -1332,8 +1377,6 @@ CREATE TABLE Configurations (
     ModulationId INTEGER,
     ActivityFactor REAL NOT NULL DEFAULT 0.5 CHECK (ActivityFactor > 0 AND ActivityFactor <= 1),
     OkaId INTEGER,
-    OkaDistanceMeters REAL NOT NULL DEFAULT 10 CHECK (OkaDistanceMeters > 0),
-    OkaBuildingDampingDb REAL NOT NULL DEFAULT 0 CHECK (OkaBuildingDampingDb >= 0),
     FOREIGN KEY (ProjectId) REFERENCES Projects(Id) ON DELETE CASCADE,
     FOREIGN KEY (RadioId) REFERENCES Radios(Id) ON DELETE RESTRICT,
     FOREIGN KEY (CableId) REFERENCES Cables(Id) ON DELETE RESTRICT,
@@ -1426,9 +1469,7 @@ User and Factory exports share the same JSON structure. Factory import uses the 
       "additionalLossDescription": "Connectors",
       "modulation": "SSB",
       "activityFactor": 0.5,
-      "oka": { "name": "Neighbor balcony" },
-      "okaDistanceMeters": 5.4,
-      "okaBuildingDampingDb": 0
+      "oka": { "id": 1 }
     }
   ],
   "masterData": {
@@ -1442,6 +1483,7 @@ User and Factory exports share the same JSON structure. Factory import uses the 
 
 Notes:
 - `linear` is optional; use `null` when no linear is present. When present, it contains `name` (string) and `powerWatts` (number), e.g., `{ "name": "SPE Expert 1.5K", "powerWatts": 1500 }`.
+- `oka` references OKA master data by ID. Distance and damping values are stored in OKA master data (single source of truth).
 - `masterData` is always present (even if arrays are empty) to show the structure for user-specific master data.
 - Only user-specific master data (IsUserData=true) is included in `masterData`; factory data is not exported.
 
@@ -1499,4 +1541,4 @@ Notes:
 | 6m Station | 100W | Aircom-plus 20m | Wimo ZX6-2 | 10m | 50 MHz | Garden fence @ 7.4m |
 | VHF/UHF | 100W | Aircom-plus 17m | Diamond X-50 | 14m | 144, 432 MHz | Terrace @ 10.4m |
 
-Each configuration includes antenna height and its own evaluation point (OKA/LSM/LST/PSS) with distance and optional building damping.
+Each configuration includes antenna height and references an evaluation point (OKA/LSM/LST/PSS) from master data (distance and building damping are stored in OKA master data).

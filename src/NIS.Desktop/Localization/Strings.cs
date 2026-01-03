@@ -102,13 +102,11 @@ public class Strings : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SettingsAboutCredits1)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SettingsAboutCredits2)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NewProject)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(OpenProject)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MasterData)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NisvCompliance)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Home)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Project)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Settings)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ImportExport)));
 
         // Project Info
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ProjectInfo)));
@@ -171,7 +169,6 @@ public class Strings : INotifyPropertyChanged
         // Results
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DistanceAntennaOka)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalculationResults)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Limit)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ExportMarkdown)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FactorySettings)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StatusHeader)));
@@ -190,16 +187,12 @@ public class Strings : INotifyPropertyChanged
         // Calculation Report Labels
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcTitlePrefix)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcSubtitle)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcProjectInfo)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcOperator)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcCallsign)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcAddress)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcLocation)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcDate)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcComplianceSummary)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcAllCompliant)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcNonCompliantDetected)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcConfigsAnalyzed)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcDisclaimer)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Compliant)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NonCompliant)));
@@ -220,6 +213,7 @@ public class Strings : INotifyPropertyChanged
 
         // Calculation Table Row Labels
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcFrequency)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcOkaNumber)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcDistanceToAntenna)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcTxPower)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcActivityFactor)));
@@ -246,6 +240,7 @@ public class Strings : INotifyPropertyChanged
         // Column Explanations
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcColumnExplanations)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainF)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainOkaNumber)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainD)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainP)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainAF)));
@@ -270,7 +265,10 @@ public class Strings : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainOkaDistance)));
     }
 
-    private string Get(string key) =>
+    /// <summary>
+    /// Get a localized string by key. Falls back to German, then shows [key] if not found.
+    /// </summary>
+    public string Get(string key) =>
         TranslationData.TryGetValue(key, out var t) && t.TryGetValue(_language, out var v) ? v :
         TranslationData.TryGetValue(key, out var t2) && t2.TryGetValue("de", out var fallback) ? fallback : $"[{key}]";
 
@@ -333,14 +331,12 @@ public class Strings : INotifyPropertyChanged
     public string SettingsAboutCredits1 => Get("SettingsAboutCredits1");
     public string SettingsAboutCredits2 => Get("SettingsAboutCredits2");
     public string NewProject => Get("NewProject");
-    public string OpenProject => Get("OpenProject");
     public string MasterData => Get("MasterData");
     public string NisvCompliance => Get("NisvCompliance");
     public string Home => Get("Home");
     public string Projects => Get("Projects");
     public string Project => Get("Project");
     public string Settings => Get("Settings");
-    public string ImportExport => Get("ImportExport");
 
     // ============================================================
     // PROJECT INFO
@@ -496,7 +492,6 @@ public class Strings : INotifyPropertyChanged
     public string AboveOka => Get("AboveOka");
     public string HorizDistToMast => Get("HorizDistToMast");
     public string CalculationResults => Get("CalculationResults");
-    public string Limit => Get("Limit");
     public string ExportMarkdown => Get("ExportMarkdown");
     public string StatusHeader => Get("StatusHeader");
 
@@ -515,16 +510,13 @@ public class Strings : INotifyPropertyChanged
     // Calculation Report Labels
     public string CalcTitlePrefix => Get("CalcTitlePrefix");
     public string CalcSubtitle => Get("CalcSubtitle");
-    public string CalcProjectInfo => Get("CalcProjectInfo");
     public string CalcOperator => Get("CalcOperator");
     public string CalcCallsign => Get("CalcCallsign");
     public string CalcAddress => Get("CalcAddress");
     public string CalcLocation => Get("CalcLocation");
     public string CalcDate => Get("CalcDate");
-    public string CalcComplianceSummary => Get("CalcComplianceSummary");
     public string CalcAllCompliant => Get("CalcAllCompliant");
     public string CalcNonCompliantDetected => Get("CalcNonCompliantDetected");
-    public string CalcConfigsAnalyzed => Get("CalcConfigsAnalyzed");
     public string CalcDisclaimer => Get("CalcDisclaimer");
     public string Compliant => Get("Compliant");
     public string NonCompliant => Get("NonCompliant");
@@ -545,6 +537,7 @@ public class Strings : INotifyPropertyChanged
 
     // Calculation Table Row Labels
     public string CalcFrequency => Get("CalcFrequency");
+    public string CalcOkaNumber => Get("CalcOkaNumber");
     public string CalcDistanceToAntenna => Get("CalcDistanceToAntenna");
     public string CalcTxPower => Get("CalcTxPower");
     public string CalcActivityFactor => Get("CalcActivityFactor");
@@ -571,6 +564,7 @@ public class Strings : INotifyPropertyChanged
     // Column Explanations
     public string CalcColumnExplanations => Get("CalcColumnExplanations");
     public string CalcExplainF => Get("CalcExplainF");
+    public string CalcExplainOkaNumber => Get("CalcExplainOkaNumber");
     public string CalcExplainD => Get("CalcExplainD");
     public string CalcExplainP => Get("CalcExplainP");
     public string CalcExplainAF => Get("CalcExplainAF");
@@ -621,7 +615,6 @@ public class Strings : INotifyPropertyChanged
     public string ImportFactoryData => Get("ImportFactoryData");
     public string ExportFactoryDataDesc => Get("ExportFactoryDataDesc");
     public string ImportDatabaseDesc => Get("ImportDatabaseDesc");
-    public string ImportFactoryConfirmMessage => Get("ImportFactoryConfirmMessage");
     public string OpenDataFolder => Get("OpenDataFolder");
     public string DataFolder => Get("DataFolder");
     public string DataFolderDesc => Get("DataFolderDesc");
@@ -632,8 +625,6 @@ public class Strings : INotifyPropertyChanged
     public string ImportProject => Get("ImportProject");
     public string ExportProject => Get("ExportProject");
     public string ImportProjectConfirmMessage => Get("ImportProjectConfirmMessage");
-    public string ProjectImportExportDesc => Get("ProjectImportExportDesc");
-    public string ExportSuccess => Get("ExportSuccess");
     public string ExportFailed => Get("ExportFailed");
     public string StatusReady => Get("StatusReady");
     public string CannotExportNoProject => Get("CannotExportNoProject");
@@ -641,7 +632,6 @@ public class Strings : INotifyPropertyChanged
     public string PdfExportError => Get("PdfExportError");
     public string ExportMarkdownTitle => Get("ExportMarkdownTitle");
     public string ExportPdfTitle => Get("ExportPdfTitle");
-    public string ImportSuccess => Get("ImportSuccess");
     public string ImportFailed => Get("ImportFailed");
     public string ImportWarning => Get("ImportWarning");
     public string MissingMasterData => Get("MissingMasterData");
@@ -657,10 +647,9 @@ public class Strings : INotifyPropertyChanged
     public string FailedToOpenDataFolder => Get("FailedToOpenDataFolder");
     public string DatabaseResetRequired => Get("DatabaseResetRequired");
     public string DatabaseResetMessage => Get("DatabaseResetMessage");
-    public string ImportUserData => Get("ImportUserData");
-    public string ExportUserData => Get("ExportUserData");
-    public string ImportConfirmMessage => Get("ImportConfirmMessage");
-    public string SelectProjectToExport => Get("SelectProjectToExport");
+    public string PatternPrefix => Get("PatternPrefix");
+    public string NoPattern => Get("NoPattern");
+    public string ConfigurationNumber => Get("ConfigurationNumber");
 
     // ============================================================
     // UNITS (not translated, but centralized)
@@ -750,9 +739,7 @@ public class Strings : INotifyPropertyChanged
         ["LanguageFrench"] = "Settings",
         ["LanguageItalian"] = "Settings",
         ["NewProject"] = "Welcome",
-        ["OpenProject"] = "Welcome",
         ["MasterData"] = "Welcome",
-        ["ImportExport"] = "Welcome",
         ["NisvCompliance"] = "Welcome",
         // ProjectInfo
         ["ProjectInfo"] = "ProjectInfo",
@@ -854,7 +841,6 @@ public class Strings : INotifyPropertyChanged
         // Results
         ["DistanceAntennaOka"] = "Results",
         ["CalculationResults"] = "Results",
-        ["Limit"] = "Results",
         ["ExportMarkdown"] = "Results",
         ["StatusHeader"] = "Results",
         // Dialogs
@@ -883,9 +869,9 @@ public class Strings : INotifyPropertyChanged
         ["NoAntennaSelected"] = new() { ["de"] = "Keine Antenne ausgewählt", ["fr"] = "Aucune antenne sélectionnée", ["it"] = "Nessuna antenna selezionata", ["en"] = "No antenna selected" },
         ["NoCableSelected"] = new() { ["de"] = "Kein Kabel ausgewählt", ["fr"] = "Aucun câble sélectionné", ["it"] = "Nessun cavo selezionato", ["en"] = "No cable selected" },
         ["NoModulationSelected"] = new() { ["de"] = "Keine Modulation ausgewählt", ["fr"] = "Aucune modulation sélectionnée", ["it"] = "Nessuna modulazione selezionata", ["en"] = "No modulation selected" },
-        ["NoOkaSelected"] = new() { ["de"] = "Kein OKA ausgewählt", ["fr"] = "Aucun OKA sélectionné", ["it"] = "Nessun OKA selezionato", ["en"] = "No OKA selected" },
-        ["OkaNotFound"] = new() { ["de"] = "OKA nicht in Datenbank gefunden", ["fr"] = "OKA introuvable dans la base de données", ["it"] = "OKA non trovato nel database", ["en"] = "OKA not found in database" },
-        ["OkaDistanceInvalid"] = new() { ["de"] = "OKA-Distanz muss grösser als 0 sein", ["fr"] = "La distance OKA doit être supérieure à 0", ["it"] = "La distanza OKA deve essere maggiore di 0", ["en"] = "OKA distance must be greater than 0" },
+        ["NoOkaSelected"] = new() { ["de"] = "Kein OKA ausgewählt", ["fr"] = "Aucun LSM sélectionné", ["it"] = "Nessun LST selezionato", ["en"] = "No PSS selected" },
+        ["OkaNotFound"] = new() { ["de"] = "OKA nicht in Datenbank gefunden", ["fr"] = "LSM introuvable dans la base de données", ["it"] = "LST non trovato nel database", ["en"] = "PSS not found in database" },
+        ["OkaDistanceInvalid"] = new() { ["de"] = "OKA-Distanz muss grösser als 0 sein", ["fr"] = "La distance LSM doit être supérieure à 0", ["it"] = "La distanza LST deve essere maggiore di 0", ["en"] = "PSS distance must be greater than 0" },
         ["AntennaNotFound"] = new() { ["de"] = "Antenne nicht in Datenbank gefunden", ["fr"] = "Antenne introuvable dans la base de données", ["it"] = "Antenna non trovata nel database", ["en"] = "Antenna not found in database" },
         ["CableNotFound"] = new() { ["de"] = "Kabel nicht in Datenbank gefunden", ["fr"] = "Câble introuvable dans la base de données", ["it"] = "Cavo non trovato nel database", ["en"] = "Cable not found in database" },
         ["ModulationNotFound"] = new() { ["de"] = "Modulation nicht in Datenbank gefunden", ["fr"] = "Modulation introuvable dans la base de données", ["it"] = "Modulazione non trovata nel database", ["en"] = "Modulation not found in database" },
@@ -921,14 +907,12 @@ public class Strings : INotifyPropertyChanged
         ["SettingsAboutCredits1"] = new() { ["de"] = "Ursprünglich entwickelt von HB9ZS", ["fr"] = "Développé à l'origine par HB9ZS", ["it"] = "Sviluppato originariamente da HB9ZS", ["en"] = "Originally developed by HB9ZS" },
         ["SettingsAboutCredits2"] = new() { ["de"] = "Neu geschrieben mit Avalonia UI und FluentAvalonia", ["fr"] = "Réécrit avec Avalonia UI et FluentAvalonia", ["it"] = "Riscritto con Avalonia UI e FluentAvalonia", ["en"] = "Rewritten with Avalonia UI and FluentAvalonia" },
         ["NewProject"] = new() { ["de"] = "Neues Projekt", ["fr"] = "Nouveau projet", ["it"] = "Nuovo progetto", ["en"] = "New Project" },
-        ["OpenProject"] = new() { ["de"] = "Projekt öffnen...", ["fr"] = "Ouvrir projet...", ["it"] = "Apri progetto...", ["en"] = "Open Project..." },
         ["MasterData"] = new() { ["de"] = "Stammdaten", ["fr"] = "Données de base", ["it"] = "Dati master", ["en"] = "Master Data" },
         ["NisvCompliance"] = new() { ["de"] = "NISV-Konformitätsrechner für Schweizer Amateurfunkstationen", ["fr"] = "Calculateur de conformité ORNI pour stations radioamateurs suisses", ["it"] = "Calcolatore conformità ORNI per stazioni radioamatoriali svizzere", ["en"] = "NISV Compliance Calculator for Swiss Amateur Radio Stations" },
         ["Home"] = new() { ["de"] = "Start", ["fr"] = "Accueil", ["it"] = "Home", ["en"] = "Home" },
         ["Projects"] = new() { ["de"] = "Projekte", ["fr"] = "Projets", ["it"] = "Progetti", ["en"] = "Projects" },
         ["Project"] = new() { ["de"] = "Projekt", ["fr"] = "Projet", ["it"] = "Progetto", ["en"] = "Project" },
         ["Settings"] = new() { ["de"] = "Einstellungen", ["fr"] = "Paramètres", ["it"] = "Impostazioni", ["en"] = "Settings" },
-        ["ImportExport"] = new() { ["de"] = "Import/Export", ["fr"] = "Import/Export", ["it"] = "Import/Export", ["en"] = "Import/Export" },
 
         // Project Info
         ["ProjectInfo"] = new() { ["de"] = "Projektinformationen", ["fr"] = "Informations projet", ["it"] = "Informazioni progetto", ["en"] = "Project Information" },
@@ -1009,7 +993,7 @@ public class Strings : INotifyPropertyChanged
         ["Gain"] = new() { ["de"] = "Gewinn", ["fr"] = "Gain", ["it"] = "Guadagno", ["en"] = "Gain" },
         ["AddBand"] = new() { ["de"] = "+ Band hinzufügen", ["fr"] = "+ Ajouter bande", ["it"] = "+ Aggiungi banda", ["en"] = "+ Add Band" },
         ["VerticalRadiationPattern"] = new() { ["de"] = "Vertikales Strahlungsdiagramm (Dämpfung in dB je Winkel vom Horizont)", ["fr"] = "Diagramme de rayonnement vertical (atténuation en dB par angle depuis l'horizon)", ["it"] = "Diagramma di radiazione verticale (attenuazione in dB per angolo dall'orizzonte)", ["en"] = "Vertical Radiation Pattern (attenuation in dB at each angle from horizon)" },
-        ["PatternExplanation"] = new() { ["de"] = "0° = Horizont (max. Abstrahlung), 90° = Senkrecht nach unten (Richtung OKA). Werte: 0-60 dB Dämpfung.", ["fr"] = "0° = Horizon (rayonnement max), 90° = Verticalement vers le bas (direction LSM). Valeurs: 0-60 dB d'atténuation.", ["it"] = "0° = Orizzonte (radiazione max), 90° = Verticalmente verso il basso (direzione LSBD). Valori: 0-60 dB attenuazione.", ["en"] = "0° = Horizon (max radiation), 90° = Straight down (toward OKA). Values: 0-60 dB attenuation." },
+        ["PatternExplanation"] = new() { ["de"] = "0° = Horizont (max. Abstrahlung), 90° = Senkrecht nach unten (Richtung OKA). Werte: 0-60 dB Dämpfung.", ["fr"] = "0° = Horizon (rayonnement max), 90° = Verticalement vers le bas (direction LSM). Valeurs: 0-60 dB d'atténuation.", ["it"] = "0° = Orizzonte (radiazione max), 90° = Verticalmente verso il basso (direzione LST). Valori: 0-60 dB attenuazione.", ["en"] = "0° = Horizon (max radiation), 90° = Straight down (toward PSS). Values: 0-60 dB attenuation." },
         ["AddAtLeastOneBand"] = new() { ["de"] = "Fügen Sie mindestens ein Frequenzband mit Gewinn und vertikalem Strahlungsdiagramm hinzu.", ["fr"] = "Ajoutez au moins une bande de fréquence avec gain et diagramme de rayonnement vertical.", ["it"] = "Aggiungi almeno una banda di frequenza con guadagno e diagramma di radiazione verticale.", ["en"] = "Add at least one frequency band with gain and vertical radiation pattern." },
         ["AddNewAntenna"] = new() { ["de"] = "Neue Antenne hinzufügen", ["fr"] = "Ajouter nouvelle antenne", ["it"] = "Aggiungi nuova antenna", ["en"] = "Add New Antenna" },
         ["SelectAntennaPrompt"] = new() { ["de"] = "Antenne auswählen", ["fr"] = "Sélectionner antenne", ["it"] = "Seleziona antenna", ["en"] = "Select Antenna" },
@@ -1065,7 +1049,6 @@ public class Strings : INotifyPropertyChanged
         ["AboveOka"] = new() { ["de"] = "über OKA", ["fr"] = "au-dessus du LSM", ["it"] = "sopra LST", ["en"] = "above PSS" },
         ["HorizDistToMast"] = new() { ["de"] = "horizontale Distanz zum Antennenmast", ["fr"] = "distance horizontale au mât", ["it"] = "distanza orizzontale al palo", ["en"] = "horizontal distance to antenna mast" },
         ["CalculationResults"] = new() { ["de"] = "Berechnungsergebnisse", ["fr"] = "Résultats du calcul", ["it"] = "Risultati del calcolo", ["en"] = "Calculation Results" },
-        ["Limit"] = new() { ["de"] = "Grenzwert", ["fr"] = "Limite", ["it"] = "Limite", ["en"] = "Limit" },
         ["ExportMarkdown"] = new() { ["de"] = "Markdown exportieren", ["fr"] = "Exporter Markdown", ["it"] = "Esporta Markdown", ["en"] = "Export Markdown" },
         ["StatusHeader"] = new() { ["de"] = "Status", ["fr"] = "Statut", ["it"] = "Stato", ["en"] = "Status" },
 
@@ -1079,7 +1062,7 @@ public class Strings : INotifyPropertyChanged
         ["BldLbl"] = new() { ["de"] = "Geb.", ["fr"] = "Bât.", ["it"] = "Ed.", ["en"] = "Bld." },
         ["LimitLbl"] = new() { ["de"] = "Grenzw.", ["fr"] = "Limite", ["it"] = "Limite", ["en"] = "Limit" },
         ["SafeDistLbl"] = new() { ["de"] = "Sich.D.", ["fr"] = "Dist.S.", ["it"] = "Dist.S.", ["en"] = "Safe D." },
-        ["OkaDistLbl"] = new() { ["de"] = "OKA D.", ["fr"] = "LSM D.", ["it"] = "LSBD D.", ["en"] = "OKA D." },
+        ["OkaDistLbl"] = new() { ["de"] = "OKA D.", ["fr"] = "LSM D.", ["it"] = "LST D.", ["en"] = "PSS D." },
 
         // Validation
 
@@ -1096,11 +1079,7 @@ public class Strings : INotifyPropertyChanged
         ["ProjectDeleted"] = new() { ["de"] = "Projekt gelöscht", ["fr"] = "Projet supprimé", ["it"] = "Progetto eliminato", ["en"] = "Project deleted" },
         ["Callsign"] = new() { ["de"] = "Rufzeichen", ["fr"] = "Indicatif", ["it"] = "Nominativo", ["en"] = "Callsign" },
 
-        // User Data Export/Import
-        ["ExportUserData"] = new() { ["de"] = "Benutzerdaten exportieren", ["fr"] = "Exporter données utilisateur", ["it"] = "Esporta dati utente", ["en"] = "Export User Data" },
-        ["ImportUserData"] = new() { ["de"] = "Benutzerdaten importieren", ["fr"] = "Importer données utilisateur", ["it"] = "Importa dati utente", ["en"] = "Import User Data" },
-        ["ImportConfirmMessage"] = new() { ["de"] = "Dies löscht alle bestehenden Daten und ersetzt sie durch das Backup. Fortfahren?", ["fr"] = "Cela supprime toutes les données existantes et les remplace par la sauvegarde. Continuer?", ["it"] = "Questo elimina tutti i dati esistenti e li sostituisce con il backup. Continuare?", ["en"] = "This deletes all existing data and replaces it with the backup. Continue?" },
-        ["ExportSuccess"] = new() { ["de"] = "Export erfolgreich", ["fr"] = "Export réussi", ["it"] = "Esportazione riuscita", ["en"] = "Export successful" },
+        // Export/Import
         ["ExportFailed"] = new() { ["de"] = "Export fehlgeschlagen", ["fr"] = "Échec de l'export", ["it"] = "Esportazione fallita", ["en"] = "Export failed" },
         ["StatusReady"] = new() { ["de"] = "Bereit", ["fr"] = "Prêt", ["it"] = "Pronto", ["en"] = "Ready" },
         ["CannotExportNoProject"] = new() { ["de"] = "Export nicht möglich. Bitte speichern Sie zuerst das Projekt.", ["fr"] = "Export impossible. Veuillez d'abord enregistrer le projet.", ["it"] = "Impossibile esportare. Salvare prima il progetto.", ["en"] = "Cannot export. Please save the project first." },
@@ -1108,18 +1087,14 @@ public class Strings : INotifyPropertyChanged
         ["PdfExportError"] = new() { ["de"] = "PDF-Export fehlgeschlagen: {0}", ["fr"] = "Échec de l'export PDF: {0}", ["it"] = "Esportazione PDF fallita: {0}", ["en"] = "PDF export failed: {0}" },
         ["ExportMarkdownTitle"] = new() { ["de"] = "Ergebnisse als Markdown exportieren", ["fr"] = "Exporter les résultats en Markdown", ["it"] = "Esporta risultati come Markdown", ["en"] = "Export Results as Markdown" },
         ["ExportPdfTitle"] = new() { ["de"] = "Ergebnisse als PDF exportieren", ["fr"] = "Exporter les résultats en PDF", ["it"] = "Esporta risultati come PDF", ["en"] = "Export Results as PDF" },
-        ["ImportSuccess"] = new() { ["de"] = "Import erfolgreich", ["fr"] = "Import réussi", ["it"] = "Importazione riuscita", ["en"] = "Import successful" },
         ["ImportFailed"] = new() { ["de"] = "Import fehlgeschlagen", ["fr"] = "Échec de l'import", ["it"] = "Importazione fallita", ["en"] = "Import failed" },
         ["ImportWarning"] = new() { ["de"] = "Import-Warnung", ["fr"] = "Avertissement d'import", ["it"] = "Avviso di importazione", ["en"] = "Import Warning" },
         ["MissingMasterData"] = new() { ["de"] = "Einige Stammdaten-Referenzen konnten nicht aufgelöst werden:", ["fr"] = "Certaines références de données de base n'ont pas pu être résolues:", ["it"] = "Alcuni riferimenti ai dati master non sono stati risolti:", ["en"] = "Some master data references could not be resolved:" },
         ["ImportProject"] = new() { ["de"] = "Projekt importieren", ["fr"] = "Importer projet", ["it"] = "Importa progetto", ["en"] = "Import Project" },
         ["ExportProject"] = new() { ["de"] = "Projekt exportieren", ["fr"] = "Exporter projet", ["it"] = "Esporta progetto", ["en"] = "Export Project" },
-        ["SelectProjectToExport"] = new() { ["de"] = "Bitte wählen Sie ein Projekt zum Exportieren", ["fr"] = "Veuillez sélectionner un projet à exporter", ["it"] = "Seleziona un progetto da esportare", ["en"] = "Please select a project to export" },
-        ["ProjectImportExportDesc"] = new() { ["de"] = "Projekte als .nisproj-Dateien importieren oder exportieren", ["fr"] = "Importer ou exporter des projets sous forme de fichiers .nisproj", ["it"] = "Importa o esporta progetti come file .nisproj", ["en"] = "Import or export individual projects as .nisproj files" },
         ["ExportFactoryData"] = new() { ["de"] = "Werksdaten exportieren", ["fr"] = "Exporter données usine", ["it"] = "Esporta dati di fabbrica", ["en"] = "Export Factory Data" },
         ["ImportFactoryData"] = new() { ["de"] = "Werksdaten importieren", ["fr"] = "Importer données usine", ["it"] = "Importa dati di fabbrica", ["en"] = "Import Factory Data" },
         ["ExportFactoryDataDesc"] = new() { ["de"] = "Exportiert alle Projekte, OKAs und Stammdaten (Factory)", ["fr"] = "Exporte tous les projets, LSMs et données de base (usine)", ["it"] = "Esporta tutti i progetti, LST e dati master (fabbrica)", ["en"] = "Export all projects, PSSs, and master data (factory)" },
-        ["ImportFactoryConfirmMessage"] = new() { ["de"] = "Dies löscht alle bestehenden Daten und ersetzt sie durch die Werksdaten. Fortfahren?", ["fr"] = "Cela supprime toutes les données existantes et les remplace par les données usine. Continuer?", ["it"] = "Questo elimina tutti i dati esistenti e li sostituisce con i dati di fabbrica. Continuare?", ["en"] = "This deletes all existing data and replaces it with factory data. Continue?" },
         ["ImportProjectConfirmMessage"] = new() { ["de"] = "Ein neues Projekt wird importiert. Fortfahren?", ["fr"] = "Un nouveau projet sera importé. Continuer?", ["it"] = "Verrà importato un nuovo progetto. Continuare?", ["en"] = "A new project will be imported. Continue?" },
         ["ConfirmImport"] = new() { ["de"] = "Import bestätigen", ["fr"] = "Confirmer l'import", ["it"] = "Conferma importazione", ["en"] = "Confirm Import" },
         ["ReplaceMasterDataConfirm"] = new() { ["de"] = "Dies ersetzt ALLE bestehenden Stammdaten. Fortfahren?", ["fr"] = "Cela remplacera TOUTES les données de base existantes. Continuer?", ["it"] = "Questo sostituirà TUTTI i dati master esistenti. Continuare?", ["en"] = "This will replace ALL existing master data. Continue?" },
@@ -1134,6 +1109,9 @@ public class Strings : INotifyPropertyChanged
         ["FailedToOpenDataFolder"] = new() { ["de"] = "Datenordner konnte nicht geöffnet werden: {0}", ["fr"] = "Impossible d'ouvrir le dossier de données: {0}", ["it"] = "Impossibile aprire la cartella dati: {0}", ["en"] = "Failed to open data folder: {0}" },
         ["DatabaseResetRequired"] = new() { ["de"] = "Datenbank-Reset erforderlich", ["fr"] = "Réinitialisation de la base de données requise", ["it"] = "Reset del database richiesto", ["en"] = "Database Reset Required" },
         ["DatabaseResetMessage"] = new() { ["de"] = "Das Datenbankschema ist inkompatibel und muss zurückgesetzt werden.\n\nACHTUNG: Alle Projekte und Konfigurationen werden gelöscht!\n\nKlicken Sie Ja zum Zurücksetzen oder Nein zum Beenden.", ["fr"] = "Le schéma de la base de données est incompatible et doit être réinitialisé.\n\nATTENTION: Tous les projets et configurations seront supprimés!\n\nCliquez Oui pour réinitialiser ou Non pour quitter.", ["it"] = "Lo schema del database è incompatibile e deve essere reimpostato.\n\nATTENZIONE: Tutti i progetti e le configurazioni verranno eliminati!\n\nClicca Sì per reimpostare o No per uscire.", ["en"] = "The database schema is incompatible and needs to be reset.\n\nWARNING: All projects and configurations will be deleted!\n\nClick Yes to reset the database, or No to exit the application." },
+        ["PatternPrefix"] = new() { ["de"] = "Muster:", ["fr"] = "Diagramme:", ["it"] = "Pattern:", ["en"] = "Pattern:" },
+        ["NoPattern"] = new() { ["de"] = "Kein Muster", ["fr"] = "Pas de diagramme", ["it"] = "Nessun pattern", ["en"] = "No pattern" },
+        ["ConfigurationNumber"] = new() { ["de"] = "Konfiguration {0}", ["fr"] = "Configuration {0}", ["it"] = "Configurazione {0}", ["en"] = "Configuration {0}" },
         ["OpenDataFolder"] = new() { ["de"] = "Datenordner öffnen", ["fr"] = "Ouvrir dossier données", ["it"] = "Apri cartella dati", ["en"] = "Open Data Folder" },
         ["DataFolder"] = new() { ["de"] = "Datenordner", ["fr"] = "Dossier données", ["it"] = "Cartella dati", ["en"] = "Data Folder" },
         ["DataFolderDesc"] = new() { ["de"] = "Öffnet den Datenordner mit der Datenbank (nisdata.db) für Git-Commits", ["fr"] = "Ouvre le dossier de données avec la base de données (nisdata.db) pour les commits Git", ["it"] = "Apre la cartella dati con il database (nisdata.db) per i commit Git", ["en"] = "Opens the data folder containing the database (nisdata.db) for Git commits" },
@@ -1145,16 +1123,13 @@ public class Strings : INotifyPropertyChanged
         // Calculation Report Labels
         ["CalcTitlePrefix"] = new() { ["de"] = "Immissionsberechnung für", ["fr"] = "Calcul d'immission pour", ["it"] = "Calcolo immissione per", ["en"] = "Emission Calculation for" },
         ["CalcSubtitle"] = new() { ["de"] = "NISV Feldstärkeberechnung", ["fr"] = "Calcul de l'intensité du champ ORNI", ["it"] = "Calcolo intensità campo ORNI", ["en"] = "NISV Field Strength Calculation" },
-        ["CalcProjectInfo"] = new() { ["de"] = "Projektinformationen", ["fr"] = "Informations du projet", ["it"] = "Informazioni progetto", ["en"] = "Project Information" },
         ["CalcOperator"] = new() { ["de"] = "Betreiber", ["fr"] = "Opérateur", ["it"] = "Operatore", ["en"] = "Operator" },
         ["CalcCallsign"] = new() { ["de"] = "Rufzeichen", ["fr"] = "Indicatif", ["it"] = "Nominativo", ["en"] = "Callsign" },
         ["CalcAddress"] = new() { ["de"] = "Adresse", ["fr"] = "Adresse", ["it"] = "Indirizzo", ["en"] = "Address" },
         ["CalcLocation"] = new() { ["de"] = "Standort", ["fr"] = "Emplacement", ["it"] = "Posizione", ["en"] = "Location" },
         ["CalcDate"] = new() { ["de"] = "Datum", ["fr"] = "Date", ["it"] = "Data", ["en"] = "Date" },
-        ["CalcComplianceSummary"] = new() { ["de"] = "KONFORMITÄTSZUSAMMENFASSUNG", ["fr"] = "RÉSUMÉ DE CONFORMITÉ", ["it"] = "RIEPILOGO CONFORMITÀ", ["en"] = "COMPLIANCE SUMMARY" },
         ["CalcAllCompliant"] = new() { ["de"] = "ALLE KONFIGURATIONEN KONFORM", ["fr"] = "TOUTES LES CONFIGURATIONS CONFORMES", ["it"] = "TUTTE LE CONFIGURAZIONI CONFORMI", ["en"] = "ALL CONFIGURATIONS COMPLIANT" },
         ["CalcNonCompliantDetected"] = new() { ["de"] = "NICHT KONFORME KONFIGURATIONEN ERKANNT", ["fr"] = "CONFIGURATIONS NON CONFORMES DÉTECTÉES", ["it"] = "CONFIGURAZIONI NON CONFORMI RILEVATE", ["en"] = "NON-COMPLIANT CONFIGURATIONS DETECTED" },
-        ["CalcConfigsAnalyzed"] = new() { ["de"] = "{0} Konfiguration(en) analysiert", ["fr"] = "{0} configuration(s) analysée(s)", ["it"] = "{0} configurazione/i analizzata/e", ["en"] = "{0} configuration(s) analyzed" },
         ["CalcDisclaimer"] = new() { ["de"] = "Diese Berechnung basiert auf der Schweizer NISV (Verordnung über den Schutz vor nichtionisierender Strahlung) und geht von einer Freiraumausbreitung mit einem Bodenreflexionsfaktor von 1.6 aus. Die tatsächliche Feldstärke kann aufgrund von Umweltfaktoren variieren.", ["fr"] = "Ce calcul est basé sur l'ORNI suisse (Ordonnance sur la protection contre le rayonnement non ionisant) et suppose une propagation en espace libre avec un facteur de réflexion au sol de 1.6. L'intensité réelle du champ peut varier en raison de facteurs environnementaux.", ["it"] = "Questo calcolo si basa sull'ORNI svizzera (Ordinanza sulla protezione dalle radiazioni non ionizzanti) e presuppone una propagazione in spazio libero con un fattore di riflessione al suolo di 1.6. L'intensità effettiva del campo può variare a causa di fattori ambientali.", ["en"] = "This calculation is based on the Swiss NISV (Verordnung über den Schutz vor nichtionisierender Strahlung) regulations and assumes free-space propagation with ground reflection factor of 1.6. Actual field strength may vary due to environmental factors." },
         ["Compliant"] = new() { ["de"] = "KONFORM", ["fr"] = "CONFORME", ["it"] = "CONFORME", ["en"] = "COMPLIANT" },
         ["NonCompliant"] = new() { ["de"] = "NICHT KONFORM", ["fr"] = "NON CONFORME", ["it"] = "NON CONFORME", ["en"] = "NON-COMPLIANT" },
@@ -1164,7 +1139,7 @@ public class Strings : INotifyPropertyChanged
         ["CalcPolarization"] = new() { ["de"] = "Polarisation", ["fr"] = "Polarisation", ["it"] = "Polarizzazione", ["en"] = "Polarization" },
         ["CalcRotation"] = new() { ["de"] = "Rotation", ["fr"] = "Rotation", ["it"] = "Rotazione", ["en"] = "Rotation" },
         ["CalcLinear"] = new() { ["de"] = "Linear", ["fr"] = "Linéaire", ["it"] = "Lineare", ["en"] = "Linear" },
-        ["CalcOka"] = new() { ["de"] = "OKA", ["fr"] = "LSM", ["it"] = "LSBD", ["en"] = "OKA" },
+        ["CalcOka"] = new() { ["de"] = "OKA", ["fr"] = "LSM", ["it"] = "LST", ["en"] = "PSS" },
         ["CalcModulation"] = new() { ["de"] = "Modulation", ["fr"] = "Modulation", ["it"] = "Modulazione", ["en"] = "Modulation" },
         ["CalcBuildingDamping"] = new() { ["de"] = "Gebäudedämpfung", ["fr"] = "Atténuation bâtiment", ["it"] = "Attenuazione edificio", ["en"] = "Building Damping" },
         ["CalcStatusCompliant"] = new() { ["de"] = "**Status: KONFORM** - Alle Frequenzen innerhalb der Grenzwerte", ["fr"] = "**Statut: CONFORME** - Toutes les fréquences dans les limites", ["it"] = "**Stato: CONFORME** - Tutte le frequenze entro i limiti", ["en"] = "**Status: COMPLIANT** - All frequencies within limits" },
@@ -1173,55 +1148,56 @@ public class Strings : INotifyPropertyChanged
         ["CalcVertical"] = new() { ["de"] = "Vertikal", ["fr"] = "Vertical", ["it"] = "Verticale", ["en"] = "Vertical" },
         ["CalcFixed"] = new() { ["de"] = "Fest", ["fr"] = "Fixe", ["it"] = "Fisso", ["en"] = "Fixed" },
 
-        // Calculation Table Row Labels
+        // Calculation Table Row Labels (VB6 translations for fr/it)
         ["CalcFrequency"] = new() { ["de"] = "Frequenz", ["fr"] = "Fréquence", ["it"] = "Frequenza", ["en"] = "Frequency" },
-        ["CalcDistanceToAntenna"] = new() { ["de"] = "Abstand zur Antenne", ["fr"] = "Distance à l'antenne", ["it"] = "Distanza dall'antenna", ["en"] = "Distance to antenna" },
-        ["CalcTxPower"] = new() { ["de"] = "Senderleistung", ["fr"] = "Puissance TX", ["it"] = "Potenza TX", ["en"] = "TX Power" },
-        ["CalcActivityFactor"] = new() { ["de"] = "Aktivitätsfaktor", ["fr"] = "Facteur d'activité", ["it"] = "Fattore di attività", ["en"] = "Activity factor" },
+        ["CalcOkaNumber"] = new() { ["de"] = "Nr. des OKA auf dem Situationsplan", ["fr"] = "No du LSM sur le plan de situation", ["it"] = "Nr. del LST sulla planimetria", ["en"] = "PSS number on site plan" },
+        ["CalcDistanceToAntenna"] = new() { ["de"] = "Abstand OKA zur Antenne", ["fr"] = "Distance entre le LSM et l'antenne", ["it"] = "Distanza dal LST all'antenna", ["en"] = "Distance PSS to antenna" },
+        ["CalcTxPower"] = new() { ["de"] = "Leistung am Senderausgang", ["fr"] = "Puissance à la sortie de l'émetteur", ["it"] = "Potenza d'emissione del trasmettitore", ["en"] = "TX output power" },
+        ["CalcActivityFactor"] = new() { ["de"] = "Aktivitätsfaktor", ["fr"] = "Facteur d'activité", ["it"] = "Fattore d'attività", ["en"] = "Activity factor" },
         ["CalcModulationFactor"] = new() { ["de"] = "Modulationsfaktor", ["fr"] = "Facteur de modulation", ["it"] = "Fattore di modulazione", ["en"] = "Modulation factor" },
-        ["CalcMeanPower"] = new() { ["de"] = "Mittlere Leistung", ["fr"] = "Puissance moyenne", ["it"] = "Potenza media", ["en"] = "Mean power" },
-        ["CalcCableAttenuation"] = new() { ["de"] = "Kabeldämpfung", ["fr"] = "Atténuation câble", ["it"] = "Attenuazione cavo", ["en"] = "Cable attenuation" },
-        ["CalcAdditionalLosses"] = new() { ["de"] = "Übrige Dämpfung", ["fr"] = "Pertes supplémentaires", ["it"] = "Perdite aggiuntive", ["en"] = "Additional losses" },
-        ["CalcTotalAttenuation"] = new() { ["de"] = "Gesamtdämpfung", ["fr"] = "Atténuation totale", ["it"] = "Attenuazione totale", ["en"] = "Total attenuation" },
-        ["CalcAttenuationFactor"] = new() { ["de"] = "Dämpfungsfaktor", ["fr"] = "Facteur d'atténuation", ["it"] = "Fattore di attenuazione", ["en"] = "Attenuation factor" },
-        ["CalcAntennaGain"] = new() { ["de"] = "Antennengewinn", ["fr"] = "Gain d'antenne", ["it"] = "Guadagno antenna", ["en"] = "Antenna gain" },
-        ["CalcVerticalAttenuation"] = new() { ["de"] = "Vertikale Winkeldämpfung", ["fr"] = "Atténuation angle vertical", ["it"] = "Attenuazione angolo verticale", ["en"] = "Vertical angle attenuation" },
-        ["CalcTotalAntennaGain"] = new() { ["de"] = "Totaler Antennengewinn", ["fr"] = "Gain d'antenne total", ["it"] = "Guadagno antenna totale", ["en"] = "Total antenna gain" },
-        ["CalcGainFactor"] = new() { ["de"] = "Gewinnfaktor", ["fr"] = "Facteur de gain", ["it"] = "Fattore di guadagno", ["en"] = "Gain factor" },
-        ["CalcEirp"] = new() { ["de"] = "EIRP in Richtung OKA", ["fr"] = "PIRE en direction du LSM", ["it"] = "EIRP in direzione del LST", ["en"] = "EIRP in direction of OKA" },
-        ["CalcErp"] = new() { ["de"] = "ERP in Richtung OKA", ["fr"] = "PAR en direction du LSM", ["it"] = "ERP in direzione del LST", ["en"] = "ERP in direction of OKA" },
-        ["CalcBuildingDampingRow"] = new() { ["de"] = "Gebäudedämpfung", ["fr"] = "Atténuation bâtiment", ["it"] = "Attenuazione edificio", ["en"] = "Building damping" },
-        ["CalcBuildingDampingFactor"] = new() { ["de"] = "Gebäudedämpfungsfaktor", ["fr"] = "Facteur atténuation bât.", ["it"] = "Fattore attenuazione ed.", ["en"] = "Building damping factor" },
-        ["CalcGroundReflection"] = new() { ["de"] = "Bodenreflexionsfaktor", ["fr"] = "Facteur réflexion sol", ["it"] = "Fattore riflessione suolo", ["en"] = "Ground reflection factor" },
-        ["CalcFieldStrength"] = new() { ["de"] = "Feldstärke am OKA", ["fr"] = "Champ au LSM", ["it"] = "Campo al LSBD", ["en"] = "Field strength at OKA" },
-        ["CalcLimit"] = new() { ["de"] = "Grenzwert", ["fr"] = "Limite", ["it"] = "Limite", ["en"] = "Limit" },
-        ["CalcMinSafeDistance"] = new() { ["de"] = "Min. Sicherheitsabstand", ["fr"] = "Dist. sécurité min.", ["it"] = "Dist. sicurezza min.", ["en"] = "Min. safe distance" },
-        ["CalcOkaDistance"] = new() { ["de"] = "OKA Abstand", ["fr"] = "Distance LSM", ["it"] = "Distanza LSBD", ["en"] = "OKA distance" },
+        ["CalcMeanPower"] = new() { ["de"] = "Mittl. Leistung am Senderausgang", ["fr"] = "Puissance moyenne à la sortie de l'émetteur", ["it"] = "Potenza media d'emissione del trasmettitore", ["en"] = "Mean TX output power" },
+        ["CalcCableAttenuation"] = new() { ["de"] = "Kabeldämpfung", ["fr"] = "Atténuation des câbles", ["it"] = "Attenuazione del cavo", ["en"] = "Cable attenuation" },
+        ["CalcAdditionalLosses"] = new() { ["de"] = "Übrige Dämpfung", ["fr"] = "Autres atténuations", ["it"] = "Attenuazioni diverse", ["en"] = "Other attenuation" },
+        ["CalcTotalAttenuation"] = new() { ["de"] = "Summe der Dämpfung", ["fr"] = "Total des atténuations", ["it"] = "Somma delle attenuazioni", ["en"] = "Sum of attenuation" },
+        ["CalcAttenuationFactor"] = new() { ["de"] = "Dämpfungsfaktor", ["fr"] = "Facteur d'atténuation", ["it"] = "Fattore d'attenuazione", ["en"] = "Attenuation factor" },
+        ["CalcAntennaGain"] = new() { ["de"] = "Antennengewinn", ["fr"] = "Gain d'antenne", ["it"] = "Guadagno d'antenna", ["en"] = "Antenna gain" },
+        ["CalcVerticalAttenuation"] = new() { ["de"] = "Vertikale Winkeldämpfung", ["fr"] = "Atténuation angulaire verticale", ["it"] = "Attenuazione d'angolo verticale", ["en"] = "Vertical angle attenuation" },
+        ["CalcTotalAntennaGain"] = new() { ["de"] = "Totaler Antennengewinn", ["fr"] = "Gain total d'antenne", ["it"] = "Guadagno totale dell'antenna", ["en"] = "Total antenna gain" },
+        ["CalcGainFactor"] = new() { ["de"] = "Antennengewinnfaktor", ["fr"] = "Facteur du gain total d'antenne", ["it"] = "Fattore di guadagno dell'antenna", ["en"] = "Antenna gain factor" },
+        ["CalcEirp"] = new() { ["de"] = "Massgebende Sendeleistung (EIRP)", ["fr"] = "Puissance déterminante (PIRE)", ["it"] = "Potenza di trasmissione determinante (EIRP)", ["en"] = "Relevant TX power (EIRP)" },
+        ["CalcErp"] = new() { ["de"] = "Massgebende Sendeleistung (ERP)", ["fr"] = "Puissance déterminante (PAR)", ["it"] = "Potenza di trasmissione determinante (ERP)", ["en"] = "Relevant TX power (ERP)" },
+        ["CalcBuildingDampingRow"] = new() { ["de"] = "Gebäudedämpfung", ["fr"] = "Atténuation due au bâtiment", ["it"] = "Attenuazione dello stabile", ["en"] = "Building attenuation" },
+        ["CalcBuildingDampingFactor"] = new() { ["de"] = "Gebäudedämpfungsfaktor", ["fr"] = "Facteur d'atténuation due au bâtiment", ["it"] = "Fattore d'attenuazione dello stabile", ["en"] = "Building attenuation factor" },
+        ["CalcGroundReflection"] = new() { ["de"] = "Bodenreflexionsfaktor", ["fr"] = "Facteur réflexion du sol", ["it"] = "Fattore di riflessione del suolo", ["en"] = "Ground reflection factor" },
+        ["CalcFieldStrength"] = new() { ["de"] = "Massgebende Feldstärke am OKA", ["fr"] = "Intensité de champ électrique déterminante au LSM", ["it"] = "Intensità di campo determinante nel LST", ["en"] = "Relevant field strength at PSS" },
+        ["CalcLimit"] = new() { ["de"] = "Immissions-Grenzwert", ["fr"] = "Valeur limite des immissions", ["it"] = "Valore limite delle immissioni", ["en"] = "Immission limit" },
+        ["CalcMinSafeDistance"] = new() { ["de"] = "Sicherheitsabstand", ["fr"] = "Distance de sécurité", ["it"] = "Distanza di sicurezza", ["en"] = "Safety distance" },
+        ["CalcOkaDistance"] = new() { ["de"] = "OKA Abstand", ["fr"] = "Distance LSM", ["it"] = "Distanza LST", ["en"] = "PSS distance" },
 
-        // Column Explanations
-        ["CalcColumnExplanations"] = new() { ["de"] = "## Spaltenlegende", ["fr"] = "## Légende des colonnes", ["it"] = "## Legenda delle colonne", ["en"] = "## Column Explanations" },
-        ["CalcExplainF"] = new() { ["de"] = "Frequenz in MHz", ["fr"] = "Fréquence en MHz", ["it"] = "Frequenza in MHz", ["en"] = "Frequency in MHz" },
-        ["CalcExplainD"] = new() { ["de"] = "Horizontaler Abstand vom OKA zur Antenne in Metern", ["fr"] = "Distance horizontale du LSM à l'antenne en mètres", ["it"] = "Distanza orizzontale dal LSBD all'antenna in metri", ["en"] = "Horizontal distance from OKA to antenna in meters" },
-        ["CalcExplainP"] = new() { ["de"] = "Senderausgangsleistung in Watt", ["fr"] = "Puissance de sortie de l'émetteur en Watts", ["it"] = "Potenza di uscita del trasmettitore in Watt", ["en"] = "Transmitter output power in Watts" },
-        ["CalcExplainAF"] = new() { ["de"] = "Aktivitätsfaktor (typisch 0.5 = 50% Sendezeit)", ["fr"] = "Facteur d'activité (typique 0.5 = 50% du temps d'émission)", ["it"] = "Fattore di attività (tipico 0.5 = 50% del tempo di trasmissione)", ["en"] = "Activity factor (typical 0.5 = 50% transmit time)" },
-        ["CalcExplainMF"] = new() { ["de"] = "Modulationsfaktor (SSB=0.2, CW=0.4, FM/Digital=1.0)", ["fr"] = "Facteur de modulation (SSB=0.2, CW=0.4, FM/Digital=1.0)", ["it"] = "Fattore di modulazione (SSB=0.2, CW=0.4, FM/Digital=1.0)", ["en"] = "Modulation factor (SSB=0.2, CW=0.4, FM/Digital=1.0)" },
-        ["CalcExplainPm"] = new() { ["de"] = "Pmittel = Mittlere Leistung = P × AF × MF", ["fr"] = "Pmoy = Puissance moyenne = P × AF × MF", ["it"] = "Pmedia = Potenza media = P × AF × MF", ["en"] = "Pmean = Mean power = P × AF × MF" },
-        ["CalcExplainA1"] = new() { ["de"] = "Kabeldämpfung in dB", ["fr"] = "Atténuation du câble en dB", ["it"] = "Attenuazione del cavo in dB", ["en"] = "Cable attenuation in dB" },
-        ["CalcExplainA2"] = new() { ["de"] = "Zusätzliche Dämpfung (Stecker, Schalter) in dB", ["fr"] = "Pertes supplémentaires (connecteurs, commutateurs) en dB", ["it"] = "Perdite aggiuntive (connettori, interruttori) in dB", ["en"] = "Additional losses (connectors, switches) in dB" },
-        ["CalcExplainA"] = new() { ["de"] = "Gesamtdämpfung = a1 + a2", ["fr"] = "Atténuation totale = a1 + a2", ["it"] = "Attenuazione totale = a1 + a2", ["en"] = "Total attenuation = a1 + a2" },
-        ["CalcExplainAFactor"] = new() { ["de"] = "Dämpfungsfaktor = 10^(-a/10)", ["fr"] = "Facteur d'atténuation = 10^(-a/10)", ["it"] = "Fattore di attenuazione = 10^(-a/10)", ["en"] = "Attenuation factor = 10^(-a/10)" },
-        ["CalcExplainG1"] = new() { ["de"] = "Antennengewinn in dBi", ["fr"] = "Gain d'antenne en dBi", ["it"] = "Guadagno dell'antenna in dBi", ["en"] = "Antenna gain in dBi" },
-        ["CalcExplainG2"] = new() { ["de"] = "Vertikale Winkeldämpfung basierend auf Antennendiagramm in dB", ["fr"] = "Atténuation angle vertical basée sur le diagramme d'antenne en dB", ["it"] = "Attenuazione angolo verticale basata sul diagramma dell'antenna in dB", ["en"] = "Vertical angle attenuation based on antenna pattern in dB" },
-        ["CalcExplainG"] = new() { ["de"] = "Totaler Antennengewinn = g1 - g2", ["fr"] = "Gain d'antenne total = g1 - g2", ["it"] = "Guadagno totale dell'antenna = g1 - g2", ["en"] = "Total antenna gain = g1 - g2" },
-        ["CalcExplainGFactor"] = new() { ["de"] = "Gewinnfaktor = 10^(g/10)", ["fr"] = "Facteur de gain = 10^(g/10)", ["it"] = "Fattore di guadagno = 10^(g/10)", ["en"] = "Gain factor = 10^(g/10)" },
-        ["CalcExplainPs"] = new() { ["de"] = "EIRP in Richtung OKA (Equivalent Isotropic Radiated Power) = Pmittel × A × G", ["fr"] = "PIRE en direction du LSM (Puissance Isotrope Rayonnée Équivalente) = Pmoy × A × G", ["it"] = "EIRP in direzione del LST (Potenza Isotropa Irradiata Equivalente) = Pmedia × A × G", ["en"] = "EIRP in direction of OKA (Equivalent Isotropic Radiated Power) = Pmean × A × G" },
-        ["CalcExplainPsPrime"] = new() { ["de"] = "ERP in Richtung OKA (Effective Radiated Power) = Ps / 1.64", ["fr"] = "PAR en direction du LSM (Puissance Apparente Rayonnée) = Ps / 1.64", ["it"] = "ERP in direzione del LST (Potenza Effettiva Irradiata) = Ps / 1.64", ["en"] = "ERP in direction of OKA (Effective Radiated Power) = Ps / 1.64" },
-        ["CalcExplainAg"] = new() { ["de"] = "Gebäudedämpfung in dB (0 für Aussenbereich)", ["fr"] = "Atténuation du bâtiment en dB (0 pour l'extérieur)", ["it"] = "Attenuazione dell'edificio in dB (0 per esterni)", ["en"] = "Building damping in dB (0 for outdoor)" },
-        ["CalcExplainAG"] = new() { ["de"] = "Gebäudedämpfungsfaktor = 10^(-ag/10)", ["fr"] = "Facteur d'atténuation du bâtiment = 10^(-ag/10)", ["it"] = "Fattore di attenuazione dell'edificio = 10^(-ag/10)", ["en"] = "Building damping factor = 10^(-ag/10)" },
-        ["CalcExplainKr"] = new() { ["de"] = "Bodenreflexionsfaktor (1.6 gemäss NISV Anhang 2)", ["fr"] = "Facteur de réflexion au sol (1.6 selon ORNI Annexe 2)", ["it"] = "Fattore di riflessione al suolo (1.6 secondo ORNI Allegato 2)", ["en"] = "Ground reflection factor (1.6 per NISV Annex 2)" },
-        ["CalcExplainE"] = new() { ["de"] = "Berechnete Feldstärke am OKA in V/m", ["fr"] = "Intensité de champ calculée au LSM en V/m", ["it"] = "Intensità di campo calcolata al LSBD in V/m", ["en"] = "Calculated field strength at OKA in V/m" },
-        ["CalcExplainEigw"] = new() { ["de"] = "Immissions-Grenzwert gemäss NISV in V/m", ["fr"] = "Valeur limite d'immission selon ORNI en V/m", ["it"] = "Valore limite di immissione secondo ORNI in V/m", ["en"] = "Emission limit per NISV in V/m" },
-        ["CalcExplainDs"] = new() { ["de"] = "Minimaler Sicherheitsabstand (Konformität wenn d > ds)", ["fr"] = "Distance de sécurité minimale (conforme si d > ds)", ["it"] = "Distanza di sicurezza minima (conforme se d > ds)", ["en"] = "Minimum safe distance (compliant if d > ds)" },
-        ["CalcExplainOkaDistance"] = new() { ["de"] = "Tatsächlicher Abstand vom OKA zur Antenne in Metern", ["fr"] = "Distance réelle du LSM à l'antenne en mètres", ["it"] = "Distanza effettiva dal LSBD all'antenna in metri", ["en"] = "Actual distance from OKA to antenna in meters" },
+        // Column Explanations (VB6 translations)
+        ["CalcColumnExplanations"] = new() { ["de"] = "Erläuterungen zu den verschiedenen Tabellenspalten", ["fr"] = "Explications des différents champs de la tabelle", ["it"] = "Definizione dei termini utilizzati per il calcolo", ["en"] = "Explanation of the table columns" },
+        ["CalcExplainF"] = new() { ["de"] = "Sendefrequenz der Amateurfunkstation", ["fr"] = "Fréquence d'émission de la station de radioamateur", ["it"] = "Frequenza di trasmissione della stazione radioamatore", ["en"] = "Transmit frequency of the amateur radio station" },
+        ["CalcExplainOkaNumber"] = new() { ["de"] = "Im Situationsplan eingezeichneter Ort für den kurzfristigen Aufenthalt", ["fr"] = "Emplacement du séjour momentané marqué sur le plan de situation", ["it"] = "Spazio/locale di soggiorno di breve durata disegnato sulla planimetria", ["en"] = "Location for short-term stay marked on site plan" },
+        ["CalcExplainD"] = new() { ["de"] = "Antenne – Ort für den kurzfristigen Aufenthalt", ["fr"] = "Antenne - lieu de séjour momentané", ["it"] = "Antenna – Spazio/locale di soggiorno di breve durata", ["en"] = "Antenna – location for short-term stay" },
+        ["CalcExplainP"] = new() { ["de"] = "Ausgangsleistung des Senders oder Linears", ["fr"] = "Puissance de sortie de l'émetteur ou de l'ampli linéaire", ["it"] = "Potenza d'uscita del trasmettitore o dell'amplificatore lineare", ["en"] = "Output power of transmitter or linear amplifier" },
+        ["CalcExplainAF"] = new() { ["de"] = "In der Regel AF = 0.5", ["fr"] = "Normalement AF = 0.5", ["it"] = "Di regola AF = 0.5", ["en"] = "Normally AF = 0.5" },
+        ["CalcExplainMF"] = new() { ["de"] = "bei SSB: MF=0.2, bei CW: MF=0.4, bei FM/RTTY/PSK31: MF=1.0", ["fr"] = "en SSB: MF=0.2, en CW: MF=0.4, en FM/RTTY/PSK31: MF=1.0", ["it"] = "in SSB: MF=0.2, in CW: MF=0.4, in FM/RTTY/PSK31: MF=1.0", ["en"] = "SSB: MF=0.2, CW: MF=0.4, FM/RTTY/PSK31: MF=1.0" },
+        ["CalcExplainPm"] = new() { ["de"] = "Ausgangsleistung reduziert um Aktivitäts- und Modulationsfaktor", ["fr"] = "Puissance de sortie diminuée par le facteur d'activité et de modulation", ["it"] = "Potenza d'uscita ridotta secondo il fattore d'attività e di modulazione", ["en"] = "Output power reduced by activity and modulation factor" },
+        ["CalcExplainA1"] = new() { ["de"] = "Kabeldämpfung bezogen auf Kabellänge", ["fr"] = "Atténuation du câble par rapport à sa longueur", ["it"] = "Attenuazione del cavo in rapporto alla sua lunghezza", ["en"] = "Cable attenuation relative to cable length" },
+        ["CalcExplainA2"] = new() { ["de"] = "Stecker, SWR-Brücke, Antennenschalter", ["fr"] = "Prises et fiches, coupleur et commutateurs d'antenne", ["it"] = "Prese e PL, accoppiatori e commutatori d'antenna", ["en"] = "Connectors, SWR bridge, antenna switch" },
+        ["CalcExplainA"] = new() { ["de"] = "Kabeldämpfung + übrige Dämpfung", ["fr"] = "Atténuations des câbles et autres atténuations", ["it"] = "Cavo e attenuazioni diverse", ["en"] = "Cable attenuation + other attenuation" },
+        ["CalcExplainAFactor"] = new() { ["de"] = "In absolute Zahl umgerechnete «Summe der Dämpfungen»", ["fr"] = "Total des atténuations converties en valeur absolue", ["it"] = "Somma delle attenuazioni convertite in valore assoluto", ["en"] = "Sum of attenuation converted to absolute value" },
+        ["CalcExplainG1"] = new() { ["de"] = "Maximaler Gewinn der Antenne gemäss Hersteller", ["fr"] = "Gain maximal d'antenne selon le fabricant", ["it"] = "Guadagno massimo secondo il costruttore", ["en"] = "Maximum antenna gain per manufacturer" },
+        ["CalcExplainG2"] = new() { ["de"] = "Gewinnverminderung, wegen vertikalem Strahlungsdiagramm der Antenne", ["fr"] = "Diminution du gain selon diagramme du lobe de rayonnement vertical", ["it"] = "Diminuzione del guadagno dovuto all'angolo d'irradiazione verticale", ["en"] = "Gain reduction due to vertical radiation pattern of antenna" },
+        ["CalcExplainG"] = new() { ["de"] = "Antennengewinn − vertikale Winkeldämpfung", ["fr"] = "Gain d'antenne moins l'atténuation verticale d'angle", ["it"] = "Guadagno dell'antenna meno l'attenuazione verticale", ["en"] = "Antenna gain − vertical angle attenuation" },
+        ["CalcExplainGFactor"] = new() { ["de"] = "In absolute Zahl umgerechneter «Antennengewinn»", ["fr"] = "Gain total d'antenne converti en valeur absolue", ["it"] = "Somma del guadagno dell'antenna convertito in valore", ["en"] = "Antenna gain converted to absolute value" },
+        ["CalcExplainPs"] = new() { ["de"] = "Äquivalente abgestrahlte Leistung bezogen auf einen isotropen Strahler", ["fr"] = "Puissance équivalente rayonnée comparée à une antenne isotropique", ["it"] = "Potenza irradiata equivalente ad una irradiazione isotropa", ["en"] = "Equivalent radiated power relative to isotropic radiator" },
+        ["CalcExplainPsPrime"] = new() { ["de"] = "Äquivalente abgestrahlte Leistung bezogen auf einen Dipol", ["fr"] = "Puissance équivalente rayonnée comparée à un dipôle", ["it"] = "Potenza irradiata equivalente riferita ad un dipolo", ["en"] = "Equivalent radiated power relative to dipole" },
+        ["CalcExplainAg"] = new() { ["de"] = "Dämpfung durch Gebäudemauern und Decken", ["fr"] = "Atténuation dues aux murs et couverture du bâtiment", ["it"] = "Attenuazione dei muri e del tetto", ["en"] = "Attenuation by building walls and ceilings" },
+        ["CalcExplainAG"] = new() { ["de"] = "In absolute Zahlen umgerechnete «Gebäudedämpfung»", ["fr"] = "Atténuation du bâtiment converti en valeur absolue", ["it"] = "Attenuazione dello stabile convertito in valore assoluto", ["en"] = "Building attenuation converted to absolute value" },
+        ["CalcExplainKr"] = new() { ["de"] = "Faktor welcher zu einer Zunahme der Feldstärke führt", ["fr"] = "Facteur amenant une augmentation de la force du champ", ["it"] = "Fattore che determina un aumento dell'intensità di campo", ["en"] = "Factor leading to an increase in field strength" },
+        ["CalcExplainE"] = new() { ["de"] = "6-Minuten-Mittelwert der Feldstärke am Ort für den kurzfristigen Aufenthalt", ["fr"] = "Valeur moyenne sur 6 minutes de l'intensité de champ électrique au lieu de séjour momentané", ["it"] = "Valore medio durante 6 minuti dell'intensità di campo nello spazio/locale di soggiorno di breve durata", ["en"] = "6-minute average field strength at location for short-term stay" },
+        ["CalcExplainEigw"] = new() { ["de"] = "Immissions-Grenzwert für die elektrische Feldstärke gemäss NISV", ["fr"] = "Valeur limite d'immissions de l'intensité de champ électrique selon ORNI", ["it"] = "Valore limite d'immissione per l'intensità di campo elettrico ai sensi dell'ORNI", ["en"] = "Immission limit for electric field strength per NISV" },
+        ["CalcExplainDs"] = new() { ["de"] = "Distanz von der Antenne, wo der Immissions-Grenzwert erreicht wird", ["fr"] = "Distance jusqu'à l'antenne à partir de laquelle la valeur limite des immissions est atteinte", ["it"] = "Distanza tra l'antenna ed il luogo dove è raggiunto il valore limite", ["en"] = "Distance from antenna where immission limit is reached" },
     };
 }

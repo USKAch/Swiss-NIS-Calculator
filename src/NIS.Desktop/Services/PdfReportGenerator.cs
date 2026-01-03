@@ -35,8 +35,10 @@ public class PdfReportGenerator
         return Document.Create(container =>
         {
             // One page per configuration
-            foreach (var result in results)
+            for (int i = 0; i < results.Count; i++)
             {
+                var result = results[i];
+                var configNumber = i + 1;
                 container.Page(page =>
                 {
                     page.Size(PageSizes.A4);
@@ -44,7 +46,7 @@ public class PdfReportGenerator
                     page.DefaultTextStyle(x => x.FontSize(10));
 
                     page.Header().Element(c => ComposeHeader(c, project));
-                    page.Content().Element(c => ComposeConfigurationPage(c, project, result));
+                    page.Content().Element(c => ComposeConfigurationPage(c, project, result, configNumber));
                     page.Footer().Element(ComposeFooter);
                 });
             }
@@ -82,7 +84,7 @@ public class PdfReportGenerator
         });
     }
 
-    private void ComposeConfigurationPage(IContainer container, Project project, ConfigurationResult result)
+    private void ComposeConfigurationPage(IContainer container, Project project, ConfigurationResult result, int configNumber)
     {
         var s = Strings.Instance;
         container.PaddingVertical(5).Column(column =>
@@ -142,7 +144,7 @@ public class PdfReportGenerator
             });
 
             // Configuration content
-            column.Item().Element(c => ComposeConfigurationResult(c, result));
+            column.Item().Element(c => ComposeConfigurationResult(c, result, configNumber));
 
             // Disclaimer at bottom
             column.Item().PaddingTop(10).Text(s.CalcDisclaimer)
@@ -150,7 +152,7 @@ public class PdfReportGenerator
         });
     }
 
-    private void ComposeConfigurationResult(IContainer container, ConfigurationResult result)
+    private void ComposeConfigurationResult(IContainer container, ConfigurationResult result, int configNumber)
     {
         var s = Strings.Instance;
         var borderColor = result.IsCompliant ? Colors.Green.Medium : Colors.Red.Medium;
@@ -159,10 +161,10 @@ public class PdfReportGenerator
         {
             column.Spacing(8);
 
-            // Configuration Header
+            // Configuration Header with number
             var configName = !string.IsNullOrWhiteSpace(result.ConfigurationName)
-                ? result.ConfigurationName
-                : "Configuration";
+                ? $"{result.ConfigurationName} (#{configNumber})"
+                : $"{s.Configuration} #{configNumber}";
             column.Item().Row(row =>
             {
                 row.RelativeItem().Text(configName).FontSize(12).Bold();
@@ -197,7 +199,7 @@ public class PdfReportGenerator
                 AddInfoRow(table, s.CalcAntenna, result.AntennaName);
                 AddInfoRow(table, s.CalcPolarization, result.IsHorizontallyPolarized ? s.CalcHorizontal : s.CalcVertical);
                 AddInfoRow(table, s.CalcRotation, result.IsRotatable ? $"{result.HorizontalAngleDegrees}°" : s.CalcFixed);
-                AddInfoRow(table, s.CalcOka, $"{result.OkaName} @ {result.OkaDistance:F1}m");
+                AddInfoRow(table, $"{s.OkaFullName} ({s.CalcOka})", $"Nr. {result.OkaNumber}: {result.OkaName} @ {result.OkaDistance:F1}m");
                 AddInfoRow(table, s.CalcModulation, result.Modulation);
                 AddInfoRow(table, s.CalcBuildingDamping, $"{result.BuildingDampingDb:F2} dB");
             });
@@ -234,29 +236,25 @@ public class PdfReportGenerator
                         }
                     });
 
-                    // Data rows - matching FSD Section 5 format
-                    AddDataRow(table, s.CalcFrequency, "f", "MHz", result.BandResults, b => b.FrequencyMHz, "F0", false);
-                    AddDataRow(table, s.CalcDistanceToAntenna, "d", "m", result.BandResults, _ => result.OkaDistance, "F1", false);
-                    AddDataRow(table, s.CalcTxPower, "P", "W", result.BandResults, b => b.TxPowerW, "F2", false);
-                    AddDataRow(table, s.CalcActivityFactor, "AF", "-", result.BandResults, b => b.ActivityFactor, "F2", false);
-                    AddDataRow(table, s.CalcModulationFactor, "MF", "-", result.BandResults, b => b.ModulationFactor, "F2", false);
-                    AddDataRow(table, s.CalcMeanPower, s.PmittelLbl, "W", result.BandResults, b => b.MeanPowerW, "F2", false);
-                    AddDataRow(table, s.CalcCableAttenuation, "a1", "dB", result.BandResults, b => b.CableLossDb, "F2", false);
-                    AddDataRow(table, s.CalcAdditionalLosses, "a2", "dB", result.BandResults, b => b.AdditionalLossDb, "F2", false);
-                    AddDataRow(table, s.CalcTotalAttenuation, "a", "dB", result.BandResults, b => b.TotalLossDb, "F2", false);
-                    AddDataRow(table, s.CalcAttenuationFactor, "A", "-", result.BandResults, b => b.AttenuationFactor, "F2", false);
-                    AddDataRow(table, s.CalcAntennaGain, "g1", "dBi", result.BandResults, b => b.GainDbi, "F2", false);
-                    AddDataRow(table, s.CalcVerticalAttenuation, "g2", "dB", result.BandResults, b => b.VerticalAttenuation, "F2", false);
-                    AddDataRow(table, s.CalcTotalAntennaGain, "g", "dB", result.BandResults, b => b.TotalGainDbi, "F2", false);
-                    AddDataRow(table, s.CalcGainFactor, "G", "-", result.BandResults, b => b.GainFactor, "F2", false);
-                    AddDataRow(table, s.CalcEirp, "Ps", "W", result.BandResults, b => b.Eirp, "F2", false);
-                    AddDataRow(table, s.CalcErp, "P's", "W", result.BandResults, b => b.Erp, "F2", false);
-                    AddDataRow(table, s.CalcBuildingDampingRow, "ag", "dB", result.BandResults, b => b.BuildingDampingDb, "F2", false);
-                    AddDataRow(table, s.CalcGroundReflection, "kr", "-", result.BandResults, b => b.GroundReflectionFactor, "F2", false);
-                    AddDataRow(table, s.CalcFieldStrength, "E'", "V/m", result.BandResults, b => b.FieldStrength, "F2", true);
-                    AddDataRow(table, s.CalcLimit, "EIGW", "V/m", result.BandResults, b => b.Limit, "F1", true);
-                    AddDataRow(table, s.CalcMinSafeDistance, "ds", "m", result.BandResults, b => b.SafetyDistance, "F2", true);
-                    AddDataRow(table, s.CalcOkaDistance, "d(OKA)", "m", result.BandResults, _ => result.OkaDistance, "F1", true);
+                    // Data rows - matching FSD Section 5 format (23 rows matching VB6)
+                    foreach (var row in CalculationTableDefinition.Rows)
+                    {
+                        var label = row.GetLabel(s);
+                        var symbol = row.GetSymbol(s);
+
+                        if (row.IsConstantString)
+                        {
+                            AddDataRowConstant(table, label, symbol, row.Unit, result.BandResults, row.StringValueGetter!(result), row.IsBold);
+                        }
+                        else if (row.IsConstantNumeric)
+                        {
+                            AddDataRowConstant(table, label, symbol, row.Unit, result.BandResults, row.ConfigValueGetter!(result).ToString(row.Format), row.IsBold);
+                        }
+                        else
+                        {
+                            AddDataRow(table, label, symbol, row.Unit, result.BandResults, row.BandValueGetter!, row.Format, row.IsBold);
+                        }
+                    }
                 });
 
                 // Compliance status
@@ -278,7 +276,7 @@ public class PdfReportGenerator
         table.Cell().Background(bgColor).BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(2)
             .Text(param).Style(highlight ? style.Bold() : style);
         table.Cell().Background(bgColor).BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(2)
-            .Text(symbol).Style(style);
+            .Text(symbol).Style(highlight ? style.Bold() : style);
         table.Cell().Background(bgColor).BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(2)
             .Text(unit).Style(style);
 
@@ -286,6 +284,26 @@ public class PdfReportGenerator
         {
             table.Cell().Background(bgColor).BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(2)
                 .AlignRight().Text(getValue(band).ToString(format)).Style(highlight ? style.Bold() : style);
+        }
+    }
+
+    private void AddDataRowConstant(TableDescriptor table, string param, string symbol, string unit,
+        IEnumerable<BandResult> bands, string value, bool highlight)
+    {
+        var style = TextStyle.Default.FontSize(8);
+        var bgColor = highlight ? Colors.Yellow.Lighten4 : Colors.White;
+
+        table.Cell().Background(bgColor).BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(2)
+            .Text(param).Style(highlight ? style.Bold() : style);
+        table.Cell().Background(bgColor).BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(2)
+            .Text(symbol).Style(highlight ? style.Bold() : style);
+        table.Cell().Background(bgColor).BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(2)
+            .Text(unit).Style(style);
+
+        foreach (var _ in bands)
+        {
+            table.Cell().Background(bgColor).BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(2)
+                .AlignRight().Text(value).Style(highlight ? style.Bold() : style);
         }
     }
 
@@ -320,41 +338,19 @@ public class PdfReportGenerator
             {
                 table.ColumnsDefinition(columns =>
                 {
-                    columns.ConstantColumn(60);  // Symbol
-                    columns.RelativeColumn();    // Explanation
+                    columns.RelativeColumn(1);   // Parameter label
+                    columns.RelativeColumn(2);   // Explanation
                 });
 
-                var explanations = new (string symbol, string explanation)[]
+                var rows = CalculationTableDefinition.Rows;
+                var explanations = CalculationTableDefinition.Explanations;
+                for (int i = 0; i < rows.Count && i < explanations.Count; i++)
                 {
-                    ("f", s.CalcExplainF),
-                    ("d", s.CalcExplainD),
-                    ("P", s.CalcExplainP),
-                    ("AF", s.CalcExplainAF),
-                    ("MF", s.CalcExplainMF),
-                    ("Pm", s.CalcExplainPm),
-                    ("a1", s.CalcExplainA1),
-                    ("a2", s.CalcExplainA2),
-                    ("a", s.CalcExplainA),
-                    ("A", s.CalcExplainAFactor),
-                    ("g1", s.CalcExplainG1),
-                    ("g2", s.CalcExplainG2),
-                    ("g", s.CalcExplainG),
-                    ("G", s.CalcExplainGFactor),
-                    ("Ps", s.CalcExplainPs),
-                    ("P's", s.CalcExplainPsPrime),
-                    ("ag", s.CalcExplainAg),
-                    ("AG", s.CalcExplainAG),
-                    ("kr", s.CalcExplainKr),
-                    ("E'", s.CalcExplainE),
-                    ("EIGW", s.CalcExplainEigw),
-                    ("ds", s.CalcExplainDs),
-                    ("d(OKA)", s.CalcExplainOkaDistance),
-                };
+                    var label = rows[i].GetLabel(s);
+                    var explanation = s.Get(explanations[i].ExplanationKey);
 
-                foreach (var (symbol, explanation) in explanations)
-                {
                     table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(3)
-                        .Text(symbol).FontSize(9).Bold();
+                        .Text(label).FontSize(9).Bold();
                     table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(3)
                         .Text(explanation).FontSize(9);
                 }

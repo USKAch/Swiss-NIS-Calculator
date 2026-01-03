@@ -37,7 +37,7 @@
                             <TextBlock Grid.Column="1" Text="{Binding ProjectName}"/>
 
                             <TextBlock Grid.Column="2" Text="{Binding Operator, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold"/>
-                            <TextBlock Grid.Column="3" Text="{Binding OperatorName}"/>
+                            <TextBlock Grid.Column="3" Text="{Binding Operator}"/>
 
                             <TextBlock Grid.Row="1" Text="{Binding Callsign, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold"/>
                             <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Callsign}"/>

@@ -126,7 +126,7 @@ public partial class ProjectOverviewViewModel : ViewModelBase
         {
             OnPropertyChanged(nameof(ProjectName));
             OnPropertyChanged(nameof(DirtyIndicator));
-            OnPropertyChanged(nameof(OperatorName));
+            OnPropertyChanged(nameof(Operator));
             OnPropertyChanged(nameof(Callsign));
             OnPropertyChanged(nameof(Address));
             OnPropertyChanged(nameof(Location));
@@ -144,7 +144,7 @@ public partial class ProjectOverviewViewModel : ViewModelBase
         set => _projectViewModel.ProjectName = value;
     }
     public string DirtyIndicator => _projectViewModel.IsDirty ? "*" : "";
-    public string OperatorName => _projectViewModel.Project.Operator;
+    public string Operator => _projectViewModel.Project.Operator;
     public string Callsign => _projectViewModel.Project.Callsign;
     public string Address => _projectViewModel.Project.Address;
     public string Location => _projectViewModel.Project.Location;

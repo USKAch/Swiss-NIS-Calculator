@@ -15,7 +15,7 @@ public partial class ProjectInfoViewModel : ViewModelBase
     private string _projectName = string.Empty;
 
     [ObservableProperty]
-    private string _operatorName = string.Empty;
+    private string _operator = string.Empty;
 
     [ObservableProperty]
     private string _callsign = string.Empty;
@@ -54,7 +54,7 @@ public partial class ProjectInfoViewModel : ViewModelBase
 
     // Track dirty state for all fields
     partial void OnProjectNameChanged(string value) => MarkDirty();
-    partial void OnOperatorNameChanged(string value) => MarkDirty();
+    partial void OnOperatorChanged(string value) => MarkDirty();
     partial void OnCallsignChanged(string value) => MarkDirty();
     partial void OnAddressChanged(string value) => MarkDirty();
     partial void OnLocationChanged(string value) => MarkDirty();

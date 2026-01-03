@@ -136,24 +136,12 @@ public class AntennaConfiguration
     [JsonPropertyName("activityFactor")]
     public double ActivityFactor { get; set; } = 0.5;
 
-    // OKA reference (ID for lookup, name for display)
+    // OKA reference (ID for lookup, name for display cache)
     [JsonPropertyName("okaId")]
     public int? OkaId { get; set; }
 
     [JsonPropertyName("okaName")]
     public string OkaName { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Distance to evaluation point in meters. Initialized from OKA defaults, editable per configuration.
-    /// </summary>
-    [JsonPropertyName("okaDistanceMeters")]
-    public double OkaDistanceMeters { get; set; } = 10;
-
-    /// <summary>
-    /// Building damping in dB. Initialized from OKA defaults, editable per configuration.
-    /// </summary>
-    [JsonPropertyName("okaBuildingDampingDb")]
-    public double OkaBuildingDampingDb { get; set; }
 
     [JsonIgnore]
     public string ModulationDisplay => Modulation;

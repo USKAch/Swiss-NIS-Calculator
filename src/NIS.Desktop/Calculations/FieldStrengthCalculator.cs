@@ -161,7 +161,7 @@ public class FieldStrengthCalculator
     {
         return new CalculationInput
         {
-            OperatorName = input.OperatorName,
+            Operator = input.Operator,
             DistanceMeters = input.DistanceMeters,
             EvaluationHeightMeters = input.EvaluationHeightMeters,
             FrequencyMHz = input.FrequencyMHz,

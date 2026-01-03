@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Avalonia.Data.Converters;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using NIS.Desktop.Localization;
 using NIS.Desktop.Models;
 using NIS.Desktop.Services;
 
@@ -28,9 +29,9 @@ public class PatternConverter : IValueConverter
             var parts = samples
                 .Where(i => i < pattern.Length)
                 .Select(i => $"{i * 10}°={pattern[i]:F1}");
-            return "Pattern: " + string.Join(", ", parts);
+            return Strings.Instance.PatternPrefix + " " + string.Join(", ", parts);
         }
-        return "No pattern";
+        return Strings.Instance.NoPattern;
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
@@ -77,7 +78,7 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
     [ObservableProperty]
     private int _configurationNumber = 1;
 
-    public string HeaderText => $"Configuration {ConfigurationNumber}";
+    public string HeaderText => string.Format(Strings.Instance.ConfigurationNumber, ConfigurationNumber);
 
     partial void OnConfigurationNumberChanged(int value)
     {
@@ -155,30 +156,21 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
     private Oka? _selectedOka;
 
     /// <summary>
-    /// Distance to evaluation point in meters. Editable per configuration.
+    /// Distance to OKA in meters. Read from OKA master data.
     /// </summary>
-    [ObservableProperty]
-    private double _okaDistanceMeters = 10;
+    public double OkaDistanceMeters => SelectedOka?.DefaultDistanceMeters ?? 10;
 
     /// <summary>
-    /// Building damping in dB. Editable per configuration.
+    /// Building damping in dB. Read from OKA master data.
     /// </summary>
-    [ObservableProperty]
-    private double _okaBuildingDampingDb;
+    public double OkaBuildingDampingDb => SelectedOka?.DefaultDampingDb ?? 0;
 
     partial void OnSelectedOkaChanged(Oka? value)
     {
-        // Initialize from OKA defaults when selected
-        if (value != null)
-        {
-            OkaDistanceMeters = value.DefaultDistanceMeters;
-            OkaBuildingDampingDb = value.DefaultDampingDb;
-        }
         MarkDirty();
+        OnPropertyChanged(nameof(OkaDistanceMeters));
+        OnPropertyChanged(nameof(OkaBuildingDampingDb));
     }
-
-    partial void OnOkaDistanceMetersChanged(double value) => MarkDirty();
-    partial void OnOkaBuildingDampingDbChanged(double value) => MarkDirty();
 
     partial void OnSelectedAntennaChanged(Antenna? value) => MarkDirty();
     partial void OnSelectedRadioChanged(Radio? value)
@@ -277,9 +269,6 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
         SelectedOka = config.OkaId.HasValue
             ? Okas.FirstOrDefault(o => o.Id == config.OkaId.Value)
             : null;
-        // Override with saved per-configuration values
-        OkaDistanceMeters = config.OkaDistanceMeters;
-        OkaBuildingDampingDb = config.OkaBuildingDampingDb;
     }
 
     /// <summary>
@@ -327,11 +316,9 @@ public partial class ConfigurationEditorViewModel : ViewModelBase
             ModulationId = SelectedModulation?.Id,
             Modulation = SelectedModulation?.Name ?? "CW",
             ActivityFactor = ActivityFactor,
-            // OKA: ID for reference, per-config distance/damping
+            // OKA: ID for reference (distance/damping come from OKA master data)
             OkaId = SelectedOka?.Id,
-            OkaName = SelectedOka?.Name ?? string.Empty,
-            OkaDistanceMeters = OkaDistanceMeters,
-            OkaBuildingDampingDb = OkaBuildingDampingDb
+            OkaName = SelectedOka?.Name ?? string.Empty
         };
     }
 

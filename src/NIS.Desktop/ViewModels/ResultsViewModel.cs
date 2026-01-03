@@ -38,6 +38,7 @@ public class ConfigurationResult
     public required double OkaDistance { get; init; }
     public required double AntennaHeight { get; init; }
     public required string OkaName { get; init; }
+    public required string OkaNumber { get; init; }
     public required double BuildingDampingDb { get; init; }
     public required string CableDescription { get; init; }
     public required string LinearName { get; init; }
@@ -233,9 +234,9 @@ public partial class ResultsViewModel : ViewModelBase
             : null;
         var constants = MasterDataStore.Load().Constants;
 
-        // Use per-configuration OKA values (editable, initialized from OKA defaults)
-        double okaDistance = config.OkaDistanceMeters;
-        double okaDamping = config.OkaBuildingDampingDb;
+        // Get OKA values from master data (single source of truth)
+        double okaDistance = oka?.DefaultDistanceMeters ?? 10;
+        double okaDamping = oka?.DefaultDampingDb ?? 0;
 
         // Use linear power if set, otherwise use radio power
         double effectivePower = (config.Linear != null && config.Linear.PowerWatts > 0)
@@ -254,6 +255,7 @@ public partial class ResultsViewModel : ViewModelBase
             OkaDistance = okaDistance,
             AntennaHeight = config.Antenna.HeightMeters,
             OkaName = config.OkaName,
+            OkaNumber = oka?.Id.ToString() ?? "-",
             BuildingDampingDb = okaDamping,
             CableDescription = $"{config.Cable.LengthMeters:F1}m {config.Cable.Type}",
             LinearName = config.Linear?.Name ?? "",
@@ -525,74 +527,75 @@ public partial class ResultsViewModel : ViewModelBase
         sb.AppendLine($"**{s.CalcDate}:** {DateTime.Now:dd.MM.yyyy}");
         sb.AppendLine();
 
-        foreach (var result in Results)
+        for (int i = 0; i < Results.Count; i++)
         {
+            var result = Results[i];
             var configName = !string.IsNullOrWhiteSpace(result.ConfigurationName)
-                ? result.ConfigurationName
-                : "Configuration";
-            sb.AppendLine($"## {configName}");
-            sb.AppendLine();
+                ? $"{result.ConfigurationName} (#{i + 1})"
+                : $"{s.Configuration} #{i + 1}";
 
-            // Configuration summary table
-            sb.AppendLine("| | |");
-            sb.AppendLine("|:------------------------|:-------------------------------------------------------|");
+            // Configuration summary table (config name as header)
+            sb.AppendLine($"| **{configName}** | |");
+            sb.AppendLine("|:--|:--|");
             if (result.HasLinear)
             {
-                sb.AppendLine($"| **{s.CalcTransmitter}:**      | {result.RadioName}                                     |");
-                sb.AppendLine($"| **{s.CalcLinear}:**      | {result.LinearName}, {result.LinearPowerWatts:F0}W     |");
+                sb.AppendLine($"| **{s.CalcTransmitter}:** | {result.RadioName} |");
+                sb.AppendLine($"| **{s.CalcLinear}:** | {result.LinearName}, {result.LinearPowerWatts:F0}W |");
             }
             else
             {
-                sb.AppendLine($"| **{s.CalcTransmitter}:**      | {result.RadioName}, {result.RadioPowerWatts:F0}W       |");
+                sb.AppendLine($"| **{s.CalcTransmitter}:** | {result.RadioName}, {result.RadioPowerWatts:F0}W |");
             }
-            sb.AppendLine($"| **{s.CalcCable}:**       | {result.CableDescription}                              |");
-            sb.AppendLine($"| **{s.CalcAntenna}:**     | {result.AntennaName}                                   |");
-            sb.AppendLine($"| **{s.CalcPolarization}:**         | {(result.IsHorizontallyPolarized ? s.CalcHorizontal : s.CalcVertical)} |");
-            sb.AppendLine($"| **{s.CalcRotation}:**         | {(result.IsRotatable ? $"{result.HorizontalAngleDegrees}°" : s.CalcFixed)} |");
-            sb.AppendLine($"| **{s.CalcOka}:**         | {result.OkaName} @ {result.OkaDistance:F1}m            |");
-            sb.AppendLine($"| **{s.CalcModulation}:**         | {result.Modulation}                                    |");
-            sb.AppendLine($"| **{s.CalcBuildingDamping}:**        | {result.BuildingDampingDb:F2} dB                       |");
+            sb.AppendLine($"| **{s.CalcCable}:** | {result.CableDescription} |");
+            sb.AppendLine($"| **{s.CalcAntenna}:** | {result.AntennaName} |");
+            sb.AppendLine($"| **{s.CalcPolarization}:** | {(result.IsHorizontallyPolarized ? s.CalcHorizontal : s.CalcVertical)} |");
+            sb.AppendLine($"| **{s.CalcRotation}:** | {(result.IsRotatable ? $"{result.HorizontalAngleDegrees}°" : s.CalcFixed)} |");
+            sb.AppendLine($"| **{s.OkaFullName} ({s.CalcOka}):** | Nr. {result.OkaNumber}: {result.OkaName} @ {result.OkaDistance:F1}m |");
+            sb.AppendLine($"| **{s.CalcModulation}:** | {result.Modulation} |");
+            sb.AppendLine($"| **{s.CalcBuildingDamping}:** | {result.BuildingDampingDb:F2} dB |");
             sb.AppendLine();
 
-            // Band results header - FSD Section 5 columns
-            sb.Append("| Parameter                            | Sym  | Unit   |");
+            // Band results table - markdown format
+            sb.Append("| Parameter | Sym | Unit |");
             foreach (var band in result.BandResults)
             {
-                sb.Append($" {band.FrequencyMHz,7:F0} |");
+                sb.Append($" {band.FrequencyMHz:F0} |");
             }
             sb.AppendLine();
 
-            sb.Append("|:-------------------------------------|:----:|:------:|");
+            // Table separator
+            sb.Append("|:---|:---:|:---:|");
             foreach (var _ in result.BandResults)
             {
-                sb.Append("-------:|");
+                sb.Append("---:|");
             }
             sb.AppendLine();
 
-            // FSD Section 5 required rows
-            AppendRow(sb, s.CalcFrequency, "f", "MHz", result.BandResults, b => b.FrequencyMHz, "F0");
-            AppendRow(sb, s.CalcDistanceToAntenna, "d", "m", result.BandResults, _ => result.OkaDistance, "F1");
-            AppendRow(sb, s.CalcTxPower, "P", "W", result.BandResults, b => b.TxPowerW, "F2");
-            AppendRow(sb, s.CalcActivityFactor, "AF", "-", result.BandResults, b => b.ActivityFactor, "F2");
-            AppendRow(sb, s.CalcModulationFactor, "MF", "-", result.BandResults, b => b.ModulationFactor, "F2");
-            AppendRow(sb, s.CalcMeanPower, s.PmittelLbl, "W", result.BandResults, b => b.MeanPowerW, "F2");
-            AppendRow(sb, s.CalcCableAttenuation, "a1", "dB", result.BandResults, b => b.CableLossDb, "F2");
-            AppendRow(sb, s.CalcAdditionalLosses, "a2", "dB", result.BandResults, b => b.AdditionalLossDb, "F2");
-            AppendRow(sb, s.CalcTotalAttenuation, "a", "dB", result.BandResults, b => b.TotalLossDb, "F2");
-            AppendRow(sb, s.CalcAttenuationFactor, "A", "-", result.BandResults, b => b.AttenuationFactor, "F2");
-            AppendRow(sb, s.CalcAntennaGain, "g1", "dBi", result.BandResults, b => b.GainDbi, "F2");
-            AppendRow(sb, s.CalcVerticalAttenuation, "g2", "dB", result.BandResults, b => b.VerticalAttenuation, "F2");
-            AppendRow(sb, s.CalcTotalAntennaGain, "g", "dB", result.BandResults, b => b.TotalGainDbi, "F2");
-            AppendRow(sb, s.CalcGainFactor, "G", "-", result.BandResults, b => b.GainFactor, "F2");
-            AppendRow(sb, s.CalcEirp, "Ps", "W", result.BandResults, b => b.Eirp, "F2");
-            AppendRow(sb, s.CalcErp, "P's", "W", result.BandResults, b => b.Erp, "F2");
-            AppendRow(sb, s.CalcBuildingDampingRow, "ag", "dB", result.BandResults, b => b.BuildingDampingDb, "F2");
-            AppendRow(sb, s.CalcGroundReflection, "kr", "-", result.BandResults, b => b.GroundReflectionFactor, "F2");
-            AppendRow(sb, "**" + s.CalcFieldStrength + "**", "E'", "V/m", result.BandResults, b => b.FieldStrength, "F2");
-            AppendRow(sb, "**" + s.CalcLimit + "**", "EIGW", "V/m", result.BandResults, b => b.Limit, "F1");
-            AppendRow(sb, "**" + s.CalcMinSafeDistance + "**", "ds", "m", result.BandResults, b => b.SafetyDistance, "F2");
-            AppendRow(sb, "**" + s.CalcOkaDistance + "**", "d(OKA)", "m", result.BandResults, _ => result.OkaDistance, "F1");
+            // FSD Section 5 required rows (22 rows)
+            foreach (var row in CalculationTableDefinition.Rows)
+            {
+                var label = row.GetLabel(s);
+                var symbol = row.GetSymbol(s);
 
+                if (row.IsBold)
+                {
+                    label = $"**{label}**";
+                    symbol = $"**{symbol}**";
+                }
+
+                if (row.IsConstantString)
+                {
+                    AppendRow(sb, label, symbol, row.Unit, result.BandResults, row.StringValueGetter!(result));
+                }
+                else if (row.IsConstantNumeric)
+                {
+                    AppendRow(sb, label, symbol, row.Unit, result.BandResults, row.ConfigValueGetter!(result).ToString(row.Format));
+                }
+                else
+                {
+                    AppendRow(sb, label, symbol, row.Unit, result.BandResults, row.BandValueGetter!, row.Format);
+                }
+            }
             sb.AppendLine();
 
             // Compliance status
@@ -612,38 +615,18 @@ public partial class ResultsViewModel : ViewModelBase
     {
         var s = Localization.Strings.Instance;
 
-        sb.AppendLine(s.CalcColumnExplanations);
-        sb.AppendLine();
+        // Explanations table (parameter label + explanation)
+        var title = s.CalcColumnExplanations.Replace("## ", "");
+        sb.AppendLine($"| **{title}** | |");
+        sb.AppendLine("|:--|:--|");
 
-        var explanations = new[]
+        var rows = CalculationTableDefinition.Rows;
+        var explanations = CalculationTableDefinition.Explanations;
+        for (int i = 0; i < rows.Count && i < explanations.Count; i++)
         {
-            ("f", s.CalcExplainF),
-            ("d", s.CalcExplainD),
-            ("P", s.CalcExplainP),
-            ("AF", s.CalcExplainAF),
-            ("MF", s.CalcExplainMF),
-            (s.PmittelLbl, s.CalcExplainPm),
-            ("a1", s.CalcExplainA1),
-            ("a2", s.CalcExplainA2),
-            ("a", s.CalcExplainA),
-            ("A", s.CalcExplainAFactor),
-            ("g1", s.CalcExplainG1),
-            ("g2", s.CalcExplainG2),
-            ("g", s.CalcExplainG),
-            ("G", s.CalcExplainGFactor),
-            ("Ps", s.CalcExplainPs),
-            ("P's", s.CalcExplainPsPrime),
-            ("ag", s.CalcExplainAg),
-            ("kr", s.CalcExplainKr),
-            ("E'", s.CalcExplainE),
-            ("EIGW", s.CalcExplainEigw),
-            ("ds", s.CalcExplainDs),
-            ("d(OKA)", s.CalcExplainOkaDistance)
-        };
-
-        foreach (var (symbol, description) in explanations)
-        {
-            sb.AppendLine($"- **{symbol}**: {description}");
+            var label = rows[i].GetLabel(s);
+            var explanation = s.Get(explanations[i].ExplanationKey);
+            sb.AppendLine($"| {label} | {explanation} |");
         }
         sb.AppendLine();
     }
@@ -651,10 +634,21 @@ public partial class ResultsViewModel : ViewModelBase
     private void AppendRow(StringBuilder sb, string param, string sym, string unit,
         ObservableCollection<BandResult> bands, Func<BandResult, double> getValue, string format)
     {
-        sb.Append($"| {param,-36} | {sym,-4} | {unit,-6} |");
+        sb.Append($"| {param} | {sym} | {unit} |");
         foreach (var band in bands)
         {
-            sb.Append($" {getValue(band).ToString(format),6} |");
+            sb.Append($" {getValue(band).ToString(format)} |");
+        }
+        sb.AppendLine();
+    }
+
+    private void AppendRow(StringBuilder sb, string param, string sym, string unit,
+        ObservableCollection<BandResult> bands, string value)
+    {
+        sb.Append($"| {param} | {sym} | {unit} |");
+        foreach (var _ in bands)
+        {
+            sb.Append($" {value} |");
         }
         sb.AppendLine();
     }
