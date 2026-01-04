@@ -112,7 +112,7 @@ jobs:
       run: dotnet test --configuration Release --verbosity normal
 
     - name: Publish ARM64
-      run: dotnet publish src/NIS.Desktop/NIS.Desktop.csproj -c Release -r osx-arm64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --self-contained true -o publish
+      run: dotnet publish src/NIS.Desktop/NIS.Desktop.csproj -c Release -r osx-arm64 --self-contained true -o publish
 
     - name: Create App Bundle
       run: |
@@ -154,18 +154,7 @@ jobs:
         </plist>
         EOF
 
-        # Keep only the executable in Contents/MacOS. Portable files live in Resources/PortableRoot
-        PORTABLE_ROOT="SwissNISCalculator.app/Contents/Resources/PortableRoot"
-        mkdir -p "$PORTABLE_ROOT"
-        shopt -s nullglob
-        for item in SwissNISCalculator.app/Contents/MacOS/*; do
-          name="$(basename "$item")"
-          if [ "$name" = "NIS.Desktop" ]; then
-            continue
-          fi
-          mv "$item" "$PORTABLE_ROOT/"
-        done
-        shopt -u nullglob
+        # Leave the published runtime files next to the executable
 
     - name: Import signing certificate
       env:
