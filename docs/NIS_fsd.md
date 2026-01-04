@@ -1230,10 +1230,10 @@ UI should follow Windows 11 look and feel:
 
 CI/CD produces packaged releases for:
 - Windows (x64)
-- macOS (x64) — runs on ARM64 via Rosetta 2
+- macOS (Universal Binary: x64 + ARM64)
 - Linux (x64)
 
-Note: Native ARM64 macOS builds are not yet implemented. Apple Silicon Macs run the x64 build through Rosetta 2 translation.
+The macOS build is a Universal Binary that runs natively on both Intel and Apple Silicon Macs.
 
 ### 11.2 Bundled Data
 
@@ -1334,29 +1334,50 @@ chmod +x "SwissNISCalculator.app/Contents/MacOS/NIS.Desktop"
 ```
 Without this, users cannot double-click to launch the app (Finder will try to open it with another application).
 
-**Current Limitations:**
+**macOS Build Features:**
 
 | Feature | Status | Notes |
 |---------|--------|-------|
 | x64 (Intel) | ✅ Supported | Native execution |
-| ARM64 (Apple Silicon) | ⚠️ Via Rosetta | x64 build runs via Rosetta 2 translation |
-| Code signing | ❌ Not implemented | Triggers Gatekeeper warning |
-| Notarization | ❌ Not implemented | Additional security prompts |
-| App icon | ❌ Not included | Shows generic application icon |
+| ARM64 (Apple Silicon) | ✅ Supported | Universal Binary |
+| Code signing | ✅ Implemented | Requires GitHub secrets |
+| Notarization | ✅ Implemented | Requires GitHub secrets |
+| App icon | ⚠️ Not included | Shows generic application icon |
 
-**Gatekeeper Bypass (Required for Unsigned Apps):**
+**Universal Binary:**
+The macOS executable is built using `lipo` to combine x64 and ARM64 binaries into a single Universal Binary that runs natively on both Intel and Apple Silicon Macs.
 
-Since the app is not code-signed, macOS Gatekeeper will block it. Users must bypass Gatekeeper on first launch:
+**Code Signing & Notarization:**
+When the required GitHub secrets are configured, the build automatically:
+1. Signs the app with a Developer ID Application certificate
+2. Submits for Apple notarization
+3. Staples the notarization ticket to the app
+
+This allows users to open the app without Gatekeeper warnings.
+
+**Required GitHub Secrets for Signing:**
+
+| Secret | Description |
+|--------|-------------|
+| `APPLE_CERTIFICATE_BASE64` | Developer ID Application certificate (.p12) encoded as base64 |
+| `APPLE_CERTIFICATE_PASSWORD` | Password for the .p12 file |
+| `APPLE_ID` | Apple ID email for notarization |
+| `APPLE_APP_PASSWORD` | App-specific password from appleid.apple.com |
+| `APPLE_TEAM_ID` | 10-character Team ID from Apple Developer portal |
+
+**Generating Secrets:**
+
+1. **Export certificate:** Keychain Access → My Certificates → "Developer ID Application" → Export as .p12
+2. **Encode certificate:** `base64 -i certificate.p12 | pbcopy`
+3. **Create app password:** appleid.apple.com → Sign-In and Security → App-Specific Passwords
+4. **Find Team ID:** developer.apple.com → Account → Membership → Team ID
+
+**Fallback (Without Secrets):**
+If secrets are not configured, the build produces an unsigned app. Users must bypass Gatekeeper:
 
 1. **Right-click method:** Right-click the app → "Open" → Click "Open" in the dialog
 2. **Terminal method:** `xattr -cr /path/to/SwissNISCalculator.app`
 3. **System Settings:** If blocked, go to System Settings → Privacy & Security → Click "Open Anyway"
-
-**Future Improvements (not currently implemented):**
-- Native ARM64 build for Apple Silicon Macs
-- Code signing with Apple Developer certificate
-- Notarization for smoother installation
-- Custom app icon (.icns file in Contents/Resources/)
 
 ### 11.4 Master Data Update Workflow
 

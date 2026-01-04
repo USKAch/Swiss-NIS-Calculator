@@ -21,23 +21,9 @@ jobs:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GH_REPO: ${{ github.repository }}
 
-  build:
+  build-windows:
     needs: cleanup
-    strategy:
-      matrix:
-        include:
-          - os: windows-latest
-            rid: win-x64
-            artifact: SwissNISCalculator-Windows
-          - os: macos-latest
-            rid: osx-x64
-            artifact: SwissNISCalculator-macOS
-          - os: ubuntu-latest
-            rid: linux-x64
-            artifact: SwissNISCalculator-Linux
-
-    runs-on: ${{ matrix.os }}
-
+    runs-on: windows-latest
     steps:
     - uses: actions/checkout@v4
 
@@ -50,8 +36,8 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
-        restore-keys: ${{ runner.os }}-nuget-
+        key: Windows-nuget-${{ hashFiles('**/*.csproj') }}
+        restore-keys: Windows-nuget-
 
     - name: Restore dependencies
       run: dotnet restore
@@ -60,10 +46,88 @@ jobs:
       run: dotnet test --configuration Release --verbosity normal
 
     - name: Publish
-      run: dotnet publish src/NIS.Desktop/NIS.Desktop.csproj -c Release -r ${{ matrix.rid }} -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --self-contained true -o publish
+      run: dotnet publish src/NIS.Desktop/NIS.Desktop.csproj -c Release -r win-x64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --self-contained true -o publish
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: SwissNISCalculator-Windows
+        path: publish/
+
+  build-linux:
+    needs: cleanup
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Cache NuGet packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.nuget/packages
+        key: Linux-nuget-${{ hashFiles('**/*.csproj') }}
+        restore-keys: Linux-nuget-
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Test
+      run: dotnet test --configuration Release --verbosity normal
+
+    - name: Publish
+      run: dotnet publish src/NIS.Desktop/NIS.Desktop.csproj -c Release -r linux-x64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --self-contained true -o publish
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: SwissNISCalculator-Linux
+        path: publish/
+
+  build-macos:
+    needs: cleanup
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Cache NuGet packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.nuget/packages
+        key: macOS-nuget-${{ hashFiles('**/*.csproj') }}
+        restore-keys: macOS-nuget-
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Test
+      run: dotnet test --configuration Release --verbosity normal
+
+    - name: Publish x64
+      run: dotnet publish src/NIS.Desktop/NIS.Desktop.csproj -c Release -r osx-x64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --self-contained true -o publish-x64
+
+    - name: Publish ARM64
+      run: dotnet publish src/NIS.Desktop/NIS.Desktop.csproj -c Release -r osx-arm64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --self-contained true -o publish-arm64
+
+    - name: Create Universal Binary
+      run: |
+        mkdir -p publish
+        # Create universal binary from x64 and arm64
+        lipo -create -output publish/NIS.Desktop publish-x64/NIS.Desktop publish-arm64/NIS.Desktop
+        # Copy other files from x64 build (they should be the same)
+        cp -r publish-x64/Data publish/ 2>/dev/null || true
+        cp -r publish-x64/LatoFont publish/ 2>/dev/null || true
+        cp publish-x64/*.pdb publish/ 2>/dev/null || true
 
     - name: Create macOS App Bundle
-      if: runner.os == 'macOS'
       run: |
         mkdir -p "SwissNISCalculator.app/Contents/MacOS"
         mkdir -p "SwissNISCalculator.app/Contents/Resources"
@@ -76,33 +140,113 @@ jobs:
 
         # Create Info.plist
         cat > "SwissNISCalculator.app/Contents/Info.plist" << 'PLIST'
-        <?xml version="1.0" encoding="UTF-8"?>
-        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-        <plist version="1.0">
-        <dict>
-          <key>CFBundleName</key>
-          <string>Swiss NIS Calculator</string>
-          <key>CFBundleDisplayName</key>
-          <string>Swiss NIS Calculator</string>
-          <key>CFBundleExecutable</key>
-          <string>NIS.Desktop</string>
-          <key>CFBundleIdentifier</key>
-          <string>ch.uska.nis-calculator</string>
-          <key>CFBundleVersion</key>
-          <string>1.0.0</string>
-          <key>CFBundleShortVersionString</key>
-          <string>1.0.0</string>
-          <key>CFBundlePackageType</key>
-          <string>APPL</string>
-          <key>LSMinimumSystemVersion</key>
-          <string>10.15</string>
-          <key>NSHighResolutionCapable</key>
-          <true/>
-        </dict>
-        </plist>
-        PLIST
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleName</key>
+  <string>Swiss NIS Calculator</string>
+  <key>CFBundleDisplayName</key>
+  <string>Swiss NIS Calculator</string>
+  <key>CFBundleExecutable</key>
+  <string>NIS.Desktop</string>
+  <key>CFBundleIdentifier</key>
+  <string>ch.uska.nis-calculator</string>
+  <key>CFBundleVersion</key>
+  <string>1.0.0</string>
+  <key>CFBundleShortVersionString</key>
+  <string>1.0.0</string>
+  <key>CFBundlePackageType</key>
+  <string>APPL</string>
+  <key>LSMinimumSystemVersion</key>
+  <string>10.15</string>
+  <key>NSHighResolutionCapable</key>
+  <true/>
+</dict>
+</plist>
+PLIST
 
-        # Replace publish folder with the app bundle
+    - name: Import Code Signing Certificate
+      if: env.APPLE_CERTIFICATE_BASE64 != ''
+      env:
+        APPLE_CERTIFICATE_BASE64: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
+        APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+      run: |
+        # Create temporary keychain
+        KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+        KEYCHAIN_PASSWORD=$(openssl rand -base64 32)
+
+        # Decode certificate
+        echo "$APPLE_CERTIFICATE_BASE64" | base64 --decode > $RUNNER_TEMP/certificate.p12
+
+        # Create and configure keychain
+        security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+        security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+        security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+
+        # Import certificate
+        security import $RUNNER_TEMP/certificate.p12 -P "$APPLE_CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+        security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+        security list-keychain -d user -s $KEYCHAIN_PATH
+
+        # Clean up
+        rm $RUNNER_TEMP/certificate.p12
+
+    - name: Code Sign App Bundle
+      if: env.APPLE_CERTIFICATE_BASE64 != ''
+      env:
+        APPLE_CERTIFICATE_BASE64: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
+      run: |
+        # Find the Developer ID Application certificate
+        IDENTITY=$(security find-identity -v -p codesigning | grep "Developer ID Application" | head -1 | awk -F'"' '{print $2}')
+
+        if [ -z "$IDENTITY" ]; then
+          echo "No Developer ID Application certificate found"
+          exit 1
+        fi
+
+        echo "Signing with identity: $IDENTITY"
+
+        # Sign all nested components first (deep signing)
+        find "SwissNISCalculator.app/Contents/MacOS" -type f -perm +111 -exec codesign --force --options runtime --sign "$IDENTITY" {} \;
+
+        # Sign the main executable
+        codesign --force --options runtime --sign "$IDENTITY" "SwissNISCalculator.app/Contents/MacOS/NIS.Desktop"
+
+        # Sign the app bundle
+        codesign --force --options runtime --sign "$IDENTITY" "SwissNISCalculator.app"
+
+        # Verify signature
+        codesign --verify --verbose "SwissNISCalculator.app"
+
+    - name: Notarize App Bundle
+      if: env.APPLE_ID != '' && env.APPLE_APP_PASSWORD != '' && env.APPLE_TEAM_ID != ''
+      env:
+        APPLE_ID: ${{ secrets.APPLE_ID }}
+        APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
+        APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      run: |
+        # Create zip for notarization
+        ditto -c -k --keepParent "SwissNISCalculator.app" "SwissNISCalculator-notarize.zip"
+
+        # Submit for notarization
+        xcrun notarytool submit "SwissNISCalculator-notarize.zip" \
+          --apple-id "$APPLE_ID" \
+          --password "$APPLE_APP_PASSWORD" \
+          --team-id "$APPLE_TEAM_ID" \
+          --wait
+
+        # Staple the notarization ticket
+        xcrun stapler staple "SwissNISCalculator.app"
+
+        # Verify notarization
+        spctl --assess --verbose "SwissNISCalculator.app"
+
+        # Clean up
+        rm "SwissNISCalculator-notarize.zip"
+
+    - name: Package App Bundle
+      run: |
         rm -rf publish
         mkdir publish
         mv SwissNISCalculator.app publish/
@@ -110,11 +254,11 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ matrix.artifact }}
+        name: SwissNISCalculator-macOS
         path: publish/
 
   release:
-    needs: build
+    needs: [build-windows, build-linux, build-macos]
     runs-on: ubuntu-latest
 
     steps:
@@ -139,7 +283,7 @@ jobs:
     - name: Create archives
       run: |
         cd windows && zip -r ../SwissNISCalculator-Windows.zip . && cd ..
-        cd macos && zip -r ../SwissNISCalculator-macOS.zip . && cd ..
+        cd macos && zip -yr ../SwissNISCalculator-macOS.zip . && cd ..
         cd linux && tar -czvf ../SwissNISCalculator-Linux.tar.gz . && cd ..
 
     - name: Create Release
