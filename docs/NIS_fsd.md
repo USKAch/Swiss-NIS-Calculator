@@ -1277,8 +1277,60 @@ The workflow can be re-run with the same version tag to rebuild a release—it a
 - `SwissNISCalculator-Linux.tar.gz`
 
 Each artifact contains a portable application (Section 11.2) with:
-- Single executable file
+- Single executable file (or `.app` bundle for macOS)
 - `Data/nisdata.db` - pre-populated database with factory master data and demo project
+
+### 11.3.1 macOS App Bundle
+
+The macOS release is packaged as a proper `.app` bundle to enable standard macOS interactions (double-click to launch, drag to Applications).
+
+**Bundle Structure:**
+```
+SwissNISCalculator.app/
+├── Contents/
+│   ├── Info.plist              # Application metadata
+│   ├── MacOS/
+│   │   ├── NIS.Desktop         # Main executable (must have +x permission)
+│   │   ├── Data/
+│   │   │   └── nisdata.db      # Database
+│   │   └── LatoFont/           # Font files
+│   └── Resources/              # (Reserved for app icon)
+```
+
+**Info.plist Contents:**
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "...">
+<plist version="1.0">
+<dict>
+  <key>CFBundleName</key>
+  <string>Swiss NIS Calculator</string>
+  <key>CFBundleDisplayName</key>
+  <string>Swiss NIS Calculator</string>
+  <key>CFBundleExecutable</key>
+  <string>NIS.Desktop</string>
+  <key>CFBundleIdentifier</key>
+  <string>ch.uska.nis-calculator</string>
+  <key>CFBundleVersion</key>
+  <string>1.0.0</string>
+  <key>CFBundleShortVersionString</key>
+  <string>1.0.0</string>
+  <key>CFBundlePackageType</key>
+  <string>APPL</string>
+  <key>LSMinimumSystemVersion</key>
+  <string>10.15</string>
+  <key>NSHighResolutionCapable</key>
+  <true/>
+</dict>
+</plist>
+```
+
+**Critical Build Step:**
+The executable must have execute permission set during the build process:
+```bash
+chmod +x "SwissNISCalculator.app/Contents/MacOS/NIS.Desktop"
+```
+Without this, users cannot double-click to launch the app (Finder will try to open it with another application).
 
 ### 11.4 Master Data Update Workflow
 
