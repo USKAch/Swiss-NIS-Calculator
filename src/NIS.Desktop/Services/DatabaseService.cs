@@ -40,6 +40,21 @@ public class DatabaseService : IDisposable
 
     private DatabaseService()
     {
+        // Check if database file exists - if not, show error and exit
+        if (!File.Exists(AppPaths.DatabaseFile))
+        {
+            MsBox.Avalonia.MessageBoxManager
+                .GetMessageBoxStandard(
+                    Localization.Strings.Instance.DatabaseNotFound,
+                    Localization.Strings.Instance.DatabaseNotFoundMessage,
+                    MsBox.Avalonia.Enums.ButtonEnum.Ok,
+                    MsBox.Avalonia.Enums.Icon.Error)
+                .ShowAsync()
+                .GetAwaiter()
+                .GetResult();
+            Environment.Exit(1);
+        }
+
         var connectionString = $"Data Source={AppPaths.DatabaseFile}";
         _connection = new SqliteConnection(connectionString);
         _connection.Open();

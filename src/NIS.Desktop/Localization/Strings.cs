@@ -647,6 +647,8 @@ public class Strings : INotifyPropertyChanged
     public string FailedToOpenDataFolder => Get("FailedToOpenDataFolder");
     public string DatabaseResetRequired => Get("DatabaseResetRequired");
     public string DatabaseResetMessage => Get("DatabaseResetMessage");
+    public string DatabaseNotFound => Get("DatabaseNotFound");
+    public string DatabaseNotFoundMessage => Get("DatabaseNotFoundMessage");
     public string PatternPrefix => Get("PatternPrefix");
     public string NoPattern => Get("NoPattern");
     public string ConfigurationNumber => Get("ConfigurationNumber");
@@ -1111,6 +1113,8 @@ public class Strings : INotifyPropertyChanged
         ["FailedToOpenDataFolder"] = new() { ["de"] = "Datenordner konnte nicht geöffnet werden: {0}", ["fr"] = "Impossible d'ouvrir le dossier de données: {0}", ["it"] = "Impossibile aprire la cartella dati: {0}", ["en"] = "Failed to open data folder: {0}" },
         ["DatabaseResetRequired"] = new() { ["de"] = "Datenbank-Reset erforderlich", ["fr"] = "Réinitialisation de la base de données requise", ["it"] = "Reset del database richiesto", ["en"] = "Database Reset Required" },
         ["DatabaseResetMessage"] = new() { ["de"] = "Das Datenbankschema ist inkompatibel und muss zurückgesetzt werden.\n\nACHTUNG: Alle Projekte und Konfigurationen werden gelöscht!\n\nKlicken Sie Ja zum Zurücksetzen oder Nein zum Beenden.", ["fr"] = "Le schéma de la base de données est incompatible et doit être réinitialisé.\n\nATTENTION: Tous les projets et configurations seront supprimés!\n\nCliquez Oui pour réinitialiser ou Non pour quitter.", ["it"] = "Lo schema del database è incompatibile e deve essere reimpostato.\n\nATTENZIONE: Tutti i progetti e le configurazioni verranno eliminati!\n\nClicca Sì per reimpostare o No per uscire.", ["en"] = "The database schema is incompatible and needs to be reset.\n\nWARNING: All projects and configurations will be deleted!\n\nClick Yes to reset the database, or No to exit the application." },
+        ["DatabaseNotFound"] = new() { ["de"] = "Datenbank nicht gefunden", ["fr"] = "Base de données introuvable", ["it"] = "Database non trovato", ["en"] = "Database Not Found" },
+        ["DatabaseNotFoundMessage"] = new() { ["de"] = "Die Datenbankdatei wurde nicht gefunden.\n\nErwartet: Data/nisdata.db\n\nDie Anwendung wird beendet.", ["fr"] = "Le fichier de base de données est introuvable.\n\nAttendu: Data/nisdata.db\n\nL'application va se fermer.", ["it"] = "Il file del database non è stato trovato.\n\nPrevisto: Data/nisdata.db\n\nL'applicazione verrà chiusa.", ["en"] = "The database file was not found.\n\nExpected: Data/nisdata.db\n\nThe application will close." },
         ["PatternPrefix"] = new() { ["de"] = "Muster:", ["fr"] = "Diagramme:", ["it"] = "Pattern:", ["en"] = "Pattern:" },
         ["NoPattern"] = new() { ["de"] = "Kein Muster", ["fr"] = "Pas de diagramme", ["it"] = "Nessun pattern", ["en"] = "No pattern" },
         ["ConfigurationNumber"] = new() { ["de"] = "Konfiguration {0}", ["fr"] = "Configuration {0}", ["it"] = "Configurazione {0}", ["en"] = "Configuration {0}" },
