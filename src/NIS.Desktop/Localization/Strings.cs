@@ -645,8 +645,8 @@ public class Strings : INotifyPropertyChanged
     public string Export => Get("Export");
     public string Import => Get("Import");
     public string FailedToOpenDataFolder => Get("FailedToOpenDataFolder");
-    public string DatabaseResetRequired => Get("DatabaseResetRequired");
-    public string DatabaseResetMessage => Get("DatabaseResetMessage");
+    public string DatabaseIncompatible => Get("DatabaseIncompatible");
+    public string DatabaseIncompatibleMessage => Get("DatabaseIncompatibleMessage");
     public string DatabaseNotFound => Get("DatabaseNotFound");
     public string DatabaseNotFoundMessage => Get("DatabaseNotFoundMessage");
     public string PatternPrefix => Get("PatternPrefix");
@@ -1111,8 +1111,8 @@ public class Strings : INotifyPropertyChanged
         ["Export"] = new() { ["de"] = "Export", ["fr"] = "Export", ["it"] = "Esportazione", ["en"] = "Export" },
         ["Import"] = new() { ["de"] = "Import", ["fr"] = "Import", ["it"] = "Importazione", ["en"] = "Import" },
         ["FailedToOpenDataFolder"] = new() { ["de"] = "Datenordner konnte nicht geöffnet werden: {0}", ["fr"] = "Impossible d'ouvrir le dossier de données: {0}", ["it"] = "Impossibile aprire la cartella dati: {0}", ["en"] = "Failed to open data folder: {0}" },
-        ["DatabaseResetRequired"] = new() { ["de"] = "Datenbank-Reset erforderlich", ["fr"] = "Réinitialisation de la base de données requise", ["it"] = "Reset del database richiesto", ["en"] = "Database Reset Required" },
-        ["DatabaseResetMessage"] = new() { ["de"] = "Das Datenbankschema ist inkompatibel und muss zurückgesetzt werden.\n\nACHTUNG: Alle Projekte und Konfigurationen werden gelöscht!\n\nKlicken Sie Ja zum Zurücksetzen oder Nein zum Beenden.", ["fr"] = "Le schéma de la base de données est incompatible et doit être réinitialisé.\n\nATTENTION: Tous les projets et configurations seront supprimés!\n\nCliquez Oui pour réinitialiser ou Non pour quitter.", ["it"] = "Lo schema del database è incompatibile e deve essere reimpostato.\n\nATTENZIONE: Tutti i progetti e le configurazioni verranno eliminati!\n\nClicca Sì per reimpostare o No per uscire.", ["en"] = "The database schema is incompatible and needs to be reset.\n\nWARNING: All projects and configurations will be deleted!\n\nClick Yes to reset the database, or No to exit the application." },
+        ["DatabaseIncompatible"] = new() { ["de"] = "Falsche Datenbank", ["fr"] = "Base de données incorrecte", ["it"] = "Database errato", ["en"] = "Wrong Database" },
+        ["DatabaseIncompatibleMessage"] = new() { ["de"] = "Das Datenbankschema ist nicht kompatibel mit dieser Version.\n\nErwartet: Data/nisdata.db (kompatible Version)\n\nDie Anwendung wird beendet.", ["fr"] = "Le schéma de la base de données n'est pas compatible avec cette version.\n\nAttendu: Data/nisdata.db (version compatible)\n\nL'application va se fermer.", ["it"] = "Lo schema del database non è compatibile con questa versione.\n\nPrevisto: Data/nisdata.db (versione compatibile)\n\nL'applicazione verrà chiusa.", ["en"] = "The database schema is not compatible with this version.\n\nExpected: Data/nisdata.db (compatible version)\n\nThe application will close." },
         ["DatabaseNotFound"] = new() { ["de"] = "Datenbank nicht gefunden", ["fr"] = "Base de données introuvable", ["it"] = "Database non trovato", ["en"] = "Database Not Found" },
         ["DatabaseNotFoundMessage"] = new() { ["de"] = "Die Datenbankdatei wurde nicht gefunden.\n\nErwartet: Data/nisdata.db\n\nDie Anwendung wird beendet.", ["fr"] = "Le fichier de base de données est introuvable.\n\nAttendu: Data/nisdata.db\n\nL'application va se fermer.", ["it"] = "Il file del database non è stato trovato.\n\nPrevisto: Data/nisdata.db\n\nL'applicazione verrà chiusa.", ["en"] = "The database file was not found.\n\nExpected: Data/nisdata.db\n\nThe application will close." },
         ["PatternPrefix"] = new() { ["de"] = "Muster:", ["fr"] = "Diagramme:", ["it"] = "Pattern:", ["en"] = "Pattern:" },

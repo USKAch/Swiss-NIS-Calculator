@@ -64,23 +64,17 @@ public class DatabaseService : IDisposable
 
         if (!IsSchemaCompatible())
         {
-            // Show warning - user data will be lost
-            var result = MsBox.Avalonia.MessageBoxManager
+            _connection.Close();
+            MsBox.Avalonia.MessageBoxManager
                 .GetMessageBoxStandard(
-                    Localization.Strings.Instance.DatabaseResetRequired,
-                    Localization.Strings.Instance.DatabaseResetMessage,
-                    MsBox.Avalonia.Enums.ButtonEnum.YesNo,
-                    MsBox.Avalonia.Enums.Icon.Warning)
+                    Localization.Strings.Instance.DatabaseIncompatible,
+                    Localization.Strings.Instance.DatabaseIncompatibleMessage,
+                    MsBox.Avalonia.Enums.ButtonEnum.Ok,
+                    MsBox.Avalonia.Enums.Icon.Error)
                 .ShowAsync()
                 .GetAwaiter()
                 .GetResult();
-
-            if (result != MsBox.Avalonia.Enums.ButtonResult.Yes)
-            {
-                Environment.Exit(0);
-            }
-
-            ResetDatabaseSchema();
+            Environment.Exit(1);
         }
 
         // Initialize repositories before InitializeDatabase (which needs them)
@@ -127,17 +121,6 @@ public class DatabaseService : IDisposable
             .Select(row => (string)row.name)
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
         return columns.Contains(columnName);
-    }
-
-    private void ResetDatabaseSchema()
-    {
-        _connection.Execute("DROP TABLE IF EXISTS Configurations");
-        _connection.Execute("DROP TABLE IF EXISTS Projects");
-        _connection.Execute("DROP TABLE IF EXISTS Antennas");
-        _connection.Execute("DROP TABLE IF EXISTS Cables");
-        _connection.Execute("DROP TABLE IF EXISTS Radios");
-        _connection.Execute("DROP TABLE IF EXISTS Okas");
-        _connection.Execute("DROP TABLE IF EXISTS Modulations");
     }
 
     private void InitializeDatabase()
@@ -235,12 +218,6 @@ public class DatabaseService : IDisposable
         ");
 
         EnsureDefaultModulations();
-
-        // Auto-import bundled factory data if database is empty
-        if (GetAllAntennas().Count == 0)
-        {
-            ImportFactoryDataFromBundled();
-        }
     }
 
     private void EnsureDefaultModulations()
@@ -397,89 +374,6 @@ public class DatabaseService : IDisposable
             throw;
         }
     }
-
-    private void ImportFactoryDataFromBundled()
-    {
-        var folderPath = AppPaths.DataFolder;
-        if (!Directory.Exists(folderPath)) return;
-
-        ImportFactoryDataFromFolder(folderPath);
-    }
-
-    private void ImportFactoryDataFromFolder(string folderPath)
-    {
-        var options = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            PropertyNameCaseInsensitive = true
-        };
-
-        // Import antennas (consolidate multiband entries with same manufacturer/model)
-        var antennasFile = Path.Combine(folderPath, "antennas.json");
-        if (File.Exists(antennasFile))
-        {
-            var json = File.ReadAllText(antennasFile);
-            var wrapper = JsonSerializer.Deserialize<AntennaFileWrapper>(json, options);
-            var rawAntennas = wrapper?.Antennas ?? new();
-
-            var consolidated = rawAntennas
-                .GroupBy(a => (a.Manufacturer, a.Model))
-                .Select(g =>
-                {
-                    var first = g.First();
-                    var merged = new Antenna
-                    {
-                        Manufacturer = first.Manufacturer,
-                        Model = first.Model,
-                        AntennaType = first.AntennaType,
-                        IsHorizontallyPolarized = first.IsHorizontallyPolarized,
-                        IsUserData = false
-                    };
-                    foreach (var ant in g)
-                    {
-                        merged.Bands.AddRange(ant.Bands);
-                    }
-                    return merged;
-                });
-
-            foreach (var antenna in consolidated)
-            {
-                _masterData.InsertAntenna(antenna, isUserData: false);
-            }
-        }
-
-        // Import cables
-        var cablesFile = Path.Combine(folderPath, "cables.json");
-        if (File.Exists(cablesFile))
-        {
-            var json = File.ReadAllText(cablesFile);
-            var wrapper = JsonSerializer.Deserialize<CableFileWrapper>(json, options);
-            var cables = wrapper?.Cables ?? new();
-            foreach (var cable in cables)
-            {
-                cable.IsUserData = false;
-                _masterData.InsertCable(cable, isUserData: false);
-            }
-        }
-
-        // Import radios
-        var radiosFile = Path.Combine(folderPath, "radios.json");
-        if (File.Exists(radiosFile))
-        {
-            var json = File.ReadAllText(radiosFile);
-            var wrapper = JsonSerializer.Deserialize<RadioFileWrapper>(json, options);
-            var radios = wrapper?.Radios ?? new();
-            foreach (var radio in radios)
-            {
-                radio.IsUserData = false;
-                _masterData.InsertRadio(radio, isUserData: false);
-            }
-        }
-    }
-
-    private class AntennaFileWrapper { public List<Antenna>? Antennas { get; set; } }
-    private class CableFileWrapper { public List<Cable>? Cables { get; set; } }
-    private class RadioFileWrapper { public List<Radio>? Radios { get; set; } }
 
     #endregion
 
