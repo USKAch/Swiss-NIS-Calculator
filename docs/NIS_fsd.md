@@ -675,8 +675,7 @@ This ensures users don't accidentally lose their work.
 ### 6.5 First-Run Initialization
 
 On first launch:
-- Create the application Data folder if it does not exist.
-- Seed the writable database from the factory database if `nisdata.db` is missing.
+- **Database required**: If `nisdata.db` is missing, show a localized error dialog ("Database Not Found") and exit. The application does not auto-create a database.
 - Create default `settings.json` if missing (language=de, theme=system).
 - Load embedded translations, then merge `translations.json` if present.
 
@@ -688,7 +687,7 @@ This section defines the expected database rules for a robust implementation.
 - SQLite is the single source of truth for application data (see Section 7.1 for locations).
 - All master data and project records use integer Id primary keys.
 - All references in configurations use Ids, not names (names are display-only).
-- Schema changes do not use migrations; incompatible schemas trigger the reset flow in Section 6.7.
+- Schema changes do not use auto-migrations; incompatible schemas trigger an error dialog and exit (Section 6.7).
 
 **Foreign Key Enforcement:**
 - Foreign keys are enforced on connection open (`PRAGMA foreign_keys = ON`).
@@ -719,14 +718,7 @@ This section defines the expected database rules for a robust implementation.
 
 ### 6.7 Database Schema Compatibility
 
-When the application detects an incompatible database schema (e.g., after an update that changes the table structure), it displays a warning dialog before resetting the database:
-
-- **Warning message**: Informs user that all projects and configurations will be deleted
-- **Options**:
-  - **Yes**: Reset database and continue (data will be lost)
-  - **No**: Exit application (user can manually backup or migrate the database)
-
-This ensures users are never surprised by data loss due to schema changes.
+When the application detects an incompatible database schema (e.g., after an update that changes the table structure), it displays a localized error dialog ("Wrong Database") and exits. The application does not auto-reset the database.
 
 ### 6.8 Manual Database Migration
 
@@ -734,8 +726,7 @@ For schema changes that can preserve existing data, a Python migration script is
 
 **When to use manual migration:**
 - After updating to a new version with schema changes
-- When the application shows a schema incompatibility warning
-- Before the warning dialog forces a database reset
+- When the application shows a schema incompatibility error and exits
 
 **Migration process:**
 
@@ -778,10 +769,10 @@ Migration complete!
 
 All application data is stored in a single SQLite database file (`nisdata.db`).
 
-**Data locations**:
-- Windows: `%APPDATA%/SwissNISCalculator/Data/nisdata.db`
-- macOS: `~/Library/Application Support/SwissNISCalculator/Data/nisdata.db`
-- Linux: `~/.local/share/SwissNISCalculator/Data/nisdata.db`
+**Data location** (portable application):
+- `Data/nisdata.db` - relative to the application executable
+
+The application is fully portable. All data files reside in the `Data/` folder next to the executable. No data is stored in %APPDATA% or other system folders.
 
 `settings.json`, `translations.json`, and `masterdata.json` are stored in the same Data folder.
 
