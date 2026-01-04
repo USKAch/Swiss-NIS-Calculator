@@ -241,15 +241,14 @@ jobs:
 
     - name: Package App Bundle
       run: |
-        rm -rf publish
-        mkdir publish
-        mv SwissNISCalculator.app publish/
+        # Use ditto to create zip that preserves permissions and attributes
+        ditto -c -k --keepParent "SwissNISCalculator.app" "SwissNISCalculator-macOS.zip"
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: SwissNISCalculator-macOS
-        path: publish/
+        path: SwissNISCalculator-macOS.zip
 
   release:
     needs: [build-windows, build-linux, build-macos]
@@ -277,7 +276,8 @@ jobs:
     - name: Create archives
       run: |
         cd windows && zip -r ../SwissNISCalculator-Windows.zip . && cd ..
-        cd macos && zip -yr ../SwissNISCalculator-macOS.zip . && cd ..
+        # macOS zip already created with ditto, just move it
+        mv macos/SwissNISCalculator-macOS.zip .
         cd linux && tar -czvf ../SwissNISCalculator-Linux.tar.gz . && cd ..
 
     - name: Create Release
