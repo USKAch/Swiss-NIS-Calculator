@@ -111,33 +111,17 @@ jobs:
     - name: Test
       run: dotnet test --configuration Release --verbosity normal
 
-    - name: Publish x64
-      run: dotnet publish src/NIS.Desktop/NIS.Desktop.csproj -c Release -r osx-x64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --self-contained true -o publish-x64
-
     - name: Publish ARM64
-      run: dotnet publish src/NIS.Desktop/NIS.Desktop.csproj -c Release -r osx-arm64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --self-contained true -o publish-arm64
+      run: dotnet publish src/NIS.Desktop/NIS.Desktop.csproj -c Release -r osx-arm64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --self-contained true -o publish
 
-    - name: Create Universal Binary and App Bundle
+    - name: Create App Bundle
       run: |
-        mkdir -p publish
-        # Create universal binary from x64 and arm64
-        lipo -create -output publish/NIS.Desktop publish-x64/NIS.Desktop publish-arm64/NIS.Desktop
-        # Copy other files from x64 build (they should be the same)
-        cp -r publish-x64/Data publish/ 2>/dev/null || true
-        cp -r publish-x64/LatoFont publish/ 2>/dev/null || true
-        cp publish-x64/*.pdb publish/ 2>/dev/null || true
-
         # Create app bundle structure
         mkdir -p "SwissNISCalculator.app/Contents/MacOS"
         mkdir -p "SwissNISCalculator.app/Contents/Resources"
 
-        # Move executable to MacOS folder
-        mv publish/NIS.Desktop "SwissNISCalculator.app/Contents/MacOS/"
-
-        # Move resources to Resources folder (not MacOS)
-        mv publish/Data "SwissNISCalculator.app/Contents/Resources/" 2>/dev/null || true
-        mv publish/LatoFont "SwissNISCalculator.app/Contents/Resources/" 2>/dev/null || true
-        mv publish/*.pdb "SwissNISCalculator.app/Contents/Resources/" 2>/dev/null || true
+        # Move all files to MacOS folder (app expects them next to executable)
+        mv publish/* "SwissNISCalculator.app/Contents/MacOS/"
 
         # Make executable
         chmod +x "SwissNISCalculator.app/Contents/MacOS/NIS.Desktop"
