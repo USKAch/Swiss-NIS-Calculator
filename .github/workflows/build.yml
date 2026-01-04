@@ -205,6 +205,33 @@ jobs:
         codesign --force --deep --options runtime --timestamp --sign "$IDENTITY" "SwissNISCalculator.app"
         codesign --verify --deep --strict "SwissNISCalculator.app"
 
+    - name: Notarize App Bundle
+      env:
+        APPLE_ID: ${{ secrets.APPLE_ID }}
+        APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
+        APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      run: |
+        if [ -z "$APPLE_ID" ] || [ -z "$APPLE_APP_PASSWORD" ] || [ -z "$APPLE_TEAM_ID" ]; then
+          echo "Notarization credentials not configured, skipping"
+          exit 0
+        fi
+
+        # Create zip for notarization
+        ditto -c -k --keepParent "SwissNISCalculator.app" "notarize.zip"
+
+        # Submit for notarization and wait
+        xcrun notarytool submit "notarize.zip" \
+          --apple-id "$APPLE_ID" \
+          --password "$APPLE_APP_PASSWORD" \
+          --team-id "$APPLE_TEAM_ID" \
+          --wait
+
+        # Staple the notarization ticket
+        xcrun stapler staple "SwissNISCalculator.app"
+
+        # Clean up
+        rm "notarize.zip"
+
     - name: Package App Bundle
       run: |
         # Use ditto to create zip that preserves permissions and attributes
