@@ -1275,18 +1275,18 @@ The workflow can be re-run with the same version tag to rebuild a release—it a
 
 **Artifacts produced:**
 - `SwissNISCalculator-Windows.zip`
-- `SwissNISCalculator-macOS.zip`
+- `SwissNISCalculator-macOS.dmg`
 - `SwissNISCalculator-Linux.tar.gz`
 
 Each artifact contains a portable application (Section 11.2) with:
-- Single executable file (Windows/Linux) or `.app` bundle (macOS)
+- Single executable file (Windows/Linux) or `.app` bundle wrapped inside a DMG (macOS)
 - `Data/nisdata.db` - pre-populated database with factory master data and demo project
 
 ### 11.3.1 macOS App Bundle
 
 The macOS release is packaged as a proper `.app` bundle to enable standard macOS interactions (double-click to launch, drag to Applications).
 
-**Bundle Structure:**
+**Bundle Structure (within the DMG):**
 ```
 SwissNISCalculator.app/
 ├── Contents/
@@ -1331,8 +1331,8 @@ SwissNISCalculator.app/
 </plist>
 ```
 
-**Critical Build Step:**
-The executable must have execute permission set during the build process:
+**Packaging & Critical Build Steps:**
+1. The executable must have execute permission set during the build process:
 ```bash
 chmod +x "SwissNISCalculator.app/Contents/MacOS/NIS.Desktop"
 ```
@@ -1345,6 +1345,7 @@ All published files (assemblies, `.dylib` runtime components, fonts, `Data/nisda
 2. `dotnet publish ... -r osx-x64 --self-contained true -o publish-x64`
 3. Copy the ARM64 output into `SwissNISCalculator.app/Contents/MacOS/`
 4. Iterate every Mach-O file (main executable + `.dylib` native runtime assets) and run `lipo -create <arm64> <x64> -output <target>` so each binary contains both architectures while sharing the same managed assemblies and data files.
+5. Create `SwissNISCalculator-macOS.dmg` with `hdiutil create -volname "Swiss NIS Calculator" -srcfolder SwissNISCalculator.app -ov -format UDZO ...` so users download a single DMG, open it, and drag the `.app` into Applications without extracting archives manually.
 
 **macOS Build Features:**
 

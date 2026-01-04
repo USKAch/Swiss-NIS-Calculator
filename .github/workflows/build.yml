@@ -241,14 +241,14 @@ jobs:
 
     - name: Package App Bundle
       run: |
-        # Use ditto to create zip that preserves permissions and attributes
-        ditto -c -k --keepParent "SwissNISCalculator.app" "SwissNISCalculator-macOS.zip"
+        # Create compressed DMG so users can download a single file and run/install
+        hdiutil create -volname "Swiss NIS Calculator" -srcfolder "SwissNISCalculator.app" -ov -format UDZO "SwissNISCalculator-macOS.dmg"
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: SwissNISCalculator-macOS
-        path: SwissNISCalculator-macOS.zip
+        path: SwissNISCalculator-macOS.dmg
 
   release:
     needs: [build-windows, build-linux, build-macos]
@@ -276,8 +276,8 @@ jobs:
     - name: Create archives
       run: |
         cd windows && zip -r ../SwissNISCalculator-Windows.zip . && cd ..
-        # macOS zip already created with ditto, just move it
-        mv macos/SwissNISCalculator-macOS.zip .
+        # macOS DMG already created, just move it
+        mv macos/SwissNISCalculator-macOS.dmg .
         cd linux && tar -czvf ../SwissNISCalculator-Linux.tar.gz . && cd ..
 
     - name: Create Release
@@ -287,7 +287,7 @@ jobs:
         name: Release ${{ inputs.version }}
         files: |
           SwissNISCalculator-Windows.zip
-          SwissNISCalculator-macOS.zip
+          SwissNISCalculator-macOS.dmg
           SwissNISCalculator-Linux.tar.gz
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

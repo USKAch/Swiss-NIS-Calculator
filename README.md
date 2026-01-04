@@ -40,7 +40,7 @@ Download the latest release for your platform from [Releases](../../releases):
 | Platform | Download |
 |----------|----------|
 | Windows | `SwissNISCalculator-Windows.zip` |
-| macOS | `SwissNISCalculator-macOS.zip` |
+| macOS | `SwissNISCalculator-macOS.dmg` |
 | Linux | `SwissNISCalculator-Linux.tar.gz` |
 
 ### Windows
@@ -48,8 +48,9 @@ Download the latest release for your platform from [Releases](../../releases):
 2. Run `SwissNISCalculator.exe`
 
 ### macOS
-1. Extract the ZIP file
-2. Run `SwissNISCalculator` (you may need to allow it in Security & Privacy settings)
+1. Open the downloaded DMG
+2. Drag `SwissNISCalculator.app` to `Applications` (or run it directly from the DMG)
+3. Launch the app (you may need to allow it in Security & Privacy settings)
 
 ### Linux
 1. Extract: `tar -xzvf SwissNISCalculator-Linux.tar.gz`
