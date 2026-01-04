@@ -203,14 +203,11 @@ jobs:
 
         echo "Signing with identity: $IDENTITY"
 
-        # Sign the main executable
-        codesign --force --options runtime --sign "$IDENTITY" "SwissNISCalculator.app/Contents/MacOS/NIS.Desktop"
-
-        # Sign the app bundle
-        codesign --force --options runtime --sign "$IDENTITY" "SwissNISCalculator.app"
+        # Sign the app bundle with --deep to handle all nested content
+        codesign --force --deep --options runtime --sign "$IDENTITY" "SwissNISCalculator.app"
 
         # Verify signature
-        codesign --verify --verbose "SwissNISCalculator.app"
+        codesign --verify --deep --verbose "SwissNISCalculator.app"
 
     - name: Notarize App Bundle
       env:
