@@ -38,6 +38,20 @@ public partial class App : Application
             // Load any custom translations from previous sessions
             TranslationEditorViewModel.LoadCustomTranslations();
 
+            // Check database before proceeding
+            var dbError = DatabaseService.CheckDatabaseStatus();
+            if (dbError != null)
+            {
+                // Show error dialog and exit
+                var msgBox = MessageBoxManager.GetMessageBoxStandard(
+                    dbError.Value.Title,
+                    dbError.Value.Message,
+                    ButtonEnum.Ok,
+                    Icon.Error);
+                msgBox.ShowAsync().ContinueWith(_ => Environment.Exit(1));
+                return;
+            }
+
             // Avoid duplicate validations from both Avalonia and the CommunityToolkit.
             DisableAvaloniaDataAnnotationValidation();
 

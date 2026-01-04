@@ -38,56 +38,65 @@ public class DatabaseService : IDisposable
         }
     }
 
-    private DatabaseService()
+    /// <summary>
+    /// Checks if the database file exists and schema is compatible.
+    /// Returns null if OK, or an error message tuple (title, message) if not.
+    /// Call this before accessing Instance to show proper UI error dialogs.
+    /// </summary>
+    public static (string Title, string Message)? CheckDatabaseStatus()
     {
-        // Check if database file exists - if not, show error and exit
         if (!File.Exists(AppPaths.DatabaseFile))
         {
-            MsBox.Avalonia.MessageBoxManager
-                .GetMessageBoxStandard(
-                    Localization.Strings.Instance.DatabaseNotFound,
-                    Localization.Strings.Instance.DatabaseNotFoundMessage,
-                    MsBox.Avalonia.Enums.ButtonEnum.Ok,
-                    MsBox.Avalonia.Enums.Icon.Error)
-                .ShowAsync()
-                .GetAwaiter()
-                .GetResult();
-            Environment.Exit(1);
+            return (
+                Localization.Strings.Instance.DatabaseNotFound,
+                Localization.Strings.Instance.DatabaseNotFoundMessage
+            );
         }
 
-        var connectionString = $"Data Source={AppPaths.DatabaseFile}";
-        _connection = new SqliteConnection(connectionString);
-        _connection.Open();
+        // Check schema compatibility
+        using var connection = new SqliteConnection($"Data Source={AppPaths.DatabaseFile}");
+        connection.Open();
 
-        // Enable foreign key enforcement
-        _connection.Execute("PRAGMA foreign_keys = ON");
+        bool compatible = CheckSchemaCompatibility(connection);
+        connection.Close();
 
-        if (!IsSchemaCompatible())
+        if (!compatible)
         {
-            _connection.Close();
-            MsBox.Avalonia.MessageBoxManager
-                .GetMessageBoxStandard(
-                    Localization.Strings.Instance.DatabaseIncompatible,
-                    Localization.Strings.Instance.DatabaseIncompatibleMessage,
-                    MsBox.Avalonia.Enums.ButtonEnum.Ok,
-                    MsBox.Avalonia.Enums.Icon.Error)
-                .ShowAsync()
-                .GetAwaiter()
-                .GetResult();
-            Environment.Exit(1);
+            return (
+                Localization.Strings.Instance.DatabaseIncompatible,
+                Localization.Strings.Instance.DatabaseIncompatibleMessage
+            );
         }
 
-        // Initialize repositories before InitializeDatabase (which needs them)
-        _masterData = new MasterDataRepository(_connection);
-        _projects = new ProjectRepository(_connection, _masterData);
-
-        InitializeDatabase();
+        return null;
     }
 
-    #region Schema Management
-
-    private bool IsSchemaCompatible()
+    private static bool CheckSchemaCompatibility(SqliteConnection connection)
     {
+        bool TableExists(string tableName)
+        {
+            var result = connection.ExecuteScalar<string>(
+                "SELECT name FROM sqlite_master WHERE type='table' AND name=@Name",
+                new { Name = tableName });
+            return !string.IsNullOrEmpty(result);
+        }
+
+        bool HasColumn(string tableName, string columnName)
+        {
+            var columns = connection.Query("PRAGMA table_info(" + tableName + ")")
+                .Select(row => (string)row.name)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+            return columns.Contains(columnName);
+        }
+
+        bool IndexExists(string indexName)
+        {
+            var result = connection.ExecuteScalar<string>(
+                "SELECT name FROM sqlite_master WHERE type='index' AND name=@Name",
+                new { Name = indexName });
+            return !string.IsNullOrEmpty(result);
+        }
+
         if (!TableExists("Antennas") || !HasColumn("Antennas", "IsUserData")) return false;
         if (!TableExists("Cables") || !HasColumn("Cables", "IsUserData")) return false;
         if (!TableExists("Radios") || !HasColumn("Radios", "IsUserData")) return false;
@@ -99,29 +108,23 @@ public class DatabaseService : IDisposable
         return true;
     }
 
-    private bool IndexExists(string indexName)
+    private DatabaseService()
     {
-        var result = _connection.ExecuteScalar<string>(
-            "SELECT name FROM sqlite_master WHERE type='index' AND name=@Name",
-            new { Name = indexName });
-        return !string.IsNullOrEmpty(result);
+        var connectionString = $"Data Source={AppPaths.DatabaseFile}";
+        _connection = new SqliteConnection(connectionString);
+        _connection.Open();
+
+        // Enable foreign key enforcement
+        _connection.Execute("PRAGMA foreign_keys = ON");
+
+        // Initialize repositories before InitializeDatabase (which needs them)
+        _masterData = new MasterDataRepository(_connection);
+        _projects = new ProjectRepository(_connection, _masterData);
+
+        InitializeDatabase();
     }
 
-    private bool TableExists(string tableName)
-    {
-        var result = _connection.ExecuteScalar<string>(
-            "SELECT name FROM sqlite_master WHERE type='table' AND name=@Name",
-            new { Name = tableName });
-        return !string.IsNullOrEmpty(result);
-    }
-
-    private bool HasColumn(string tableName, string columnName)
-    {
-        var columns = _connection.Query("PRAGMA table_info(" + tableName + ")")
-            .Select(row => (string)row.name)
-            .ToHashSet(StringComparer.OrdinalIgnoreCase);
-        return columns.Contains(columnName);
-    }
+    #region Schema Management
 
     private void InitializeDatabase()
     {
