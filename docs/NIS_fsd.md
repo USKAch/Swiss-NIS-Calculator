@@ -1228,10 +1228,12 @@ UI should follow Windows 11 look and feel:
 
 ### 11.1 Platforms
 
-CI/CD must produce packaged releases for:
+CI/CD produces packaged releases for:
 - Windows (x64)
-- macOS (x64, ARM64)
+- macOS (x64) — runs on ARM64 via Rosetta 2
 - Linux (x64)
+
+Note: Native ARM64 macOS builds are not yet implemented. Apple Silicon Macs run the x64 build through Rosetta 2 translation.
 
 ### 11.2 Bundled Data
 
@@ -1331,6 +1333,30 @@ The executable must have execute permission set during the build process:
 chmod +x "SwissNISCalculator.app/Contents/MacOS/NIS.Desktop"
 ```
 Without this, users cannot double-click to launch the app (Finder will try to open it with another application).
+
+**Current Limitations:**
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| x64 (Intel) | ✅ Supported | Native execution |
+| ARM64 (Apple Silicon) | ⚠️ Via Rosetta | x64 build runs via Rosetta 2 translation |
+| Code signing | ❌ Not implemented | Triggers Gatekeeper warning |
+| Notarization | ❌ Not implemented | Additional security prompts |
+| App icon | ❌ Not included | Shows generic application icon |
+
+**Gatekeeper Bypass (Required for Unsigned Apps):**
+
+Since the app is not code-signed, macOS Gatekeeper will block it. Users must bypass Gatekeeper on first launch:
+
+1. **Right-click method:** Right-click the app → "Open" → Click "Open" in the dialog
+2. **Terminal method:** `xattr -cr /path/to/SwissNISCalculator.app`
+3. **System Settings:** If blocked, go to System Settings → Privacy & Security → Click "Open Anyway"
+
+**Future Improvements (not currently implemented):**
+- Native ARM64 build for Apple Silicon Macs
+- Code signing with Apple Developer certificate
+- Notarization for smoother installation
+- Custom app icon (.icns file in Contents/Resources/)
 
 ### 11.4 Master Data Update Workflow
 
