@@ -76,6 +76,11 @@ dotnet publish src/NIS.Desktop -c Release -r osx-x64 --self-contained
 dotnet publish src/NIS.Desktop -c Release -r linux-x64 --self-contained
 ```
 
+### Data & Export Locations
+- **Windows & Linux**: the app is fully portable. All mutable files (database, settings, `Data/Export` for Markdown/PDFs) stay next to the executable inside the extracted folder.
+- **macOS (installed)**: after dragging the app to `/Applications`, data and exports remain inside `SwissNISCalculator.app/Contents/MacOS/Data`.
+- **macOS (running directly from the DMG)**: the app copies `Data/` to `~/Library/Application Support/SwissNISCalculator/Data` and writes exports there (`~/Library/Application Support/SwissNISCalculator/Data/Export`) because the mounted DMG is read-only.
+
 ## Usage
 
 ### Quick Start
