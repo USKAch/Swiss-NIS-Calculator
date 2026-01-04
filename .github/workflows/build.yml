@@ -203,11 +203,11 @@ jobs:
 
         echo "Signing with identity: $IDENTITY"
 
-        # Sign the app bundle with --deep to handle all nested content
-        codesign --force --deep --options runtime --sign "$IDENTITY" "SwissNISCalculator.app"
+        # Sign only the bundle (not --deep, as it corrupts .NET single-file apps)
+        codesign --force --options runtime --sign "$IDENTITY" "SwissNISCalculator.app"
 
         # Verify signature
-        codesign --verify --deep --verbose "SwissNISCalculator.app"
+        codesign --verify --verbose "SwissNISCalculator.app"
 
     - name: Notarize App Bundle
       env:
