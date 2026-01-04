@@ -143,7 +143,33 @@ public static class AppPaths
                     Directory.CreateDirectory(targetDir);
                 }
                 File.Copy(file, targetFile);
+                TryMakeWritable(targetFile);
             }
         }
+    }
+
+    private static void TryMakeWritable(string path)
+    {
+        try
+        {
+            File.SetAttributes(path, FileAttributes.Normal);
+        }
+        catch
+        {
+        }
+
+#if NET6_0_OR_GREATER
+        if (!OperatingSystem.IsWindows())
+        {
+            try
+            {
+                const UnixFileMode mode = UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.GroupRead;
+                File.SetUnixFileMode(path, mode);
+            }
+            catch
+            {
+            }
+        }
+#endif
     }
 }
