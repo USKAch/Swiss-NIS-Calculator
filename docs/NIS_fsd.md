@@ -1340,6 +1340,12 @@ Without this, users cannot double-click to launch the app (Finder will try to op
 
 All published files (assemblies, `.dylib` runtime components, fonts, `Data/nisdata.db`, etc.) must remain beside `NIS.Desktop` inside `Contents/MacOS`. Relocating them (e.g., moving into `Resources`) prevents the .NET host from loading CoreCLR and causes startup failure.
 
+**Universal Binary Build Steps:**
+1. `dotnet publish ... -r osx-arm64 --self-contained true -o publish-arm64`
+2. `dotnet publish ... -r osx-x64 --self-contained true -o publish-x64`
+3. Copy the ARM64 output into `SwissNISCalculator.app/Contents/MacOS/`
+4. Iterate every Mach-O file (main executable + `.dylib` native runtime assets) and run `lipo -create <arm64> <x64> -output <target>` so each binary contains both architectures while sharing the same managed assemblies and data files.
+
 **macOS Build Features:**
 
 | Feature | Status | Notes |

@@ -111,8 +111,11 @@ jobs:
     - name: Test
       run: dotnet test --configuration Release --verbosity normal
 
-    - name: Publish ARM64
-      run: dotnet publish src/NIS.Desktop/NIS.Desktop.csproj -c Release -r osx-arm64 --self-contained true -o publish
+    - name: Publish macOS ARM64
+      run: dotnet publish src/NIS.Desktop/NIS.Desktop.csproj -c Release -r osx-arm64 --self-contained true -o publish-arm64
+
+    - name: Publish macOS x64
+      run: dotnet publish src/NIS.Desktop/NIS.Desktop.csproj -c Release -r osx-x64 --self-contained true -o publish-x64
 
     - name: Create App Bundle
       run: |
@@ -120,8 +123,8 @@ jobs:
         mkdir -p "SwissNISCalculator.app/Contents/MacOS"
         mkdir -p "SwissNISCalculator.app/Contents/Resources"
 
-        # Move all files to MacOS folder (app expects them next to executable)
-        mv publish/* "SwissNISCalculator.app/Contents/MacOS/"
+        # Copy the ARM64 publish output as the base app contents
+        rsync -a "publish-arm64/" "SwissNISCalculator.app/Contents/MacOS/"
 
         # Make executable
         chmod +x "SwissNISCalculator.app/Contents/MacOS/NIS.Desktop"
@@ -154,7 +157,22 @@ jobs:
         </plist>
         EOF
 
-        # Leave the published runtime files next to the executable
+        # Merge architecture-specific binaries into a single universal binary
+        MACOS_CONTENTS="SwissNISCalculator.app/Contents/MacOS"
+        find publish-arm64 -type f -print0 | while IFS= read -r -d '' arm_file; do
+          rel="${arm_file#publish-arm64/}"
+          x64_file="publish-x64/$rel"
+          target_file="$MACOS_CONTENTS/$rel"
+          if [ ! -f "$x64_file" ]; then
+            continue
+          fi
+          if file "$arm_file" | grep -q "Mach-O"; then
+            info="$(lipo -info "$target_file" 2>/dev/null || true)"
+            if echo "$info" | grep -q "Non-fat file" || ! (echo "$info" | grep -q "arm64" && echo "$info" | grep -q "x86_64"); then
+              lipo -create "$arm_file" "$x64_file" -output "$target_file"
+            fi
+          fi
+        done
 
     - name: Import signing certificate
       env:
