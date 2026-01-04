@@ -166,11 +166,15 @@ jobs:
         EOF
 
     - name: Import Code Signing Certificate
-      if: ${{ secrets.APPLE_CERTIFICATE_BASE64 != '' }}
       env:
         APPLE_CERTIFICATE_BASE64: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
         APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
       run: |
+        if [ -z "$APPLE_CERTIFICATE_BASE64" ]; then
+          echo "No certificate configured, skipping signing"
+          exit 0
+        fi
+
         # Create temporary keychain
         KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
         KEYCHAIN_PASSWORD=$(openssl rand -base64 32)
@@ -192,8 +196,14 @@ jobs:
         rm $RUNNER_TEMP/certificate.p12
 
     - name: Code Sign App Bundle
-      if: ${{ secrets.APPLE_CERTIFICATE_BASE64 != '' }}
+      env:
+        APPLE_CERTIFICATE_BASE64: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
       run: |
+        if [ -z "$APPLE_CERTIFICATE_BASE64" ]; then
+          echo "No certificate configured, skipping signing"
+          exit 0
+        fi
+
         # Find the Developer ID Application certificate
         IDENTITY=$(security find-identity -v -p codesigning | grep "Developer ID Application" | head -1 | awk -F'"' '{print $2}')
 
@@ -217,12 +227,16 @@ jobs:
         codesign --verify --verbose "SwissNISCalculator.app"
 
     - name: Notarize App Bundle
-      if: ${{ secrets.APPLE_ID != '' && secrets.APPLE_APP_PASSWORD != '' && secrets.APPLE_TEAM_ID != '' }}
       env:
         APPLE_ID: ${{ secrets.APPLE_ID }}
         APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
         APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
       run: |
+        if [ -z "$APPLE_ID" ] || [ -z "$APPLE_APP_PASSWORD" ] || [ -z "$APPLE_TEAM_ID" ]; then
+          echo "Notarization credentials not configured, skipping"
+          exit 0
+        fi
+
         # Create zip for notarization
         ditto -c -k --keepParent "SwissNISCalculator.app" "SwissNISCalculator-notarize.zip"
 
