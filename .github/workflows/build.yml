@@ -131,8 +131,13 @@ jobs:
         mkdir -p "SwissNISCalculator.app/Contents/MacOS"
         mkdir -p "SwissNISCalculator.app/Contents/Resources"
 
-        # Move published files to MacOS folder
-        mv publish/* "SwissNISCalculator.app/Contents/MacOS/"
+        # Move executable to MacOS folder
+        mv publish/NIS.Desktop "SwissNISCalculator.app/Contents/MacOS/"
+
+        # Move resources to Resources folder (not MacOS)
+        mv publish/Data "SwissNISCalculator.app/Contents/Resources/" 2>/dev/null || true
+        mv publish/LatoFont "SwissNISCalculator.app/Contents/Resources/" 2>/dev/null || true
+        mv publish/*.pdb "SwissNISCalculator.app/Contents/Resources/" 2>/dev/null || true
 
         # Make executable
         chmod +x "SwissNISCalculator.app/Contents/MacOS/NIS.Desktop"
@@ -213,9 +218,6 @@ jobs:
         fi
 
         echo "Signing with identity: $IDENTITY"
-
-        # Sign all nested components first (deep signing)
-        find "SwissNISCalculator.app/Contents/MacOS" -type f -perm +111 -exec codesign --force --options runtime --sign "$IDENTITY" {} \;
 
         # Sign the main executable
         codesign --force --options runtime --sign "$IDENTITY" "SwissNISCalculator.app/Contents/MacOS/NIS.Desktop"
