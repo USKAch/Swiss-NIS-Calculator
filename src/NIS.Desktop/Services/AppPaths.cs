@@ -10,7 +10,12 @@ namespace NIS.Desktop.Services;
 /// </summary>
 public static class AppPaths
 {
+    private const string AppFolderName = "SwissNISCalculator";
+
     private static readonly string _appRoot = AppContext.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar);
+    private static readonly string _portableDataFolder = Path.Combine(AppRoot, "Data");
+    private static bool _usingPortableStorage;
+    private static readonly string _dataFolder = InitializeDataFolder();
 
     /// <summary>
     /// Application root folder (where the executable is located).
@@ -18,10 +23,15 @@ public static class AppPaths
     public static string AppRoot => _appRoot;
 
     /// <summary>
-    /// Data folder containing database, settings, translations, and exports.
-    /// Located in the application folder for portability.
+    /// Indicates whether we are storing data next to the executable (portable mode).
+    /// When false, data lives in the per-user application support directory.
     /// </summary>
-    public static string DataFolder => Path.Combine(AppRoot, "Data");
+    public static bool UsingPortableStorage => _usingPortableStorage;
+
+    /// <summary>
+    /// Data folder containing database, settings, translations, and exports.
+    /// </summary>
+    public static string DataFolder => _dataFolder;
 
     /// <summary>
     /// User settings file.
@@ -56,5 +66,84 @@ public static class AppPaths
     {
         Directory.CreateDirectory(DataFolder);
         Directory.CreateDirectory(ExportFolder);
+    }
+
+    private static string InitializeDataFolder()
+    {
+        if (TryPreparePortableStorage(_portableDataFolder))
+        {
+            _usingPortableStorage = true;
+            return _portableDataFolder;
+        }
+
+        var fallback = GetFallbackDataFolder();
+        CopyDataIfMissing(_portableDataFolder, fallback);
+        _usingPortableStorage = false;
+        return fallback;
+    }
+
+    private static bool TryPreparePortableStorage(string dataFolder)
+    {
+        try
+        {
+            Directory.CreateDirectory(dataFolder);
+            var exportFolder = Path.Combine(dataFolder, "Export");
+            Directory.CreateDirectory(exportFolder);
+
+            var testFile = Path.Combine(dataFolder, ".write_test");
+            using var stream = File.Create(testFile, 1, FileOptions.DeleteOnClose);
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private static string GetFallbackDataFolder()
+    {
+        var basePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        if (string.IsNullOrWhiteSpace(basePath))
+        {
+            basePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        }
+        if (string.IsNullOrWhiteSpace(basePath))
+        {
+            basePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        }
+        if (string.IsNullOrWhiteSpace(basePath))
+        {
+            basePath = Path.GetTempPath();
+        }
+
+        var fallbackRoot = Path.Combine(basePath, AppFolderName);
+        var fallbackData = Path.Combine(fallbackRoot, "Data");
+        Directory.CreateDirectory(fallbackData);
+        Directory.CreateDirectory(Path.Combine(fallbackData, "Export"));
+        return fallbackData;
+    }
+
+    private static void CopyDataIfMissing(string source, string destination)
+    {
+        if (!Directory.Exists(source))
+        {
+            return;
+        }
+
+        foreach (var file in Directory.GetFiles(source, "*", SearchOption.AllDirectories))
+        {
+            var relativePath = Path.GetRelativePath(source, file);
+            var targetFile = Path.Combine(destination, relativePath);
+            if (!File.Exists(targetFile))
+            {
+                var targetDir = Path.GetDirectoryName(targetFile);
+                if (!string.IsNullOrEmpty(targetDir))
+                {
+                    Directory.CreateDirectory(targetDir);
+                }
+                File.Copy(file, targetFile);
+            }
+        }
     }
 }

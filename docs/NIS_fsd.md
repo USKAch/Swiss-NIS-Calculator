@@ -1247,7 +1247,7 @@ The database contains:
 - All factory master data (antennas, cables, radios, modulations, constants, bands) with `IsUserData=false`
 - One demo project ready to explore
 
-**Portable Application**: All files reside in the application folder. No data is stored in %APPDATA% or other system folders. Users can run the app from any location (USB drive, local folder, etc.).
+**Portable Application**: All files reside in the application folder. No data is stored in %APPDATA% or other system folders. Users can run the app from any location (USB drive, local folder, etc.). When the executable is located on a read-only volume (e.g., running directly from the DMG), the app automatically copies `Data/` to the user profile (`~/Library/Application Support/SwissNISCalculator` on macOS) to provide a writable workspace while keeping the original bundle untouched.
 
 ### 11.3 Build and Release Process
 

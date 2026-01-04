@@ -49,7 +49,7 @@ Download the latest release for your platform from [Releases](../../releases):
 
 ### macOS
 1. Open the downloaded DMG
-2. Drag `SwissNISCalculator.app` to `Applications` (or run it directly from the DMG)
+2. Drag `SwissNISCalculator.app` to `Applications` (recommended). If you run directly from the DMG, the app stores its data under `~/Library/Application Support/SwissNISCalculator` because the DMG volume is read-only.
 3. Launch the app (you may need to allow it in Security & Privacy settings)
 
 ### Linux
