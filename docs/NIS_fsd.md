@@ -1367,10 +1367,22 @@ This allows users to open the app without Gatekeeper warnings.
 
 **Generating Secrets:**
 
-1. **Export certificate:** Keychain Access → My Certificates → "Developer ID Application" → Export as .p12
-2. **Encode certificate:** `base64 -i certificate.p12 | pbcopy`
-3. **Create app password:** appleid.apple.com → Sign-In and Security → App-Specific Passwords
-4. **Find Team ID:** developer.apple.com → Account → Membership → Team ID
+1. **Create Developer ID Certificate** (if you don't have one):
+   - Go to [developer.apple.com/account/resources/certificates](https://developer.apple.com/account/resources/certificates)
+   - Click **+** → Select **Developer ID Application** → Choose **G2 Sub-CA**
+   - Create CSR: Keychain Access → Certificate Assistant → Request a Certificate from a Certificate Authority
+   - Upload CSR, download certificate, double-click to install
+
+2. **Export certificate:**
+   - Keychain Access → My Certificates → expand "Developer ID Application"
+   - Select both certificate AND private key → Right-click → Export 2 items as .p12
+   - Set a password (remember it for `APPLE_CERTIFICATE_PASSWORD`)
+
+3. **Encode certificate:** `base64 -i certificate.p12 | tr -d '\n' | pbcopy`
+
+4. **Create app password:** [appleid.apple.com](https://appleid.apple.com) → Sign-In and Security → App-Specific Passwords → Generate
+
+5. **Find Team ID:** [developer.apple.com/account](https://developer.apple.com/account) → Membership → Team ID (10 characters)
 
 **Fallback (Without Secrets):**
 If secrets are not configured, the build produces an unsigned app. Users must bypass Gatekeeper:
