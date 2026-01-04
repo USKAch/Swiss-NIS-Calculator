@@ -1268,7 +1268,7 @@ Triggered by:
 | Job | Platforms | Description |
 |-----|-----------|-------------|
 | cleanup | - | Deletes existing release and tag with the same version (if any) |
-| build | Windows, macOS, Linux | Restore, build, test, publish as single-file self-contained executable |
+| build | Windows, macOS, Linux | Restore, build, test. Publish Windows/Linux as single-file self-contained executables; publish macOS as a full self-contained bundle (all runtime files beside `NIS.Desktop`). |
 | release | - | Creates GitHub Release with platform archives |
 
 The workflow can be re-run with the same version tag to rebuild a release—it automatically cleans up the previous release first.
@@ -1279,7 +1279,7 @@ The workflow can be re-run with the same version tag to rebuild a release—it a
 - `SwissNISCalculator-Linux.tar.gz`
 
 Each artifact contains a portable application (Section 11.2) with:
-- Single executable file (or `.app` bundle for macOS)
+- Single executable file (Windows/Linux) or `.app` bundle (macOS)
 - `Data/nisdata.db` - pre-populated database with factory master data and demo project
 
 ### 11.3.1 macOS App Bundle
@@ -1293,6 +1293,10 @@ SwissNISCalculator.app/
 │   ├── Info.plist              # Application metadata
 │   ├── MacOS/
 │   │   ├── NIS.Desktop         # Main executable (must have +x permission)
+│   │   ├── *.dll               # Avalonia + application assemblies
+│   │   ├── libcoreclr.dylib    # .NET runtime component
+│   │   ├── libhostfxr.dylib    # .NET runtime component
+│   │   ├── libhostpolicy.dylib # .NET runtime component
 │   │   ├── Data/
 │   │   │   └── nisdata.db      # Database
 │   │   └── LatoFont/           # Font files
@@ -1333,6 +1337,8 @@ The executable must have execute permission set during the build process:
 chmod +x "SwissNISCalculator.app/Contents/MacOS/NIS.Desktop"
 ```
 Without this, users cannot double-click to launch the app (Finder will try to open it with another application).
+
+All published files (assemblies, `.dylib` runtime components, fonts, `Data/nisdata.db`, etc.) must remain beside `NIS.Desktop` inside `Contents/MacOS`. Relocating them (e.g., moving into `Resources`) prevents the .NET host from loading CoreCLR and causes startup failure.
 
 **macOS Build Features:**
 
