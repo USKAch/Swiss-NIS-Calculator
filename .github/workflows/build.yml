@@ -62,6 +62,48 @@ jobs:
     - name: Publish
       run: dotnet publish src/NIS.Desktop/NIS.Desktop.csproj -c Release -r ${{ matrix.rid }} -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --self-contained true -o publish
 
+    - name: Create macOS App Bundle
+      if: runner.os == 'macOS'
+      run: |
+        mkdir -p "SwissNISCalculator.app/Contents/MacOS"
+        mkdir -p "SwissNISCalculator.app/Contents/Resources"
+
+        # Move published files to MacOS folder
+        mv publish/* "SwissNISCalculator.app/Contents/MacOS/"
+
+        # Create Info.plist
+        cat > "SwissNISCalculator.app/Contents/Info.plist" << 'PLIST'
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+        <plist version="1.0">
+        <dict>
+          <key>CFBundleName</key>
+          <string>Swiss NIS Calculator</string>
+          <key>CFBundleDisplayName</key>
+          <string>Swiss NIS Calculator</string>
+          <key>CFBundleExecutable</key>
+          <string>NIS.Desktop</string>
+          <key>CFBundleIdentifier</key>
+          <string>ch.uska.nis-calculator</string>
+          <key>CFBundleVersion</key>
+          <string>1.0.0</string>
+          <key>CFBundleShortVersionString</key>
+          <string>1.0.0</string>
+          <key>CFBundlePackageType</key>
+          <string>APPL</string>
+          <key>LSMinimumSystemVersion</key>
+          <string>10.15</string>
+          <key>NSHighResolutionCapable</key>
+          <true/>
+        </dict>
+        </plist>
+        PLIST
+
+        # Replace publish folder with the app bundle
+        rm -rf publish
+        mkdir publish
+        mv SwissNISCalculator.app publish/
+
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
