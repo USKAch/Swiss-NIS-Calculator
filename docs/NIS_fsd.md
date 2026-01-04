@@ -1365,6 +1365,7 @@ When the required GitHub secrets are configured, the build automatically:
 1. Signs the app with a Developer ID Application certificate
 2. Submits for Apple notarization
 3. Staples the notarization ticket to the app
+4. Applies hardened-runtime entitlements required by .NET so CoreCLR can JIT (allow-jit, allow-unsigned-executable-memory, disable-library-validation)
 
 This allows users to open the app without Gatekeeper warnings.
 
