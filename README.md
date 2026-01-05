@@ -37,6 +37,10 @@ Swiss NIS Calculator is a modern desktop application for calculating electromagn
 
 Download the latest release for your platform from [Releases](../../releases):
 
+![Download_Release](docs/Pictures/Download_Release.png)
+
+
+
 | Platform | Download |
 |----------|----------|
 | Windows | `SwissNISCalculator-Windows.zip` |
@@ -45,7 +49,14 @@ Download the latest release for your platform from [Releases](../../releases):
 
 ### Windows
 1. Extract the ZIP file
+
+   ![Screenshot_Download2](docs/Pictures/Screenshot_Download2.png)
+
+   ![Screenshot_Download3](docs/Pictures/Screenshot_Download3.png)
+
 2. Run `SwissNISCalculator.exe`
+
+   ![Screenshot_Programm_Start](docs/Pictures/Screenshot_Programm_Start.png)
 
 ### macOS
 1. Open the downloaded DMG
