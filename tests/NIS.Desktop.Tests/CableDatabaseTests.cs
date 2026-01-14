@@ -135,4 +135,24 @@ public class CableTests
             CultureInfo.CurrentCulture = originalCulture;
         }
     }
+
+    [Fact]
+    public void Cable_CalculateLoss_19m_At_144MHz_With_4_2dB_Per100m()
+    {
+        // Arrange
+        var cable = new Cable
+        {
+            Name = "TestCable",
+            AttenuationPer100m = new Dictionary<string, double>
+            {
+                { "144", 4.2 }
+            }
+        };
+
+        // Act
+        var loss = cable.CalculateLoss(19, 144.0);
+
+        // Assert - 19m at 4.2 dB/100m = 4.2 * 19 / 100 = 0.798 dB
+        Assert.Equal(0.798, loss, 3);
+    }
 }

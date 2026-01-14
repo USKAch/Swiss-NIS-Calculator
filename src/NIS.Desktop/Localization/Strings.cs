@@ -56,8 +56,11 @@ public class Strings : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(View)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ProjectSpecific)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DuplicateNameError)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DuplicateNameErrorFormat)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(New)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Delete)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Copy)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CustomSuffix)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CannotDelete)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ItemInUse)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ConfigurationIncomplete)));
@@ -152,6 +155,7 @@ public class Strings : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(OkaDistanceShort)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(OkaShort)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(OkaDamping)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(OkaDampingExamples)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(OkaExplanation)));
 
         // Master Data
@@ -263,6 +267,18 @@ public class Strings : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainEigw)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainDs)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainOkaDistance)));
+
+        // Radio Editor
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RadioDetails)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MaxPower)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MaxPowerHint)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PowerConfiguration)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SinglePowerForAllBands)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BandSpecificPower)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PowerByBand)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DefaultPower)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DefaultPowerExplanation)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BandPowerExplanation)));
     }
 
     /// <summary>
@@ -281,8 +297,11 @@ public class Strings : INotifyPropertyChanged
     public string View => Get("View");
     public string ProjectSpecific => Get("ProjectSpecific");
     public string DuplicateNameError => Get("DuplicateNameError");
+    public string DuplicateNameErrorFormat => Get("DuplicateNameErrorFormat");
     public string New => Get("New");
     public string Delete => Get("Delete");
+    public string Copy => Get("Copy");
+    public string CustomSuffix => Get("CustomSuffix");
     public string CannotDelete => Get("CannotDelete");
     public string ItemInUse => Get("ItemInUse");
     public string ConfigurationIncomplete => Get("ConfigurationIncomplete");
@@ -412,6 +431,7 @@ public class Strings : INotifyPropertyChanged
     public string OkaDampingNonNegative => Get("OkaDampingNonNegative");
     public string EditOka => Get("EditOka");
     public string OkaDampingHint => Get("OkaDampingHint");
+    public string OkaDampingExamples => Get("OkaDampingExamples");
     public string HeightHint => Get("HeightHint");
     public string OkaDistanceHint => Get("OkaDistanceHint");
     public string AddOka => Get("AddOka");
@@ -455,6 +475,13 @@ public class Strings : INotifyPropertyChanged
     public string RadioDetails => Get("RadioDetails");
     public string MaxPower => Get("MaxPower");
     public string MaxPowerHint => Get("MaxPowerHint");
+    public string PowerConfiguration => Get("PowerConfiguration");
+    public string SinglePowerForAllBands => Get("SinglePowerForAllBands");
+    public string BandSpecificPower => Get("BandSpecificPower");
+    public string PowerByBand => Get("PowerByBand");
+    public string DefaultPower => Get("DefaultPower");
+    public string DefaultPowerExplanation => Get("DefaultPowerExplanation");
+    public string BandPowerExplanation => Get("BandPowerExplanation");
 
     // ============================================================
     // MASTER DATA MANAGER
@@ -817,6 +844,12 @@ public class Strings : INotifyPropertyChanged
         ["RadioDetails"] = "RadioEditor",
         ["MaxPower"] = "RadioEditor",
         ["MaxPowerHint"] = "RadioEditor",
+        ["PowerConfiguration"] = "RadioEditor",
+        ["SinglePowerForAllBands"] = "RadioEditor",
+        ["BandSpecificPower"] = "RadioEditor",
+        ["PowerByBand"] = "RadioEditor",
+        ["DefaultPower"] = "RadioEditor",
+        ["DefaultPowerExplanation"] = "RadioEditor",
         // MasterData
         ["Antennas"] = "MasterData",
         ["Cables"] = "MasterData",
@@ -863,8 +896,11 @@ public class Strings : INotifyPropertyChanged
         ["View"] = new() { ["de"] = "Anzeigen", ["fr"] = "Afficher", ["it"] = "Visualizza", ["en"] = "View" },
         ["ProjectSpecific"] = new() { ["de"] = "[Projekt]", ["fr"] = "[Projet]", ["it"] = "[Progetto]", ["en"] = "[Project]" },
         ["DuplicateNameError"] = new() { ["de"] = "Ein Eintrag mit diesem Namen existiert bereits", ["fr"] = "Une entrée avec ce nom existe déjà", ["it"] = "Esiste già una voce con questo nome", ["en"] = "An item with this name already exists" },
+        ["DuplicateNameErrorFormat"] = new() { ["de"] = "Ein Eintrag mit dem Namen '{0}' existiert bereits", ["fr"] = "Une entrée avec le nom '{0}' existe déjà", ["it"] = "Esiste già una voce con il nome '{0}'", ["en"] = "An item with the name '{0}' already exists" },
         ["New"] = new() { ["de"] = "Neu", ["fr"] = "Nouveau", ["it"] = "Nuovo", ["en"] = "New" },
         ["Delete"] = new() { ["de"] = "Löschen", ["fr"] = "Supprimer", ["it"] = "Elimina", ["en"] = "Delete" },
+        ["Copy"] = new() { ["de"] = "Kopieren", ["fr"] = "Copier", ["it"] = "Copia", ["en"] = "Copy" },
+        ["CustomSuffix"] = new() { ["de"] = "(custom)", ["fr"] = "(custom)", ["it"] = "(custom)", ["en"] = "(custom)" },
         ["CannotDelete"] = new() { ["de"] = "Löschen nicht möglich", ["fr"] = "Suppression impossible", ["it"] = "Impossibile eliminare", ["en"] = "Cannot Delete" },
         ["ItemInUse"] = new() { ["de"] = "Dieses Element wird in folgenden Konfigurationen verwendet:", ["fr"] = "Cet élément est utilisé dans les configurations suivantes:", ["it"] = "Questo elemento è utilizzato nelle seguenti configurazioni:", ["en"] = "This item is used in the following configurations:" },
         ["ConfigurationIncomplete"] = new() { ["de"] = "Konfiguration unvollständig", ["fr"] = "Configuration incomplète", ["it"] = "Configurazione incompleta", ["en"] = "Configuration Incomplete" },
@@ -979,6 +1015,12 @@ public class Strings : INotifyPropertyChanged
         ["OkaDistanceRequired"] = new() { ["de"] = "Die Distanz muss grösser als 0 sein.", ["fr"] = "La distance doit être supérieure à 0.", ["it"] = "La distanza deve essere maggiore di 0.", ["en"] = "Distance must be greater than 0." },
         ["OkaDampingNonNegative"] = new() { ["de"] = "Die Dämpfung darf nicht negativ sein.", ["fr"] = "L'atténuation ne peut pas être négative.", ["it"] = "L'attenuazione non può essere negativa.", ["en"] = "Damping cannot be negative." },
         ["OkaDampingHint"] = new() { ["de"] = "0 dB für Aussenbereich, typisch 6-12 dB für Innenräume", ["fr"] = "0 dB pour l'extérieur, typiquement 6-12 dB pour l'intérieur", ["it"] = "0 dB per l'esterno, tipicamente 6-12 dB per interni", ["en"] = "0 dB for outdoor, typically 6-12 dB for indoor" },
+        ["OkaDampingExamples"] = new() {
+            ["de"] = "Typische Werte:\n• Keine Dämpfung: 0 dB\n• Stahlbetondecke: 10 dB\n• Blechdach: 10 dB\n• Ziegeldach: 0 dB\n• Stahlbeton: 10 dB\n• Mauerwerk: 5 dB\n• Holzkonstruktion: 0 dB",
+            ["fr"] = "Valeurs typiques:\n• Pas d'atténuation: 0 dB\n• Dalle béton armé: 10 dB\n• Toit en tôle: 10 dB\n• Toit en tuiles: 0 dB\n• Béton armé: 10 dB\n• Maçonnerie: 5 dB\n• Construction bois: 0 dB",
+            ["it"] = "Valori tipici:\n• Nessuna attenuazione: 0 dB\n• Soletta in cemento armato: 10 dB\n• Tetto in lamiera: 10 dB\n• Tetto in tegole: 0 dB\n• Cemento armato: 10 dB\n• Muratura: 5 dB\n• Costruzione in legno: 0 dB",
+            ["en"] = "Typical values:\n• No damping: 0 dB\n• Reinforced concrete slab: 10 dB\n• Metal roof: 10 dB\n• Tile roof: 0 dB\n• Reinforced concrete: 10 dB\n• Masonry: 5 dB\n• Wood construction: 0 dB"
+        },
         ["HeightHint"] = new() { ["de"] = "Antennenhöhe über OKA", ["fr"] = "Hauteur de l'antenne au-dessus du LSM", ["it"] = "Altezza dell'antenna sopra LST", ["en"] = "Antenna height above PSS" },
         ["OkaDistanceHint"] = new() { ["de"] = "Horizontale Distanz vom OKA zum Antennenmast", ["fr"] = "Distance horizontale du LSM au mât d'antenne", ["it"] = "Distanza orizzontale dal LST al palo dell'antenna", ["en"] = "Horizontal distance from PSS to antenna mast" },
         ["AddOka"] = new() { ["de"] = "OKA hinzufügen", ["fr"] = "Ajouter LSM", ["it"] = "Aggiungi LST", ["en"] = "Add PSS" },
@@ -1017,6 +1059,13 @@ public class Strings : INotifyPropertyChanged
         ["RadioDetails"] = new() { ["de"] = "Transceiver-Details", ["fr"] = "Détails émetteur-récepteur", ["it"] = "Dettagli ricetrasmettitore", ["en"] = "Radio / Transceiver Details" },
         ["MaxPower"] = new() { ["de"] = "Max. Leistung", ["fr"] = "Puissance max.", ["it"] = "Potenza max.", ["en"] = "Max Power" },
         ["MaxPowerHint"] = new() { ["de"] = "W (maximale Ausgangsleistung)", ["fr"] = "W (puissance de sortie maximale)", ["it"] = "W (potenza di uscita massima)", ["en"] = "W (maximum output power)" },
+        ["PowerConfiguration"] = new() { ["de"] = "Leistungskonfiguration", ["fr"] = "Configuration de puissance", ["it"] = "Configurazione potenza", ["en"] = "Power Configuration" },
+        ["SinglePowerForAllBands"] = new() { ["de"] = "Einheitliche Leistung", ["fr"] = "Puissance unique", ["it"] = "Potenza unica", ["en"] = "Single power for all bands" },
+        ["BandSpecificPower"] = new() { ["de"] = "Bandspezifische Leistung", ["fr"] = "Puissance par bande", ["it"] = "Potenza per banda", ["en"] = "Band-specific power" },
+        ["PowerByBand"] = new() { ["de"] = "Leistung pro Band", ["fr"] = "Puissance par bande", ["it"] = "Potenza per banda", ["en"] = "Power per Band" },
+        ["DefaultPower"] = new() { ["de"] = "Standardleistung", ["fr"] = "Puissance par défaut", ["it"] = "Potenza predefinita", ["en"] = "Default Power" },
+        ["DefaultPowerExplanation"] = new() { ["de"] = "Die Standardleistung wird für Frequenzen verwendet, die nicht explizit definiert sind.", ["fr"] = "La puissance par défaut est utilisée pour les fréquences non définies explicitement.", ["it"] = "La potenza predefinita viene utilizzata per le frequenze non definite esplicitamente.", ["en"] = "Default power is used for frequencies not explicitly defined." },
+        ["BandPowerExplanation"] = new() { ["de"] = "Definieren Sie die maximale Leistung für jedes Frequenzband.", ["fr"] = "Définissez la puissance maximale pour chaque bande de fréquence.", ["it"] = "Definire la potenza massima per ciascuna banda di frequenza.", ["en"] = "Define the maximum power for each frequency band." },
 
         // Master Data Manager
         ["Antennas"] = new() { ["de"] = "Antennen", ["fr"] = "Antennes", ["it"] = "Antenne", ["en"] = "Antennas" },

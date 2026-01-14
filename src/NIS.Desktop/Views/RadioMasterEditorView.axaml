@@ -19,7 +19,12 @@
                 BorderBrush="{DynamicResource HeaderSecondaryBrush}"
                 BorderThickness="0,0,0,2"
                 Padding="20,15">
-            <TextBlock Text="{Binding Title}" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Text="{Binding Title}" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                <Button Grid.Column="1" Content="{Binding Copy, Source={x:Static loc:Strings.Instance}}" Command="{Binding CopyCommand}"
+                        Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}"
+                        Padding="20,10" IsVisible="{Binding CanCopy}"/>
+            </Grid>
         </Border>
 
         <!-- Main Content -->
@@ -30,39 +35,109 @@
                     <StackPanel Spacing="12">
                         <TextBlock Text="{Binding RadioDetails, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
 
-                        <Grid ColumnDefinitions="120,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="12" ColumnSpacing="15">
+                        <Grid ColumnDefinitions="120,*" RowDefinitions="Auto,Auto" RowSpacing="12" ColumnSpacing="15">
                             <TextBlock Text="{Binding Manufacturer, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <TextBox Grid.Column="1" Text="{Binding Manufacturer}" IsEnabled="{Binding CanEdit}"/>
 
                             <TextBlock Grid.Row="1" Text="{Binding Model, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Model}" IsEnabled="{Binding CanEdit}"/>
-
-                            <TextBlock Grid.Row="2" Text="{Binding MaxPower, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                            <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Spacing="10">
-                                <NumericUpDown Value="{Binding MaxPowerWatts, UpdateSourceTrigger=LostFocus, TargetNullValue=100, FallbackValue=100}"
-                                               ShowButtonSpinner="False" Minimum="1" Maximum="10000" Increment="10"
-                                               FormatString="F0" Width="100" IsEnabled="{Binding CanEdit}"/>
-                                <TextBlock Text="{Binding MaxPowerHint, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" Opacity="0.6"/>
-                            </StackPanel>
                         </Grid>
+
+                        <!-- Validation message for duplicate name -->
+                        <TextBlock Text="{Binding ValidationMessage}" Foreground="{DynamicResource DangerButtonBrush}"
+                                   TextWrapping="Wrap" FontSize="12"
+                                   IsVisible="{Binding ValidationMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
                     </StackPanel>
                 </Border>
 
+                <!-- Power Configuration -->
+                <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="20">
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="{Binding PowerConfiguration, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
+
+                        <!-- Toggle between single power and band-specific -->
+                        <CheckBox Content="{Binding BandSpecificPower, Source={x:Static loc:Strings.Instance}}"
+                                  IsChecked="{Binding UseBandSpecificPower, Mode=TwoWay}"
+                                  IsEnabled="{Binding CanEdit}"/>
+
+                        <!-- Single Power (shown when UseBandSpecificPower=false) -->
+                        <StackPanel IsVisible="{Binding ShowSinglePower}" Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="{Binding MaxPower, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold" Width="120"/>
+                            <NumericUpDown Value="{Binding MaxPowerWatts, UpdateSourceTrigger=LostFocus, TargetNullValue=100, FallbackValue=100}"
+                                           ShowButtonSpinner="False" Minimum="1" Maximum="10000" Increment="10"
+                                           FormatString="F0" Width="100" IsEnabled="{Binding CanEdit}"/>
+                            <TextBlock Text="{Binding MaxPowerHint, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" Opacity="0.6"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Band-Specific Power (shown when UseBandSpecificPower=true) -->
+                <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="20"
+                        IsVisible="{Binding ShowBands}">
+                    <StackPanel Spacing="12">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Text="{Binding PowerByBand, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
+                            <Button Grid.Column="1" Content="{Binding AddBand, Source={x:Static loc:Strings.Instance}}"
+                                    Command="{Binding AddBandCommand}"
+                                    Background="{DynamicResource PrimaryButtonBrush}"
+                                    Foreground="{DynamicResource HeaderForegroundBrush}"
+                                    Padding="12,6" IsVisible="{Binding CanEdit}"/>
+                        </Grid>
+
+                        <ItemsControl ItemsSource="{Binding Bands}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="vm:EditableRadioBandItem">
+                                    <Border Background="{DynamicResource CardBackgroundFillColorDefault}"
+                                            CornerRadius="6" Padding="12" Margin="0,4">
+                                        <Grid ColumnDefinitions="Auto,130,Auto,90,Auto,*,Auto">
+                                            <TextBlock Text="{Binding Frequency, Source={x:Static loc:Strings.Instance}}"
+                                                       VerticalAlignment="Center" Margin="0,0,10,0" FontWeight="SemiBold"/>
+                                            <ComboBox Grid.Column="1"
+                                                      SelectedItem="{Binding FrequencyMHz}"
+                                                      ItemsSource="{Binding $parent[ItemsControl].((vm:RadioMasterEditorViewModel)DataContext).AvailableFrequencies}"
+                                                      IsEnabled="{Binding $parent[ItemsControl].((vm:RadioMasterEditorViewModel)DataContext).CanEdit}">
+                                                <ComboBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Text="{Binding StringFormat={}{0} MHz}"/>
+                                                    </DataTemplate>
+                                                </ComboBox.ItemTemplate>
+                                            </ComboBox>
+
+                                            <TextBlock Grid.Column="2" Text="{Binding Power, Source={x:Static loc:Strings.Instance}}"
+                                                       VerticalAlignment="Center" Margin="15,0,10,0" FontWeight="SemiBold"/>
+                                            <NumericUpDown Grid.Column="3" Value="{Binding MaxPowerWatts}"
+                                                           ShowButtonSpinner="False" Minimum="1" Maximum="10000"
+                                                           Increment="10" FormatString="F0" Width="80"
+                                                           IsEnabled="{Binding $parent[ItemsControl].((vm:RadioMasterEditorViewModel)DataContext).CanEdit}"/>
+                                            <TextBlock Grid.Column="4" Text="W" VerticalAlignment="Center" Margin="5,0,0,0"/>
+
+                                            <Button Grid.Column="6"
+                                                    Content="{Binding Remove, Source={x:Static loc:Strings.Instance}}"
+                                                    Command="{Binding $parent[ItemsControl].((vm:RadioMasterEditorViewModel)DataContext).RemoveBandCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    Padding="10,5" Foreground="{DynamicResource DangerButtonBrush}"
+                                                    IsVisible="{Binding $parent[ItemsControl].((vm:RadioMasterEditorViewModel)DataContext).CanEdit}"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <TextBlock Text="{Binding BandPowerExplanation, Source={x:Static loc:Strings.Instance}}"
+                                   Opacity="0.6" FontSize="11" FontStyle="Italic" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
             </StackPanel>
         </ScrollViewer>
 
         <!-- Footer -->
         <Border Grid.Row="2" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" Padding="20,15">
-            <Grid ColumnDefinitions="*,Auto">
-                <TextBlock Text="{Binding ValidationMessage}" Foreground="{DynamicResource DangerButtonBrush}" VerticalAlignment="Center"
-                           IsVisible="{Binding ValidationMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
-                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
-                    <Button Content="{Binding Cancel, Source={x:Static loc:Strings.Instance}}" Command="{Binding CancelCommand}" Padding="20,10"/>
-                    <Button Content="{Binding Save, Source={x:Static loc:Strings.Instance}}" Command="{Binding SaveCommand}"
-                            Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="20,10"
-                            IsVisible="{Binding CanEdit}"/>
-                </StackPanel>
-            </Grid>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                <Button Content="{Binding Cancel, Source={x:Static loc:Strings.Instance}}" Command="{Binding CancelCommand}" Padding="20,10"/>
+                <Button Content="{Binding Save, Source={x:Static loc:Strings.Instance}}" Command="{Binding SaveCommand}"
+                        Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="20,10"
+                        IsVisible="{Binding CanEdit}"/>
+            </StackPanel>
         </Border>
     </Grid>
 </UserControl>

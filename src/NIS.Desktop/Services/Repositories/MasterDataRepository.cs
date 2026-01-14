@@ -336,26 +336,40 @@ public class MasterDataRepository
 
     public void InsertRadio(Radio radio, bool isUserData)
     {
+        var bandsJson = JsonSerializer.Serialize(radio.Bands.Select(b => new RadioBandData
+        {
+            FrequencyMHz = b.FrequencyMHz,
+            MaxPowerWatts = b.MaxPowerWatts
+        }), JsonOptions);
+
         _connection.Execute(
-            @"INSERT INTO Radios (Manufacturer, Model, MaxPowerWatts, IsUserData)
-              VALUES (@Manufacturer, @Model, @MaxPowerWatts, @IsUserData)",
+            @"INSERT INTO Radios (Manufacturer, Model, MaxPowerWatts, IsUserData, BandsJson)
+              VALUES (@Manufacturer, @Model, @MaxPowerWatts, @IsUserData, @BandsJson)",
             new
             {
                 radio.Manufacturer,
                 radio.Model,
                 radio.MaxPowerWatts,
-                IsUserData = isUserData ? 1 : 0
+                IsUserData = isUserData ? 1 : 0,
+                BandsJson = bandsJson
             });
     }
 
     private void UpdateRadio(Radio radio, bool isUserData)
     {
+        var bandsJson = JsonSerializer.Serialize(radio.Bands.Select(b => new RadioBandData
+        {
+            FrequencyMHz = b.FrequencyMHz,
+            MaxPowerWatts = b.MaxPowerWatts
+        }), JsonOptions);
+
         _connection.Execute(@"
             UPDATE Radios SET
                 Manufacturer = @Manufacturer,
                 Model = @Model,
                 MaxPowerWatts = @MaxPowerWatts,
-                IsUserData = @IsUserData
+                IsUserData = @IsUserData,
+                BandsJson = @BandsJson
             WHERE Id = @Id",
             new
             {
@@ -363,7 +377,8 @@ public class MasterDataRepository
                 radio.Manufacturer,
                 radio.Model,
                 radio.MaxPowerWatts,
-                IsUserData = isUserData ? 1 : 0
+                IsUserData = isUserData ? 1 : 0,
+                BandsJson = bandsJson
             });
     }
 
@@ -385,13 +400,19 @@ public class MasterDataRepository
 
     private Radio ToRadio(RadioRow row)
     {
+        var bands = JsonSerializer.Deserialize<List<RadioBandData>>(row.BandsJson, JsonOptions) ?? new List<RadioBandData>();
         return new Radio
         {
             Id = row.Id,
             Manufacturer = row.Manufacturer,
             Model = row.Model,
             MaxPowerWatts = row.MaxPowerWatts,
-            IsUserData = row.IsUserData == 1
+            IsUserData = row.IsUserData == 1,
+            Bands = bands.Select(b => new RadioBand
+            {
+                FrequencyMHz = b.FrequencyMHz,
+                MaxPowerWatts = b.MaxPowerWatts
+            }).ToList()
         };
     }
 
@@ -587,6 +608,13 @@ public class MasterDataRepository
         public string Model { get; set; } = "";
         public double MaxPowerWatts { get; set; }
         public int IsUserData { get; set; }
+        public string BandsJson { get; set; } = "[]";
+    }
+
+    private class RadioBandData
+    {
+        public double FrequencyMHz { get; set; }
+        public double MaxPowerWatts { get; set; }
     }
 
     #endregion

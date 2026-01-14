@@ -18,8 +18,10 @@ public partial class CableMasterEditorViewModel : ViewModelBase
     // Navigation callbacks
     public Action? NavigateBack { get; set; }
     public Action<Cable>? OnSave { get; set; }
+    public Action<Cable>? OnCopy { get; set; }
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanCopy))]
     private bool _isEditing;
 
     /// <summary>
@@ -27,12 +29,18 @@ public partial class CableMasterEditorViewModel : ViewModelBase
     /// </summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanEdit))]
+    [NotifyPropertyChangedFor(nameof(CanCopy))]
     private bool _isReadOnly;
 
     /// <summary>
     /// Whether editing is allowed (inverse of IsReadOnly).
     /// </summary>
     public bool CanEdit => !IsReadOnly;
+
+    /// <summary>
+    /// Whether copying is allowed (always visible).
+    /// </summary>
+    public bool CanCopy => true;
 
     [ObservableProperty]
     private string _name = string.Empty;
@@ -242,6 +250,23 @@ public partial class CableMasterEditorViewModel : ViewModelBase
         };
 
         OnSave?.Invoke(cable);
+    }
+
+    [RelayCommand]
+    private void Copy()
+    {
+        var suffix = Localization.Strings.Instance.CustomSuffix;
+        var attenuationDict = BuildAttenuationDictionary();
+
+        var copy = new Cable
+        {
+            Id = 0, // New entry
+            Name = $"{Name.Trim()} {suffix}",
+            IsUserData = true,
+            AttenuationPer100m = attenuationDict
+        };
+
+        OnCopy?.Invoke(copy);
     }
 
     [RelayCommand]

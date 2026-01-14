@@ -2,6 +2,9 @@
 """
 Database migration script for NIS Calculator.
 
+Migration v0.6:
+- Adds BandsJson column to Radios table for band-specific power support
+
 Migration v0.5:
 - Removes OkaDistanceMeters and OkaBuildingDampingDb columns from Configurations table
   (these values now come from OKA master data - single source of truth)
@@ -117,6 +120,18 @@ def migrate_database(db_path: Path):
                 changes_made = True
                 print("Columns removed successfully!")
 
+        # Migration v0.6: Add BandsJson column to Radios table
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='Radios'")
+        if cursor.fetchone():
+            columns = get_column_names(cursor, "Radios")
+
+            if "BandsJson" not in columns:
+                print("Adding BandsJson column to Radios table...")
+                print("(Supports band-specific power for radios)")
+                cursor.execute("ALTER TABLE Radios ADD COLUMN BandsJson TEXT NOT NULL DEFAULT '[]'")
+                changes_made = True
+                print("Column added successfully!")
+
         conn.commit()
 
         if changes_made:
@@ -143,13 +158,13 @@ def main():
 
     db_path = project_root / "src" / "NIS.Desktop" / "Data" / "nisdata.db"
 
-    print("NIS Calculator Database Migration v0.5")
+    print("NIS Calculator Database Migration v0.6")
     print("=" * 45)
     print(f"Database: {db_path}")
     print()
-    print("This migration removes OkaDistanceMeters and")
-    print("OkaBuildingDampingDb from Configurations table.")
-    print("(Values now come from OKA master data)")
+    print("Migrations:")
+    print("  v0.5: Remove OkaDistanceMeters/OkaBuildingDampingDb from Configurations")
+    print("  v0.6: Add BandsJson to Radios (band-specific power)")
     print()
 
     if db_path.exists():

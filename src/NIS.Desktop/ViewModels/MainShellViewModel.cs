@@ -231,8 +231,6 @@ public partial class MainShellViewModel : ViewModelBase
         SetView(_welcomeViewModel, Strings.Instance.Home, "Swiss NIS Calculator");
     }
 
-    // LoadLastProjectAsync removed - database is source of truth
-
     public void NavigateToProjectInfo(string _)
     {
         _projectInfoViewModel = new ProjectInfoViewModel();
@@ -378,9 +376,16 @@ public partial class MainShellViewModel : ViewModelBase
         editorVm.NavigateBack = NavigateToAntennaSelector;
         editorVm.OnSave = (antenna) =>
         {
-            Services.DatabaseService.Instance.SaveAntenna(antenna);
-            _antennaEditorViewModel?.AddAntennaToList(antenna);
-            _antennaEditorViewModel?.OnSelect?.Invoke(antenna);
+            try
+            {
+                Services.DatabaseService.Instance.SaveAntenna(antenna);
+                _antennaEditorViewModel?.AddAntennaToList(antenna);
+                _antennaEditorViewModel?.OnSelect?.Invoke(antenna);
+            }
+            catch
+            {
+                editorVm.ValidationMessage = string.Format(Strings.Instance.DuplicateNameErrorFormat, $"{antenna.Manufacturer} {antenna.Model}");
+            }
         };
         var projectName = GetProjectDisplayName();
         SetView(editorVm, $"{Strings.Instance.Project} > {projectName} > {Strings.Instance.AntennaDetails}", "Swiss NIS Calculator - Add New Antenna");
@@ -1071,18 +1076,42 @@ public partial class MainShellViewModel : ViewModelBase
         _antennaMasterEditorViewModel.NavigateBack = () => ReturnToMasterDataManager(0);
         _antennaMasterEditorViewModel.OnSave = (antenna) =>
         {
-            if (_antennaMasterEditorViewModel!.IsEditing)
-                _masterDataManagerViewModel?.UpdateAntennaInDatabase(antenna);
-            else
+            try
             {
-                var success = _masterDataManagerViewModel?.AddAntennaToDatabase(antenna) ?? false;
-                if (!success)
+                if (_antennaMasterEditorViewModel!.IsEditing)
+                    _masterDataManagerViewModel?.UpdateAntennaInDatabase(antenna);
+                else
                 {
-                    _antennaMasterEditorViewModel.ValidationMessage = Strings.Instance.DuplicateNameError;
-                    return;
+                    var success = _masterDataManagerViewModel?.AddAntennaToDatabase(antenna) ?? false;
+                    if (!success)
+                    {
+                        _antennaMasterEditorViewModel.ValidationMessage = string.Format(Strings.Instance.DuplicateNameErrorFormat, $"{antenna.Manufacturer} {antenna.Model}");
+                        return;
+                    }
                 }
+                ReturnToMasterDataManager(0);
             }
-            ReturnToMasterDataManager(0);
+            catch
+            {
+                _antennaMasterEditorViewModel!.ValidationMessage = string.Format(Strings.Instance.DuplicateNameErrorFormat, $"{antenna.Manufacturer} {antenna.Model}");
+            }
+        };
+        _antennaMasterEditorViewModel.OnCopy = (copy) =>
+        {
+            var success = _masterDataManagerViewModel?.AddAntennaToDatabase(copy) ?? false;
+            if (!success)
+            {
+                _antennaMasterEditorViewModel!.ValidationMessage = string.Format(Strings.Instance.DuplicateNameErrorFormat, $"{copy.Manufacturer} {copy.Model}");
+                return;
+            }
+            // Fetch the newly saved copy and reinitialize editor
+            var saved = DatabaseService.Instance.GetAntenna(copy.Manufacturer, copy.Model);
+            if (saved != null)
+            {
+                _antennaMasterEditorViewModel!.InitializeEdit(saved);
+                _antennaMasterEditorViewModel.IsReadOnly = false;
+                _antennaMasterEditorViewModel.IsDirty = false;
+            }
         };
         SetView(_antennaMasterEditorViewModel, $"{Strings.Instance.MasterData} > {Strings.Instance.AntennaDetails}", GetEditorTitle("Antenna", existing, isReadOnly));
     }
@@ -1104,18 +1133,42 @@ public partial class MainShellViewModel : ViewModelBase
         _cableMasterEditorViewModel.NavigateBack = () => ReturnToMasterDataManager(1);
         _cableMasterEditorViewModel.OnSave = (cable) =>
         {
-            if (_cableMasterEditorViewModel!.IsEditing)
-                _masterDataManagerViewModel?.UpdateCableInDatabase(cable);
-            else
+            try
             {
-                var success = _masterDataManagerViewModel?.AddCableToDatabase(cable) ?? false;
-                if (!success)
+                if (_cableMasterEditorViewModel!.IsEditing)
+                    _masterDataManagerViewModel?.UpdateCableInDatabase(cable);
+                else
                 {
-                    _cableMasterEditorViewModel.ValidationMessage = Strings.Instance.DuplicateNameError;
-                    return;
+                    var success = _masterDataManagerViewModel?.AddCableToDatabase(cable) ?? false;
+                    if (!success)
+                    {
+                        _cableMasterEditorViewModel.ValidationMessage = string.Format(Strings.Instance.DuplicateNameErrorFormat, cable.Name);
+                        return;
+                    }
                 }
+                ReturnToMasterDataManager(1);
             }
-            ReturnToMasterDataManager(1);
+            catch
+            {
+                _cableMasterEditorViewModel!.ValidationMessage = string.Format(Strings.Instance.DuplicateNameErrorFormat, cable.Name);
+            }
+        };
+        _cableMasterEditorViewModel.OnCopy = (copy) =>
+        {
+            var success = _masterDataManagerViewModel?.AddCableToDatabase(copy) ?? false;
+            if (!success)
+            {
+                _cableMasterEditorViewModel!.ValidationMessage = string.Format(Strings.Instance.DuplicateNameErrorFormat, copy.Name);
+                return;
+            }
+            // Fetch the newly saved copy and reinitialize editor
+            var saved = DatabaseService.Instance.GetCable(copy.Name);
+            if (saved != null)
+            {
+                _cableMasterEditorViewModel!.InitializeEdit(saved);
+                _cableMasterEditorViewModel.IsReadOnly = false;
+                _cableMasterEditorViewModel.IsDirty = false;
+            }
         };
         SetView(_cableMasterEditorViewModel, $"{Strings.Instance.MasterData} > {Strings.Instance.Cable}", GetEditorTitle("Cable", existing, isReadOnly));
     }
@@ -1137,18 +1190,42 @@ public partial class MainShellViewModel : ViewModelBase
         _radioMasterEditorViewModel.NavigateBack = () => ReturnToMasterDataManager(2);
         _radioMasterEditorViewModel.OnSave = (radio) =>
         {
-            if (_radioMasterEditorViewModel!.IsEditing)
-                _masterDataManagerViewModel?.UpdateRadioInDatabase(radio);
-            else
+            try
             {
-                var success = _masterDataManagerViewModel?.AddRadioToDatabase(radio) ?? false;
-                if (!success)
+                if (_radioMasterEditorViewModel!.IsEditing)
+                    _masterDataManagerViewModel?.UpdateRadioInDatabase(radio);
+                else
                 {
-                    _radioMasterEditorViewModel.ValidationMessage = Strings.Instance.DuplicateNameError;
-                    return;
+                    var success = _masterDataManagerViewModel?.AddRadioToDatabase(radio) ?? false;
+                    if (!success)
+                    {
+                        _radioMasterEditorViewModel.ValidationMessage = string.Format(Strings.Instance.DuplicateNameErrorFormat, $"{radio.Manufacturer} {radio.Model}");
+                        return;
+                    }
                 }
+                ReturnToMasterDataManager(2);
             }
-            ReturnToMasterDataManager(2);
+            catch
+            {
+                _radioMasterEditorViewModel!.ValidationMessage = string.Format(Strings.Instance.DuplicateNameErrorFormat, $"{radio.Manufacturer} {radio.Model}");
+            }
+        };
+        _radioMasterEditorViewModel.OnCopy = (copy) =>
+        {
+            var success = _masterDataManagerViewModel?.AddRadioToDatabase(copy) ?? false;
+            if (!success)
+            {
+                _radioMasterEditorViewModel!.ValidationMessage = string.Format(Strings.Instance.DuplicateNameErrorFormat, $"{copy.Manufacturer} {copy.Model}");
+                return;
+            }
+            // Fetch the newly saved copy and reinitialize editor
+            var saved = DatabaseService.Instance.GetRadio(copy.Manufacturer, copy.Model);
+            if (saved != null)
+            {
+                _radioMasterEditorViewModel!.InitializeEdit(saved);
+                _radioMasterEditorViewModel.IsReadOnly = false;
+                _radioMasterEditorViewModel.IsDirty = false;
+            }
         };
         SetView(_radioMasterEditorViewModel, $"{Strings.Instance.MasterData} > {Strings.Instance.RadioDetails}", GetEditorTitle("Radio", existing, isReadOnly));
     }
@@ -1169,18 +1246,25 @@ public partial class MainShellViewModel : ViewModelBase
         _okaMasterEditorViewModel.NavigateBack = () => ReturnToMasterDataManager(3);
         _okaMasterEditorViewModel.OnSave = (oka) =>
         {
-            if (_okaMasterEditorViewModel!.IsEditing)
-                _masterDataManagerViewModel?.UpdateOkaInDatabase(oka);
-            else
+            try
             {
-                var success = _masterDataManagerViewModel?.AddOkaToDatabase(oka) ?? false;
-                if (!success)
+                if (_okaMasterEditorViewModel!.IsEditing)
+                    _masterDataManagerViewModel?.UpdateOkaInDatabase(oka);
+                else
                 {
-                    _okaMasterEditorViewModel.ValidationMessage = Strings.Instance.DuplicateNameError;
-                    return;
+                    var success = _masterDataManagerViewModel?.AddOkaToDatabase(oka) ?? false;
+                    if (!success)
+                    {
+                        _okaMasterEditorViewModel.ValidationMessage = string.Format(Strings.Instance.DuplicateNameErrorFormat, oka.Name);
+                        return;
+                    }
                 }
+                ReturnToMasterDataManager(3);
             }
-            ReturnToMasterDataManager(3);
+            catch
+            {
+                _okaMasterEditorViewModel!.ValidationMessage = string.Format(Strings.Instance.DuplicateNameErrorFormat, oka.Name);
+            }
         };
         SetView(_okaMasterEditorViewModel, $"{Strings.Instance.MasterData} > {Strings.Instance.OkaDetails}", GetEditorTitle("OKA", existing, false));
     }
@@ -1203,6 +1287,16 @@ public partial class MainShellViewModel : ViewModelBase
         setSelected(collection.FirstOrDefault(predicate));
     }
 
+    /// <summary>
+    /// Return to the configuration editor with proper breadcrumb reset.
+    /// </summary>
+    private void ReturnToConfigurationEditor()
+    {
+        if (_configurationEditorViewModel == null) return;
+        var projectName = GetProjectDisplayName();
+        SetView(_configurationEditorViewModel, $"{Strings.Instance.Project} > {projectName} > {Strings.Instance.Configuration} {_configurationEditorViewModel.ConfigurationNumber}", $"Swiss NIS Calculator - {projectName}");
+    }
+
     private void NavigateToAntennaEditorFromConfig(NIS.Desktop.Models.Antenna? existing)
     {
         _antennaMasterEditorViewModel = new AntennaMasterEditorViewModel();
@@ -1215,20 +1309,45 @@ public partial class MainShellViewModel : ViewModelBase
         {
             _antennaMasterEditorViewModel.InitializeNew();
         }
-        _antennaMasterEditorViewModel.NavigateBack = () => CurrentView = _configurationEditorViewModel;
+        _antennaMasterEditorViewModel.NavigateBack = ReturnToConfigurationEditor;
         _antennaMasterEditorViewModel.OnSave = (antenna) =>
         {
-            Services.DatabaseService.Instance.SaveAntenna(antenna);
-            if (_configurationEditorViewModel != null)
+            try
             {
-                RefreshAndSelect(
-                    _configurationEditorViewModel.Antennas,
-                    Services.DatabaseService.Instance.GetAllAntennas,
-                    a => a.Manufacturer.Equals(antenna.Manufacturer, StringComparison.OrdinalIgnoreCase) &&
-                         a.Model.Equals(antenna.Model, StringComparison.OrdinalIgnoreCase),
-                    a => _configurationEditorViewModel.SelectedAntenna = a);
+                Services.DatabaseService.Instance.SaveAntenna(antenna);
+                if (_configurationEditorViewModel != null)
+                {
+                    RefreshAndSelect(
+                        _configurationEditorViewModel.Antennas,
+                        Services.DatabaseService.Instance.GetAllAntennas,
+                        a => a.Manufacturer.Equals(antenna.Manufacturer, StringComparison.OrdinalIgnoreCase) &&
+                             a.Model.Equals(antenna.Model, StringComparison.OrdinalIgnoreCase),
+                        a => _configurationEditorViewModel.SelectedAntenna = a);
+                }
+                ReturnToConfigurationEditor();
             }
-            CurrentView = _configurationEditorViewModel;
+            catch
+            {
+                _antennaMasterEditorViewModel!.ValidationMessage = string.Format(Strings.Instance.DuplicateNameErrorFormat, $"{antenna.Manufacturer} {antenna.Model}");
+            }
+        };
+        _antennaMasterEditorViewModel.OnCopy = (copy) =>
+        {
+            try
+            {
+                Services.DatabaseService.Instance.SaveAntenna(copy);
+                var saved = Services.DatabaseService.Instance.GetAntenna(copy.Manufacturer, copy.Model);
+                if (saved != null)
+                {
+                    _antennaMasterEditorViewModel!.InitializeEdit(saved);
+                    _antennaMasterEditorViewModel.IsReadOnly = false;
+                    _antennaMasterEditorViewModel.IsDirty = false;
+                }
+            }
+            catch
+            {
+                _antennaMasterEditorViewModel!.ValidationMessage = string.Format(Strings.Instance.DuplicateNameErrorFormat, $"{copy.Manufacturer} {copy.Model}");
+            }
         };
         var projectName = GetProjectDisplayName();
         SetView(_antennaMasterEditorViewModel, $"{Strings.Instance.Project} > {projectName} > {Strings.Instance.AntennaDetails}", GetEditorTitle("Antenna", existing, false));
@@ -1246,19 +1365,44 @@ public partial class MainShellViewModel : ViewModelBase
         {
             _cableMasterEditorViewModel.InitializeNew();
         }
-        _cableMasterEditorViewModel.NavigateBack = () => CurrentView = _configurationEditorViewModel;
+        _cableMasterEditorViewModel.NavigateBack = ReturnToConfigurationEditor;
         _cableMasterEditorViewModel.OnSave = (cable) =>
         {
-            Services.DatabaseService.Instance.SaveCable(cable);
-            if (_configurationEditorViewModel != null)
+            try
             {
-                RefreshAndSelect(
-                    _configurationEditorViewModel.Cables,
-                    Services.DatabaseService.Instance.GetAllCables,
-                    c => c.Name.Equals(cable.Name, StringComparison.OrdinalIgnoreCase),
-                    c => _configurationEditorViewModel.SelectedCable = c);
+                Services.DatabaseService.Instance.SaveCable(cable);
+                if (_configurationEditorViewModel != null)
+                {
+                    RefreshAndSelect(
+                        _configurationEditorViewModel.Cables,
+                        Services.DatabaseService.Instance.GetAllCables,
+                        c => c.Name.Equals(cable.Name, StringComparison.OrdinalIgnoreCase),
+                        c => _configurationEditorViewModel.SelectedCable = c);
+                }
+                ReturnToConfigurationEditor();
             }
-            CurrentView = _configurationEditorViewModel;
+            catch
+            {
+                _cableMasterEditorViewModel!.ValidationMessage = string.Format(Strings.Instance.DuplicateNameErrorFormat, cable.Name);
+            }
+        };
+        _cableMasterEditorViewModel.OnCopy = (copy) =>
+        {
+            try
+            {
+                Services.DatabaseService.Instance.SaveCable(copy);
+                var saved = Services.DatabaseService.Instance.GetCable(copy.Name);
+                if (saved != null)
+                {
+                    _cableMasterEditorViewModel!.InitializeEdit(saved);
+                    _cableMasterEditorViewModel.IsReadOnly = false;
+                    _cableMasterEditorViewModel.IsDirty = false;
+                }
+            }
+            catch
+            {
+                _cableMasterEditorViewModel!.ValidationMessage = string.Format(Strings.Instance.DuplicateNameErrorFormat, copy.Name);
+            }
         };
         var projectName = GetProjectDisplayName();
         SetView(_cableMasterEditorViewModel, $"{Strings.Instance.Project} > {projectName} > {Strings.Instance.Cable}", GetEditorTitle("Cable", existing, false));
@@ -1276,20 +1420,45 @@ public partial class MainShellViewModel : ViewModelBase
         {
             _radioMasterEditorViewModel.InitializeNew();
         }
-        _radioMasterEditorViewModel.NavigateBack = () => CurrentView = _configurationEditorViewModel;
+        _radioMasterEditorViewModel.NavigateBack = ReturnToConfigurationEditor;
         _radioMasterEditorViewModel.OnSave = (radio) =>
         {
-            Services.DatabaseService.Instance.SaveRadio(radio);
-            if (_configurationEditorViewModel != null)
+            try
             {
-                RefreshAndSelect(
-                    _configurationEditorViewModel.Radios,
-                    Services.DatabaseService.Instance.GetAllRadios,
-                    r => r.Manufacturer.Equals(radio.Manufacturer, StringComparison.OrdinalIgnoreCase) &&
-                         r.Model.Equals(radio.Model, StringComparison.OrdinalIgnoreCase),
-                    r => _configurationEditorViewModel.SelectedRadio = r);
+                Services.DatabaseService.Instance.SaveRadio(radio);
+                if (_configurationEditorViewModel != null)
+                {
+                    RefreshAndSelect(
+                        _configurationEditorViewModel.Radios,
+                        Services.DatabaseService.Instance.GetAllRadios,
+                        r => r.Manufacturer.Equals(radio.Manufacturer, StringComparison.OrdinalIgnoreCase) &&
+                             r.Model.Equals(radio.Model, StringComparison.OrdinalIgnoreCase),
+                        r => _configurationEditorViewModel.SelectedRadio = r);
+                }
+                ReturnToConfigurationEditor();
             }
-            CurrentView = _configurationEditorViewModel;
+            catch
+            {
+                _radioMasterEditorViewModel!.ValidationMessage = string.Format(Strings.Instance.DuplicateNameErrorFormat, $"{radio.Manufacturer} {radio.Model}");
+            }
+        };
+        _radioMasterEditorViewModel.OnCopy = (copy) =>
+        {
+            try
+            {
+                Services.DatabaseService.Instance.SaveRadio(copy);
+                var saved = Services.DatabaseService.Instance.GetRadio(copy.Manufacturer, copy.Model);
+                if (saved != null)
+                {
+                    _radioMasterEditorViewModel!.InitializeEdit(saved);
+                    _radioMasterEditorViewModel.IsReadOnly = false;
+                    _radioMasterEditorViewModel.IsDirty = false;
+                }
+            }
+            catch
+            {
+                _radioMasterEditorViewModel!.ValidationMessage = string.Format(Strings.Instance.DuplicateNameErrorFormat, $"{copy.Manufacturer} {copy.Model}");
+            }
         };
         var projectName = GetProjectDisplayName();
         SetView(_radioMasterEditorViewModel, $"{Strings.Instance.Project} > {projectName} > {Strings.Instance.RadioDetails}", GetEditorTitle("Radio", existing, false));
@@ -1302,19 +1471,26 @@ public partial class MainShellViewModel : ViewModelBase
             _okaMasterEditorViewModel.InitializeEdit(existing);
         else
             _okaMasterEditorViewModel.InitializeNew();
-        _okaMasterEditorViewModel.NavigateBack = () => CurrentView = _configurationEditorViewModel;
+        _okaMasterEditorViewModel.NavigateBack = ReturnToConfigurationEditor;
         _okaMasterEditorViewModel.OnSave = (oka) =>
         {
-            Services.DatabaseService.Instance.SaveOka(oka);
-            if (_configurationEditorViewModel != null)
+            try
             {
-                RefreshAndSelect(
-                    _configurationEditorViewModel.Okas,
-                    Services.DatabaseService.Instance.GetAllOkas,
-                    o => o.Name.Equals(oka.Name, StringComparison.OrdinalIgnoreCase),
-                    o => _configurationEditorViewModel.SelectedOka = o);
+                Services.DatabaseService.Instance.SaveOka(oka);
+                if (_configurationEditorViewModel != null)
+                {
+                    RefreshAndSelect(
+                        _configurationEditorViewModel.Okas,
+                        Services.DatabaseService.Instance.GetAllOkas,
+                        o => o.Name.Equals(oka.Name, StringComparison.OrdinalIgnoreCase),
+                        o => _configurationEditorViewModel.SelectedOka = o);
+                }
+                ReturnToConfigurationEditor();
             }
-            CurrentView = _configurationEditorViewModel;
+            catch
+            {
+                _okaMasterEditorViewModel!.ValidationMessage = string.Format(Strings.Instance.DuplicateNameErrorFormat, oka.Name);
+            }
         };
         var projectName = GetProjectDisplayName();
         SetView(_okaMasterEditorViewModel, $"{Strings.Instance.Project} > {projectName} > {Strings.Instance.OkaDetails}", GetEditorTitle("OKA", existing, false));

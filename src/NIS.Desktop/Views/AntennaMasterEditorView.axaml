@@ -19,7 +19,12 @@
                 BorderBrush="{DynamicResource HeaderSecondaryBrush}"
                 BorderThickness="0,0,0,2"
                 Padding="20,15">
-            <TextBlock Text="{Binding Title}" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Text="{Binding Title}" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                <Button Grid.Column="1" Content="{Binding Copy, Source={x:Static loc:Strings.Instance}}" Command="{Binding CopyCommand}"
+                        Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}"
+                        Padding="20,10" IsVisible="{Binding CanCopy}"/>
+            </Grid>
         </Border>
 
         <!-- Main Content -->
@@ -38,6 +43,11 @@
                             <TextBlock Text="{Binding Model, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <TextBox Text="{Binding Model}" Width="300" IsEnabled="{Binding CanEdit}"/>
                         </StackPanel>
+
+                        <!-- Validation message for duplicate name -->
+                        <TextBlock Text="{Binding ValidationMessage}" Foreground="{DynamicResource DangerButtonBrush}"
+                                   TextWrapping="Wrap" FontSize="12"
+                                   IsVisible="{Binding ValidationMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
 
                         <!-- Line 2: Antenna Type and Polarization -->
                         <StackPanel Orientation="Horizontal" Spacing="15">
@@ -158,17 +168,12 @@
 
         <!-- Footer -->
         <Border Grid.Row="2" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" Padding="20,15">
-            <Grid ColumnDefinitions="*,Auto">
-                <TextBlock Text="{Binding ValidationMessage}" Foreground="{DynamicResource DangerButtonBrush}" VerticalAlignment="Center"
-                           TextWrapping="Wrap" MaxWidth="500"
-                           IsVisible="{Binding ValidationMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
-                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
-                    <Button Content="{Binding Cancel, Source={x:Static loc:Strings.Instance}}" Command="{Binding CancelCommand}" Padding="20,10"/>
-                    <Button Content="{Binding Save, Source={x:Static loc:Strings.Instance}}" Command="{Binding SaveCommand}"
-                            Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="20,10"
-                            IsVisible="{Binding CanEdit}"/>
-                </StackPanel>
-            </Grid>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                <Button Content="{Binding Cancel, Source={x:Static loc:Strings.Instance}}" Command="{Binding CancelCommand}" Padding="20,10"/>
+                <Button Content="{Binding Save, Source={x:Static loc:Strings.Instance}}" Command="{Binding SaveCommand}"
+                        Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="20,10"
+                        IsVisible="{Binding CanEdit}"/>
+            </StackPanel>
         </Border>
     </Grid>
 </UserControl>

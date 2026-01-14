@@ -99,7 +99,7 @@ public class DatabaseService : IDisposable
 
         if (!TableExists("Antennas") || !HasColumn("Antennas", "IsUserData")) return false;
         if (!TableExists("Cables") || !HasColumn("Cables", "IsUserData")) return false;
-        if (!TableExists("Radios") || !HasColumn("Radios", "IsUserData")) return false;
+        if (!TableExists("Radios") || !HasColumn("Radios", "IsUserData") || !HasColumn("Radios", "BandsJson")) return false;
         if (!TableExists("Okas") || !HasColumn("Okas", "IsUserData")) return false;
         if (!TableExists("Modulations")) return false;
         if (!TableExists("Projects") || !HasColumn("Projects", "Callsign")) return false;
@@ -153,6 +153,7 @@ public class DatabaseService : IDisposable
                 Model TEXT NOT NULL,
                 MaxPowerWatts REAL NOT NULL DEFAULT 100 CHECK (MaxPowerWatts > 0),
                 IsUserData INTEGER NOT NULL DEFAULT 0,
+                BandsJson TEXT NOT NULL DEFAULT '[]',
                 UNIQUE(Manufacturer, Model)
             );
 

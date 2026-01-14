@@ -142,8 +142,10 @@ public partial class AntennaMasterEditorViewModel : ViewModelBase
     // Navigation callbacks
     public Action? NavigateBack { get; set; }
     public Action<Antenna>? OnSave { get; set; }
+    public Action<Antenna>? OnCopy { get; set; }
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanCopy))]
     private bool _isEditing;
 
     /// <summary>
@@ -151,12 +153,18 @@ public partial class AntennaMasterEditorViewModel : ViewModelBase
     /// </summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanEdit))]
+    [NotifyPropertyChangedFor(nameof(CanCopy))]
     private bool _isReadOnly;
 
     /// <summary>
     /// Whether editing is allowed (inverse of IsReadOnly).
     /// </summary>
     public bool CanEdit => !IsReadOnly;
+
+    /// <summary>
+    /// Whether copying is allowed (always visible).
+    /// </summary>
+    public bool CanCopy => true;
 
     [ObservableProperty]
     private string _manufacturer = string.Empty;
@@ -320,6 +328,25 @@ public partial class AntennaMasterEditorViewModel : ViewModelBase
         };
 
         OnSave?.Invoke(antenna);
+    }
+
+    [RelayCommand]
+    private void Copy()
+    {
+        var suffix = Localization.Strings.Instance.CustomSuffix;
+
+        var copy = new Antenna
+        {
+            Id = 0, // New entry
+            Manufacturer = Manufacturer.Trim(),
+            Model = $"{Model.Trim()} {suffix}",
+            IsHorizontallyPolarized = IsHorizontallyPolarized,
+            AntennaType = AntennaType,
+            IsUserData = true,
+            Bands = Bands.Select(b => b.ToBand()).ToList()
+        };
+
+        OnCopy?.Invoke(copy);
     }
 
     [RelayCommand]

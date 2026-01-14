@@ -55,15 +55,15 @@ public static class MasterDataStore
                 new() { Name = "160m", FrequencyMHz = 1.8 },
                 new() { Name = "80m", FrequencyMHz = 3.5 },
                 new() { Name = "40m", FrequencyMHz = 7.0 },
-                new() { Name = "30m", FrequencyMHz = 10.1 },
+                new() { Name = "30m", FrequencyMHz = 10.0 },
                 new() { Name = "20m", FrequencyMHz = 14.0 },
-                new() { Name = "17m", FrequencyMHz = 18.1 },
+                new() { Name = "17m", FrequencyMHz = 18.0 },
                 new() { Name = "15m", FrequencyMHz = 21.0 },
-                new() { Name = "12m", FrequencyMHz = 24.9 },
+                new() { Name = "12m", FrequencyMHz = 24.0 },
                 new() { Name = "10m", FrequencyMHz = 28.0 },
                 new() { Name = "6m", FrequencyMHz = 50.0 },
                 new() { Name = "2m", FrequencyMHz = 144.0 },
-                new() { Name = "70cm", FrequencyMHz = 432.0 }
+                new() { Name = "70cm", FrequencyMHz = 430.0 }
             },
             Constants = new MasterConstants()
         };

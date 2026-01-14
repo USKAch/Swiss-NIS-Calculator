@@ -232,13 +232,16 @@ public partial class ResultsViewModel : ViewModelBase
         var oka = config.OkaId.HasValue
             ? DatabaseService.Instance.GetOkaById(config.OkaId.Value)
             : null;
+        var radio = config.RadioId.HasValue
+            ? DatabaseService.Instance.GetRadioById(config.RadioId.Value)
+            : null;
         var constants = MasterDataStore.Load().Constants;
 
         // Get OKA values from master data (single source of truth)
         double okaDistance = oka?.DefaultDistanceMeters ?? 10;
         double okaDamping = oka?.DefaultDampingDb ?? 0;
 
-        // Use linear power if set, otherwise use radio power
+        // Use linear power if set, otherwise use radio power (base power for display)
         double effectivePower = (config.Linear != null && config.Linear.PowerWatts > 0)
             ? config.Linear.PowerWatts
             : config.PowerWatts;
@@ -269,7 +272,7 @@ public partial class ResultsViewModel : ViewModelBase
 
         foreach (var band in bands)
         {
-            var bandResult = CalculateBand(config, band, cable, modulation, constants.GroundReflectionFactor, okaDistance, okaDamping);
+            var bandResult = CalculateBand(config, band, cable, modulation, radio, constants.GroundReflectionFactor, okaDistance, okaDamping);
             result.BandResults.Add(bandResult);
         }
 
@@ -369,7 +372,7 @@ public partial class ResultsViewModel : ViewModelBase
         return null;
     }
 
-    private BandResult CalculateBand(AntennaConfiguration config, AntennaBand band, Cable? cable, Modulation? modulation, double groundReflectionFactor, double okaDistance, double okaDamping)
+    private BandResult CalculateBand(AntennaConfiguration config, AntennaBand band, Cable? cable, Modulation? modulation, Radio? radio, double groundReflectionFactor, double okaDistance, double okaDamping)
     {
         double horizontalDistance = Math.Max(okaDistance, 0.001); // Guard against division by zero
         double antennaHeight = config.Antenna.HeightMeters;
@@ -387,10 +390,23 @@ public partial class ResultsViewModel : ViewModelBase
 
         double modulationFactor = modulation?.Factor ?? 0.4;
 
-        // Use linear power if set, otherwise use radio power
-        double effectivePower = (config.Linear != null && config.Linear.PowerWatts > 0)
-            ? config.Linear.PowerWatts
-            : config.PowerWatts;
+        // Determine effective power for this band:
+        // 1. If linear is set, use linear power (overrides everything)
+        // 2. If radio has band-specific power, use power for this frequency
+        // 3. Otherwise use config.PowerWatts (which is radio's MaxPowerWatts or user override)
+        double effectivePower;
+        if (config.Linear != null && config.Linear.PowerWatts > 0)
+        {
+            effectivePower = config.Linear.PowerWatts;
+        }
+        else if (radio != null && radio.HasBandSpecificPower)
+        {
+            effectivePower = radio.GetPowerAtFrequency(frequencyMHz);
+        }
+        else
+        {
+            effectivePower = config.PowerWatts;
+        }
 
         // Use Core calculator for field strength computation
         // Use real 3D distance for field strength calculation

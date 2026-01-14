@@ -261,8 +261,27 @@
                                         Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="8,4"/>
                             </StackPanel>
 
-                            <!-- Radio Power -->
-                            <StackPanel Orientation="Horizontal" Spacing="8" IsEnabled="{Binding !HasLinearPower}">
+                            <!-- Radio Bands Display (when radio has band-specific power) -->
+                            <Border Background="{DynamicResource CardBackgroundFillColorDefault}" CornerRadius="4" Padding="8,6"
+                                    IsVisible="{Binding SelectedRadio.HasBandSpecificPower}">
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="{Binding PowerByBand, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" FontSize="12"/>
+                                    <ItemsControl ItemsSource="{Binding SelectedRadio.Bands}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                                    <TextBlock Text="{Binding FrequencyMHz, StringFormat='{}{0} MHz'}" FontSize="11" Width="55"/>
+                                                    <TextBlock Text="{Binding MaxPowerWatts, StringFormat='{}{0:F0} W'}" FontSize="11" Opacity="0.7"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Radio Power (only when NOT using band-specific power) -->
+                            <StackPanel Orientation="Horizontal" Spacing="8" IsEnabled="{Binding !HasLinearPower}"
+                                        IsVisible="{Binding !SelectedRadio.HasBandSpecificPower}">
                                 <TextBlock Text="{Binding Power, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" FontWeight="SemiBold"/>
                                 <NumericUpDown Value="{Binding PowerWatts, UpdateSourceTrigger=LostFocus, TargetNullValue=100, FallbackValue=100}"
                                                ShowButtonSpinner="False" Minimum="1" Maximum="10000" Increment="10" Width="80"/>
