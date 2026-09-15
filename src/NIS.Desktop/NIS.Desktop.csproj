@@ -6,11 +6,11 @@
     <RootNamespace>NIS.Desktop</RootNamespace>
     <AssemblyName>NIS.Desktop</AssemblyName>
     <!-- Version comes from git tags via MinVer (tags are plain "0.9.1", no "v" prefix):
-         tagged commit -> 0.9.1; commits after a tag -> 0.9.2-alpha.0.N (N = commits since tag).
+         tagged commit -> 0.9.1; commits after a tag -> 0.9.2-dev.N (N = commits since tag).
          CI passes the release tag explicitly via -p:MinVerVersionOverride=... -->
     <MinVerTagPrefix></MinVerTagPrefix>
     <MinVerMinimumMajorMinor>0.9</MinVerMinimumMajorMinor>
-    <MinVerDefaultPreReleaseIdentifiers>alpha.0</MinVerDefaultPreReleaseIdentifiers>
+    <MinVerDefaultPreReleaseIdentifiers>dev</MinVerDefaultPreReleaseIdentifiers>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <!-- Pre-compile to native code for faster startup -->

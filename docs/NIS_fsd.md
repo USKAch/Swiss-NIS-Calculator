@@ -1280,7 +1280,7 @@ dotnet publish -c Release -r win-x64 -p:PublishSingleFile=true -p:IncludeNativeL
 
 The application version is derived from git tags by [MinVer](https://github.com/adamralph/minver); the csproj contains no fixed version:
 - Tags are plain semantic versions without prefix: `0.9.1`
-- A tagged commit builds as `0.9.1`; later commits build as `0.9.2-alpha.0.N` (N = commits since the tag), so development builds are distinguishable from releases
+- A tagged commit builds as `0.9.1`; later commits build as `0.9.2-dev.N` (N = commits since the tag), so development builds are distinguishable from releases
 - The release workflow passes the entered version to all publish steps via `-p:MinVerVersionOverride` and into the macOS `Info.plist`
 - At runtime `AppInfo.Version` exposes the version (build metadata stripped) for the About dialog and the PDF footer
 
