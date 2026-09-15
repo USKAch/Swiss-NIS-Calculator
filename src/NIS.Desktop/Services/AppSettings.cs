@@ -8,7 +8,32 @@ namespace NIS.Desktop.Services;
 /// </summary>
 public class AppSettings
 {
+    /// <summary>
+    /// UI language: "de", "fr", "it", "en" or "system" (follow the OS UI language).
+    /// Existing settings files without the value default to German (previous behaviour).
+    /// </summary>
     public string Language { get; set; } = "de";
+
+    public const string SystemLanguage = "system";
+
+    /// <summary>
+    /// Resolves the effective UI language code ("de"/"fr"/"it"/"en"), mapping
+    /// "system" to the OS UI culture with German as fallback.
+    /// </summary>
+    public string ResolveLanguage() => ResolveLanguage(Language);
+
+    public static string ResolveLanguage(string? language)
+    {
+        if (!string.Equals(language, SystemLanguage, System.StringComparison.OrdinalIgnoreCase))
+            return string.IsNullOrWhiteSpace(language) ? "de" : language;
+
+        var os = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+        return os switch
+        {
+            "de" or "fr" or "it" or "en" => os,
+            _ => "de"
+        };
+    }
     /// <summary>
     /// Theme mode: 0 = System, 1 = Light, 2 = Dark
     /// </summary>

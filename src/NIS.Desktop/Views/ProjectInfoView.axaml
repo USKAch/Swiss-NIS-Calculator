@@ -45,6 +45,12 @@
                     <TextBlock Text="{Binding LocationLabel}" FontWeight="SemiBold"/>
                     <TextBox Text="{Binding Location, Mode=TwoWay}"/>
                 </StackPanel>
+
+                <!-- Parcel number (optional, for authorities) -->
+                <StackPanel Spacing="5">
+                    <TextBlock Text="{Binding ParcelNumberLabel}" FontWeight="SemiBold"/>
+                    <TextBox Text="{Binding ParcelNumber, Mode=TwoWay}"/>
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
 

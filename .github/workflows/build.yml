@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version tag (e.g., v0.5)'
+        description: 'Version tag without prefix (e.g., 0.9.1)'
         required: true
         type: string
 
@@ -26,6 +26,8 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0   # full history so MinVer can see tags
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -46,7 +48,9 @@ jobs:
       run: dotnet test --configuration Release --verbosity normal
 
     - name: Publish
-      run: dotnet publish src/NIS.Desktop/NIS.Desktop.csproj -c Release -r win-x64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --self-contained true -o publish
+      run: dotnet publish src/NIS.Desktop/NIS.Desktop.csproj -c Release -r win-x64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --self-contained true -p:MinVerVersionOverride=$($env:APP_VERSION.TrimStart("v")) -o publish
+      env:
+        APP_VERSION: ${{ inputs.version }}
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
@@ -59,6 +63,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0   # full history so MinVer can see tags
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -79,7 +85,9 @@ jobs:
       run: dotnet test --configuration Release --verbosity normal
 
     - name: Publish
-      run: dotnet publish src/NIS.Desktop/NIS.Desktop.csproj -c Release -r linux-x64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --self-contained true -o publish
+      run: dotnet publish src/NIS.Desktop/NIS.Desktop.csproj -c Release -r linux-x64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --self-contained true -p:MinVerVersionOverride=${APP_VERSION#v} -o publish
+      env:
+        APP_VERSION: ${{ inputs.version }}
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
@@ -92,6 +100,8 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0   # full history so MinVer can see tags
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -112,12 +122,18 @@ jobs:
       run: dotnet test --configuration Release --verbosity normal
 
     - name: Publish macOS ARM64
-      run: dotnet publish src/NIS.Desktop/NIS.Desktop.csproj -c Release -r osx-arm64 --self-contained true -o publish-arm64
+      run: dotnet publish src/NIS.Desktop/NIS.Desktop.csproj -c Release -r osx-arm64 --self-contained true -p:MinVerVersionOverride=${APP_VERSION#v} -o publish-arm64
+      env:
+        APP_VERSION: ${{ inputs.version }}
 
     - name: Publish macOS x64
-      run: dotnet publish src/NIS.Desktop/NIS.Desktop.csproj -c Release -r osx-x64 --self-contained true -o publish-x64
+      run: dotnet publish src/NIS.Desktop/NIS.Desktop.csproj -c Release -r osx-x64 --self-contained true -p:MinVerVersionOverride=${APP_VERSION#v} -o publish-x64
+      env:
+        APP_VERSION: ${{ inputs.version }}
 
     - name: Create App Bundle
+      env:
+        APP_VERSION: ${{ inputs.version }}
       run: |
         # Create app bundle structure
         mkdir -p "SwissNISCalculator.app/Contents/MacOS"
@@ -130,7 +146,7 @@ jobs:
         chmod +x "SwissNISCalculator.app/Contents/MacOS/NIS.Desktop"
 
         # Create Info.plist
-        cat > "SwissNISCalculator.app/Contents/Info.plist" << 'EOF'
+        cat > "SwissNISCalculator.app/Contents/Info.plist" << EOF
         <?xml version="1.0" encoding="UTF-8"?>
         <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
         <plist version="1.0">
@@ -144,9 +160,9 @@ jobs:
           <key>CFBundleIdentifier</key>
           <string>ch.uska.nis-calculator</string>
           <key>CFBundleVersion</key>
-          <string>1.0.0</string>
+          <string>${APP_VERSION#v}</string>
           <key>CFBundleShortVersionString</key>
-          <string>1.0.0</string>
+          <string>${APP_VERSION#v}</string>
           <key>CFBundlePackageType</key>
           <string>APPL</string>
           <key>LSMinimumSystemVersion</key>

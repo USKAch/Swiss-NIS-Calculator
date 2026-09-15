@@ -38,3 +38,7 @@ src/NIS.Desktop/Data/nisdata.db
 src/NIS.Desktop/Data/nisdata.db.backup_*
 src/NIS.Desktop/Data/translations.json
 src/NIS.Desktop/Export/
+nul
+
+# Local scratch files (review documents, TODO notes)
+tmp/

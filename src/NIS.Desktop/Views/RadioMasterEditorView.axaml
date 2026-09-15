@@ -98,7 +98,7 @@
                                                       IsEnabled="{Binding $parent[ItemsControl].((vm:RadioMasterEditorViewModel)DataContext).CanEdit}">
                                                 <ComboBox.ItemTemplate>
                                                     <DataTemplate>
-                                                        <TextBlock Text="{Binding StringFormat={}{0} MHz}"/>
+                                                        <TextBlock Text="{Binding Converter={StaticResource BandNameConverter}}"/>
                                                     </DataTemplate>
                                                 </ComboBox.ItemTemplate>
                                             </ComboBox>
@@ -133,7 +133,9 @@
         <!-- Footer -->
         <Border Grid.Row="2" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" Padding="20,15">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
-                <Button Content="{Binding Cancel, Source={x:Static loc:Strings.Instance}}" Command="{Binding CancelCommand}" Padding="20,10"/>
+                <!-- Read-only detail view: "Close" instead of "Cancel" (nothing to discard) -->
+                <Button Content="{Binding Close, Source={x:Static loc:Strings.Instance}}" Command="{Binding CancelCommand}" Padding="20,10" IsVisible="{Binding IsReadOnly}"/>
+                <Button Content="{Binding Cancel, Source={x:Static loc:Strings.Instance}}" Command="{Binding CancelCommand}" Padding="20,10" IsVisible="{Binding CanEdit}"/>
                 <Button Content="{Binding Save, Source={x:Static loc:Strings.Instance}}" Command="{Binding SaveCommand}"
                         Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="20,10"
                         IsVisible="{Binding CanEdit}"/>

@@ -32,7 +32,7 @@
                         BorderThickness="1" CornerRadius="8" Padding="15">
                     <StackPanel Spacing="10">
                         <TextBlock Text="{Binding ProjectInfo, Source={x:Static loc:Strings.Instance}}" FontSize="16" FontWeight="Bold"/>
-                        <Grid ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="15" RowSpacing="5">
+                        <Grid ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="15" RowSpacing="5">
                             <TextBlock Text="{Binding ProjectName, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold"/>
                             <TextBlock Grid.Column="1" Text="{Binding ProjectName}"/>
 
@@ -47,6 +47,9 @@
 
                             <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding Location, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold"/>
                             <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding Location}"/>
+
+                            <TextBlock Grid.Row="3" Text="{Binding ParcelNumber, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding ParcelNumber}"/>
                         </Grid>
                         <Button Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}" Command="{Binding EditStationInfoCommand}"
                                 HorizontalAlignment="Left" Padding="15,8"/>
@@ -166,12 +169,16 @@
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
                                 <!-- Col 8: Actions (210px) -->
-                                <DataGridTemplateColumn Header="" Width="210">
+                                <DataGridTemplateColumn Header="" Width="290">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
                                                 <Button Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}"
                                                         Command="{Binding $parent[DataGrid].((vm:ProjectOverviewViewModel)DataContext).EditConfigurationCommand}"
+                                                        CommandParameter="{Binding}"
+                                                        Padding="6,2"/>
+                                                <Button Content="{Binding Copy, Source={x:Static loc:Strings.Instance}}"
+                                                        Command="{Binding $parent[DataGrid].((vm:ProjectOverviewViewModel)DataContext).CopyConfigurationCommand}"
                                                         CommandParameter="{Binding}"
                                                         Padding="6,2"/>
                                                 <Button Content="{Binding Delete, Source={x:Static loc:Strings.Instance}}"

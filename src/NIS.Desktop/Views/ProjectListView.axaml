@@ -24,12 +24,16 @@
                     <Grid ColumnDefinitions="*,Auto">
                         <TextBlock Text="{Binding Projects, Source={x:Static loc:Strings.Instance}}"
                                    FontSize="16" FontWeight="Bold"/>
-                        <Button Grid.Column="1"
-                                Command="{Binding AddProjectCommand}"
-                                Content="{Binding CreateProject, Source={x:Static loc:Strings.Instance}}"
-                                Background="{DynamicResource PrimaryButtonBrush}"
-                                Foreground="{DynamicResource HeaderForegroundBrush}"
-                                Padding="15,8"/>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                            <Button Command="{Binding ImportProjectFileCommand}"
+                                    Content="{Binding ImportProject, Source={x:Static loc:Strings.Instance}}"
+                                    Padding="15,8"/>
+                            <Button Command="{Binding AddProjectCommand}"
+                                    Content="{Binding CreateProject, Source={x:Static loc:Strings.Instance}}"
+                                    Background="{DynamicResource PrimaryButtonBrush}"
+                                    Foreground="{DynamicResource HeaderForegroundBrush}"
+                                    Padding="15,8"/>
+                        </StackPanel>
                     </Grid>
 
                     <!-- Search and sort -->
@@ -89,6 +93,10 @@
                                             <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" Margin="5,0">
                                                 <Button Content="{Binding Edit, Source={x:Static loc:Strings.Instance}}"
                                                         Command="{Binding $parent[DataGrid].((vm:ProjectListViewModel)DataContext).EditProjectCommand}"
+                                                        CommandParameter="{Binding}"
+                                                        Padding="8,3"/>
+                                                <Button Content="{Binding ExportProject, Source={x:Static loc:Strings.Instance}}"
+                                                        Command="{Binding $parent[DataGrid].((vm:ProjectListViewModel)DataContext).ExportProjectFileCommand}"
                                                         CommandParameter="{Binding}"
                                                         Padding="8,3"/>
                                                 <Button Content="{Binding Delete, Source={x:Static loc:Strings.Instance}}"

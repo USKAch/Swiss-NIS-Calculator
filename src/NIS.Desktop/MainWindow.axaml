@@ -31,45 +31,9 @@
                 </ui:NavigationViewItem.IconSource>
             </ui:NavigationViewItem>
 
-            <ui:NavigationViewItem Content="{Binding NewProject, Source={x:Static loc:Strings.Instance}}" Tag="NewProject">
-                <ui:NavigationViewItem.IconSource>
-                    <ui:SymbolIconSource Symbol="Add"/>
-                </ui:NavigationViewItem.IconSource>
-            </ui:NavigationViewItem>
-
             <ui:NavigationViewItem Content="{Binding MasterData, Source={x:Static loc:Strings.Instance}}" Tag="MasterData">
                 <ui:NavigationViewItem.IconSource>
                     <ui:SymbolIconSource Symbol="Library"/>
-                </ui:NavigationViewItem.IconSource>
-            </ui:NavigationViewItem>
-
-            <ui:NavigationViewItem Content="{Binding CalculateAll, Source={x:Static loc:Strings.Instance}}" Tag="Calculate" IsEnabled="{Binding HasProject}">
-                <ui:NavigationViewItem.IconSource>
-                    <ui:SymbolIconSource Symbol="Calculator"/>
-                </ui:NavigationViewItem.IconSource>
-            </ui:NavigationViewItem>
-
-            <ui:NavigationViewItem Content="{Binding ExportReport, Source={x:Static loc:Strings.Instance}}" Tag="CreateReport" IsEnabled="{Binding HasProject}">
-                <ui:NavigationViewItem.IconSource>
-                    <ui:SymbolIconSource Symbol="Share"/>
-                </ui:NavigationViewItem.IconSource>
-            </ui:NavigationViewItem>
-
-            <ui:NavigationViewItem Content="{Binding ExportPdf, Source={x:Static loc:Strings.Instance}}" Tag="ExportPdf" IsEnabled="{Binding HasProject}">
-                <ui:NavigationViewItem.IconSource>
-                    <ui:SymbolIconSource Symbol="Document"/>
-                </ui:NavigationViewItem.IconSource>
-            </ui:NavigationViewItem>
-
-            <ui:NavigationViewItem Content="{Binding ImportProject, Source={x:Static loc:Strings.Instance}}" Tag="ImportProject">
-                <ui:NavigationViewItem.IconSource>
-                    <ui:SymbolIconSource Symbol="OpenFolder"/>
-                </ui:NavigationViewItem.IconSource>
-            </ui:NavigationViewItem>
-
-            <ui:NavigationViewItem Content="{Binding ExportProject, Source={x:Static loc:Strings.Instance}}" Tag="ExportProject" IsEnabled="{Binding HasProject}">
-                <ui:NavigationViewItem.IconSource>
-                    <ui:SymbolIconSource Symbol="Save"/>
                 </ui:NavigationViewItem.IconSource>
             </ui:NavigationViewItem>
         </ui:NavigationView.MenuItems>
@@ -80,21 +44,7 @@
                     <ui:SymbolIconSource Symbol="Setting"/>
                 </ui:NavigationViewItem.IconSource>
             </ui:NavigationViewItem>
-            <ui:NavigationViewItem Content="{Binding Factory, Source={x:Static loc:Strings.Instance}}" Tag="Factory">
-                <ui:NavigationViewItem.IconSource>
-                    <ui:SymbolIconSource Symbol="Admin"/>
-                </ui:NavigationViewItem.IconSource>
-            </ui:NavigationViewItem>
         </ui:NavigationView.FooterMenuItems>
-
-        <ui:NavigationView.PaneFooter>
-            <StackPanel Margin="12,8,12,12" Spacing="2">
-                <TextBlock Text="Swiss NIS Calculator v1.0"
-                           FontSize="10" Opacity="0.5"/>
-                <TextBlock Text="HB9BLA / USKA"
-                           FontSize="10" Opacity="0.5"/>
-            </StackPanel>
-        </ui:NavigationView.PaneFooter>
 
         <!-- Content area with breadcrumb header -->
         <Grid RowDefinitions="Auto,*">

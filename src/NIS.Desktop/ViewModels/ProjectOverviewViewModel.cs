@@ -9,6 +9,7 @@ using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using NIS.Desktop.Localization;
 using NIS.Desktop.Models;
+using NIS.Desktop.Services;
 
 namespace NIS.Desktop.ViewModels;
 
@@ -69,28 +70,9 @@ public class ConfigurationDisplayItem
         if (antenna.Bands.Count == 0)
             return "";
 
-        var freqs = antenna.Bands.Select(b => FormatFrequency(b.FrequencyMHz));
+        // Band names come from master data (single source of truth, includes 30m/12m/4m)
+        var freqs = antenna.Bands.Select(b => MasterDataStore.GetBandName(b.FrequencyMHz));
         return string.Join(", ", freqs);
-    }
-
-    private static string FormatFrequency(double mhz)
-    {
-        return mhz switch
-        {
-            >= 1.8 and < 2 => "160m",
-            >= 3.5 and < 4 => "80m",
-            >= 7 and < 7.3 => "40m",
-            >= 10.1 and < 10.2 => "30m",
-            >= 14 and < 14.4 => "20m",
-            >= 18 and < 18.2 => "17m",
-            >= 21 and < 21.5 => "15m",
-            >= 24.8 and < 25 => "12m",
-            >= 28 and < 30 => "10m",
-            >= 50 and < 54 => "6m",
-            >= 144 and < 148 => "2m",
-            >= 430 and < 440 => "70cm",
-            _ => $"{mhz}MHz"
-        };
     }
 }
 
@@ -103,6 +85,7 @@ public partial class ProjectOverviewViewModel : ViewModelBase
 
     // Navigation callbacks
     public Action<AntennaConfiguration?>? NavigateToConfigurationEditor { get; set; }
+    public Action<AntennaConfiguration>? NavigateToConfigurationEditorWithTemplate { get; set; }
     public Action? NavigateToResults { get; set; }
     public Action? NavigateToProjectInfo { get; set; }
     public Action? NavigateBack { get; set; }
@@ -130,6 +113,7 @@ public partial class ProjectOverviewViewModel : ViewModelBase
             OnPropertyChanged(nameof(Callsign));
             OnPropertyChanged(nameof(Address));
             OnPropertyChanged(nameof(Location));
+            OnPropertyChanged(nameof(ParcelNumber));
             OnPropertyChanged(nameof(Configurations));
             OnPropertyChanged(nameof(ConfigurationItems));
             OnPropertyChanged(nameof(HasConfigurations));
@@ -148,6 +132,7 @@ public partial class ProjectOverviewViewModel : ViewModelBase
     public string Callsign => _projectViewModel.Project.Callsign;
     public string Address => _projectViewModel.Project.Address;
     public string Location => _projectViewModel.Project.Location;
+    public string ParcelNumber => _projectViewModel.Project.ParcelNumber;
 
     // Collections
     public ObservableCollection<AntennaConfiguration> Configurations => _projectViewModel.Configurations;
@@ -194,6 +179,18 @@ public partial class ProjectOverviewViewModel : ViewModelBase
     private void EditConfiguration(ConfigurationDisplayItem item)
     {
         NavigateToConfigurationEditor?.Invoke(item.Configuration);
+    }
+
+    /// <summary>
+    /// Opens the editor with a copy of the configuration as a new (unsaved) configuration,
+    /// so a variant (e.g. more power) can be created quickly.
+    /// </summary>
+    [RelayCommand]
+    private void CopyConfiguration(ConfigurationDisplayItem item)
+    {
+        var copy = item.Configuration.Clone();
+        copy.Name = $"{item.Configuration.Name} {Strings.Instance.CopySuffix}".Trim();
+        NavigateToConfigurationEditorWithTemplate?.Invoke(copy);
     }
 
     [RelayCommand]

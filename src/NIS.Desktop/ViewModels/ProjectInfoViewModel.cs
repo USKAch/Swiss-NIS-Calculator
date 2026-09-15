@@ -26,6 +26,9 @@ public partial class ProjectInfoViewModel : ViewModelBase
     [ObservableProperty]
     private string _location = string.Empty;
 
+    [ObservableProperty]
+    private string _parcelNumber = string.Empty;
+
     // Navigation callbacks
     public Action? NavigateBack { get; set; }
     public Action<ProjectInfoViewModel>? NavigateToProjectOverview { get; set; }
@@ -38,6 +41,7 @@ public partial class ProjectInfoViewModel : ViewModelBase
     public string CallsignLabel => Strings.Instance.Callsign + ":";
     public string AddressLabel => Strings.Instance.Address + ":";
     public string LocationLabel => Strings.Instance.Location + ":";
+    public string ParcelNumberLabel => Strings.Instance.ParcelNumber + ":";
 
     [ObservableProperty]
     private bool _isEditMode;
@@ -58,6 +62,7 @@ public partial class ProjectInfoViewModel : ViewModelBase
     partial void OnCallsignChanged(string value) => MarkDirty();
     partial void OnAddressChanged(string value) => MarkDirty();
     partial void OnLocationChanged(string value) => MarkDirty();
+    partial void OnParcelNumberChanged(string value) => MarkDirty();
 
     [RelayCommand]
     private async Task Cancel()

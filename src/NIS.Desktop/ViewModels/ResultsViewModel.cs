@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Avalonia.Input.Platform;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -124,6 +125,9 @@ public partial class ResultsViewModel : ViewModelBase
     // Storage provider for file dialogs (set by view)
     public IStorageProvider? StorageProvider { get; set; }
 
+    // System clipboard (set by view)
+    public IClipboard? Clipboard { get; set; }
+
     public ObservableCollection<ConfigurationResult> Results { get; } = new();
 
     [ObservableProperty]
@@ -142,9 +146,19 @@ public partial class ResultsViewModel : ViewModelBase
     public bool AllCompliant => Results.Count > 0 &&
         System.Linq.Enumerable.All(Results, r => r.IsCompliant);
 
-    public string ComplianceSummary => AllCompliant
-        ? Strings.Instance.CalcAllCompliant
-        : Strings.Instance.CalcNonCompliantDetected;
+    public string ComplianceSummary
+    {
+        get
+        {
+            if (Results.Count == 0)
+                return "";
+            if (AllCompliant)
+                return Strings.Instance.CalcAllCompliant;
+
+            var failing = Results.Where(r => !r.IsCompliant).Select(r => r.ConfigurationName);
+            return $"{Strings.Instance.CalcNonCompliantDetected}: {string.Join(", ", failing)}";
+        }
+    }
 
     /// <summary>
     /// Calculate results for all configurations in the project.
@@ -190,28 +204,36 @@ public partial class ResultsViewModel : ViewModelBase
             return;
         }
 
-        // All validations passed, proceed with calculation
-        await Task.Run(() =>
+        // All validations passed, proceed with calculation.
+        // Compute on a background thread, then add results on the UI thread
+        // so that Results.Count and the compliance summary are correct below.
+        string? calculationError = null;
+        var results = await Task.Run(() =>
         {
+            var list = new List<ConfigurationResult>();
             try
             {
                 foreach (var config in project.AntennaConfigurations)
                 {
-                    var result = CalculateConfiguration(config);
-                    Avalonia.Threading.Dispatcher.UIThread.Post(() => Results.Add(result));
+                    list.Add(CalculateConfiguration(config));
                 }
             }
             catch (Exception ex)
             {
-                Avalonia.Threading.Dispatcher.UIThread.Post(() =>
-                {
-                    StatusMessage = $"{Strings.Instance.Error}: {ex.Message}";
-                });
+                calculationError = ex.Message;
             }
+            return list;
         });
 
+        foreach (var result in results)
+        {
+            Results.Add(result);
+        }
+
         IsCalculating = false;
-        StatusMessage = $"{Strings.Instance.CalculationComplete} {Results.Count} {Strings.Instance.ConfigurationsAnalyzed}";
+        StatusMessage = calculationError != null
+            ? $"{Strings.Instance.Error}: {calculationError}"
+            : $"{Strings.Instance.CalculationComplete} {Results.Count} {Strings.Instance.ConfigurationsAnalyzed}";
         OnPropertyChanged(nameof(HasResults));
         OnPropertyChanged(nameof(AllCompliant));
         OnPropertyChanged(nameof(ComplianceSummary));
@@ -454,6 +476,27 @@ public partial class ResultsViewModel : ViewModelBase
         };
     }
 
+    /// <summary>
+    /// Copies the Markdown report to the clipboard (same content as the Markdown export).
+    /// </summary>
+    [RelayCommand]
+    private async Task CopyToClipboard()
+    {
+        if (_project == null || !HasResults)
+        {
+            StatusMessage = Strings.Instance.CannotExportNoProject;
+            return;
+        }
+        if (Clipboard == null)
+        {
+            StatusMessage = Strings.Instance.ClipboardUnavailable;
+            return;
+        }
+
+        await Clipboard.SetTextAsync(GenerateMarkdown());
+        StatusMessage = Strings.Instance.CopiedToClipboard;
+    }
+
     [RelayCommand]
     private async Task ExportMarkdown()
     {
@@ -540,6 +583,8 @@ public partial class ResultsViewModel : ViewModelBase
         sb.AppendLine();
         sb.AppendLine($"**{s.CalcOperator}:** {_project?.Operator}");
         sb.AppendLine($"**{s.CalcAddress}:** {_project?.Address}, {_project?.Location}");
+        if (!string.IsNullOrWhiteSpace(_project?.ParcelNumber))
+            sb.AppendLine($"**{s.ParcelNumber}:** {_project.ParcelNumber}");
         sb.AppendLine($"**{s.CalcDate}:** {DateTime.Now:dd.MM.yyyy}");
         sb.AppendLine();
 
@@ -571,11 +616,11 @@ public partial class ResultsViewModel : ViewModelBase
             sb.AppendLine($"| **{s.CalcBuildingDamping}:** | {result.BuildingDampingDb:F2} dB |");
             sb.AppendLine();
 
-            // Band results table - markdown format (frequencies shown in first data row)
+            // Band results table - markdown format (band names as column headers, exact frequency in first data row)
             sb.Append("| Parameter | Sym | Unit |");
-            foreach (var _ in result.BandResults)
+            foreach (var band in result.BandResults)
             {
-                sb.Append(" |");
+                sb.Append($" {MasterDataStore.GetBandName(band.FrequencyMHz)} |");
             }
             sb.AppendLine();
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace NIS.Desktop.Models;
@@ -145,11 +146,22 @@ public class AntennaConfiguration
 
     [JsonIgnore]
     public string ModulationDisplay => Modulation;
+
+    /// <summary>
+    /// Deep copy (radio/cable/antenna/linear sub-objects included), e.g. to create
+    /// a variant of an existing configuration. Uses the JSON contract so new
+    /// fields are covered automatically.
+    /// </summary>
+    public AntennaConfiguration Clone()
+    {
+        var json = JsonSerializer.Serialize(this);
+        return JsonSerializer.Deserialize<AntennaConfiguration>(json)!;
+    }
 }
 
 /// <summary>
 /// NIS calculation project file (.nisproj).
-/// Project fields: Name, Operator (callsign), Address, Location.
+/// Project fields: Name, Operator (callsign), Address, Location, ParcelNumber.
 /// All master data is referenced by ID, with names stored for display purposes.
 /// </summary>
 public class Project
@@ -169,6 +181,10 @@ public class Project
 
     [JsonPropertyName("location")]
     public string Location { get; set; } = string.Empty;
+
+    /// <summary>Land parcel number (Parzellen-Nr.), optional; requested by authorities.</summary>
+    [JsonPropertyName("parcelNumber")]
+    public string ParcelNumber { get; set; } = string.Empty;
 
     [JsonPropertyName("configurations")]
     public List<AntennaConfiguration> AntennaConfigurations { get; set; } = new();

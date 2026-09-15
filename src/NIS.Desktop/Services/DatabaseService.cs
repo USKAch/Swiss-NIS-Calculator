@@ -179,6 +179,7 @@ public class DatabaseService : IDisposable
                 Callsign TEXT,
                 Address TEXT,
                 Location TEXT,
+                ParcelNumber TEXT,
                 CreatedAt TEXT NOT NULL,
                 ModifiedAt TEXT NOT NULL
             );
@@ -221,7 +222,27 @@ public class DatabaseService : IDisposable
                 ON Configurations(ProjectId, ConfigNumber);
         ");
 
+        ApplyAdditiveMigrations();
         EnsureDefaultModulations();
+    }
+
+    /// <summary>
+    /// Adds columns introduced after a database was created. Only additive
+    /// ALTER TABLE ... ADD COLUMN steps - never drops or clears user data.
+    /// </summary>
+    private void ApplyAdditiveMigrations()
+    {
+        // v0.9: parcel number on projects
+        if (!ColumnExists("Projects", "ParcelNumber"))
+        {
+            _connection.Execute("ALTER TABLE Projects ADD COLUMN ParcelNumber TEXT");
+        }
+    }
+
+    private bool ColumnExists(string table, string column)
+    {
+        var columns = _connection.Query<string>($"SELECT name FROM pragma_table_info('{table}')");
+        return columns.Any(c => string.Equals(c, column, StringComparison.OrdinalIgnoreCase));
     }
 
     private void EnsureDefaultModulations()

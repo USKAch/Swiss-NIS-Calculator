@@ -77,7 +77,7 @@ public partial class MainShellViewModel : ViewModelBase
     {
         // Load and apply settings
         var settings = Services.AppSettings.Load();
-        Strings.Instance.Language = settings.Language;
+        Strings.Instance.Language = settings.ResolveLanguage();
         SettingsViewModel.ApplyTheme(settings.ThemeMode);
 
         // Start with project list view
@@ -189,7 +189,8 @@ public partial class MainShellViewModel : ViewModelBase
                 if (HasProject) NavigateToProjectOverview();
                 break;
             case "MasterData":
-                NavigateToMasterDataManager();
+                // Started with --factory: master data opens in factory (admin) mode
+                NavigateToMasterDataManager(AppInfo.FactoryModeEnabled);
                 break;
             case "ImportProject":
                 _ = ImportProjectFileAsync();
@@ -212,6 +213,8 @@ public partial class MainShellViewModel : ViewModelBase
         _projectListViewModel.NavigateToNewProject = NavigateToProjectInfo;
         _projectListViewModel.NavigateToEditProject = async (id) => await LoadProjectFromDatabaseAsync(id);
         _projectListViewModel.ShowConfirmDialog = ShowConfirmDialog;
+        _projectListViewModel.ImportProject = ImportProjectFileAsync;
+        _projectListViewModel.ExportProject = ExportProjectByIdAsync;
         _projectListViewModel.RefreshProjects();
         SetView(_projectListViewModel, Strings.Instance.Home, "Swiss NIS Calculator");
         HasProject = false;
@@ -249,6 +252,7 @@ public partial class MainShellViewModel : ViewModelBase
         ProjectViewModel.Project.Callsign = vm.Callsign;
         ProjectViewModel.Project.Address = vm.Address;
         ProjectViewModel.Project.Location = vm.Location;
+        ProjectViewModel.Project.ParcelNumber = vm.ParcelNumber;
 
         // Save to database immediately so project appears in list
         var projectId = Services.DatabaseService.Instance.CreateProject(ProjectViewModel.Project);
@@ -271,7 +275,8 @@ public partial class MainShellViewModel : ViewModelBase
     {
         AutoSaveProjectIfDirty();
         _projectOverviewViewModel = new ProjectOverviewViewModel(ProjectViewModel);
-        _projectOverviewViewModel.NavigateToConfigurationEditor = NavigateToConfigurationEditor;
+        _projectOverviewViewModel.NavigateToConfigurationEditor = existing => NavigateToConfigurationEditor(existing);
+        _projectOverviewViewModel.NavigateToConfigurationEditorWithTemplate = template => NavigateToConfigurationEditor(null, template);
         _projectOverviewViewModel.NavigateToResults = NavigateToResults;
         _projectOverviewViewModel.NavigateToProjectInfo = NavigateToEditProjectInfo;
         _projectOverviewViewModel.NavigateBack = NavigateToProjectList;
@@ -290,6 +295,7 @@ public partial class MainShellViewModel : ViewModelBase
         _projectInfoViewModel.Callsign = ProjectViewModel.Project.Callsign;
         _projectInfoViewModel.Address = ProjectViewModel.Project.Address;
         _projectInfoViewModel.Location = ProjectViewModel.Project.Location;
+        _projectInfoViewModel.ParcelNumber = ProjectViewModel.Project.ParcelNumber;
         _projectInfoViewModel.IsDirty = false; // Reset after loading
         _projectInfoViewModel.NavigateBack = NavigateToProjectOverview;
         _projectInfoViewModel.ShowConfirmDialog = ShowConfirmDialog;
@@ -300,6 +306,7 @@ public partial class MainShellViewModel : ViewModelBase
             ProjectViewModel.Project.Callsign = vm.Callsign;
             ProjectViewModel.Project.Address = vm.Address;
             ProjectViewModel.Project.Location = vm.Location;
+            ProjectViewModel.Project.ParcelNumber = vm.ParcelNumber;
             ProjectViewModel.MarkDirty();
             NavigateToProjectOverview();
         };
@@ -307,7 +314,10 @@ public partial class MainShellViewModel : ViewModelBase
         SetView(_projectInfoViewModel, $"{Strings.Instance.Project} > {projectName} > {Strings.Instance.ProjectInfo}", $"Swiss NIS Calculator - {projectName}");
     }
 
-    public void NavigateToConfigurationEditor(NIS.Desktop.Models.AntennaConfiguration? existing = null)
+    /// <param name="existing">Configuration to edit in place, or null to add a new one.</param>
+    /// <param name="template">For a new configuration: values to prefill (copy of another configuration).</param>
+    public void NavigateToConfigurationEditor(NIS.Desktop.Models.AntennaConfiguration? existing = null,
+                                              NIS.Desktop.Models.AntennaConfiguration? template = null)
     {
         _configurationEditorViewModel = new ConfigurationEditorViewModel();
         _configurationEditorViewModel.MarkProjectDirty = ProjectViewModel.MarkDirty;
@@ -325,6 +335,12 @@ public partial class MainShellViewModel : ViewModelBase
         else
         {
             _configurationEditorViewModel.ConfigurationNumber = ProjectViewModel.Project.AntennaConfigurations.Count + 1;
+            if (template != null)
+            {
+                // Copy of an existing configuration: prefilled but not yet part of the project
+                _configurationEditorViewModel.LoadFromConfiguration(template);
+                _configurationEditorViewModel.IsDirty = true;
+            }
         }
         _configurationEditorViewModel.NavigateBack = NavigateToProjectOverview;
         _configurationEditorViewModel.NavigateToAntennaSelector = NavigateToAntennaSelector;
@@ -403,18 +419,18 @@ public partial class MainShellViewModel : ViewModelBase
     [RelayCommand]
     public void NavigateToMasterData()
     {
-        NavigateToMasterDataManager(false);
+        NavigateToMasterDataManager(AppInfo.FactoryModeEnabled);
     }
 
     /// <summary>
     /// Navigates to Master Data Manager.
     /// </summary>
-    /// <param name="isAdminMode">When true, allows editing embedded master data (Shift+Click)</param>
+    /// <param name="isAdminMode">When true, allows editing embedded master data (factory mode, see --factory)</param>
     public void NavigateToMasterDataManager(bool isAdminMode = false)
     {
         AutoSaveProjectIfDirty();
         _masterDataManagerViewModel = new MasterDataManagerViewModel(ProjectViewModel);
-        _masterDataManagerViewModel.IsAdminMode = isAdminMode;
+        _masterDataManagerViewModel.IsAdminMode = isAdminMode || AppInfo.FactoryModeEnabled;
         _masterDataManagerViewModel.NavigateBack = HasProject ? NavigateToProjectOverview : NavigateToProjectList;
         _masterDataManagerViewModel.NavigateToAntennaEditor = (a, ro) => NavigateToAntennaMasterEditor(a, ro);
         _masterDataManagerViewModel.NavigateToCableEditor = (c, ro) => NavigateToCableMasterEditor(c, ro);
@@ -534,7 +550,8 @@ public partial class MainShellViewModel : ViewModelBase
                         Operator = projectFile.Project.Operator,
                         Callsign = projectFile.Project.Callsign,
                         Address = projectFile.Project.Address,
-                        Location = projectFile.Project.Location
+                        Location = projectFile.Project.Location,
+                        ParcelNumber = projectFile.Project.ParcelNumber
                     };
 
                     foreach (var config in projectFile.Configurations)
@@ -672,9 +689,26 @@ public partial class MainShellViewModel : ViewModelBase
     /// </summary>
     private async Task ExportProjectFileAsync()
     {
-        if (StorageProvider == null || !HasProject) return;
+        if (!HasProject) return;
+        await ExportProjectFileAsync(ProjectViewModel.Project);
+    }
 
-        var project = ProjectViewModel.Project;
+    /// <summary>
+    /// Export a project from the project list without opening it.
+    /// </summary>
+    private async Task ExportProjectByIdAsync(int projectId)
+    {
+        var project = DatabaseService.Instance.GetProject(projectId);
+        if (project != null)
+        {
+            await ExportProjectFileAsync(project);
+        }
+    }
+
+    private async Task ExportProjectFileAsync(Project project)
+    {
+        if (StorageProvider == null) return;
+
         var suggestedName = !string.IsNullOrWhiteSpace(project.Name)
             ? project.Name
             : !string.IsNullOrWhiteSpace(project.Operator)
@@ -704,7 +738,8 @@ public partial class MainShellViewModel : ViewModelBase
                         Operator = project.Operator,
                         Callsign = project.Callsign,
                         Address = project.Address,
-                        Location = project.Location
+                        Location = project.Location,
+                        ParcelNumber = project.ParcelNumber
                     },
                     Configurations = project.AntennaConfigurations.Select(c =>
                     {
@@ -1006,6 +1041,7 @@ public partial class MainShellViewModel : ViewModelBase
         public string Callsign { get; set; } = string.Empty;
         public string Address { get; set; } = string.Empty;
         public string Location { get; set; } = string.Empty;
+        public string ParcelNumber { get; set; } = string.Empty;
     }
 
     private class ProjectFileConfiguration

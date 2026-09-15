@@ -4,6 +4,7 @@ Database migration script for NIS Calculator.
 
 Migration v0.6:
 - Adds BandsJson column to Radios table for band-specific power support
+- Adds ParcelNumber column to Projects table
 
 Migration v0.5:
 - Removes OkaDistanceMeters and OkaBuildingDampingDb columns from Configurations table
@@ -132,6 +133,18 @@ def migrate_database(db_path: Path):
                 changes_made = True
                 print("Column added successfully!")
 
+        # Migration v0.9: Add ParcelNumber column to Projects table
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='Projects'")
+        if cursor.fetchone():
+            columns = get_column_names(cursor, "Projects")
+
+            if "ParcelNumber" not in columns:
+                print("Adding ParcelNumber column to Projects table...")
+                print("(Land parcel number for authorities)")
+                cursor.execute("ALTER TABLE Projects ADD COLUMN ParcelNumber TEXT")
+                changes_made = True
+                print("Column added successfully!")
+
         conn.commit()
 
         if changes_made:
@@ -158,13 +171,14 @@ def main():
 
     db_path = project_root / "src" / "NIS.Desktop" / "Data" / "nisdata.db"
 
-    print("NIS Calculator Database Migration v0.6")
+    print("NIS Calculator Database Migration v0.9")
     print("=" * 45)
     print(f"Database: {db_path}")
     print()
     print("Migrations:")
     print("  v0.5: Remove OkaDistanceMeters/OkaBuildingDampingDb from Configurations")
     print("  v0.6: Add BandsJson to Radios (band-specific power)")
+    print("  v0.9: Add ParcelNumber to Projects")
     print()
 
     if db_path.exists():

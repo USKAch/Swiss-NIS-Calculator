@@ -61,6 +61,20 @@ public class Strings : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Delete)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Copy)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CustomSuffix)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CopySuffix)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Band)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ValidationManufacturerRequired)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ValidationModelRequired)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ValidationBandRequired)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ValidationGainRange)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ValidationPatternRange)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ValidationCableNameRequired)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ValidationAttenuationRequired)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ValidationAttenuationNonNegative)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ValidationPowerPositive)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ValidationBandPowerPositive)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MissingPatternTitle)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MissingPatternMessage)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CannotDelete)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ItemInUse)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ConfigurationIncomplete)));
@@ -95,6 +109,7 @@ public class Strings : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SettingsLanguage)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SettingsLanguageDescription)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SettingsDisplayLanguage)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LanguageSystem)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LanguageGerman)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LanguageEnglish)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LanguageFrench)));
@@ -117,6 +132,7 @@ public class Strings : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Operator)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Address)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Location)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ParcelNumber)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CreateProject)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Callsign)));
 
@@ -137,13 +153,13 @@ public class Strings : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Transmitter)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FeedLine)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(OperatingParameters)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(EvaluationPoint)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectAntenna)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Height)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HeightShort)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FrequencyBands)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectRadio)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Linear)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LinearType)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Power)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Cable)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectCable)));
@@ -174,6 +190,9 @@ public class Strings : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DistanceAntennaOka)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalculationResults)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ExportMarkdown)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CopyToClipboard)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CopiedToClipboard)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ClipboardUnavailable)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FactorySettings)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StatusHeader)));
 
@@ -266,7 +285,6 @@ public class Strings : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainE)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainEigw)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainDs)));
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcExplainOkaDistance)));
 
         // Radio Editor
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RadioDetails)));
@@ -302,6 +320,7 @@ public class Strings : INotifyPropertyChanged
     public string Delete => Get("Delete");
     public string Copy => Get("Copy");
     public string CustomSuffix => Get("CustomSuffix");
+    public string CopySuffix => Get("CopySuffix");
     public string CannotDelete => Get("CannotDelete");
     public string ItemInUse => Get("ItemInUse");
     public string ConfigurationIncomplete => Get("ConfigurationIncomplete");
@@ -340,12 +359,13 @@ public class Strings : INotifyPropertyChanged
     public string SettingsLanguage => Get("SettingsLanguage");
     public string SettingsLanguageDescription => Get("SettingsLanguageDescription");
     public string SettingsDisplayLanguage => Get("SettingsDisplayLanguage");
+    public string LanguageSystem => Get("LanguageSystem");
     public string LanguageGerman => Get("LanguageGerman");
     public string LanguageEnglish => Get("LanguageEnglish");
     public string LanguageFrench => Get("LanguageFrench");
     public string LanguageItalian => Get("LanguageItalian");
     public string SettingsAbout => Get("SettingsAbout");
-    public string SettingsAboutVersion => Get("SettingsAboutVersion");
+    public string SettingsAboutVersion => string.Format(Get("SettingsAboutVersion"), NIS.Desktop.Services.AppInfo.Version);
     public string SettingsAboutDescription => Get("SettingsAboutDescription");
     public string SettingsAboutCredits1 => Get("SettingsAboutCredits1");
     public string SettingsAboutCredits2 => Get("SettingsAboutCredits2");
@@ -366,6 +386,7 @@ public class Strings : INotifyPropertyChanged
     public string Callsign => Get("Callsign");
     public string Address => Get("Address");
     public string Location => Get("Location");
+    public string ParcelNumber => Get("ParcelNumber");
     public string CreateProject => Get("CreateProject");
 
     // ============================================================
@@ -390,7 +411,6 @@ public class Strings : INotifyPropertyChanged
     public string Transmitter => Get("Transmitter");
     public string FeedLine => Get("FeedLine");
     public string OperatingParameters => Get("OperatingParameters");
-    public string EvaluationPoint => Get("EvaluationPoint");
 
     // Antenna section
     public string SelectAntenna => Get("SelectAntenna");
@@ -398,10 +418,12 @@ public class Strings : INotifyPropertyChanged
     public string HeightShort => Get("HeightShort");
     public string FrequencyBands => Get("FrequencyBands");
     public string Bands => Get("Bands");
+    public string Band => Get("Band");
 
     // Transmitter section
     public string SelectRadio => Get("SelectRadio");
     public string Linear => Get("Linear");
+    public string LinearType => Get("LinearType");
     public string Power => Get("Power");
 
     // Feed line section
@@ -429,6 +451,18 @@ public class Strings : INotifyPropertyChanged
     public string OkaNameDuplicate => Get("OkaNameDuplicate");
     public string OkaDistanceRequired => Get("OkaDistanceRequired");
     public string OkaDampingNonNegative => Get("OkaDampingNonNegative");
+    public string ValidationManufacturerRequired => Get("ValidationManufacturerRequired");
+    public string ValidationModelRequired => Get("ValidationModelRequired");
+    public string ValidationBandRequired => Get("ValidationBandRequired");
+    public string ValidationGainRange => Get("ValidationGainRange");
+    public string ValidationPatternRange => Get("ValidationPatternRange");
+    public string ValidationCableNameRequired => Get("ValidationCableNameRequired");
+    public string ValidationAttenuationRequired => Get("ValidationAttenuationRequired");
+    public string ValidationAttenuationNonNegative => Get("ValidationAttenuationNonNegative");
+    public string ValidationPowerPositive => Get("ValidationPowerPositive");
+    public string ValidationBandPowerPositive => Get("ValidationBandPowerPositive");
+    public string MissingPatternTitle => Get("MissingPatternTitle");
+    public string MissingPatternMessage => Get("MissingPatternMessage");
     public string EditOka => Get("EditOka");
     public string OkaDampingHint => Get("OkaDampingHint");
     public string OkaDampingExamples => Get("OkaDampingExamples");
@@ -520,6 +554,9 @@ public class Strings : INotifyPropertyChanged
     public string HorizDistToMast => Get("HorizDistToMast");
     public string CalculationResults => Get("CalculationResults");
     public string ExportMarkdown => Get("ExportMarkdown");
+    public string CopyToClipboard => Get("CopyToClipboard");
+    public string CopiedToClipboard => Get("CopiedToClipboard");
+    public string ClipboardUnavailable => Get("ClipboardUnavailable");
     public string StatusHeader => Get("StatusHeader");
 
     // Short labels for two-line headers
@@ -613,7 +650,6 @@ public class Strings : INotifyPropertyChanged
     public string CalcExplainE => Get("CalcExplainE");
     public string CalcExplainEigw => Get("CalcExplainEigw");
     public string CalcExplainDs => Get("CalcExplainDs");
-    public string CalcExplainOkaDistance => Get("CalcExplainOkaDistance");
 
     // ============================================================
     // VALIDATION MESSAGES
@@ -647,8 +683,6 @@ public class Strings : INotifyPropertyChanged
     public string DataFolderDesc => Get("DataFolderDesc");
     public string Factory => Get("Factory");
     public string FactoryMode => Get("FactoryMode");
-    public string EnterFactoryPassword => Get("EnterFactoryPassword");
-    public string WrongPassword => Get("WrongPassword");
     public string ImportProject => Get("ImportProject");
     public string ExportProject => Get("ExportProject");
     public string ImportProjectConfirmMessage => Get("ImportProjectConfirmMessage");
@@ -765,6 +799,7 @@ public class Strings : INotifyPropertyChanged
         ["SettingsAboutDescription"] = "Settings",
         ["SettingsAboutCredits1"] = "Settings",
         ["SettingsAboutCredits2"] = "Settings",
+        ["LanguageSystem"] = "Settings",
         ["LanguageGerman"] = "Settings",
         ["LanguageEnglish"] = "Settings",
         ["LanguageFrench"] = "Settings",
@@ -779,6 +814,7 @@ public class Strings : INotifyPropertyChanged
         ["Callsign"] = "ProjectInfo",
         ["Address"] = "ProjectInfo",
         ["Location"] = "ProjectInfo",
+        ["ParcelNumber"] = "ProjectInfo",
         ["CreateProject"] = "ProjectInfo",
         // ProjectOverview
         ["Configurations"] = "ProjectOverview",
@@ -797,12 +833,12 @@ public class Strings : INotifyPropertyChanged
         ["Transmitter"] = "ConfigEditor",
         ["FeedLine"] = "ConfigEditor",
         ["OperatingParameters"] = "ConfigEditor",
-        ["EvaluationPoint"] = "ConfigEditor",
         ["SelectAntenna"] = "ConfigEditor",
         ["Height"] = "ConfigEditor",
         ["FrequencyBands"] = "ConfigEditor",
         ["SelectRadio"] = "ConfigEditor",
         ["Linear"] = "ConfigEditor",
+        ["LinearType"] = "ConfigEditor",
         ["Power"] = "ConfigEditor",
         ["Cable"] = "ConfigEditor",
         ["SelectCable"] = "ConfigEditor",
@@ -879,6 +915,9 @@ public class Strings : INotifyPropertyChanged
         ["DistanceAntennaOka"] = "Results",
         ["CalculationResults"] = "Results",
         ["ExportMarkdown"] = "Results",
+        ["CopyToClipboard"] = "Results",
+        ["CopiedToClipboard"] = "Results",
+        ["ClipboardUnavailable"] = "Results",
         ["StatusHeader"] = "Results",
         // Dialogs
         ["UnsavedChanges"] = "Dialogs",
@@ -901,6 +940,7 @@ public class Strings : INotifyPropertyChanged
         ["Delete"] = new() { ["de"] = "Löschen", ["fr"] = "Supprimer", ["it"] = "Elimina", ["en"] = "Delete" },
         ["Copy"] = new() { ["de"] = "Kopieren", ["fr"] = "Copier", ["it"] = "Copia", ["en"] = "Copy" },
         ["CustomSuffix"] = new() { ["de"] = "(custom)", ["fr"] = "(custom)", ["it"] = "(custom)", ["en"] = "(custom)" },
+        ["CopySuffix"] = new() { ["de"] = "(Kopie)", ["fr"] = "(copie)", ["it"] = "(copia)", ["en"] = "(copy)" },
         ["CannotDelete"] = new() { ["de"] = "Löschen nicht möglich", ["fr"] = "Suppression impossible", ["it"] = "Impossibile eliminare", ["en"] = "Cannot Delete" },
         ["ItemInUse"] = new() { ["de"] = "Dieses Element wird in folgenden Konfigurationen verwendet:", ["fr"] = "Cet élément est utilisé dans les configurations suivantes:", ["it"] = "Questo elemento è utilizzato nelle seguenti configurazioni:", ["en"] = "This item is used in the following configurations:" },
         ["ConfigurationIncomplete"] = new() { ["de"] = "Konfiguration unvollständig", ["fr"] = "Configuration incomplète", ["it"] = "Configurazione incompleta", ["en"] = "Configuration Incomplete" },
@@ -937,15 +977,16 @@ public class Strings : INotifyPropertyChanged
         ["SettingsLanguage"] = new() { ["de"] = "Sprache", ["fr"] = "Langue", ["it"] = "Lingua", ["en"] = "Language" },
         ["SettingsLanguageDescription"] = new() { ["de"] = "Bevorzugte Sprache wählen", ["fr"] = "Choisissez votre langue préférée", ["it"] = "Scegli la lingua preferita", ["en"] = "Choose your preferred language" },
         ["SettingsDisplayLanguage"] = new() { ["de"] = "Anzeigesprache", ["fr"] = "Langue d'affichage", ["it"] = "Lingua di visualizzazione", ["en"] = "Display Language" },
+        ["LanguageSystem"] = new() { ["de"] = "System", ["fr"] = "Système", ["it"] = "Sistema", ["en"] = "System" },
         ["LanguageGerman"] = new() { ["de"] = "Deutsch", ["fr"] = "Allemand", ["it"] = "Tedesco", ["en"] = "German" },
         ["LanguageEnglish"] = new() { ["de"] = "Englisch", ["fr"] = "Anglais", ["it"] = "Inglese", ["en"] = "English" },
         ["LanguageFrench"] = new() { ["de"] = "Französisch", ["fr"] = "Français", ["it"] = "Francese", ["en"] = "French" },
         ["LanguageItalian"] = new() { ["de"] = "Italienisch", ["fr"] = "Italien", ["it"] = "Italiano", ["en"] = "Italian" },
         ["SettingsAbout"] = new() { ["de"] = "Über", ["fr"] = "À propos", ["it"] = "Informazioni", ["en"] = "About" },
-        ["SettingsAboutVersion"] = new() { ["de"] = "Version 2.0", ["fr"] = "Version 2.0", ["it"] = "Versione 2.0", ["en"] = "Version 2.0" },
+        ["SettingsAboutVersion"] = new() { ["de"] = "Version {0}", ["fr"] = "Version {0}", ["it"] = "Versione {0}", ["en"] = "Version {0}" },
         ["SettingsAboutDescription"] = new() { ["de"] = "NISV-konformer Feldstärkerechner für Schweizer Funkamateure.", ["fr"] = "Calculateur de champ conforme à l'ORNI pour les radioamateurs en Suisse.", ["it"] = "Calcolatore di intensità di campo conforme all'ORNI per radioamatori in Svizzera.", ["en"] = "NISV-compliant field strength calculator for amateur radio operators in Switzerland." },
         ["SettingsAboutCredits1"] = new() { ["de"] = "Ursprünglich entwickelt von HB9ZS", ["fr"] = "Développé à l'origine par HB9ZS", ["it"] = "Sviluppato originariamente da HB9ZS", ["en"] = "Originally developed by HB9ZS" },
-        ["SettingsAboutCredits2"] = new() { ["de"] = "Neu geschrieben mit Avalonia UI und FluentAvalonia", ["fr"] = "Réécrit avec Avalonia UI et FluentAvalonia", ["it"] = "Riscritto con Avalonia UI e FluentAvalonia", ["en"] = "Rewritten with Avalonia UI and FluentAvalonia" },
+        ["SettingsAboutCredits2"] = new() { ["de"] = "Weiterentwickelt im Auftrag der USKA von Andreas Spiess, HB9BLA", ["fr"] = "Développement poursuivi sur mandat de l'USKA par Andreas Spiess, HB9BLA", ["it"] = "Sviluppo proseguito su mandato dell'USKA da Andreas Spiess, HB9BLA", ["en"] = "Further developed on behalf of USKA by Andreas Spiess, HB9BLA" },
         ["NewProject"] = new() { ["de"] = "Neues Projekt", ["fr"] = "Nouveau projet", ["it"] = "Nuovo progetto", ["en"] = "New Project" },
         ["MasterData"] = new() { ["de"] = "Stammdaten", ["fr"] = "Données de base", ["it"] = "Dati master", ["en"] = "Master Data" },
         ["NisvCompliance"] = new() { ["de"] = "NISV-Konformitätsrechner für Schweizer Amateurfunkstationen", ["fr"] = "Calculateur de conformité ORNI pour stations radioamateurs suisses", ["it"] = "Calcolatore conformità ORNI per stazioni radioamatoriali svizzere", ["en"] = "NISV Compliance Calculator for Swiss Amateur Radio Stations" },
@@ -958,8 +999,9 @@ public class Strings : INotifyPropertyChanged
         ["ProjectInfo"] = new() { ["de"] = "Projektinformationen", ["fr"] = "Informations projet", ["it"] = "Informazioni progetto", ["en"] = "Project Information" },
         ["ProjectName"] = new() { ["de"] = "Projektname", ["fr"] = "Nom du projet", ["it"] = "Nome progetto", ["en"] = "Project Name" },
         ["Operator"] = new() { ["de"] = "Betreiber", ["fr"] = "Opérateur", ["it"] = "Operatore", ["en"] = "Operator" },
-        ["Address"] = new() { ["de"] = "Adresse", ["fr"] = "Adresse", ["it"] = "Indirizzo", ["en"] = "Address" },
-        ["Location"] = new() { ["de"] = "Ort", ["fr"] = "Localité", ["it"] = "Località", ["en"] = "Location" },
+        ["Address"] = new() { ["de"] = "Strasse", ["fr"] = "Rue", ["it"] = "Via", ["en"] = "Street" },
+        ["Location"] = new() { ["de"] = "PLZ, Ort", ["fr"] = "NPA, Localité", ["it"] = "CAP, Località", ["en"] = "ZIP, City" },
+        ["ParcelNumber"] = new() { ["de"] = "Parzellen-Nr.", ["fr"] = "N° de parcelle", ["it"] = "N. particella", ["en"] = "Parcel no." },
         ["CreateProject"] = new() { ["de"] = "Projekt erstellen", ["fr"] = "Créer projet", ["it"] = "Crea progetto", ["en"] = "Create Project" },
 
         // Project Overview
@@ -980,16 +1022,17 @@ public class Strings : INotifyPropertyChanged
         ["Transmitter"] = new() { ["de"] = "Sender", ["fr"] = "Émetteur", ["it"] = "Trasmettitore", ["en"] = "Transmitter" },
         ["FeedLine"] = new() { ["de"] = "Speiseleitung", ["fr"] = "Ligne d'alimentation", ["it"] = "Linea di alimentazione", ["en"] = "Feed Line" },
         ["OperatingParameters"] = new() { ["de"] = "Betriebsparameter", ["fr"] = "Paramètres d'exploitation", ["it"] = "Parametri operativi", ["en"] = "Operating Parameters" },
-        ["EvaluationPoint"] = new() { ["de"] = "Beurteilungspunkt (OKA)", ["fr"] = "Point d'évaluation (LSM)", ["it"] = "Punto di valutazione (LST)", ["en"] = "Evaluation Point (PSS)" },
 
         ["SelectAntenna"] = new() { ["de"] = "-- Antenne wählen --", ["fr"] = "-- Sélectionner antenne --", ["it"] = "-- Seleziona antenna --", ["en"] = "-- Select Antenna --" },
         ["Height"] = new() { ["de"] = "Höhe", ["fr"] = "Hauteur", ["it"] = "Altezza", ["en"] = "Height" },
         ["HeightShort"] = new() { ["de"] = "Höhe", ["fr"] = "Haut.", ["it"] = "Alt.", ["en"] = "Height" },
         ["FrequencyBands"] = new() { ["de"] = "Frequenzbänder", ["fr"] = "Bandes de fréquence", ["it"] = "Bande di frequenza", ["en"] = "Frequency Bands" },
+        ["Band"] = new() { ["de"] = "Band", ["fr"] = "Bande", ["it"] = "Banda", ["en"] = "Band" },
         ["Bands"] = new() { ["de"] = "Bänder", ["fr"] = "Bandes", ["it"] = "Bande", ["en"] = "Bands" },
 
         ["SelectRadio"] = new() { ["de"] = "-- Transceiver wählen --", ["fr"] = "-- Sélectionner émetteur --", ["it"] = "-- Seleziona ricetrasmettitore --", ["en"] = "-- Select Radio --" },
         ["Linear"] = new() { ["de"] = "Endstufe", ["fr"] = "Amplificateur", ["it"] = "Amplificatore", ["en"] = "Linear" },
+        ["LinearType"] = new() { ["de"] = "Typ", ["fr"] = "Type", ["it"] = "Tipo", ["en"] = "Type" },
         ["Power"] = new() { ["de"] = "Leistung", ["fr"] = "Puissance", ["it"] = "Potenza", ["en"] = "Power" },
 
         ["Cable"] = new() { ["de"] = "Kabel", ["fr"] = "Câble", ["it"] = "Cavo", ["en"] = "Cable" },
@@ -1013,6 +1056,18 @@ public class Strings : INotifyPropertyChanged
         ["OkaNameRequired"] = new() { ["de"] = "Bitte eine Bezeichnung eingeben.", ["fr"] = "Veuillez entrer une désignation.", ["it"] = "Inserire una designazione.", ["en"] = "Please enter a name." },
         ["OkaNameDuplicate"] = new() { ["de"] = "Diese Bezeichnung existiert bereits.", ["fr"] = "Cette désignation existe déjà.", ["it"] = "Questa designazione esiste già.", ["en"] = "This name already exists." },
         ["OkaDistanceRequired"] = new() { ["de"] = "Die Distanz muss grösser als 0 sein.", ["fr"] = "La distance doit être supérieure à 0.", ["it"] = "La distanza deve essere maggiore di 0.", ["en"] = "Distance must be greater than 0." },
+        ["ValidationManufacturerRequired"] = new() { ["de"] = "Bitte einen Hersteller eingeben.", ["fr"] = "Veuillez entrer un fabricant.", ["it"] = "Inserire un produttore.", ["en"] = "Please enter a manufacturer." },
+        ["ValidationModelRequired"] = new() { ["de"] = "Bitte ein Modell eingeben.", ["fr"] = "Veuillez entrer un modèle.", ["it"] = "Inserire un modello.", ["en"] = "Please enter a model." },
+        ["ValidationBandRequired"] = new() { ["de"] = "Bitte mindestens ein Frequenzband hinzufügen.", ["fr"] = "Veuillez ajouter au moins une bande de fréquence.", ["it"] = "Aggiungere almeno una banda di frequenza.", ["en"] = "Please add at least one frequency band." },
+        ["ValidationGainRange"] = new() { ["de"] = "Der Gewinn für das {0}-Band muss zwischen -20 und 50 dBi liegen.", ["fr"] = "Le gain pour la bande {0} doit être compris entre -20 et 50 dBi.", ["it"] = "Il guadagno per la banda {0} deve essere compreso tra -20 e 50 dBi.", ["en"] = "Gain for the {0} band must be between -20 and 50 dBi." },
+        ["ValidationPatternRange"] = new() { ["de"] = "Die Werte des Vertikaldiagramms müssen zwischen 0 und 60 dB liegen.", ["fr"] = "Les valeurs du diagramme vertical doivent être comprises entre 0 et 60 dB.", ["it"] = "I valori del diagramma verticale devono essere compresi tra 0 e 60 dB.", ["en"] = "Vertical pattern values must be between 0 and 60 dB." },
+        ["ValidationCableNameRequired"] = new() { ["de"] = "Bitte eine Kabelbezeichnung eingeben.", ["fr"] = "Veuillez entrer une désignation de câble.", ["it"] = "Inserire una designazione del cavo.", ["en"] = "Please enter a cable name." },
+        ["ValidationAttenuationRequired"] = new() { ["de"] = "Bitte mindestens einen Dämpfungswert eingeben.", ["fr"] = "Veuillez entrer au moins une valeur d'atténuation.", ["it"] = "Inserire almeno un valore di attenuazione.", ["en"] = "Please enter at least one attenuation value." },
+        ["ValidationAttenuationNonNegative"] = new() { ["de"] = "Dämpfungswerte dürfen nicht negativ sein.", ["fr"] = "Les valeurs d'atténuation ne peuvent pas être négatives.", ["it"] = "I valori di attenuazione non possono essere negativi.", ["en"] = "Attenuation values must be non-negative." },
+        ["ValidationPowerPositive"] = new() { ["de"] = "Die Leistung muss grösser als 0 W sein.", ["fr"] = "La puissance doit être supérieure à 0 W.", ["it"] = "La potenza deve essere maggiore di 0 W.", ["en"] = "Power must be greater than 0 W." },
+        ["ValidationBandPowerPositive"] = new() { ["de"] = "Die Leistung für das {0}-Band muss grösser als 0 W sein.", ["fr"] = "La puissance pour la bande {0} doit être supérieure à 0 W.", ["it"] = "La potenza per la banda {0} deve essere maggiore di 0 W.", ["en"] = "Power for the {0} band must be greater than 0 W." },
+        ["MissingPatternTitle"] = new() { ["de"] = "Vertikaldiagramm fehlt", ["fr"] = "Diagramme vertical manquant", ["it"] = "Diagramma verticale mancante", ["en"] = "Vertical pattern missing" },
+        ["MissingPatternMessage"] = new() { ["de"] = "Für folgende Bänder wurde kein Vertikaldiagramm eingegeben:\n{0}\n\nOhne Diagramm wird mit 0 dB Dämpfung in alle Richtungen gerechnet (konservativ, ergibt höhere Feldstärken).\n\nDiagramm jetzt automatisch aus Antennentyp und Gewinn berechnen?", ["fr"] = "Aucun diagramme vertical n'a été saisi pour les bandes suivantes :\n{0}\n\nSans diagramme, le calcul utilise 0 dB d'atténuation dans toutes les directions (conservateur, champs plus élevés).\n\nCalculer automatiquement le diagramme à partir du type d'antenne et du gain ?", ["it"] = "Per le seguenti bande non è stato inserito alcun diagramma verticale:\n{0}\n\nSenza diagramma il calcolo utilizza 0 dB di attenuazione in tutte le direzioni (conservativo, campi più elevati).\n\nCalcolare ora automaticamente il diagramma dal tipo di antenna e dal guadagno?", ["en"] = "No vertical pattern was entered for the following bands:\n{0}\n\nWithout a pattern, 0 dB attenuation is assumed in all directions (conservative, yields higher field strengths).\n\nGenerate the pattern automatically from antenna type and gain now?" },
         ["OkaDampingNonNegative"] = new() { ["de"] = "Die Dämpfung darf nicht negativ sein.", ["fr"] = "L'atténuation ne peut pas être négative.", ["it"] = "L'attenuazione non può essere negativa.", ["en"] = "Damping cannot be negative." },
         ["OkaDampingHint"] = new() { ["de"] = "0 dB für Aussenbereich, typisch 6-12 dB für Innenräume", ["fr"] = "0 dB pour l'extérieur, typiquement 6-12 dB pour l'intérieur", ["it"] = "0 dB per l'esterno, tipicamente 6-12 dB per interni", ["en"] = "0 dB for outdoor, typically 6-12 dB for indoor" },
         ["OkaDampingExamples"] = new() {
@@ -1103,6 +1158,9 @@ public class Strings : INotifyPropertyChanged
         ["HorizDistToMast"] = new() { ["de"] = "horizontale Distanz zum Antennenmast", ["fr"] = "distance horizontale au mât", ["it"] = "distanza orizzontale al palo", ["en"] = "horizontal distance to antenna mast" },
         ["CalculationResults"] = new() { ["de"] = "Berechnungsergebnisse", ["fr"] = "Résultats du calcul", ["it"] = "Risultati del calcolo", ["en"] = "Calculation Results" },
         ["ExportMarkdown"] = new() { ["de"] = "Markdown exportieren", ["fr"] = "Exporter Markdown", ["it"] = "Esporta Markdown", ["en"] = "Export Markdown" },
+        ["CopyToClipboard"] = new() { ["de"] = "In Zwischenablage kopieren", ["fr"] = "Copier dans le presse-papiers", ["it"] = "Copia negli appunti", ["en"] = "Copy to clipboard" },
+        ["CopiedToClipboard"] = new() { ["de"] = "Ergebnisse in die Zwischenablage kopiert", ["fr"] = "Résultats copiés dans le presse-papiers", ["it"] = "Risultati copiati negli appunti", ["en"] = "Results copied to clipboard" },
+        ["ClipboardUnavailable"] = new() { ["de"] = "Zwischenablage nicht verfügbar", ["fr"] = "Presse-papiers non disponible", ["it"] = "Appunti non disponibili", ["en"] = "Clipboard not available" },
         ["StatusHeader"] = new() { ["de"] = "Status", ["fr"] = "Statut", ["it"] = "Stato", ["en"] = "Status" },
 
         // Short labels for two-line headers
@@ -1174,16 +1232,14 @@ public class Strings : INotifyPropertyChanged
         ["DataFolderDesc"] = new() { ["de"] = "Öffnet den Datenordner mit der Datenbank (nisdata.db) für Git-Commits", ["fr"] = "Ouvre le dossier de données avec la base de données (nisdata.db) pour les commits Git", ["it"] = "Apre la cartella dati con il database (nisdata.db) per i commit Git", ["en"] = "Opens the data folder containing the database (nisdata.db) for Git commits" },
         ["Factory"] = new() { ["de"] = "Werksmodus", ["fr"] = "Mode usine", ["it"] = "Modalità fabbrica", ["en"] = "Factory Mode" },
         ["FactoryMode"] = new() { ["de"] = "WERKSMODUS", ["fr"] = "MODE USINE", ["it"] = "MODALITÀ FABBRICA", ["en"] = "FACTORY MODE" },
-        ["EnterFactoryPassword"] = new() { ["de"] = "Bitte Werkspasswort eingeben:", ["fr"] = "Veuillez entrer le mot de passe usine:", ["it"] = "Inserisci la password di fabbrica:", ["en"] = "Please enter factory password:" },
-        ["WrongPassword"] = new() { ["de"] = "Falsches Passwort", ["fr"] = "Mot de passe incorrect", ["it"] = "Password errata", ["en"] = "Wrong password" },
 
         // Calculation Report Labels
         ["CalcTitlePrefix"] = new() { ["de"] = "Immissionsberechnung für", ["fr"] = "Calcul d'immission pour", ["it"] = "Calcolo immissione per", ["en"] = "Emission Calculation for" },
         ["CalcSubtitle"] = new() { ["de"] = "NISV Feldstärkeberechnung", ["fr"] = "Calcul de l'intensité du champ ORNI", ["it"] = "Calcolo intensità campo ORNI", ["en"] = "NISV Field Strength Calculation" },
         ["CalcOperator"] = new() { ["de"] = "Betreiber", ["fr"] = "Opérateur", ["it"] = "Operatore", ["en"] = "Operator" },
         ["CalcCallsign"] = new() { ["de"] = "Rufzeichen", ["fr"] = "Indicatif", ["it"] = "Nominativo", ["en"] = "Callsign" },
-        ["CalcAddress"] = new() { ["de"] = "Adresse", ["fr"] = "Adresse", ["it"] = "Indirizzo", ["en"] = "Address" },
-        ["CalcLocation"] = new() { ["de"] = "Standort", ["fr"] = "Emplacement", ["it"] = "Posizione", ["en"] = "Location" },
+        ["CalcAddress"] = new() { ["de"] = "Strasse", ["fr"] = "Rue", ["it"] = "Via", ["en"] = "Street" },
+        ["CalcLocation"] = new() { ["de"] = "PLZ, Ort", ["fr"] = "NPA, Localité", ["it"] = "CAP, Località", ["en"] = "ZIP, City" },
         ["CalcDate"] = new() { ["de"] = "Datum", ["fr"] = "Date", ["it"] = "Data", ["en"] = "Date" },
         ["CalcAllCompliant"] = new() { ["de"] = "ALLE KONFIGURATIONEN KONFORM", ["fr"] = "TOUTES LES CONFIGURATIONS CONFORMES", ["it"] = "TUTTE LE CONFIGURAZIONI CONFORMI", ["en"] = "ALL CONFIGURATIONS COMPLIANT" },
         ["CalcNonCompliantDetected"] = new() { ["de"] = "NICHT KONFORME KONFIGURATIONEN ERKANNT", ["fr"] = "CONFIGURATIONS NON CONFORMES DÉTECTÉES", ["it"] = "CONFIGURAZIONI NON CONFORMI RILEVATE", ["en"] = "NON-COMPLIANT CONFIGURATIONS DETECTED" },

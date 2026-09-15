@@ -25,6 +25,7 @@ public static class SwissNisLimits
         { 24.0, 28 },    // 12m band
         { 28.0, 28 },    // 10m band
         { 50.0, 28 },    // 6m band
+        { 70.0, 28 },    // 4m band (70.0-70.5 MHz, secondary allocation in CH)
         { 144.0, 28 },   // 2m band
         { 430.0, 28.6 }, // 70cm band
         { 1240.0, 48.5 },// 23cm band
@@ -48,7 +49,7 @@ public static class SwissNisLimits
             < 5 => 46.5,      // 3.5 MHz (80m)
             < 9 => 32.9,      // 7 MHz (40m) - 87/√7
             < 40 => 28,       // 10-28 MHz (30m-10m)
-            < 100 => 28,      // 50 MHz (6m)
+            < 100 => 28,      // 50 MHz (6m), 70 MHz (4m)
             < 300 => 28,      // 144 MHz (2m)
             < 800 => 28.6,    // 430 MHz (70cm)
             < 2000 => 48.5,   // 1240 MHz (23cm)

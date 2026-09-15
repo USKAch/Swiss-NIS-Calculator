@@ -31,6 +31,8 @@
                     <TextBlock Text="{Binding ComplianceSummary}" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,3,0,0"/>
                 </StackPanel>
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <Button Content="{Binding CopyToClipboard, Source={x:Static loc:Strings.Instance}}" Command="{Binding CopyToClipboardCommand}"
+                            Padding="15,8"/>
                     <Button Content="{Binding ExportMarkdown, Source={x:Static loc:Strings.Instance}}" Command="{Binding ExportMarkdownCommand}"
                             Background="{DynamicResource PrimaryButtonBrush}" Foreground="{DynamicResource HeaderForegroundBrush}" Padding="15,8"/>
                     <Button Content="{Binding ExportPdf, Source={x:Static loc:Strings.Instance}}" Command="{Binding ExportPdfCommand}"
@@ -71,8 +73,8 @@
                                         <!-- Table Header (two lines: label + unit) -->
                                         <Grid ColumnDefinitions="45,50,55,55,50,70,55,50,55,55,60,60,55" Background="{DynamicResource SystemControlBackgroundAltMediumLowBrush}" Margin="-10,-10,-10,0">
                                             <StackPanel HorizontalAlignment="Center" Margin="0,6,0,4">
-                                                <TextBlock Text="f" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
-                                                <TextBlock Text="MHz" FontSize="11" Foreground="{DynamicResource TextFillColorTertiaryBrush}" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="{Binding Band, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+                                                <TextBlock Text=" " FontSize="11" HorizontalAlignment="Center"/>
                                             </StackPanel>
                                             <StackPanel Grid.Column="1" HorizontalAlignment="Center" Margin="0,6,0,4">
                                                 <TextBlock Text="{Binding PmittelLbl, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
@@ -130,7 +132,7 @@
                                                 <DataTemplate>
                                                     <Border Padding="0,4" Margin="0,1">
                                                         <Grid ColumnDefinitions="45,50,55,55,50,70,55,50,55,55,60,60,55" Margin="-10,0,0,0">
-                                                            <TextBlock Text="{Binding FrequencyMHz, StringFormat='{}{0:F0}'}" FontSize="13" HorizontalAlignment="Center"/>
+                                                            <TextBlock Text="{Binding FrequencyMHz, Converter={StaticResource BandNameConverter}}" FontSize="13" HorizontalAlignment="Center"/>
                                                             <TextBlock Grid.Column="1" Text="{Binding MeanPowerW, StringFormat='{}{0:F1}'}" FontSize="13" HorizontalAlignment="Center"/>
                                                             <TextBlock Grid.Column="2" Text="{Binding TotalLossDb, StringFormat='{}{0:F1}'}" FontSize="13" HorizontalAlignment="Center"/>
                                                             <TextBlock Grid.Column="3" Text="{Binding GainDbi, StringFormat='{}{0:F1}'}" FontSize="13" HorizontalAlignment="Center"/>

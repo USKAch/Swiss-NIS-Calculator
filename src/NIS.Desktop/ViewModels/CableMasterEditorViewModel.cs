@@ -222,7 +222,7 @@ public partial class CableMasterEditorViewModel : ViewModelBase
 
         if (string.IsNullOrWhiteSpace(Name))
         {
-            ValidationMessage = "Please enter a cable name.";
+            ValidationMessage = Localization.Strings.Instance.ValidationCableNameRequired;
             return;
         }
 
@@ -231,14 +231,14 @@ public partial class CableMasterEditorViewModel : ViewModelBase
         // At least one attenuation frequency should be provided (FSD 6.3)
         if (attenuationDict.Count == 0)
         {
-            ValidationMessage = "Please enter at least one attenuation value.";
+            ValidationMessage = Localization.Strings.Instance.ValidationAttenuationRequired;
             return;
         }
 
         // Attenuation values must be non-negative (FSD 6.3)
         if (attenuationDict.Any(kvp => kvp.Value < 0))
         {
-            ValidationMessage = "Attenuation values must be non-negative.";
+            ValidationMessage = Localization.Strings.Instance.ValidationAttenuationNonNegative;
             return;
         }
 

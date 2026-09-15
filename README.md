@@ -18,14 +18,15 @@ Swiss NIS Calculator is a modern desktop application for calculating electromagn
 ### Key Features
 
 - **Complete NIS Calculation** - Field strength (V/m), EIRP, ERP, and safety distances
-- **Multi-Band Support** - HF through SHF frequency bands (1.8 MHz - 10 GHz)
-- **Antenna Pattern Database** - Vertical radiation patterns with 10-degree resolution
+- **Multi-Band Support** - All Swiss amateur bands from 160m to 3cm (1.8 MHz - 10 GHz), including 4m (70 MHz)
+- **Antenna Pattern Database** - Vertical radiation patterns with 10-degree resolution, auto-generated from antenna type and gain if not available
 - **Cable Loss Calculation** - Frequency-dependent attenuation for common cable types
-- **Swiss Limit Compliance** - Automatic verification against NISV limits
-- **Master Data Management** - Full editors for antennas, cables, and radios
+- **Swiss Limit Compliance** - Automatic verification against NISV limits, per band and per configuration
+- **Configuration Variants** - Copy a configuration to quickly create a variant (e.g. with more power)
+- **Master Data Management** - Full editors for antennas, cables, radios and evaluation points
 - **Project Import/Export** - Share projects via .nisproj files with embedded user master data
-- **PDF Export** - One page per configuration with column explanations
-- **Multi-Language Support** - German, French, Italian, English
+- **Reports** - PDF export (one page per configuration with column explanations), Markdown export, copy to clipboard
+- **Multi-Language Support** - German, French, Italian, English, or follow the system language
 
 ## Screenshots
 
@@ -96,27 +97,50 @@ dotnet publish src/NIS.Desktop -c Release -r linux-x64 --self-contained
 
 ### Quick Start
 
-1. **Create a New Project** - Enter station details (callsign, operator, address)
-2. **Add Antenna Configuration** - Select radio, cable, and antenna from master data
-3. **Set Evaluation Point** - Define distance and building damping (OKA/LSM/LST/PSS depending on language)
-4. **Calculate** - View field strength results and compliance status
+1. **Create a Project** - Enter station details (operator, callsign, street, ZIP/city, optional parcel number)
+2. **Add Antenna Configuration** - Select radio, cable, and antenna from master data; add an amplifier if used
+3. **Set Evaluation Point** - Choose the place of short-term stay (OKA/LSM/LST/PSS depending on language) with its distance and building damping
+4. **Calculate** - View field strength results and compliance status per band
+5. **Export** - PDF or Markdown report, or copy the report to the clipboard
+6. **Variants** - Use *Copy* on a configuration to create a second variant, e.g. with more power
+
+The navigation pane has three entries: **Projects**, **Master Data** and **Settings**. Everything else (configurations, calculation, reports) lives inside the project.
 
 ### Import/Export Projects
 
 Share station configurations with other users via .nisproj files:
 
-- **Export Project** - Save your project to a portable .nisproj file (includes user-specific master data)
-- **Import Project** - Load a project from a .nisproj file (creates missing master data automatically)
-
-Access these features directly from the navigation pane.
+- **Export** - Button on each row of the project list; saves the project to a portable .nisproj file (includes user-specific master data)
+- **Import Project** - Button next to *Create Project* in the project list; loads a .nisproj file (creates missing master data automatically)
 
 ### Master Data Management
 
-Access the Master Data Manager from the Welcome screen to:
+Open **Master Data** from the navigation pane to:
 
-- **Antennas** - Add/edit antennas with frequency bands and vertical radiation patterns
+- **Antennas** - Add/edit antennas with bands, gain and vertical radiation patterns (auto-generated on request)
 - **Cables** - Add/edit cables with frequency-dependent attenuation tables
-- **Radios** - Add/edit transmitter specifications
+- **Radios** - Add/edit transmitter specifications, optionally with band-specific power
+- **Evaluation Points** - Places of short-term stay with default distance and building damping
+
+Shipped master data is read-only; use *Copy* to create an editable variant.
+
+### Settings
+
+- **Theme** - System / Light / Dark
+- **Language** - System / Deutsch / Français / Italiano / English
+- **About** - Version and credits
+
+### Factory Mode (maintainers)
+
+Start the app with `--factory` to edit the shipped master data, constants, modulations and bands, and to export/import the complete factory data set:
+
+```bash
+NIS.Desktop.exe --factory
+# or during development
+dotnet run --project src/NIS.Desktop -- --factory
+```
+
+There is no separate menu entry; with the switch, *Master Data* opens in factory mode (red indicator). See the [Functional Specification](docs/NIS_fsd.md), section 9.
 
 ## Technical Details
 
@@ -139,6 +163,7 @@ Safety Distance:   ds = 1.6 x sqrt(30 x Pm x A x G x AG) / EIGW
 | 7 MHz     | 32.4        |
 | 10-28 MHz | 28.0        |
 | 50 MHz    | 28.0        |
+| 70 MHz    | 28.0        |
 | 144 MHz   | 28.0        |
 | 432 MHz   | 28.6        |
 | 1240 MHz  | 48.5        |
@@ -150,16 +175,17 @@ Safety Distance:   ds = 1.6 x sqrt(30 x Pm x A x G x AG) / EIGW
 Swiss-NIS-Calculator/
 +-- src/
 |   +-- NIS.Desktop/           # Avalonia UI application
-|       +-- Calculations/      # Field strength calculator, pattern generator
-|       +-- Controls/          # Custom controls (PolarDiagram)
-|       +-- Localization/      # Multi-language support
+|       +-- Calculations/      # Field strength calculator, NISV limits, pattern generator
+|       +-- Converters/        # XAML value converters (band names, compliance colors)
+|       +-- Localization/      # Multi-language support (Strings.cs)
 |       +-- Models/            # Data models
-|       +-- Services/          # Database, settings, PDF export
+|       +-- Services/          # Database, repositories, settings, master data, PDF export
 |       +-- ViewModels/        # MVVM ViewModels
 |       +-- Views/             # XAML Views
-|       +-- Data/              # SQLite database, JSON backups
-+-- docs/                      # Documentation
-+-- tests/                     # Unit tests
+|       +-- Data/              # Shipped SQLite database
++-- docs/                      # Functional specification, formulas
++-- scripts/                   # Database migration script
++-- tests/                     # xUnit tests
 +-- legacy/                    # Original VB6 source (reference)
 ```
 
@@ -176,7 +202,11 @@ Swiss-NIS-Calculator/
 ## Documentation
 
 - [Functional Specification](docs/NIS_fsd.md) - Detailed feature specification
-- [API Reference](docs/) - Core library documentation
+- [Calculation Formulas](docs/nis-formulas.md) - NIS formulas reference
+
+## Versioning & Releases
+
+The version is derived from git tags ([MinVer](https://github.com/adamralph/minver)); tags are plain semantic versions such as `0.9.1`. A release is built by running the *Build and Release* workflow with the version as input; it builds Windows, macOS and Linux packages, stamps them with that version and creates the tag. Development builds between tags show a pre-release version such as `0.9.2-alpha.0.5`.
 
 ## Contributing
 
@@ -195,6 +225,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Acknowledgments
 
 - Original VB6 application by HB9ZS
+- Further development on behalf of [USKA](https://www.uska.ch/) by Andreas Spiess, HB9BLA
 - Swiss NISV regulations and calculation methodology
 - [Avalonia UI](https://avaloniaui.net/) for the cross-platform UI framework
 

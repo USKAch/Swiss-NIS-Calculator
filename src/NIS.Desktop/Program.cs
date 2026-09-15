@@ -11,6 +11,7 @@ class Program
     {
         // Ensure portable app folders exist before anything else
         AppPaths.EnsureFoldersExist();
+        AppInfo.ParseCommandLine(args);
 
         BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
     }

@@ -43,6 +43,8 @@ public partial class ProjectListViewModel : ViewModelBase
     // Navigation callbacks
     public Action<string>? NavigateToNewProject { get; set; }
     public Action<int>? NavigateToEditProject { get; set; }
+    public Func<Task>? ImportProject { get; set; }
+    public Func<int, Task>? ExportProject { get; set; }
     public new Func<string, string, Task<bool>>? ShowConfirmDialog { get; set; }
 
     public ProjectListViewModel()
@@ -74,7 +76,7 @@ public partial class ProjectListViewModel : ViewModelBase
 
         var sorted = SortOption == Strings.Instance.SortByName
             ? filtered.OrderBy(p => p.Name, StringComparer.OrdinalIgnoreCase)
-            : filtered.OrderByDescending(p => p.ModifiedAt, StringComparer.OrdinalIgnoreCase);
+            : filtered.OrderByDescending(p => p.ModifiedAtUtc, StringComparer.Ordinal);
 
         foreach (var project in sorted)
         {
@@ -88,6 +90,23 @@ public partial class ProjectListViewModel : ViewModelBase
     private void AddProject()
     {
         NavigateToNewProject?.Invoke(Strings.Instance.Language);
+    }
+
+    [RelayCommand]
+    private async Task ImportProjectFile()
+    {
+        if (ImportProject != null)
+        {
+            await ImportProject();
+            RefreshProjects();
+        }
+    }
+
+    [RelayCommand]
+    private async Task ExportProjectFile(ProjectListItem? project)
+    {
+        if (project == null || ExportProject == null) return;
+        await ExportProject(project.Id);
     }
 
     [RelayCommand]

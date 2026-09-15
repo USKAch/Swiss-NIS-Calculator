@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using Dapper;
 using NIS.Desktop.Models;
@@ -30,8 +31,8 @@ public class ProjectRepository
         {
             var now = DateTime.UtcNow.ToString("o");
             var id = _connection.ExecuteScalar<int>(@"
-                INSERT INTO Projects (Name, Operator, Callsign, Address, Location, CreatedAt, ModifiedAt)
-                VALUES (@Name, @Operator, @Callsign, @Address, @Location, @CreatedAt, @ModifiedAt);
+                INSERT INTO Projects (Name, Operator, Callsign, Address, Location, ParcelNumber, CreatedAt, ModifiedAt)
+                VALUES (@Name, @Operator, @Callsign, @Address, @Location, @ParcelNumber, @CreatedAt, @ModifiedAt);
                 SELECT last_insert_rowid();",
                 new
                 {
@@ -40,6 +41,7 @@ public class ProjectRepository
                     project.Callsign,
                     project.Address,
                     project.Location,
+                    project.ParcelNumber,
                     CreatedAt = now,
                     ModifiedAt = now
                 },
@@ -74,6 +76,7 @@ public class ProjectRepository
                     Callsign = @Callsign,
                     Address = @Address,
                     Location = @Location,
+                    ParcelNumber = @ParcelNumber,
                     ModifiedAt = @ModifiedAt
                 WHERE Id = @Id",
                 new
@@ -84,6 +87,7 @@ public class ProjectRepository
                     project.Callsign,
                     project.Address,
                     project.Location,
+                    project.ParcelNumber,
                     ModifiedAt = now
                 },
                 transaction);
@@ -119,7 +123,8 @@ public class ProjectRepository
             Operator = row.Operator ?? "",
             Callsign = row.Callsign ?? "",
             Address = row.Address ?? "",
-            Location = row.Location ?? ""
+            Location = row.Location ?? "",
+            ParcelNumber = row.ParcelNumber ?? ""
         };
 
         var configRows = _connection.Query<ConfigurationRow>(
@@ -142,7 +147,8 @@ public class ProjectRepository
                 Operator = row.Operator ?? "",
                 Callsign = row.Callsign ?? "",
                 Address = row.Address ?? "",
-                Location = row.Location ?? ""
+                Location = row.Location ?? "",
+                ParcelNumber = row.ParcelNumber ?? ""
             };
 
             var configRows = _connection.Query<ConfigurationRow>(
@@ -168,9 +174,10 @@ public class ProjectRepository
 
     public List<ProjectListItem> GetProjectList()
     {
+        // Timestamps are stored as UTC ISO 8601; convert to local time for display.
         return _connection.Query<ProjectListItem>(@"
             SELECT p.Id, p.Name, p.Operator, p.Address, p.Location,
-                   strftime('%d.%m.%Y %H:%M', p.ModifiedAt) as ModifiedAt,
+                   p.ModifiedAt as ModifiedAtUtc,
                    (SELECT COUNT(*) FROM Configurations WHERE ProjectId = p.Id) as ConfigCount
             FROM Projects p
             ORDER BY p.ModifiedAt DESC").ToList();
@@ -181,8 +188,32 @@ public class ProjectRepository
         return _connection.Query<(int Id, string Name, string ModifiedAt)>(
             "SELECT Id, Name, ModifiedAt FROM Projects ORDER BY ModifiedAt DESC LIMIT @Limit",
             new { Limit = limit })
-            .Select(r => (r.Id, r.Name, DateTime.Parse(r.ModifiedAt)))
+            .Select(r => (r.Id, r.Name, ParseUtcTimestamp(r.ModifiedAt).ToLocalTime()))
             .ToList();
+    }
+
+    /// <summary>
+    /// Parses a stored UTC ISO 8601 timestamp. Returns DateTime.MinValue (UTC) if unparsable.
+    /// </summary>
+    public static DateTime ParseUtcTimestamp(string? value)
+    {
+        if (DateTime.TryParse(value, CultureInfo.InvariantCulture,
+                DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal, out var dt))
+        {
+            return DateTime.SpecifyKind(dt, DateTimeKind.Utc);
+        }
+        return DateTime.SpecifyKind(DateTime.MinValue, DateTimeKind.Utc);
+    }
+
+    /// <summary>
+    /// Formats a stored UTC timestamp as "dd.MM.yyyy HH:mm" in the local time zone.
+    /// </summary>
+    public static string FormatLocalTimestamp(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return "";
+        var utc = ParseUtcTimestamp(value);
+        return utc == DateTime.MinValue ? value : utc.ToLocalTime().ToString("dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
     }
 
     /// <summary>
@@ -337,6 +368,7 @@ public class ProjectRepository
         public string? Callsign { get; set; }
         public string? Address { get; set; }
         public string? Location { get; set; }
+        public string? ParcelNumber { get; set; }
         public string CreatedAt { get; set; } = "";
         public string ModifiedAt { get; set; } = "";
     }
@@ -380,7 +412,12 @@ public class ProjectListItem
     public string? Address { get; set; }
     public string? Location { get; set; }
     public int ConfigCount { get; set; }
-    public string ModifiedAt { get; set; } = "";
+
+    /// <summary>Raw UTC ISO 8601 timestamp as stored in the database (sortable).</summary>
+    public string ModifiedAtUtc { get; set; } = "";
+
+    /// <summary>Modification time formatted in local time for display.</summary>
+    public string ModifiedAt => ProjectRepository.FormatLocalTimestamp(ModifiedAtUtc);
 
     public string DisplayName => string.IsNullOrEmpty(Operator) ? Name : $"{Operator} - {Name}";
 }

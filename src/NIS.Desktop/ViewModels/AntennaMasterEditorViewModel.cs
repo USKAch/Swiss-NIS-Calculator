@@ -5,7 +5,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MsBox.Avalonia.Enums;
+using MsBox.Avalonia;
 using NIS.Desktop.Models;
+using NIS.Desktop.Services;
 using NIS.Desktop.Calculations;
 
 namespace NIS.Desktop.ViewModels;
@@ -274,25 +277,26 @@ public partial class AntennaMasterEditorViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void Save()
+    private async Task Save()
     {
+        var strings = Localization.Strings.Instance;
         ValidationMessage = string.Empty;
 
         if (string.IsNullOrWhiteSpace(Manufacturer))
         {
-            ValidationMessage = "Please enter a manufacturer.";
+            ValidationMessage = strings.ValidationManufacturerRequired;
             return;
         }
 
         if (string.IsNullOrWhiteSpace(Model))
         {
-            ValidationMessage = "Please enter a model.";
+            ValidationMessage = strings.ValidationModelRequired;
             return;
         }
 
         if (Bands.Count == 0)
         {
-            ValidationMessage = "Please add at least one frequency band.";
+            ValidationMessage = strings.ValidationBandRequired;
             return;
         }
 
@@ -301,7 +305,7 @@ public partial class AntennaMasterEditorViewModel : ViewModelBase
         {
             if (band.GainDbi < -20 || band.GainDbi > 50)
             {
-                ValidationMessage = $"Gain for {band.FrequencyMHz} MHz must be between -20 and 50 dBi.";
+                ValidationMessage = string.Format(strings.ValidationGainRange, MasterDataStore.GetBandName(band.FrequencyMHz));
                 return;
             }
 
@@ -311,8 +315,33 @@ public partial class AntennaMasterEditorViewModel : ViewModelBase
             {
                 if (pattern[i] < 0 || pattern[i] > 60)
                 {
-                    ValidationMessage = $"Pattern attenuation values must be between 0 and 60 dB.";
+                    ValidationMessage = strings.ValidationPatternRange;
                     return;
+                }
+            }
+        }
+
+        // Bands without a vertical pattern: offer to generate one (a common oversight
+        // when entering a custom antenna). All-zero pattern = 0 dB attenuation everywhere,
+        // which is conservative but usually not what the user intended.
+        var bandsWithoutPattern = Bands.Where(b => !b.HasPattern && b.GainDbi > 0).ToList();
+        if (bandsWithoutPattern.Count > 0)
+        {
+            var bandList = string.Join(", ", bandsWithoutPattern.Select(b => MasterDataStore.GetBandName(b.FrequencyMHz)));
+            var result = await MessageBoxManager.GetMessageBoxStandard(
+                strings.MissingPatternTitle,
+                string.Format(strings.MissingPatternMessage, bandList),
+                ButtonEnum.YesNoCancel,
+                Icon.Question).ShowAsync();
+
+            if (result == ButtonResult.Cancel || result == ButtonResult.None)
+                return;
+
+            if (result == ButtonResult.Yes)
+            {
+                foreach (var band in bandsWithoutPattern)
+                {
+                    GeneratePattern(band);
                 }
             }
         }

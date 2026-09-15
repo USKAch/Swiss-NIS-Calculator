@@ -66,8 +66,9 @@ public static class PatternGenerator
         // Rolloff = 3.0 (ensures 3 dB loss at half beamwidth)
         const double rolloff = 3.0;
 
-        // A_zenith = 20 + (G_dBi × 1.5)
-        double aZenith = 20 + (gainDbi * 1.5);
+        // A_zenith = 20 + (G_dBi × 1.5), capped at the editor's 60 dB maximum
+        // (only relevant above ~26.7 dBi, far beyond any practical vertical)
+        double aZenith = Math.Min(60, 20 + (gainDbi * 1.5));
 
         var pattern = new double[10];
 

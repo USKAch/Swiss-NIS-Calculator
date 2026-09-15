@@ -109,7 +109,7 @@ public partial class WelcomeViewModel : ViewModelBase
 
         var sorted = SortOption == Strings.Instance.SortByName
             ? filtered.OrderBy(p => p.Name, StringComparer.OrdinalIgnoreCase)
-            : filtered.OrderByDescending(p => p.ModifiedAt, StringComparer.OrdinalIgnoreCase);
+            : filtered.OrderByDescending(p => p.ModifiedAtUtc, StringComparer.Ordinal);
 
         foreach (var project in sorted)
         {

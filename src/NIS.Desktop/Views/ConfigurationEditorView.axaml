@@ -75,7 +75,7 @@
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal" Spacing="6">
-                                                    <TextBlock Text="{Binding FrequencyMHz, StringFormat='{}{0} MHz'}" FontSize="11" Width="55"/>
+                                                    <TextBlock Text="{Binding FrequencyMHz, Converter={StaticResource BandNameConverter}}" FontSize="11" Width="55"/>
                                                     <TextBlock Text="{Binding GainDbi, StringFormat='{}{0:F1} dBi'}" FontSize="11" Opacity="0.7"/>
                                                 </StackPanel>
                                             </DataTemplate>
@@ -172,7 +172,8 @@
 
                         <!-- OKA Section -->
                         <StackPanel Grid.Column="4" Spacing="6">
-                            <TextBlock Text="{Binding EvaluationPoint, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"/>
+                            <TextBlock Text="{Binding OkaShort, Source={x:Static loc:Strings.Instance}}" FontWeight="Bold" FontSize="16"
+                                       ToolTip.Tip="{Binding OkaFullName, Source={x:Static loc:Strings.Instance}}"/>
 
                             <!-- OKA Selector -->
                             <StackPanel Spacing="8">
@@ -270,7 +271,7 @@
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal" Spacing="6">
-                                                    <TextBlock Text="{Binding FrequencyMHz, StringFormat='{}{0} MHz'}" FontSize="11" Width="55"/>
+                                                    <TextBlock Text="{Binding FrequencyMHz, Converter={StaticResource BandNameConverter}}" FontSize="11" Width="55"/>
                                                     <TextBlock Text="{Binding MaxPowerWatts, StringFormat='{}{0:F0} W'}" FontSize="11" Opacity="0.7"/>
                                                 </StackPanel>
                                             </DataTemplate>
@@ -291,7 +292,9 @@
                             <!-- Linear (optional) -->
                             <CheckBox IsChecked="{Binding UseLinear}" Content="{Binding Linear, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold"/>
                             <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding UseLinear}" Margin="24,0,0,0">
+                                <TextBlock Text="{Binding LinearType, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center"/>
                                 <TextBox Text="{Binding LinearName}" Width="150"/>
+                                <TextBlock Text="{Binding Power, Source={x:Static loc:Strings.Instance}}" VerticalAlignment="Center" Margin="8,0,0,0"/>
                                 <NumericUpDown Value="{Binding LinearPowerWatts, UpdateSourceTrigger=LostFocus, TargetNullValue=0, FallbackValue=0}"
                                                ShowButtonSpinner="False" Minimum="0" Maximum="10000" Increment="100" Width="80"/>
                                 <TextBlock Text="W" VerticalAlignment="Center"/>

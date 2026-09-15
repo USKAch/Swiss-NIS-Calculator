@@ -63,13 +63,8 @@
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
                                                             <Border Background="{DynamicResource PanelBackgroundBrush}" CornerRadius="3" Padding="6,2" Margin="0,0,5,3">
-                                                                <TextBlock FontSize="11" Foreground="{DynamicResource PrimaryButtonBrush}">
-                                                                    <TextBlock.Text>
-                                                                        <MultiBinding StringFormat="{}{0}MHz">
-                                                                            <Binding Path="FrequencyMHz"/>
-                                                                        </MultiBinding>
-                                                                    </TextBlock.Text>
-                                                                </TextBlock>
+                                                                <TextBlock FontSize="11" Foreground="{DynamicResource PrimaryButtonBrush}"
+                                                                           Text="{Binding FrequencyMHz, Converter={StaticResource BandNameConverter}}"/>
                                                             </Border>
                                                         </DataTemplate>
                                                     </ItemsControl.ItemTemplate>

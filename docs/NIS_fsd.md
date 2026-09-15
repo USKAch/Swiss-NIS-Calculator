@@ -26,18 +26,16 @@ Welcome Screen
 
 Navigation Pane
     -> [Projects] -> Project List
-    -> [New Project] -> Project Info -> Project Overview
-    -> [Master Data] -> Master Data Manager
+       -> [Create Project] -> Project Info -> Project Overview
+       -> [Import Project] -> file picker -> Project Overview
+       -> per row: [Edit] [Export] [Delete]
+    -> [Master Data] -> Master Data Manager (factory mode when started with --factory)
        -> [Add/Edit Antenna] -> Antenna Editor -> Master Data Manager
        -> [Add/Edit Cable] -> Cable Editor -> Master Data Manager
        -> [Add/Edit Radio] -> Radio Editor -> Master Data Manager
        -> [Add/Edit Evaluation Point] -> PSS Editor -> Master Data Manager
        -> [Translations] -> Translation Editor
-    -> [Calculate All] -> Results
-    -> [Export Report] -> Results with export options
-    -> [Export PDF] -> PDF generation
     -> [Settings] -> Settings
-    -> [Factory] -> Factory Mode
 
 Project Overview
     -> [Edit Station Info] -> Project Info -> Project Overview
@@ -61,24 +59,20 @@ First screen shown when app launches:
   - Default sort: Last Modified (descending)
   - Search filters by project name (case-insensitive)
   - Selecting a project opens the Project Overview
-  - Each project row includes **Edit** and **Delete** actions on the right side (same layout as configuration cards)
+  - Each project row includes **Edit**, **Export** and **Delete** actions on the right side (same layout as configuration cards)
+  - Export saves the project as a .nisproj file without opening it
   - Delete requires confirmation; projects with configurations can be deleted
-  - A **+ New Project** button is placed in the same right-side action area (corporate identity consistency)
+  - **Import Project** and **Create Project** buttons are placed in the right-side header area
 
 ### 3.2 Navigation Pane
 
 Global navigation available from most screens:
 
-- **Projects** -> Project list (same as Welcome screen)
-- **New Project** -> Create a new project
-- **Master Data** -> Master Data Manager (Section 3.6)
-- **Calculate All** -> Runs calculation for current project (Section 3.7)
-- **Export Report** -> Results view with export options (Section 3.7)
-- **Export PDF** -> Generates PDF report from Results
-- **Import Project** -> Opens file picker to import a .nisproj file (always enabled)
-- **Export Project** -> Opens save dialog to export current project as .nisproj (enabled when project loaded)
+- **Projects** -> Project list (same as Welcome screen); project creation, import and export live here
+- **Master Data** -> Master Data Manager (Section 3.6); opens in factory mode when the app was started with `--factory` (Section 9)
 - **Settings** -> Language and Theme (Section 10)
-- **Factory** -> Factory mode access (Section 9)
+
+Calculation and report/PDF export are reached from within the project (Project Overview -> Calculate All -> Results), not from the navigation pane. There is no separate Factory entry in the navigation pane.
 
 ### 3.3 Project Overview (Main Screen)
 
@@ -106,7 +100,7 @@ Window default width: 1500px → Available DataGrid width: 1200px
 | Power | 100px | Transmitter power + group separator |
 | OKA* | 120px | Evaluation point name |
 | Dist. | 70px | Distance to evaluation point |
-| Actions | 210px | Edit / Delete buttons |
+| Actions | 290px | Edit / Copy / Delete buttons. Copy opens the editor prefilled with a clone of the configuration (name suffixed "(Kopie)") as a new, not yet saved configuration |
 
 *OKA column header is localized: OKA (de), LSM (fr), LST (it), PSS (en)
 
@@ -132,8 +126,9 @@ Screen for creating or editing station information for a project.
 - Project Name
 - Operator Name
 - Callsign
-- Address
-- Location (free text)
+- Street (label "Strasse"; stored as `Address`)
+- ZIP, City (label "PLZ, Ort"; stored as `Location`, free text)
+- Parcel number (label "Parzellen-Nr."; stored as `ParcelNumber`, optional; requested by authorities)
 
 **Actions**:
 - Save -> Returns to Project Overview
@@ -165,7 +160,7 @@ Screen for creating or editing one antenna configuration. Header shows "Configur
   - Edit → Navigates to Radio Editor with selected radio
   - Add → Navigates to Radio Editor for new radio
   - Includes common HAM transceivers (Icom, Yaesu, Kenwood, Elecraft, FlexRadio) for HF/VHF/UHF
-- Linear (optional): [text field] + [power in W]
+- Linear (optional): checkbox "Endstufe"; when checked: Typ [text field] + Leistung [power in W]
   - Free text entry for linear name
   - Power field becomes enabled when name is entered
   - When set, linear power is used in calculations instead of radio power
@@ -269,17 +264,21 @@ Results displayed after "Calculate All":
   Ort für kurzfristigen Aufenthalt: Balkon Nachbar, 4m horizontale Distanz zum Antennenmast,
   Distanz Antenne-OKA: 10.8m
   ```
-- Detailed table (see Section 5 Output and Reports)
+- Detailed table (see Section 5 Output and Reports); the first column shows the band name (80m, 40m, ... 70cm)
+
+**Summary line**: "ALLE KONFIGURATIONEN KONFORM" when every configuration passes, otherwise "NICHT KONFORME KONFIGURATIONEN ERKANNT: <names of the failing configurations>". The status bar shows "Berechnung abgeschlossen N Konfigurationen analysiert".
 
 **Safety Distance Visualization** (optional):
 - Diagram showing antenna position and calculated safety distances
 
 **Export Options**:
+- Copy to clipboard: Copies the Markdown report text to the system clipboard
 - Markdown Export: Generates formatted tables per FSD Section 5
+- PDF Export
 
 **Actions**:
 - Close → Returns to Project Overview
-- Export Markdown
+- Copy to clipboard / Export Markdown / Export PDF
 
 ## 4. Core Calculations
 
@@ -399,6 +398,7 @@ Note: EIRP (Equivalent Isotropic Radiated Power) and ERP (Effective Radiated Pow
 | 7 MHz | 32.9 |
 | 10-28 MHz | 28 |
 | 50 MHz | 28 |
+| 70 MHz | 28 |
 | 144 MHz | 28 |
 | 432 MHz | 28.6 |
 | 1240 MHz | 48.5 |
@@ -502,7 +502,7 @@ PDF export structure (one page per configuration):
 - Compliance status indicator
 - Disclaimer
 
-**Per-band Calculation Table** uses the same row structure as the Markdown export (Section 5.1), with bold formatting for key rows. The table header contains only "Parameter", "Sym", and "Unit"—band columns have empty headers since frequencies appear in the first data row:
+**Per-band Calculation Table** uses the same row structure as the Markdown export (Section 5.1), with bold formatting for key rows. The table header contains "Parameter", "Sym", "Unit" and one band name per band column (e.g. 80m, 40m, 70cm); the exact frequency used for the calculation appears in the first data row:
 - **f** (Frequency)
 - **Nr. des OKA** (OKA number)
 - **d** (Distance to OKA)
@@ -551,7 +551,9 @@ PDF export structure (one page per configuration):
 | **Radio** | Manufacturer, Model, MaxPower |
 | **Evaluation Point (PSS)** | Name, DefaultDistance, DefaultDamping |
 
-**Antenna bands**: Each band has Frequency (MHz), Gain (dBi), and 10-value vertical pattern. [Auto-calculate] generates pattern from gain (Section 8.4).
+**Antenna bands**: Each band is selected by amateur band (shown as band name, e.g. 80m, 2m, 70cm; stored as nominal frequency in MHz) and has Gain (dBi) and a 10-value vertical pattern. [Auto-calculate] generates the pattern from antenna type and gain (Section 8.4). When saving an antenna with a band that has gain > 0 but an all-zero pattern, the editor asks whether to generate the pattern now (Yes = generate and save, No = save as is, Cancel = back to editor). An all-zero pattern means 0 dB attenuation in all directions, i.e. a conservative result.
+
+**Band display**: Everywhere a band is shown in the UI, in reports and in messages, the band name from the master data band list is used (nearest band within 5 % / at least 1 MHz of the stored frequency); only the detailed calculation table keeps the exact frequency row `f` in MHz, and the cable attenuation editor keeps its per-frequency values.
 
 **Constants**: Ground Reflection Factor kr=1.6, Default Activity Factor=0.5 (editable in factory mode only, stored in `masterdata.json`)
 
@@ -818,7 +820,7 @@ Installation (nisdata.db)
 │
 └── Projects[]
     │
-    ├── Header: Name, OperatorName, Address, Location
+    ├── Header: Name, OperatorName, Callsign, Address, Location, ParcelNumber
     │
     └── Configurations[]
         │
@@ -871,7 +873,7 @@ User-created data, always editable:
 
 | Type | Description |
 |------|-------------|
-| Projects | Station information (Name, Operator, Address, Location) |
+| Projects | Station information (Name, Operator, Callsign, Address, Location, ParcelNumber); CreatedAt/ModifiedAt stored as UTC ISO 8601, displayed in local time |
 | Configurations | Antenna setups within a project, referencing master data |
 
 ### 7.4 Data Protection
@@ -959,8 +961,10 @@ Attenuation(θ) = min(A_zenith, Rolloff × (θ / θ_hp)²)
 where:
   θ_hp = HPBW / 2
   Rolloff = 3.0 (ensures 3 dB loss at half beamwidth)
-  A_zenith = 20 + (G_dBi × 1.5)
+  A_zenith = min(60, 20 + (G_dBi × 1.5))
 ```
+
+The 60 dB cap matches the editor's maximum pattern value; it only applies above ~26.7 dBi, far beyond any practical vertical antenna.
 
 The vertical antenna formula uses a simpler quadratic rolloff model with a gain-dependent zenith attenuation cap, appropriate for the broader vertical patterns of collinear and ground-plane antennas.
 
@@ -1008,7 +1012,13 @@ Factory Mode provides access to administrative features for managing shipped mas
 
 ### 9.1 Activation
 
-Factory Mode is accessed via the **Factory** item in the navigation pane (bottom section). When clicked, a password dialog appears. Enter the password **`HB9BLA`** to access Factory Mode.
+Factory Mode is hidden from regular users. It is enabled by starting the application with the `--factory` command-line switch:
+
+```
+NIS.Desktop.exe --factory
+```
+
+With the switch, **Master Data** opens in factory mode (red FACTORY MODE indicator, editable factory data, Factory tab visible). There is no password and no separate navigation item; the command-line switch is the gate.
 
 ### 9.2 Features Enabled in Factory Mode
 
@@ -1040,8 +1050,8 @@ The demo project is a regular project in the shipped `nisdata.db` database. Fact
 Typical workflow for updating shipped master data and distributing via GitHub:
 
 #### Step 1: Enter Factory Mode
-1. Navigate to **Factory** in the navigation pane (bottom section)
-2. Enter the password **`HB9BLA`**
+1. Start the application with `NIS.Desktop.exe --factory`
+2. Navigate to **Master Data** in the navigation pane
 3. Verify the red **FACTORY MODE** indicator appears
 
 #### Step 2: Modify Master Data
@@ -1064,16 +1074,12 @@ Factory Mode edits `src/NIS.Desktop/Data/nisdata.db` directly.
    ```
 
 #### Step 5: Create Release
-1. Tag the commit with a version number:
-   ```bash
-   git tag v1.x.x
-   git push origin v1.x.x
-   ```
-2. GitHub Actions builds and packages the release with the updated database
+1. Go to Actions → "Build and Release" → "Run workflow" and enter the version (plain semantic version without prefix, e.g. `0.9.1`)
+2. GitHub Actions builds and packages the release with the updated database and creates the git tag `0.9.1`
 
 ### 9.5 Security Notes
 
-- Factory Mode password is hardcoded - this is intentional as it's for development/maintenance access only
+- Factory Mode has no password; it is gated only by the `--factory` command-line switch, which is sufficient for development/maintenance access
 - Factory imports replace all data including user customizations - always warn before proceeding
 - The `IsUserData` flag distinguishes factory data (false) from user-created data (true)
 
@@ -1097,7 +1103,8 @@ Default language: **de** (Deutsch)
 #### 10.1.2 Language Selection
 
 **In Settings:**
-- Four toggle buttons displayed horizontally: de | fr | it | en
+- Drop-down with: System | Deutsch | Français | Italiano | English
+- **System** follows the operating system UI language (de/fr/it/en; any other language falls back to German). Stored as `"system"` in settings.json
 - Language change takes effect immediately across the entire UI
 - Selected language persists across sessions
 - Stored in settings.json and applied at startup
@@ -1224,6 +1231,15 @@ UI should follow Windows 11 look and feel:
 - Segmented controls and modern toggle styles
 - Consistent spacing and typography typical of Windows 11 apps
 
+### 10.4 About
+
+The Settings screen ends with an **About** section showing:
+- Application name and version (`AppInfo.Version`, derived from git tags, see Section 11)
+- Description
+- Credits: "Ursprünglich entwickelt von HB9ZS" and "Weiterentwickelt im Auftrag der USKA von Andreas Spiess, HB9BLA"
+
+The version is not shown anywhere else in the UI; the PDF report footer includes it ("Generated by Swiss NIS Calculator <version>").
+
 ## 11. Distribution
 
 ### 11.1 Platforms
@@ -1260,10 +1276,18 @@ dotnet build
 dotnet publish -c Release -r win-x64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
 ```
 
+#### Versioning
+
+The application version is derived from git tags by [MinVer](https://github.com/adamralph/minver); the csproj contains no fixed version:
+- Tags are plain semantic versions without prefix: `0.9.1`
+- A tagged commit builds as `0.9.1`; later commits build as `0.9.2-alpha.0.N` (N = commits since the tag), so development builds are distinguishable from releases
+- The release workflow passes the entered version to all publish steps via `-p:MinVerVersionOverride` and into the macOS `Info.plist`
+- At runtime `AppInfo.Version` exposes the version (build metadata stripped) for the About dialog and the PDF footer
+
 #### GitHub Actions Workflow (`.github/workflows/build.yml`)
 
 Triggered by:
-- Manual dispatch (Actions → "Run workflow" → enter version tag)
+- Manual dispatch (Actions → "Run workflow" → enter version, e.g. `0.9.1`)
 
 | Job | Platforms | Description |
 |-----|-----------|-------------|
@@ -1409,14 +1433,14 @@ If secrets are not configured, the build produces an unsigned app. Users must by
 
 Complete workflow for updating shipped master data (see also Section 9.4):
 
-1. **Enter Factory Mode** (Section 9.1): Navigate to Factory in navigation pane, enter password
+1. **Enter Factory Mode** (Section 9.1): Start with `--factory`, then navigate to Master Data
 2. **Modify Data** (Section 9.2): Edit master data (antennas, cables, radios, modulations, constants, bands)
 3. **Update Demo Project** (Section 9.3): Create or modify the demo project
 4. **Commit**: Push `src/NIS.Desktop/Data/nisdata.db` to GitHub
-5. **Run Release**: Go to Actions → "Build and Release" → "Run workflow" → enter version (e.g., v1.0.1)
+5. **Run Release**: Go to Actions → "Build and Release" → "Run workflow" → enter version (e.g., `0.9.1`)
 6. **Distribute**: GitHub Actions builds and publishes the release
 
-**Note**: No upgrade path exists. Each version ships a complete fresh database. Users start over with each new version.
+**Note on upgrades**: Schema additions are applied to existing user databases at startup (additive `ALTER TABLE ... ADD COLUMN`, see `DatabaseService.ApplyAdditiveMigrations`) and by `scripts/migrate_db.py`; new default bands are merged into an existing `masterdata.json` (`MasterDataStore.MergeMissingDefaultBands`). User data is never deleted by an upgrade.
 
 ## Appendix A: Antennas with Generated Vertical Radiation Patterns
 
@@ -1486,6 +1510,7 @@ CREATE TABLE Projects (
     Callsign TEXT,
     Address TEXT,
     Location TEXT,
+    ParcelNumber TEXT,          -- added in 0.9 (additive migration)
     CreatedAt TEXT NOT NULL,
     ModifiedAt TEXT NOT NULL
 );
@@ -1584,8 +1609,9 @@ User and Factory exports share the same JSON structure. Factory import uses the 
     "name": "Example Station",
     "operator": "HB9XX",
     "callsign": "HB9XX",
-    "address": "Street 1, 8000 City",
-    "location": "City, CH"
+    "address": "Musterstrasse 1",
+    "location": "8000 Zürich",
+    "parcelNumber": "1234"
   },
   "configurations": [
     {

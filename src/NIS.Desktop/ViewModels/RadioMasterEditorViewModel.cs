@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NIS.Desktop.Calculations;
 using NIS.Desktop.Models;
+using NIS.Desktop.Services;
 
 namespace NIS.Desktop.ViewModels;
 
@@ -196,19 +197,19 @@ public partial class RadioMasterEditorViewModel : ViewModelBase
 
         if (string.IsNullOrWhiteSpace(Manufacturer))
         {
-            ValidationMessage = "Please enter a manufacturer.";
+            ValidationMessage = Localization.Strings.Instance.ValidationManufacturerRequired;
             return;
         }
 
         if (string.IsNullOrWhiteSpace(Model))
         {
-            ValidationMessage = "Please enter a model.";
+            ValidationMessage = Localization.Strings.Instance.ValidationModelRequired;
             return;
         }
 
         if (MaxPowerWatts <= 0)
         {
-            ValidationMessage = "Power must be greater than 0 W.";
+            ValidationMessage = Localization.Strings.Instance.ValidationPowerPositive;
             return;
         }
 
@@ -219,7 +220,7 @@ public partial class RadioMasterEditorViewModel : ViewModelBase
             {
                 if (band.MaxPowerWatts <= 0)
                 {
-                    ValidationMessage = $"Power for {band.FrequencyMHz} MHz must be greater than 0 W.";
+                    ValidationMessage = string.Format(Localization.Strings.Instance.ValidationBandPowerPositive, MasterDataStore.GetBandName(band.FrequencyMHz));
                     return;
                 }
             }

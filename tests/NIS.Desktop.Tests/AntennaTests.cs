@@ -101,3 +101,58 @@ public class AntennaTests
         Assert.Equal(0, band.GetAttenuationAtAngle(45));
     }
 }
+
+public class AntennaConfigurationCloneTests
+{
+    [Fact]
+    public void Clone_IsDeepCopyWithAllFields()
+    {
+        var original = new AntennaConfiguration
+        {
+            Name = "HF Station",
+            RadioId = 3,
+            Radio = new RadioConfig { Manufacturer = "Icom", Model = "IC-7300" },
+            Linear = new LinearConfig { Name = "Expert 1.3K", PowerWatts = 1000 },
+            PowerWatts = 100,
+            CableId = 5,
+            Cable = new CableConfig { Type = "EcoFlex10", LengthMeters = 12.5, AdditionalLossDb = 0.3, AdditionalLossDescription = "Connectors" },
+            AntennaId = 7,
+            Antenna = new AntennaPlacement { Manufacturer = "Fritzel", Model = "FB-33", HeightMeters = 11, IsRotatable = true, HorizontalAngleDegrees = 90 },
+            ModulationId = 2,
+            Modulation = "SSB",
+            ActivityFactor = 0.4,
+            OkaId = 9,
+            OkaName = "Balkon"
+        };
+
+        var clone = original.Clone();
+
+        Assert.NotSame(original, clone);
+        Assert.NotSame(original.Radio, clone.Radio);
+        Assert.NotSame(original.Cable, clone.Cable);
+        Assert.NotSame(original.Antenna, clone.Antenna);
+        Assert.NotSame(original.Linear, clone.Linear);
+
+        Assert.Equal(original.Name, clone.Name);
+        Assert.Equal(original.RadioId, clone.RadioId);
+        Assert.Equal(original.Linear!.PowerWatts, clone.Linear!.PowerWatts);
+        Assert.Equal(original.PowerWatts, clone.PowerWatts);
+        Assert.Equal(original.Cable.LengthMeters, clone.Cable.LengthMeters);
+        Assert.Equal(original.Antenna.HorizontalAngleDegrees, clone.Antenna.HorizontalAngleDegrees);
+        Assert.Equal(original.ActivityFactor, clone.ActivityFactor);
+        Assert.Equal(original.OkaId, clone.OkaId);
+
+        // Changing the clone must not affect the original
+        clone.PowerWatts = 500;
+        clone.Cable.LengthMeters = 1;
+        Assert.Equal(100, original.PowerWatts);
+        Assert.Equal(12.5, original.Cable.LengthMeters);
+    }
+
+    [Fact]
+    public void Clone_WithoutLinear_KeepsLinearNull()
+    {
+        var clone = new AntennaConfiguration { Name = "X", Linear = null }.Clone();
+        Assert.Null(clone.Linear);
+    }
+}

@@ -26,16 +26,18 @@ public partial class SettingsViewModel : ViewModelBase
         _settings = AppSettings.Load();
 
         ThemeIndex = _settings.ThemeMode;
+        // Index 0 = System (like the theme selector), then de/fr/it/en
         LanguageIndex = _settings.Language switch
         {
-            "de" => 0,
-            "fr" => 1,
-            "it" => 2,
-            "en" => 3,
-            _ => 0
+            AppSettings.SystemLanguage => 0,
+            "de" => 1,
+            "fr" => 2,
+            "it" => 3,
+            "en" => 4,
+            _ => 1
         };
 
-        Strings.Instance.Language = _settings.Language;
+        Strings.Instance.Language = _settings.ResolveLanguage();
     }
 
     partial void OnThemeIndexChanged(int value)
@@ -71,15 +73,16 @@ public partial class SettingsViewModel : ViewModelBase
     {
         var language = value switch
         {
-            0 => "de",
-            1 => "fr",
-            2 => "it",
-            3 => "en",
+            0 => AppSettings.SystemLanguage,
+            1 => "de",
+            2 => "fr",
+            3 => "it",
+            4 => "en",
             _ => "de"
         };
 
         _settings.Language = language;
         _settings.Save();
-        Strings.Instance.Language = language;
+        Strings.Instance.Language = AppSettings.ResolveLanguage(language);
     }
 }

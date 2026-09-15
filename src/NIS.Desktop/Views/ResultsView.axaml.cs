@@ -15,6 +15,7 @@ public partial class ResultsView : UserControl
             if (DataContext is ResultsViewModel vm && TopLevel.GetTopLevel(this) is { } topLevel)
             {
                 vm.StorageProvider = topLevel.StorageProvider;
+                vm.Clipboard = topLevel.Clipboard;
             }
         };
     }
