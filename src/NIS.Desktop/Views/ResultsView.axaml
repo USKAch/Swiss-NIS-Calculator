@@ -71,7 +71,7 @@
                                         </Grid.RowDefinitions>
 
                                         <!-- Table Header (two lines: label + unit) -->
-                                        <Grid ColumnDefinitions="45,50,55,55,50,70,55,50,55,55,60,60,55" Background="{DynamicResource SystemControlBackgroundAltMediumLowBrush}" Margin="-10,-10,-10,0">
+                                        <Grid ColumnDefinitions="55,50,55,55,50,70,55,50,55,55,60,60,55" Background="{DynamicResource SystemControlBackgroundAltMediumLowBrush}" Margin="-10,-10,-10,0">
                                             <StackPanel HorizontalAlignment="Center" Margin="0,6,0,4">
                                                 <TextBlock Text="{Binding Band, Source={x:Static loc:Strings.Instance}}" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
                                                 <TextBlock Text=" " FontSize="11" HorizontalAlignment="Center"/>
@@ -131,7 +131,7 @@
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Border Padding="0,4" Margin="0,1">
-                                                        <Grid ColumnDefinitions="45,50,55,55,50,70,55,50,55,55,60,60,55" Margin="-10,0,0,0">
+                                                        <Grid ColumnDefinitions="55,50,55,55,50,70,55,50,55,55,60,60,55" Margin="-10,0,0,0">
                                                             <TextBlock Text="{Binding FrequencyMHz, Converter={StaticResource BandNameConverter}}" FontSize="13" HorizontalAlignment="Center"/>
                                                             <TextBlock Grid.Column="1" Text="{Binding MeanPowerW, StringFormat='{}{0:F1}'}" FontSize="13" HorizontalAlignment="Center"/>
                                                             <TextBlock Grid.Column="2" Text="{Binding TotalLossDb, StringFormat='{}{0:F1}'}" FontSize="13" HorizontalAlignment="Center"/>

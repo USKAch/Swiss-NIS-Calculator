@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:NIS.Desktop.ViewModels"
              xmlns:loc="using:NIS.Desktop.Localization"
@@ -117,7 +117,7 @@
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
                                 <!-- Col 2: Bands (280px, wrapping) -->
-                                <DataGridTemplateColumn Header="{Binding Bands, Source={x:Static loc:Strings.Instance}}" Width="280">
+                                <DataGridTemplateColumn Header="{Binding Bands, Source={x:Static loc:Strings.Instance}}" Width="220">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding FrequencyDisplay}" FontSize="11" VerticalAlignment="Center" TextWrapping="Wrap"/>
@@ -153,7 +153,7 @@
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
                                 <!-- Col 6: OKA name (120px) -->
-                                <DataGridTemplateColumn Header="{Binding OkaShort, Source={x:Static loc:Strings.Instance}}" Width="120">
+                                <DataGridTemplateColumn Header="{Binding OkaShort, Source={x:Static loc:Strings.Instance}}" Width="180">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding OkaNameDisplay}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>

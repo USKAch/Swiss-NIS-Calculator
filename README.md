@@ -30,7 +30,17 @@ Swiss NIS Calculator is a modern desktop application for calculating electromagn
 
 ## Screenshots
 
-*Coming soon*
+**Project list** – create, import, export and manage projects
+
+![Projects](docs/Pictures/Screenshot_Projects.png)
+
+**Project overview** – station data and antenna configurations (edit, copy, delete)
+
+![Project overview](docs/Pictures/Screenshot_Project_Overview.png)
+
+**Results** – per-band field strength, limits and safety distances with PASS/FAIL, export as PDF/Markdown or copy to clipboard
+
+![Results](docs/Pictures/Screenshot_Results.png)
 
 ## Installation
 

@@ -270,7 +270,8 @@ public partial class ResultsViewModel : ViewModelBase
 
         var result = new ConfigurationResult
         {
-            ConfigurationName = config.Name,
+            // Configurations may be unnamed; fall back to the antenna so summaries can identify them
+            ConfigurationName = string.IsNullOrWhiteSpace(config.Name) ? config.Antenna.DisplayName : config.Name,
             AntennaName = config.Antenna.DisplayName,
             RadioName = config.Radio.DisplayName,
             PowerWatts = effectivePower,

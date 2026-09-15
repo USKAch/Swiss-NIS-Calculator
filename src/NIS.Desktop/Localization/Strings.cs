@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -730,6 +731,31 @@ public class Strings : INotifyPropertyChanged
     // RUNTIME TRANSLATION API
     // ============================================================
 
+    // Snapshot of the embedded defaults, taken before any custom translation is applied,
+    // so the translation editor can persist only user changes (see IsDefaultTranslation).
+    // Lazy: TranslationData is declared further down, so a static field initializer here would run too early.
+    // The snapshot is taken on first use; App startup calls EnsureDefaultsCaptured() before loading custom translations.
+    private static Dictionary<string, Dictionary<string, string>>? _defaultTranslationData;
+    private static Dictionary<string, Dictionary<string, string>> DefaultTranslationData =>
+        _defaultTranslationData ??= TranslationData.ToDictionary(kvp => kvp.Key, kvp => new Dictionary<string, string>(kvp.Value));
+
+    /// <summary>
+    /// Takes the snapshot of the embedded defaults. Must be called before any UpdateTranslation.
+    /// </summary>
+    public static void EnsureDefaultsCaptured() => _ = DefaultTranslationData;
+
+    /// <summary>
+    /// Returns the embedded default text for a key/language, or null if the key is not built in.
+    /// </summary>
+    public static string? GetDefaultTranslation(string key, string language) =>
+        DefaultTranslationData.TryGetValue(key, out var t) && t.TryGetValue(language, out var v) ? v : null;
+
+    /// <summary>
+    /// True if the value equals the embedded default (i.e. nothing to persist for this key/language).
+    /// </summary>
+    public static bool IsDefaultTranslation(string key, string language, string? value) =>
+        string.Equals(GetDefaultTranslation(key, language), value, StringComparison.Ordinal);
+
     /// <summary>
     /// Gets all translations with their categories for the translation editor.
     /// </summary>
@@ -747,6 +773,7 @@ public class Strings : INotifyPropertyChanged
     /// </summary>
     public static void UpdateTranslation(string key, string language, string value)
     {
+        EnsureDefaultsCaptured();
         if (TranslationData.TryGetValue(key, out var translations))
         {
             translations[language] = value;

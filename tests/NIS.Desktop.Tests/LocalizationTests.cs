@@ -66,6 +66,27 @@ public class LocalizationTests
     }
 
     [Fact]
+    public void DefaultTranslation_SurvivesRuntimeOverride()
+    {
+        var original = Strings.GetDefaultTranslation("Save", "de");
+        Assert.Equal("Speichern", original);
+
+        Strings.UpdateTranslation("Save", "de", "Sichern");
+        try
+        {
+            Assert.Equal("Sichern", Strings.Instance.Get("Save"));
+            Assert.Equal("Speichern", Strings.GetDefaultTranslation("Save", "de"));
+            Assert.False(Strings.IsDefaultTranslation("Save", "de", "Sichern"));
+            Assert.True(Strings.IsDefaultTranslation("Save", "de", "Speichern"));
+            Assert.False(Strings.IsDefaultTranslation("NoSuchKey", "de", "x"));
+        }
+        finally
+        {
+            Strings.UpdateTranslation("Save", "de", original!);
+        }
+    }
+
+    [Fact]
     public void Get_UnknownKey_ReturnsBracketedMarker()
     {
         Assert.Equal("[DoesNotExist]", Strings.Instance.Get("DoesNotExist"));

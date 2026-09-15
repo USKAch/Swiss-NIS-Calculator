@@ -279,6 +279,8 @@ public partial class TranslationEditorViewModel : ViewModelBase
 
     /// <summary>
     /// Saves translations to a JSON file for persistence across app restarts.
+    /// Only strings that differ from the embedded defaults are written, so that
+    /// default texts changed in a later app version still reach the user.
     /// </summary>
     private void SaveToFile()
     {
@@ -288,15 +290,21 @@ public partial class TranslationEditorViewModel : ViewModelBase
             Directory.CreateDirectory(dir);
         }
 
-        var data = AllTranslations.Select(t => new Dictionary<string, string>
-        {
-            ["Key"] = t.Key,
-            ["Category"] = t.Category,
-            ["de"] = t.German,
-            ["fr"] = t.French,
-            ["it"] = t.Italian,
-            ["en"] = t.English
-        }).ToList();
+        var data = AllTranslations
+            .Where(t => !Strings.IsDefaultTranslation(t.Key, "de", t.German)
+                     || !Strings.IsDefaultTranslation(t.Key, "fr", t.French)
+                     || !Strings.IsDefaultTranslation(t.Key, "it", t.Italian)
+                     || !Strings.IsDefaultTranslation(t.Key, "en", t.English))
+            .Select(t => new Dictionary<string, string>
+            {
+                ["Key"] = t.Key,
+                ["Category"] = t.Category,
+                // Empty = keep default; only persist languages the user actually changed
+                ["de"] = Strings.IsDefaultTranslation(t.Key, "de", t.German) ? "" : t.German,
+                ["fr"] = Strings.IsDefaultTranslation(t.Key, "fr", t.French) ? "" : t.French,
+                ["it"] = Strings.IsDefaultTranslation(t.Key, "it", t.Italian) ? "" : t.Italian,
+                ["en"] = Strings.IsDefaultTranslation(t.Key, "en", t.English) ? "" : t.English
+            }).ToList();
 
         var json = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
         File.WriteAllText(AppPaths.TranslationsFile, json);
@@ -308,6 +316,7 @@ public partial class TranslationEditorViewModel : ViewModelBase
     /// </summary>
     public static void LoadCustomTranslations()
     {
+        Strings.EnsureDefaultsCaptured();
         if (!File.Exists(AppPaths.TranslationsFile))
             return;
 
