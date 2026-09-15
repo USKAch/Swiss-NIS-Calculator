@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version tag without prefix (e.g., 0.9.1)'
+        description: 'Version (plain number, e.g. 0.9 or 1.0)'
         required: true
         type: string
 
@@ -26,8 +26,6 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0   # full history so MinVer can see tags
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -48,7 +46,7 @@ jobs:
       run: dotnet test --configuration Release --verbosity normal
 
     - name: Publish
-      run: dotnet publish src/NIS.Desktop/NIS.Desktop.csproj -c Release -r win-x64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --self-contained true -p:MinVerVersionOverride=$($env:APP_VERSION.TrimStart("v")) -o publish
+      run: dotnet publish src/NIS.Desktop/NIS.Desktop.csproj -c Release -r win-x64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --self-contained true -p:AppVersion=$($env:APP_VERSION.TrimStart("v")) -o publish
       env:
         APP_VERSION: ${{ inputs.version }}
 
@@ -63,8 +61,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0   # full history so MinVer can see tags
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -85,7 +81,7 @@ jobs:
       run: dotnet test --configuration Release --verbosity normal
 
     - name: Publish
-      run: dotnet publish src/NIS.Desktop/NIS.Desktop.csproj -c Release -r linux-x64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --self-contained true -p:MinVerVersionOverride=${APP_VERSION#v} -o publish
+      run: dotnet publish src/NIS.Desktop/NIS.Desktop.csproj -c Release -r linux-x64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --self-contained true -p:AppVersion=${APP_VERSION#v} -o publish
       env:
         APP_VERSION: ${{ inputs.version }}
 
@@ -100,8 +96,6 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0   # full history so MinVer can see tags
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -122,12 +116,12 @@ jobs:
       run: dotnet test --configuration Release --verbosity normal
 
     - name: Publish macOS ARM64
-      run: dotnet publish src/NIS.Desktop/NIS.Desktop.csproj -c Release -r osx-arm64 --self-contained true -p:MinVerVersionOverride=${APP_VERSION#v} -o publish-arm64
+      run: dotnet publish src/NIS.Desktop/NIS.Desktop.csproj -c Release -r osx-arm64 --self-contained true -p:AppVersion=${APP_VERSION#v} -o publish-arm64
       env:
         APP_VERSION: ${{ inputs.version }}
 
     - name: Publish macOS x64
-      run: dotnet publish src/NIS.Desktop/NIS.Desktop.csproj -c Release -r osx-x64 --self-contained true -p:MinVerVersionOverride=${APP_VERSION#v} -o publish-x64
+      run: dotnet publish src/NIS.Desktop/NIS.Desktop.csproj -c Release -r osx-x64 --self-contained true -p:AppVersion=${APP_VERSION#v} -o publish-x64
       env:
         APP_VERSION: ${{ inputs.version }}
 

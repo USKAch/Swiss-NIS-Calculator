@@ -206,7 +206,7 @@ Swiss-NIS-Calculator/
 
 ## Versioning & Releases
 
-The version is derived from git tags ([MinVer](https://github.com/adamralph/minver)); tags are plain semantic versions such as `0.9.1`. A release is built by running the *Build and Release* workflow with the version as input; it builds Windows, macOS and Linux packages, stamps them with that version and creates the tag. Development builds between tags show a pre-release version such as `0.9.2-dev.5`.
+The version is the nearest git tag, a plain number such as `0.9` or `1.0`. A release is built by running the *Build and Release* workflow with the version as input; it builds Windows, macOS and Linux packages, stamps them with that version and creates the tag. Local builds show the last tag.
 
 ## Contributing
 

@@ -1074,8 +1074,8 @@ Factory Mode edits `src/NIS.Desktop/Data/nisdata.db` directly.
    ```
 
 #### Step 5: Create Release
-1. Go to Actions → "Build and Release" → "Run workflow" and enter the version (plain semantic version without prefix, e.g. `0.9.1`)
-2. GitHub Actions builds and packages the release with the updated database and creates the git tag `0.9.1`
+1. Go to Actions → "Build and Release" → "Run workflow" and enter the version (plain number, e.g. `0.9` or `1.0`)
+2. GitHub Actions builds and packages the release with the updated database and creates the git tag
 
 ### 9.5 Security Notes
 
@@ -1278,16 +1278,16 @@ dotnet publish -c Release -r win-x64 -p:PublishSingleFile=true -p:IncludeNativeL
 
 #### Versioning
 
-The application version is derived from git tags by [MinVer](https://github.com/adamralph/minver); the csproj contains no fixed version:
-- Tags are plain semantic versions without prefix: `0.9.1`
-- A tagged commit builds as `0.9.1`; later commits build as `0.9.2-dev.N` (N = commits since the tag), so development builds are distinguishable from releases
-- The release workflow passes the entered version to all publish steps via `-p:MinVerVersionOverride` and into the macOS `Info.plist`
-- At runtime `AppInfo.Version` exposes the version (build metadata stripped) for the About dialog and the PDF footer
+The application version is the nearest git tag; the csproj contains no fixed version:
+- Tags are plain numbers without prefix or suffix: `0.9`, `1.0`
+- The `SetVersionFromGitTag` MSBuild target runs `git describe --tags --abbrev=0` at build time, so any build (release or local) shows the last tag
+- The release workflow passes the entered version to all publish steps via `-p:AppVersion=` and into the macOS `Info.plist`, then creates the tag
+- At runtime `AppInfo.Version` exposes the version for the About dialog and the PDF footer
 
 #### GitHub Actions Workflow (`.github/workflows/build.yml`)
 
 Triggered by:
-- Manual dispatch (Actions → "Run workflow" → enter version, e.g. `0.9.1`)
+- Manual dispatch (Actions → "Run workflow" → enter version, e.g. `1.0`)
 
 | Job | Platforms | Description |
 |-----|-----------|-------------|
@@ -1437,7 +1437,7 @@ Complete workflow for updating shipped master data (see also Section 9.4):
 2. **Modify Data** (Section 9.2): Edit master data (antennas, cables, radios, modulations, constants, bands)
 3. **Update Demo Project** (Section 9.3): Create or modify the demo project
 4. **Commit**: Push `src/NIS.Desktop/Data/nisdata.db` to GitHub
-5. **Run Release**: Go to Actions → "Build and Release" → "Run workflow" → enter version (e.g., `0.9.1`)
+5. **Run Release**: Go to Actions → "Build and Release" → "Run workflow" → enter version (e.g., `1.0`)
 6. **Distribute**: GitHub Actions builds and publishes the release
 
 **Note on upgrades**: Schema additions are applied to existing user databases at startup (additive `ALTER TABLE ... ADD COLUMN`, see `DatabaseService.ApplyAdditiveMigrations`) and by `scripts/migrate_db.py`; new default bands are merged into an existing `masterdata.json` (`MasterDataStore.MergeMissingDefaultBands`). User data is never deleted by an upgrade.

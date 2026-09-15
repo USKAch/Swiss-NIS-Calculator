@@ -61,10 +61,10 @@ public class AppSettingsAndInfoTests
     }
 
     [Fact]
-    public void Version_IsSemanticVersionWithoutBuildMetadata()
+    public void Version_IsPlainNumber()
     {
-        Assert.Matches(@"^\d+\.\d+\.\d+", AppInfo.Version);
-        Assert.DoesNotContain("+", AppInfo.Version);
+        // e.g. "0.9" or "1.0" (from the git tag), never a SDK default like 1.0.0 with metadata
+        Assert.Matches(@"^\d+\.\d+(\.\d+)?$", AppInfo.Version);
     }
 
     [Fact]
